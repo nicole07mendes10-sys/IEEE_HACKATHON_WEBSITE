@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="images/ezgif-frame-001.jpg">
+  <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
 </head>
 <body>
 
@@ -126,14 +128,50 @@
             <path id="sound-icon-waves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
           </svg>
         </button>
-        <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
-        <button class="mobile-menu-toggle" aria-label="Toggle Mobile Navigation">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn-bureau-brass open-case-file-trigger nav-desktop-cta">Open a Case File</button>
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Navigation" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <svg class="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
+          <svg class="close-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer" aria-hidden="true">
+      <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
+      <div class="mobile-nav-panel">
+        <div class="mobile-nav-header">
+          <div class="mobile-nav-title">
+            <span class="mobile-tva-dot"></span>
+            BUREAU DIRECTORY // NAV-77
+          </div>
+          <button id="mobile-nav-close" class="mobile-nav-close-btn" aria-label="Close navigation menu">✕</button>
+        </div>
+        <ul class="mobile-nav-links">
+          <li><a href="#about" class="mobile-nav-link"><span class="nav-sec-num">01</span><span class="nav-sec-name">About Dossier</span></a></li>
+          <li><a href="#branches" class="mobile-nav-link"><span class="nav-sec-num">02</span><span class="nav-sec-name">Four Branches</span></a></li>
+          <li><a href="#timeline" class="mobile-nav-link"><span class="nav-sec-num">03</span><span class="nav-sec-name">Timeline Reel</span></a></li>
+          <li><a href="#overclock-24h" class="mobile-nav-link"><span class="nav-sec-num">04</span><span class="nav-sec-name">24H Crucible</span></a></li>
+          <li><a href="#labs" class="mobile-nav-link"><span class="nav-sec-num">05</span><span class="nav-sec-name">Lab Requisitions</span></a></li>
+          <li><a href="#sponsors" class="mobile-nav-link"><span class="nav-sec-num">06</span><span class="nav-sec-name">Sponsors & Partners</span></a></li>
+          <li><a href="#faq" class="mobile-nav-link"><span class="nav-sec-num">07</span><span class="nav-sec-name">Case File FAQ</span></a></li>
+        </ul>
+        <div class="mobile-nav-footer">
+          <button class="btn-bureau-brass open-case-file-trigger mobile-case-file-btn" style="width: 100%; justify-content: center;">
+            Open a Case File
+          </button>
+          <div class="mobile-nav-status">
+            <span>TIMELINE: STABLE</span>
+            <span>FREQ: 1.000 MHz</span>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -524,37 +562,39 @@
           <span>CAMPUS HARDWARE INVENTORY</span>
         </div>
 
-        <table class="equipment-table">
-          <thead>
-            <tr>
-              <th>CATEGORY</th>
-              <th>EQUIPMENT & TOOLS</th>
-              <th>AVAILABILITY</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Measurement</strong></td>
-              <td>Digital Storage Oscilloscopes (DSOs), Digital Multimeters (DMMs), Logic Analyzers, Frequency Counters</td>
-              <td><span class="status-badge-tbc">TBC</span></td>
-            </tr>
-            <tr>
-              <td><strong>Assembly & Soldering</strong></td>
-              <td>Temperature-Controlled Soldering Stations, De-soldering Pumps, Hot Air Rework Stations, Fume Extractors</td>
-              <td><span class="status-badge-tbc">TBC</span></td>
-            </tr>
-            <tr>
-              <td><strong>Prototyping</strong></td>
-              <td>Breadboards, Jumper Bundles, SMD Breakout Adapters, Component Drawers (Passives, ICs, Transistors)</td>
-              <td><span class="status-badge-tbc">TBC</span></td>
-            </tr>
-            <tr>
-              <td><strong>Power</strong></td>
-              <td>Multi-Channel Benchtop DC Power Supplies (0–30V, 5A), Current-Limited Regulators, Battery Holders</td>
-              <td><span class="status-badge-tbc">TBC</span></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="equipment-table-wrap">
+          <table class="equipment-table">
+            <thead>
+              <tr>
+                <th>CATEGORY</th>
+                <th>EQUIPMENT & TOOLS</th>
+                <th>AVAILABILITY</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Measurement</strong></td>
+                <td>Digital Storage Oscilloscopes (DSOs), Digital Multimeters (DMMs), Logic Analyzers, Frequency Counters</td>
+                <td><span class="status-badge-tbc">TBC</span></td>
+              </tr>
+              <tr>
+                <td><strong>Assembly & Soldering</strong></td>
+                <td>Temperature-Controlled Soldering Stations, De-soldering Pumps, Hot Air Rework Stations, Fume Extractors</td>
+                <td><span class="status-badge-tbc">TBC</span></td>
+              </tr>
+              <tr>
+                <td><strong>Prototyping</strong></td>
+                <td>Breadboards, Jumper Bundles, SMD Breakout Adapters, Component Drawers (Passives, ICs, Transistors)</td>
+                <td><span class="status-badge-tbc">TBC</span></td>
+              </tr>
+              <tr>
+                <td><strong>Power</strong></td>
+                <td>Multi-Channel Benchtop DC Power Supplies (0–30V, 5A), Current-Limited Regulators, Battery Holders</td>
+                <td><span class="status-badge-tbc">TBC</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <div style="font-size: 0.8rem; color: #5a4b3d; text-align: right;">
           * Specific equipment availability and lab allocations will be confirmed upon formal schedule publication.
@@ -716,17 +756,28 @@
     </div>
   </footer>
 
+
   <!-- ==========================================================
-       CORNER HUD (BOTTOM-RIGHT CRT MONITOR WITH REAL-TIME CLOCK)
+       MISS MINUTES ANIMATED OVERLAY (CONCEALING GEMINI WATERMARK)
   ========================================================== -->
-  <aside class="corner-bureau-hud" aria-live="off">
-    <span class="hud-pulse-dot"></span>
-    <span id="hud-section-label">SECTION 01/09</span>
-    <span>·</span>
-    <span>TIMELINE STABLE</span>
-    <span>·</span>
-    <span id="hud-live-clock">00:00:00</span>
-  </aside>
+  <div id="miss-minutes-overlay" class="miss-minutes-overlay" aria-label="Miss Minutes Bureau Mascot" aria-hidden="true">
+    <video
+      id="miss-minutes-video"
+      class="miss-minutes-video"
+      autoplay
+      loop
+      muted
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      disablepictureinpicture
+      disableremoteplayback
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <source src="videos/miss_minutes.webm" type="video/webm">
+    </video>
+  </div>
 
   <!-- ==========================================================
        MODAL DIALOG: OPEN A CASE FILE (EXPRESS INTEREST)

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transparency Verification</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .panel-light {
+      background: #0077ff;
+      color: white;
+    }
+    .panel-dark {
+      background: #14100c;
+      color: #f7a01d;
+    }
+    video {
+      width: 280px;
+      height: 280px;
+      object-fit: contain;
+    }
+    h2 {
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel panel-light">
+    <h2>Bright Contrasting Blue</h2>
+    <video src="/videos/miss_minutes.webm" autoplay loop muted playsinline></video>
+  </div>
+  <div class="panel panel-dark">
+    <h2>Bureau Dark Background</h2>
+    <video src="/videos/miss_minutes.webm" autoplay loop muted playsinline></video>
+  </div>
+</body>
+</html>

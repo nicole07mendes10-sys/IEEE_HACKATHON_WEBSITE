@@ -108,7 +108,10 @@ body {
   height: 100vh;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.95;
+  opacity: 1;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* CRT Scanline & Grain Texture Layer */
@@ -120,10 +123,10 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 1;
-  background: linear-gradient(rgba(18, 16, 12, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-              radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(10, 8, 6, 0.65) 100%);
+  background: linear-gradient(rgba(18, 16, 12, 0) 50%, rgba(0, 0, 0, 0.22) 50%),
+              radial-gradient(ellipse at center, rgba(0,0,0,0) 65%, rgba(10, 8, 6, 0.6) 100%);
   background-size: 100% 4px, 100% 100%;
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 /* ==========================================================
@@ -492,14 +495,194 @@ body {
 
 .mobile-menu-toggle {
   display: none;
-  background: transparent;
+  background: #241a11;
   border: 1px solid var(--border-brass);
   color: var(--amber-bright);
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.mobile-menu-toggle:hover {
+  background: #332314;
+  box-shadow: 0 0 10px rgba(232, 137, 43, 0.3);
+}
+
+.mobile-menu-toggle.active .hamburger-icon {
+  display: none !important;
+}
+
+.mobile-menu-toggle.active .close-icon {
+  display: block !important;
+}
+
+/* ==========================================================
+   MOBILE NAVIGATION DRAWER (TVA RETRO BUREAU THEME)
+========================================================== */
+.mobile-nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+}
+
+.mobile-nav-drawer.open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-nav-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 11, 8, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.mobile-nav-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(340px, 86vw);
+  height: 100%;
+  background: #19120c;
+  border-left: 2px solid var(--border-brass);
+  box-shadow: -8px 0 35px rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 20px;
+  z-index: 2;
+}
+
+.mobile-nav-drawer.open .mobile-nav-panel {
+  transform: translateX(0);
+}
+
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--border-subtle);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.mobile-nav-title {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--amber-bright);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-tva-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 8px var(--amber-bright);
+  animation: pulseRunner 2s infinite ease-in-out;
+}
+
+.mobile-nav-close-btn {
+  background: transparent;
+  border: 1px solid var(--border-brass);
+  color: var(--paper-cream);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.mobile-nav-close-btn:hover {
+  background: rgba(232, 137, 43, 0.15);
+  border-color: var(--amber-bright);
+  color: var(--amber-bright);
+}
+
+.mobile-nav-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(239, 230, 210, 0.03);
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: var(--paper-cream);
+  font-family: var(--font-typewriter);
+  font-size: 0.95rem;
+  transition: var(--transition-fast);
+  min-height: 44px;
+}
+
+.mobile-nav-link .nav-sec-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mustard-secondary);
+  border-right: 1px solid var(--border-subtle);
+  padding-right: 8px;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+  background: rgba(232, 137, 43, 0.12);
+  border-color: var(--amber-bright);
+  color: var(--amber-bright);
+}
+
+.mobile-nav-footer {
+  margin-top: auto;
+  border-top: 1px dashed var(--border-subtle);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mobile-nav-status {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.equipment-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 24px;
 }
 
 /* ==========================================================
@@ -1837,34 +2020,39 @@ body {
   padding-top: 24px;
 }
 
+
 /* ==========================================================
-   CORNER HUD DISPLAY (BOTTOM RIGHT CRT MONITOR)
+   MISS MINUTES OVERLAY (ANIMATED RETRO TIME BUREAU MASCOT)
+   Conceals the background Gemini AI watermark with genuine alpha
 ========================================================== */
-.corner-bureau-hud {
+.miss-minutes-overlay {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(18, 14, 10, 0.92);
-  border: 1px solid var(--border-brass);
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--amber-bright);
-  z-index: 200;
+  z-index: 150;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform, left, top, width, height;
+  user-select: none;
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
+  justify-content: center;
+  /* Retro warm bureau drop-shadow */
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+  /* Initial fallback for 16:9 desktop before JS calibration */
+  left: 90.59vw;
+  top: 83.26vh;
+  width: 140px;
+  height: 140px;
 }
 
-.hud-pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green-phosphor);
-  box-shadow: 0 0 6px var(--green-phosphor);
+.miss-minutes-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  background: transparent;
+  border: none;
+  outline: none;
 }
 
 /* ==========================================================
@@ -1940,32 +2128,658 @@ body {
 }
 
 /* ==========================================================
-   RESPONSIVE MEDIA QUERIES
+   RESPONSIVE DESIGN SYSTEM — COMPREHENSIVE BREAKPOINTS
+   - Tablets & Small Desktops (768px - 1023px)
+   - Large Phones & Phablets (481px - 767px)
+   - Standard Mobile Phones (375px - 480px)
+   - Small Mobile Phones (320px - 374px)
+   - Touch & Reduced Motion Overrides
 ========================================================== */
-@media (max-width: 1024px) {
+
+/* ----------------------------------------------------------
+   1. TABLETS & SMALL LAPTOPS (768px to 1023px)
+---------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .nav-container {
+    padding: 0 20px 0 54px;
+  }
+  
   .nav-links-menu {
-    gap: 14px;
+    gap: 12px;
+  }
+  
+  .nav-item-link {
+    font-size: 0.74rem;
+    gap: 4px;
+  }
+  
+  .nav-desktop-cta {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .brand-wordmark {
+    font-size: 1.65rem;
+  }
+
+  .prime-timeline-rail {
+    left: 8px;
+    width: 28px;
+  }
+
+  .bureau-section {
+    padding-left: 56px;
+    padding-right: 24px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .footer-inner-container {
+    padding-left: 48px;
+  }
+
+  .crt-monitors-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .film-strip-track {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .tier-silver-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .cabinet-tabs-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  .nav-links-menu {
-    display: none;
+/* ----------------------------------------------------------
+   2. LARGE PHONES & SMALL TABLETS (481px to 767px)
+---------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* Hide desktop timeline rail to maximize screen estate */
+  .prime-timeline-rail {
+    display: none !important;
   }
-  .mobile-menu-toggle {
-    display: flex;
-  }
-  .nav-container {
+
+  .bureau-section {
     padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
+
+  .footer-inner-container {
+    padding-left: 0;
+  }
+
+  /* Navbar adaptations */
+  .bureau-navbar {
+    height: 64px;
+  }
+
+  .main-bureau-content {
+    padding-top: 64px;
+  }
+
+  .nav-container {
+    padding: 0 16px;
+  }
+
+  .nav-links-menu {
+    display: none !important;
+  }
+
+  .nav-desktop-cta {
+    display: none !important;
+  }
+
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+
+  .brand-wordmark {
+    font-size: 1.55rem;
+  }
+
+  .brand-badge {
+    padding-right: 10px;
+    gap: 6px;
+    font-size: 0.74rem;
+  }
+
+  /* Section Stamps — prevent collisions */
+  .section-rubber-stamp {
+    font-size: 1.15rem;
+    padding: 2px 10px;
+    top: 18px;
+    right: 16px;
+    border-width: 2px;
+  }
+
+  /* Hero adjustments */
+  .hero-bureau-section {
+    min-height: auto;
+    padding-top: 30px;
+    padding-bottom: 50px;
+  }
+
+  .split-flap-title {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    width: 100%;
+    gap: clamp(3px, 1vw, 6px);
+    margin: 16px 0;
+  }
+
+  .flap-char-box {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: clamp(6px, 1.4vw, 10px) 2px;
+    font-size: clamp(1.8rem, 6.2vw, 2.8rem);
+    text-align: center;
+    border-width: 1.5px;
+  }
+
+  .hero-clock-backdrop {
+    width: min(380px, 85vw);
+    height: min(380px, 85vw);
+  }
+
+  .typed-form-strip {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 18px 16px;
+    gap: 14px;
+  }
+
+  /* About section */
+  .case-file-dossier {
+    padding: 28px 18px;
+  }
+
+  .case-notes-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Puzzle section */
+  .puzzle-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .switches-control-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toggle-switch-unit {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Branches */
+  .crt-monitors-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .crt-monitor-card {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  /* Timeline */
+  .timeline-reel-deck {
+    padding: 24px 16px;
+  }
+
+  .film-strip-track {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .spool-graphic {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* 24 Hours Crucible */
+  .overclock-crucible-chamber {
+    padding: 32px 18px;
+  }
+
+  .split-flap-timer-display {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .timer-flap-unit {
+    font-size: clamp(2.4rem, 7.5vw, 3.8rem);
+    padding: 8px 12px;
+  }
+
+  .stages-dial-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .stage-dial-pill {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Labs */
+  .requisition-paper-sheet {
+    padding: 24px 16px;
+  }
+
+  .equipment-table {
+    min-width: 480px;
+  }
+
+  /* Sponsors */
+  .sponsors-pinboard-deck {
+    padding: 28px 16px;
+  }
+
+  .tier-gold-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .tier-silver-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .partnership-requisition-panel {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    gap: 18px;
+  }
+
+  /* FAQ */
+  .case-folder-unit.open .folder-content-drawer {
+    max-height: 400px;
+  }
+
+  .folder-drawer-inner {
+    padding: 16px 18px;
+  }
+
+  /* Footer */
+  .filing-cabinet-footer {
+    padding: 50px 16px 32px;
+  }
+
+  .filing-drawer-box {
+    padding: 24px 16px;
+  }
+
+  .cabinet-tabs-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ----------------------------------------------------------
+   3. STANDARD MOBILE PHONES (375px to 480px)
+---------------------------------------------------------- */
+@media (max-width: 480px) {
+  .bureau-section {
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .section-header-wrap {
+    margin-bottom: 30px;
+  }
+
+  .section-main-heading {
+    font-size: clamp(2rem, 7.5vw, 2.45rem);
+    line-height: 1.08;
+  }
+
+  .bureau-tag {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Navbar */
+  .bureau-navbar {
+    height: 60px;
+  }
+
+  .main-bureau-content {
+    padding-top: 60px;
+  }
+
+  .nav-container {
+    padding: 0 12px;
+  }
+
+  .brand-wordmark {
+    font-size: 1.45rem;
+  }
+
+  .brand-badge {
+    font-size: 0.68rem;
+    padding-right: 8px;
+    gap: 4px;
+  }
+
+  .audio-toggle-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mobile-menu-toggle {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Hero split-flap title */
+  .split-flap-title {
+    gap: clamp(2px, 0.9vw, 4px);
+    margin: 12px 0;
+  }
+
+  .flap-char-box {
+    font-size: clamp(1.4rem, 6.2vw, 1.85rem);
+    padding: 4px 2px;
+    border-width: 1.5px;
+  }
+
+  .hero-subhead {
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-tagline {
+    font-size: 1.05rem;
+    margin-bottom: 22px;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-cta-group .btn-bureau-brass,
+  .hero-cta-group .btn-bureau-secondary {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    font-size: 0.88rem;
+  }
+
   .typed-form-strip {
     grid-template-columns: 1fr;
+    padding: 16px 14px;
+    gap: 12px;
+  }
+
+  /* Section Stamps */
+  .section-rubber-stamp {
+    font-size: 0.95rem;
+    padding: 2px 7px;
+    top: 12px;
+    right: 12px;
+    border-width: 1.5px;
+  }
+
+  /* Manila dossier */
+  .case-file-tab {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+  }
+
+  .case-file-dossier {
+    padding: 24px 14px;
+  }
+
+  /* 24H Crucible */
+  .split-flap-timer-display {
+    gap: 6px;
+  }
+
+  .timer-flap-unit {
+    font-size: clamp(1.9rem, 7vw, 2.5rem);
+    padding: 6px 10px;
+  }
+
+  .countdown-announcement-pill {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Labs Table */
+  .requisition-paper-sheet {
+    padding: 20px 12px;
+  }
+
+  .sheet-header-line {
+    font-size: 0.72rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  /* Sponsors */
+  .tier-silver-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .partnership-actions-wrap {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .partnership-actions-wrap > * {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* FAQ */
+  .folder-tab-bar {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .folder-query-title {
+    font-size: 0.95rem;
+  }
+
+  .answered-stamp-badge {
+    position: static;
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+  }
+
+  .folder-drawer-inner {
+    padding: 14px 14px;
+    font-size: 0.88rem;
+  }
+
+  /* Footer */
+  .cabinet-tabs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .cabinet-index-tab {
+    padding: 10px 6px;
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  .complete-title {
+    font-size: 1.15rem;
+  }
+
+  /* Modal Dialog */
+  .bureau-modal-card {
+    padding: 22px 16px;
+    width: 95%;
+  }
+
+  .modal-input {
+    min-height: 44px;
+    font-size: 16px; /* Prevents auto-zoom in mobile Safari */
+  }
+}
+
+/* ----------------------------------------------------------
+   4. SMALL MOBILE PHONES (320px to 374px)
+---------------------------------------------------------- */
+@media (max-width: 374px) {
+  .bureau-section {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 38px;
+    padding-bottom: 38px;
+  }
+
+  .nav-container {
+    padding: 0 8px;
+  }
+
+  .brand-wordmark {
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+  }
+
+  .brand-badge {
+    font-size: 0.62rem;
+    padding-right: 6px;
+    gap: 3px;
+  }
+
+  .section-main-heading {
+    font-size: 1.85rem;
+  }
+
+  .bureau-tag {
+    font-size: 0.64rem;
+    padding: 2px 6px;
+    word-break: break-word;
+  }
+
+  /* Hero split-flap title single-line fit on 320px */
+  .split-flap-title {
+    gap: 2px;
+  }
+
+  .flap-char-box {
+    font-size: 1.25rem;
+    padding: 3px 1px;
+    min-width: 24px;
+  }
+
+  .hero-subhead {
+    font-size: 0.95rem;
+  }
+
+  .timer-flap-unit {
+    font-size: 1.6rem;
+    padding: 4px 6px;
+  }
+
+  .case-file-dossier {
+    padding: 20px 10px;
+  }
+
+  .requisition-paper-sheet {
+    padding: 18px 10px;
+  }
+
+  .sponsors-pinboard-deck {
+    padding: 20px 10px;
+  }
+
+  .filing-drawer-box {
+    padding: 18px 10px;
+  }
+
+  .cabinet-tabs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .cabinet-index-tab {
+    font-size: 0.66rem;
+    padding: 8px 4px;
+  }
+
+  .boot-terminal-card {
+    padding: 16px 12px;
+  }
+
+  .boot-title {
+    font-size: 0.74rem;
+  }
+}
+
+/* ----------------------------------------------------------
+   5. TOUCH-FRIENDLY & REDUCED MOTION INTERACTION RULES
+---------------------------------------------------------- */
+@media (hover: none) and (pointer: coarse) {
+  /* Comfortable 44px minimum tap targets */
+  .btn-bureau-brass,
+  .btn-bureau-secondary,
+  .cabinet-index-tab,
+  .mobile-menu-toggle,
+  .audio-toggle-btn,
+  .modal-close-btn,
+  .mobile-nav-close-btn,
+  .folder-tab-bar {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Suppress desktop-only hover transform jitter on touch tap */
+  .crt-monitor-card:hover,
+  .auth-clearance-card:hover,
+  .case-note-card:hover {
+    transform: none !important;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .spool-graphic {
+    animation: none !important;
+  }
+
+  .split-flap-title .flap-char-box {
+    animation: none !important;
   }
 }

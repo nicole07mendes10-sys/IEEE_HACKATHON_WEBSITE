@@ -37,8 +37,9 @@ class OverclockApp {
     this.setupPuzzle();
     this.setupSponsorsSection();
     this.setupFAQ();
-    this.setupLiveHUDClock();
     this.setupModals();
+    this.setupMobileNav();
+    this.setupMissMinutesOverlay();
   }
 
   /* ==========================================================
@@ -185,7 +186,6 @@ class OverclockApp {
     const sections = document.querySelectorAll('.bureau-section');
     const activeTrace = document.getElementById('active-timeline-trace');
     const pulseRunner = document.getElementById('timeline-pulse-runner');
-    const hudSection = document.getElementById('hud-section-label');
     const navLinks = document.querySelectorAll('.nav-item-link');
 
     const updateScrollState = () => {
@@ -217,10 +217,9 @@ class OverclockApp {
           }
         }
 
-        // Active navigation indicator & HUD
+        // Active navigation indicator
         if (rect.top <= window.innerHeight * 0.45 && rect.bottom >= window.innerHeight * 0.2) {
           const secId = sec.getAttribute('id');
-          if (hudSection) hudSection.textContent = `SECTION 0${idx + 1}/09`;
           navLinks.forEach(link => {
             const href = link.getAttribute('href');
             if (href === `#${secId}`) link.classList.add('active');
@@ -477,24 +476,6 @@ class OverclockApp {
     });
   }
 
-  /* ==========================================================
-     8. LIVE CORNER HUD CLOCK
-  ========================================================== */
-  setupLiveHUDClock() {
-    const clockEl = document.getElementById('hud-live-clock');
-    if (!clockEl) return;
-
-    const updateClock = () => {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      clockEl.textContent = `${h}:${m}:${s}`;
-    };
-
-    setInterval(updateClock, 1000);
-    updateClock();
-  }
 
   /* ==========================================================
      9. "OPEN A CASE FILE" MODAL
@@ -508,6 +489,17 @@ class OverclockApp {
     if (!modal) return;
 
     const openModal = () => {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      if (drawer && drawer.classList.contains('open')) {
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        const toggleBtn = document.getElementById('mobile-menu-toggle');
+        if (toggleBtn) {
+          toggleBtn.classList.remove('active');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+        document.body.style.overflow = '';
+      }
       modal.classList.add('open');
       this.playRelayClick(1100);
     };
@@ -544,6 +536,186 @@ class OverclockApp {
         }, 1200);
       });
     }
+  }
+
+  /* ==========================================================
+     10. MOBILE NAVIGATION DRAWER
+  ========================================================== */
+  setupMobileNav() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const drawer = document.getElementById('mobile-nav-drawer');
+    const closeBtn = document.getElementById('mobile-nav-close');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+    const navLinks = document.querySelectorAll('.mobile-nav-link');
+
+    if (!toggleBtn || !drawer) return;
+
+    const openDrawer = () => {
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      toggleBtn.classList.add('active');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      this.playRelayClick(950);
+    };
+
+    const closeDrawer = () => {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      toggleBtn.classList.remove('active');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    };
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (drawer.classList.contains('open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        closeDrawer();
+        this.playRelayClick(600);
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeDrawer);
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+        this.playRelayClick(800);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+  }
+
+  /* ==========================================================
+     11. MISS MINUTES ANIMATED MASCOT OVERLAY
+     Continuously loops Miss Minutes, dynamically tracking and
+     concealing the background Gemini AI watermark across viewports.
+  ========================================================== */
+  setupMissMinutesOverlay() {
+    const overlay = document.getElementById('miss-minutes-overlay');
+    const video = document.getElementById('miss-minutes-video');
+    if (!overlay || !video) return;
+
+    // Calibrate overlay position to precisely track the Gemini logo on #circuit-canvas
+    const updatePosition = () => {
+      const winW = window.innerWidth;
+      const winH = window.innerHeight;
+      const imgAspect = 1280 / 720;
+      const winAspect = winW / winH;
+
+      let drawW, drawH, drawX, drawY;
+      if (winAspect > imgAspect) {
+        drawW = winW;
+        drawH = winW / imgAspect;
+        drawX = 0;
+        drawY = (winH - drawH) / 2;
+      } else {
+        drawH = winH;
+        drawW = winH * imgAspect;
+        drawX = (winW - drawW) / 2;
+        drawY = 0;
+      }
+
+      // Gemini watermark coordinates in 1280x720 source frame:
+      // Center: (1159.4, 599.5), Native width/height: ~48px
+      const geminiX = drawX + drawW * (1159.4 / 1280);
+      const geminiY = drawY + drawH * (599.5 / 720);
+      const geminiSize = drawH * (48 / 720);
+
+      // Miss Minutes clock face diameter is ~63% of our 720x720 square crop.
+      // Her solid clock face center is offset by dx=+8.2px, dy=-11.0px from the 720x720 center.
+      // Scaling overlay to ~2.4x of the Gemini star size ensures her solid, 100% opaque
+      // clock body completely and seamlessly covers the entire Gemini watermark across all dance frames.
+      const overlaySize = Math.max(Math.round(geminiSize * 2.4), 84);
+
+      // Align her clock face center precisely with the Gemini logo center
+      const offsetX = Math.round(overlaySize * (368.2 / 720 - 0.5));
+      const offsetY = Math.round(overlaySize * (349.0 / 720 - 0.5));
+
+      // Recalculate positioning: verify if the target watermark area is inside current viewport
+      const isWatermarkOnScreen = (
+        geminiX + overlaySize / 2 >= 0 &&
+        geminiX - overlaySize / 2 <= winW &&
+        geminiY + overlaySize / 2 >= 0 &&
+        geminiY - overlaySize / 2 <= winH
+      );
+
+      if (isWatermarkOnScreen) {
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '1';
+        overlay.style.left = `${Math.round(geminiX - offsetX)}px`;
+        overlay.style.top = `${Math.round(geminiY - offsetY)}px`;
+        overlay.style.width = `${overlaySize}px`;
+        overlay.style.height = `${overlaySize}px`;
+      } else {
+        // If watermark is cropped off-screen (e.g. on portrait mobile), do not show a meaningless floating overlay
+        overlay.style.display = 'none';
+      }
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(updatePosition, 100);
+    }, { passive: true });
+
+    // Handle reduced motion preferences
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      video.playbackRate = 0.6;
+    }
+
+    // Video playback management - ensure continuous uninterrupted looping
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+
+    const playVideo = () => {
+      const promise = video.play();
+      if (promise !== undefined) {
+        promise.catch(() => {
+          // If browser policy prevents autoplay, resume on first user interaction
+          const resumeOnAction = () => {
+            video.play().catch(() => {});
+            ['click', 'scroll', 'keydown', 'touchstart'].forEach(evt => {
+              window.removeEventListener(evt, resumeOnAction);
+            });
+          };
+          ['click', 'scroll', 'keydown', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resumeOnAction, { once: true, passive: true });
+          });
+        });
+      }
+    };
+
+    // Ensure it keeps playing persistently
+    video.addEventListener('pause', () => {
+      if (!document.hidden) {
+        playVideo();
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        playVideo();
+      }
+    });
+
+    playVideo();
   }
 }
 
