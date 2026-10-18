@@ -1006,11 +1006,10 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   position: relative;
   font-family: var(--font-typewriter);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: box-shadow var(--transition-fast);
 }
 
 .case-note-card:hover {
-  transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -1205,11 +1204,11 @@ body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 380px;
-  transition: border-color var(--transition-smooth), transform var(--transition-fast);
+  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
 }
 
 .crt-monitor-card:hover {
-  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
 }
 
 .crt-monitor-card.green:hover { border-color: var(--green-phosphor); box-shadow: 0 0 25px var(--green-glow); }
@@ -1633,26 +1632,17 @@ body {
   text-align: center;
   font-family: var(--font-typewriter);
   text-decoration: none;
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  transition: box-shadow var(--transition-smooth);
   opacity: 0;
-  transform: translateY(20px);
 }
 
 .bureau-section.stamped .auth-clearance-card {
   opacity: 1;
-  transform: translateY(0);
 }
 
-/* Organic slight tilt */
-.auth-clearance-card:nth-child(odd) {
-  transform: rotate(-1.2deg);
-}
-.auth-clearance-card:nth-child(even) {
-  transform: rotate(1.2deg);
-}
+/* Organic slight tilt handled by spatialController */
 
 .auth-clearance-card:hover {
-  transform: translateY(-6px) rotate(0deg) scale(1.02) !important;
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
   z-index: 10;
 }
@@ -2742,6 +2732,544 @@ body {
   }
 }
 
+/* ==========================================================
+   TVA INVESTIGATION ARCHIVE — SCROLL-TRIGGERED ANIMATIONS & INTERACTIONS
+   Mechanical, cinematic, intentional micro-interactions for foreground UI
+========================================================== */
+
+/* ----------------------------------------------------------
+   0. BUTTON MICRO-INTERACTIONS & AMBER SCANLINE
+---------------------------------------------------------- */
+.btn-bureau-brass,
+.btn-bureau-secondary {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.22s ease,
+              color 0.22s ease;
+}
+
+.btn-bureau-brass::after,
+.btn-bureau-secondary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+  transform: skewX(-24deg);
+  pointer-events: none;
+  transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-bureau-brass:hover {
+    transform: translateY(-3px);
+    border-color: #FFC06A;
+    box-shadow: 0 6px 20px rgba(232, 137, 43, 0.55), 0 0 14px var(--amber-glow);
+  }
+
+  .btn-bureau-brass:hover::after,
+  .btn-bureau-secondary:hover::after {
+    left: 170%;
+    transition: left 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .btn-bureau-secondary:hover {
+    transform: translateY(-3px);
+    border-color: var(--amber-bright);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 14px rgba(232, 137, 43, 0.35);
+  }
+}
+
+/* ----------------------------------------------------------
+   1. HERO SECTION — OVERCLOCK 2027 TIMELINE INITIAL REVEAL
+---------------------------------------------------------- */
+.split-flap-title {
+  position: relative;
+  overflow: visible;
+}
+
+.split-flap-title::after {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -15%;
+  width: 130%;
+  height: 120%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 157, 59, 0) 30%, rgba(255, 190, 90, 0.75) 50%, rgba(255, 157, 59, 0) 70%, transparent 100%);
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.hero-anim-active .split-flap-title::after {
+  animation: amber-title-sweep 0.85s cubic-bezier(0.4, 0, 0.2, 1) 0.38s forwards;
+}
+
+@keyframes amber-title-sweep {
+  0% { opacity: 0; transform: translateX(-100%); }
+  25% { opacity: 0.95; }
+  75% { opacity: 0.95; }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+.split-flap-title .flap-char-box {
+  opacity: 0;
+  transform: translateY(22px) rotateX(40deg);
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease;
+  will-change: transform, opacity;
+}
+
+.hero-anim-active .split-flap-title .flap-char-box {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
+
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(1) { transition-delay: 0.04s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(2) { transition-delay: 0.08s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(3) { transition-delay: 0.12s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(4) { transition-delay: 0.16s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(5) { transition-delay: 0.20s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(6) { transition-delay: 0.24s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(7) { transition-delay: 0.28s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(8) { transition-delay: 0.32s; }
+.hero-anim-active .split-flap-title .flap-char-box:nth-child(9) { transition-delay: 0.36s; }
+
+.hero-subhead,
+.hero-tagline {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.26s, opacity 0.45s ease 0.26s;
+}
+
+.hero-anim-active .hero-subhead,
+.hero-anim-active .hero-tagline {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-bureau-section .section-rubber-stamp {
+  opacity: 0;
+  transform: scale(1.4) translateY(-16px) rotate(-14deg);
+}
+
+.hero-anim-active .hero-bureau-section .section-rubber-stamp,
+.hero-bureau-section.hero-anim-active .section-rubber-stamp {
+  animation: hero-stamp-impact 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.35s forwards;
+}
+
+@keyframes hero-stamp-impact {
+  0% {
+    opacity: 0;
+    transform: scale(1.4) translateY(-16px) rotate(-14deg);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.96) translateY(2px) rotate(-5deg);
+    box-shadow: 0 0 22px rgba(232, 137, 43, 0.7);
+    border-color: var(--amber-bright);
+    color: var(--amber-bright);
+  }
+  100% {
+    opacity: 0.95;
+    transform: scale(1) translateY(0) rotate(-6deg);
+    box-shadow: 0 0 12px rgba(232, 137, 43, 0.3);
+    border-color: var(--amber-bright);
+    color: var(--amber-bright);
+  }
+}
+
+.typed-form-strip {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.42s, opacity 0.5s ease 0.42s;
+}
+
+.hero-anim-active .typed-form-strip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.typed-form-strip .form-field-unit {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.hero-anim-active .typed-form-strip .form-field-unit:nth-child(1) { transition-delay: 0.52s; opacity: 1; transform: translateY(0); }
+.hero-anim-active .typed-form-strip .form-field-unit:nth-child(2) { transition-delay: 0.62s; opacity: 1; transform: translateY(0); }
+.hero-anim-active .typed-form-strip .form-field-unit:nth-child(3) { transition-delay: 0.72s; opacity: 1; transform: translateY(0); }
+.hero-anim-active .typed-form-strip .form-field-unit:nth-child(4) { transition-delay: 0.82s; opacity: 1; transform: translateY(0); }
+
+.hero-cta-group > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s ease;
+}
+
+.hero-anim-active .hero-cta-group > :nth-child(1) { transition-delay: 0.68s; opacity: 1; transform: translateY(0); }
+.hero-anim-active .hero-cta-group > :nth-child(2) { transition-delay: 0.80s; opacity: 1; transform: translateY(0); }
+
+/* ----------------------------------------------------------
+   COMMON SECTION HEADER REVEAL
+---------------------------------------------------------- */
+.section-header-wrap {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+  will-change: transform, opacity;
+}
+
+.bureau-section.revealed .section-header-wrap,
+.section-header-wrap.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Rubber Stamp Stamping Impact for all sections */
+.bureau-section.stamped .section-rubber-stamp {
+  animation: section-stamp-hit 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes section-stamp-hit {
+  0% { transform: scale(1.4) translateY(-14px) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(0.96) translateY(2px) rotate(-7deg); opacity: 1; box-shadow: 0 0 18px rgba(232, 137, 43, 0.6); }
+  100% { transform: scale(1.05) rotate(-8deg); opacity: 0.95; }
+}
+
+/* ----------------------------------------------------------
+   3D PERSPECTIVE STAGES & SPATIAL CONTAINERS
+---------------------------------------------------------- */
+.case-file-dossier {
+  overflow: visible !important;
+}
+
+.case-notes-grid,
+.crt-monitors-grid,
+.film-strip-track,
+.overclock-crucible-chamber,
+.equipment-table-wrap,
+.sponsors-tier-wrapper,
+.case-files-accordion,
+.filing-drawer-box {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+/* GPU-Accelerated Foreground 3D Entities */
+.case-note-card,
+.crt-monitor-card,
+.film-frame-card,
+.overclock-crucible-chamber,
+.equipment-table tbody tr,
+.auth-clearance-card,
+.case-folder-unit,
+.cabinet-tabs-grid .cabinet-index-tab,
+.center-timeline-complete-card {
+  will-change: transform, box-shadow, border-color;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  opacity: 1;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+/* ----------------------------------------------------------
+   2. ABOUT / BRIEFING SECTION — CLASSIFIED DOSSIER CARDS
+---------------------------------------------------------- */
+.case-notes-grid .case-note-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Paperclip graphic settling */
+.case-note-card .paperclip-graphic {
+  transition: transform 0.3s ease;
+}
+
+/* Fine scanning beam effect across memo surface on hover */
+.case-note-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 5%, rgba(232, 137, 43, 0.85) 50%, transparent 95%);
+  box-shadow: 0 0 10px rgba(232, 137, 43, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .case-note-card:hover::before {
+    opacity: 1;
+    animation: dossier-scan-beam 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes dossier-scan-beam {
+  0% { top: -2px; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ----------------------------------------------------------
+   3. BRANCHES SECTION — FOUR CRT DOMAIN CARDS
+---------------------------------------------------------- */
+.crt-monitors-grid .crt-monitor-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-dial {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, background 0.35s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .crt-monitor-card:hover .crt-dial {
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px var(--amber-glow);
+  }
+
+  .crt-monitor-card.green:hover .crt-dial { box-shadow: 0 0 12px var(--green-glow); }
+  .crt-monitor-card.cyan:hover .crt-dial { box-shadow: 0 0 12px var(--cyan-glow); }
+  .crt-monitor-card.violet:hover .crt-dial { box-shadow: 0 0 12px var(--violet-glow); }
+  .crt-monitor-card.amber:hover .crt-dial { box-shadow: 0 0 12px var(--amber-glow); }
+}
+
+/* ----------------------------------------------------------
+   4. TIMELINE SECTION — TEMPORAL TRANSITION
+---------------------------------------------------------- */
+.spool-graphic {
+  transform-origin: center;
+  transition: transform 0.05s linear;
+}
+
+/* ----------------------------------------------------------
+   5. 24H COUNTDOWN SECTION — MECHANICAL CLOCK
+---------------------------------------------------------- */
+.countdown-announcement-pill {
+  transition: opacity 0.3s ease;
+}
+
+.stage-dial-pill {
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, color 0.22s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stage-dial-pill:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: var(--amber-bright);
+    box-shadow: 0 0 16px rgba(232, 137, 43, 0.5);
+    color: #FFB347;
+  }
+}
+
+/* ----------------------------------------------------------
+   6. LABS / EQUIPMENT REQUISITION FORM
+---------------------------------------------------------- */
+.requisition-paper-sheet {
+  position: relative;
+  overflow: hidden;
+}
+
+.equipment-table tbody tr {
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.equipment-table tbody tr:hover {
+  background: rgba(232, 137, 43, 0.08);
+}
+
+.status-badge-tbc {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ----------------------------------------------------------
+   7. SPONSORS SECTION — OFFICIAL ARCHIVE REVEAL
+---------------------------------------------------------- */
+.tier-divider-label {
+  transition: opacity 0.3s ease;
+}
+
+.auth-clearance-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-clearance-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 5%, rgba(232, 137, 43, 0.9) 50%, transparent 95%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.auth-clearance-card.scan-active::before {
+  opacity: 1;
+  animation: card-amber-scan 0.8s ease-out forwards;
+}
+
+@keyframes card-amber-scan {
+  0% { top: 0; opacity: 0; }
+  25% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .auth-clearance-card:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 18px var(--amber-glow);
+    border-color: var(--amber-bright);
+  }
+}
+
+/* ----------------------------------------------------------
+   8. FAQ SECTION — CASE FILE ACCORDIONS
+---------------------------------------------------------- */
+.folder-tab-bar span:last-child {
+  transition: transform 0.25s ease, color 0.25s ease;
+  display: inline-block;
+}
+
+.case-folder-unit.open .folder-tab-bar span:last-child {
+  transform: scale(1.05);
+  color: var(--amber-bright);
+}
+
+.folder-content-drawer {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+}
+
+.case-folder-unit.open .folder-content-drawer {
+  max-height: 320px;
+  opacity: 1;
+}
+
+.case-folder-unit.open {
+  border-color: var(--amber-bright);
+  box-shadow: 0 4px 20px rgba(232, 137, 43, 0.3);
+}
+
+/* ----------------------------------------------------------
+   9. FOOTER / SOCIAL PIN BOARD — FINAL ARCHIVE STAMP
+---------------------------------------------------------- */
+.cabinet-tabs-grid .cabinet-index-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.cabinet-index-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: var(--amber-bright);
+  transition: left 0.4s ease;
+}
+
+.cabinet-index-tab:hover::after {
+  left: 0;
+}
+
+.center-timeline-complete-card {
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  animation: dashed-border-glow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes dashed-border-glow {
+  0% { border-color: rgba(232, 137, 43, 0.4); box-shadow: inset 0 0 10px rgba(232, 137, 43, 0.05); }
+  100% { border-color: rgba(255, 157, 59, 0.85); box-shadow: inset 0 0 20px rgba(232, 137, 43, 0.15); }
+}
+
+/* ----------------------------------------------------------
+   10. FIXED TERMINAL STATUS INDICATOR (CORNER HUD)
+---------------------------------------------------------- */
+.corner-bureau-hud {
+  position: fixed;
+  bottom: 22px;
+  right: 24px;
+  background: rgba(18, 14, 10, 0.94);
+  border: 1px solid var(--border-brass);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--amber-bright);
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 10px rgba(232, 137, 43, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+  transition: border-color 0.3s ease;
+}
+
+.hud-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-phosphor);
+  box-shadow: 0 0 8px var(--green-phosphor);
+  flex-shrink: 0;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.hud-pulse-dot.pulse {
+  animation: dot-pulse-ping 0.6s cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes dot-pulse-ping {
+  0% { transform: scale(1); box-shadow: 0 0 6px var(--green-phosphor); }
+  50% { transform: scale(1.6); box-shadow: 0 0 14px var(--green-phosphor), 0 0 20px #FFF; background: #FFF; }
+  100% { transform: scale(1); box-shadow: 0 0 8px var(--green-phosphor); background: var(--green-phosphor); }
+}
+
+.hud-sep {
+  color: var(--text-dim);
+}
+
+.hud-status-text {
+  color: var(--paper-cream);
+  font-weight: 500;
+}
+
+#hud-section-label {
+  transition: opacity 0.2s ease;
+}
+
+#hud-section-label.text-fade {
+  opacity: 0.35;
+}
+
+@media (max-width: 640px) {
+  .corner-bureau-hud {
+    display: none;
+  }
+}
+
 /* ----------------------------------------------------------
    5. TOUCH-FRIENDLY & REDUCED MOTION INTERACTION RULES
 ---------------------------------------------------------- */
@@ -2762,7 +3290,9 @@ body {
   /* Suppress desktop-only hover transform jitter on touch tap */
   .crt-monitor-card:hover,
   .auth-clearance-card:hover,
-  .case-note-card:hover {
+  .case-note-card:hover,
+  .btn-bureau-brass:hover,
+  .btn-bureau-secondary:hover {
     transform: none !important;
   }
 }
@@ -2779,7 +3309,30 @@ body {
     animation: none !important;
   }
 
-  .split-flap-title .flap-char-box {
+  .split-flap-title .flap-char-box,
+  .hero-subhead,
+  .hero-tagline,
+  .typed-form-strip,
+  .typed-form-strip .form-field-unit,
+  .hero-cta-group > *,
+  .hero-bureau-section .section-rubber-stamp,
+  .section-header-wrap,
+  .case-notes-grid .case-note-card,
+  .crt-monitors-grid .crt-monitor-card,
+  .film-strip-track .film-frame-card,
+  .overclock-crucible-chamber,
+  .countdown-announcement-pill,
+  .floor-rules-panel,
+  .requisition-paper-sheet,
+  .equipment-table tbody tr,
+  .tier-divider-label,
+  .auth-clearance-card,
+  .case-folder-unit,
+  .cabinet-tabs-grid .cabinet-index-tab,
+  .center-timeline-complete-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
     animation: none !important;
   }
 }

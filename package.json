@@ -1,0 +1,14 @@
+{
+  "name": "overclock-2027-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OVERCLOCK 2027 — FCRIT × IEEE Student Branch Hardware Hackathon",
+  "scripts": {
+    "dev": "serve -l 3000 .",
+    "start": "serve -l 3000 .",
+    "serve": "serve -l 3000 ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
