@@ -39,42 +39,48 @@ class BureauSpatialScrollController {
     this.dossierGrid = this.aboutSec ? this.aboutSec.querySelector('.case-notes-grid') : null;
     this.dossierCards = this.aboutSec ? Array.from(this.aboutSec.querySelectorAll('.case-note-card')) : [];
 
-    // Section 03: The Four Branches CRT Monitors
-    this.branchesSec = document.getElementById('branches');
-    this.branchesGrid = this.branchesSec ? this.branchesSec.querySelector('.crt-monitors-grid') : null;
-    this.crtCards = this.branchesSec ? Array.from(this.branchesSec.querySelectorAll('.crt-monitor-card')) : [];
+    // Section 03: Problem Statements Five Domains
+    this.problemsSec = document.getElementById('problems');
+    this.domainCards = this.problemsSec ? Array.from(this.problemsSec.querySelectorAll('.domain-slot-card')) : [];
 
-    // Section 04: Timeline Reel Deck
+    // Section 04: Results Shortlist Teletype
+    this.resultsSec = document.getElementById('results');
+    this.resultsChamber = this.resultsSec ? this.resultsSec.querySelector('.results-dossier-chamber') : null;
+
+    // Section 05: Timeline Reel Deck
     this.timelineSec = document.getElementById('timeline');
     this.timelineDeck = this.timelineSec ? this.timelineSec.querySelector('.timeline-reel-deck') : null;
     this.spoolGraphics = this.timelineSec ? Array.from(this.timelineSec.querySelectorAll('.spool-graphic')) : [];
     this.filmFrames = this.timelineSec ? Array.from(this.timelineSec.querySelectorAll('.film-frame-card')) : [];
     this.timelineHeading = this.timelineSec ? this.timelineSec.querySelector('.section-main-heading') : null;
 
-    // Section 05: 24H Crucible Countdown
-    this.crucibleSec = document.getElementById('overclock-24h');
-    this.crucibleChamber = this.crucibleSec ? this.crucibleSec.querySelector('.overclock-crucible-chamber') : null;
-    this.timerDisplay = this.crucibleSec ? this.crucibleSec.querySelector('.split-flap-timer-display') : null;
-    this.announcementPill = this.crucibleSec ? this.crucibleSec.querySelector('.countdown-announcement-pill') : null;
-    this.stagePills = this.crucibleSec ? Array.from(this.crucibleSec.querySelectorAll('.stage-dial-pill')) : [];
-    this.floorRules = this.crucibleSec ? this.crucibleSec.querySelector('.floor-rules-panel') : null;
+    // Section 06: Registration Terminal
+    this.registrationSec = document.getElementById('registration');
+    this.regTerminal = this.registrationSec ? this.registrationSec.querySelector('.registration-terminal-card') : null;
 
-    // Section 06: Labs & Equipment Requisition
-    this.labsSec = document.getElementById('labs');
-    this.requisitionSheet = this.labsSec ? this.labsSec.querySelector('.requisition-paper-sheet') : null;
-    this.equipmentRows = this.labsSec ? Array.from(this.labsSec.querySelectorAll('.equipment-table tbody tr')) : [];
+    // Section 07: Accommodation
+    this.accommodationSec = document.getElementById('accommodation');
+    this.quartersCards = this.accommodationSec ? Array.from(this.accommodationSec.querySelectorAll('.quarters-stat-card')) : [];
 
-    // Section 07: Sponsors Pinboard
+    // Section 08: Judging & Recognition
+    this.judgingSec = document.getElementById('judging');
+    this.pillarCards = this.judgingSec ? Array.from(this.judgingSec.querySelectorAll('.pillar-card')) : [];
+
+    // Section 09: Sponsors Pinboard
     this.sponsorsSec = document.getElementById('sponsors');
     this.sponsorsPinboard = this.sponsorsSec ? this.sponsorsSec.querySelector('.sponsors-pinboard-deck') : null;
     this.cacheSponsorCards();
 
-    // Section 08: FAQ Manila Folders
+    // Section 10: FAQ Manila Folders
     this.faqSec = document.getElementById('faq');
     this.faqAccordion = this.faqSec ? this.faqSec.querySelector('.case-files-accordion') : null;
     this.faqFolders = this.faqSec ? Array.from(this.faqSec.querySelectorAll('.case-folder-unit')) : [];
 
-    // Section 09: Footer Filing Drawer
+    // Section 11: Contact Dossier
+    this.contactSec = document.getElementById('contact');
+    this.contactCards = this.contactSec ? Array.from(this.contactSec.querySelectorAll('.contact-dossier-card')) : [];
+
+    // Section 12: Footer Filing Drawer
     this.footerSec = document.querySelector('.filing-cabinet-footer');
     this.filingDrawer = this.footerSec ? this.footerSec.querySelector('.filing-drawer-box') : null;
     this.completionCard = this.footerSec ? this.footerSec.querySelector('.center-timeline-complete-card') : null;
@@ -138,12 +144,15 @@ class BureauSpatialScrollController {
     }
 
     this.updateBriefingSection();
-    this.updateBranchesSection();
+    this.updateProblemsSection();
+    this.updateResultsSection();
     this.updateTimelineSection();
-    this.updateCountdownSection();
-    this.updateLabsSection();
+    this.updateRegistrationSection();
+    this.updateAccommodationSection();
+    this.updateJudgingSection();
     this.updateSponsorsSection();
     this.updateFAQSection();
+    this.updateContactSection();
     this.updateFooterSection();
 
     if (Math.abs(this.targetScrollY - this.smoothScrollY) >= 0.05) {
@@ -245,39 +254,32 @@ class BureauSpatialScrollController {
   }
 
   /* --------------------------------------------------------
-     2. BRANCHES SECTION (FOUR CRT DOMAINS)
+     2. PROBLEM STATEMENTS (FIVE DOMAIN SLOTS)
   -------------------------------------------------------- */
-  updateBranchesSection() {
-    if (!this.branchesSec || this.crtCards.length === 0) return;
-    const p = this.getSectionProgress(this.branchesSec);
+  updateProblemsSection() {
+    if (!this.problemsSec || this.domainCards.length === 0) return;
+    const p = this.getSectionProgress(this.problemsSec);
     if (p < -0.1 || p > 1.1) return;
 
-    const rotXInits = [6.0, 7.0, 7.0, 6.0];
-    const rotYInits = [-4.0, -1.8, 1.8, 4.0];
-    const phosphorGlows = [
-      'rgba(124, 255, 155, 0.55)',
-      'rgba(90, 230, 255, 0.55)',
-      'rgba(183, 123, 255, 0.55)',
-      'rgba(255, 157, 59, 0.55)'
-    ];
-    const phosphorBorders = ['#7CFF9B', '#5AE6FF', '#B77BFF', '#FF9D3B'];
+    const rotXInits = [5.5, 6.5, 6.0, 6.5, 5.5];
+    const rotYInits = [-3.5, -1.8, 0, 1.8, 3.5];
 
-    this.crtCards.forEach((card, i) => {
-      const c_i = 0.35 + i * 0.09;
+    this.domainCards.forEach((card, i) => {
+      const c_i = 0.28 + i * 0.08;
       const d = p - c_i;
-      const f = Math.max(0, 1 - Math.abs(d) / 0.12);
+      const f = Math.max(0, 1 - Math.abs(d) / 0.13);
       const f_smooth = f * f * (3 - 2 * f);
 
       const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
       const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
 
-      const baseZ = -60 * (1 - enterT) - 30 * exitT;
-      let tz = baseZ + (32 - baseZ) * f_smooth;
+      const baseZ = -45 * (1 - enterT) - 20 * exitT;
+      let tz = baseZ + (26 - baseZ) * f_smooth;
 
-      let rx = (rotXInits[i] * (1 - enterT) - 3.5 * exitT) * (1 - f_smooth);
+      let rx = (rotXInits[i] * (1 - enterT) - 2.5 * exitT) * (1 - f_smooth);
       let ry = (rotYInits[i] * (1 - enterT) + (rotYInits[i] * 0.35) * exitT) * (1 - f_smooth);
-      let scale = 0.98 + 0.05 * f_smooth;
-      let tx = (i - 1.5) * 6 * (1 - f_smooth * 0.6);
+      let scale = 0.98 + 0.035 * f_smooth;
+      let tx = (i - 2.0) * 4 * (1 - f_smooth * 0.5);
 
       const pt = this.getPointerTilt(card);
       rx += pt.tiltX;
@@ -287,31 +289,36 @@ class BureauSpatialScrollController {
         rx *= 0.35;
         ry *= 0.35;
         tx = 0;
-        tz = Math.max(-20, Math.min(15, tz));
-        scale = Math.min(scale, 1.018);
+        tz = Math.max(-15, Math.min(12, tz));
+        scale = Math.min(scale, 1.015);
       }
 
       card.style.transform = `perspective(1000px) translate3d(${tx.toFixed(1)}px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-
-      if (f_smooth > 0.05) {
-        card.style.boxShadow = `0 12px 30px rgba(0, 0, 0, 0.6), 0 0 ${(f_smooth * 28).toFixed(1)}px ${phosphorGlows[i]}`;
-        card.style.borderColor = phosphorBorders[i];
-      } else {
-        card.style.boxShadow = '';
-        card.style.borderColor = '';
-      }
-
-      // Rotate CRT Dial continuously with scroll + focus
-      const dial = card.querySelector('.crt-dial');
-      if (dial) {
-        const dialDeg = (p * 220 + f_smooth * 65 + i * 45).toFixed(1);
-        dial.style.transform = `rotate(${dialDeg}deg)`;
-      }
     });
   }
 
   /* --------------------------------------------------------
-     3. TIMELINE SECTION (REEL DECK & MILESTONES)
+     3. RESULTS (TELETYPE SHORTLIST CHAMBER)
+  -------------------------------------------------------- */
+  updateResultsSection() {
+    if (!this.resultsSec || !this.resultsChamber) return;
+    const p = this.getSectionProgress(this.resultsSec);
+    if (p < -0.1 || p > 1.1) return;
+
+    const enterT = Math.min(1, Math.max(0, (p - 0.15) / 0.35));
+    const exitT = Math.min(1, Math.max(0, (p - 0.60) / 0.35));
+    let rx = (3.5 * (1 - enterT) - 2.0 * exitT);
+    let tz = -30 * (1 - enterT) + 18 * enterT * (1 - exitT);
+
+    if (this.isMobile) {
+      rx *= 0.35;
+      tz = Math.max(-12, tz);
+    }
+    this.resultsChamber.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg)`;
+  }
+
+  /* --------------------------------------------------------
+     4. TIMELINE SECTION (REEL DECK & 5 MILESTONES)
   -------------------------------------------------------- */
   updateTimelineSection() {
     if (!this.timelineSec) return;
@@ -324,45 +331,38 @@ class BureauSpatialScrollController {
       spool.style.transform = `rotate(${spoolRot}deg)`;
     });
 
-    // Milestone film frames
+    // Milestone film frames (5 milestones)
     this.filmFrames.forEach((frame, i) => {
-      const c_i = 0.35 + i * 0.10;
+      const c_i = 0.28 + i * 0.08;
       const d = p - c_i;
-      const f = Math.max(0, 1 - Math.abs(d) / 0.13);
+      const f = Math.max(0, 1 - Math.abs(d) / 0.12);
       const f_smooth = f * f * (3 - 2 * f);
 
       const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
       const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
 
-      const isPeakEvent = i === 2; // Frame III: The 24H Build
-      const targetZ = isPeakEvent ? 38 : 24;
-      const baseZ = -45 * (1 - enterT) - 25 * exitT;
+      const isFinal = i === 4; // Milestone 05: Final Problem Statement
+      const targetZ = isFinal ? 32 : 22;
+      const baseZ = -40 * (1 - enterT) - 20 * exitT;
       let tz = baseZ + (targetZ - baseZ) * f_smooth;
 
-      let rx = (4.0 * (1 - enterT) - 2.5 * exitT) * (1 - f_smooth);
-      let ry = ((i - 1.5) * 3.0 * (1 - enterT)) * (1 - f_smooth);
-      let scale = (isPeakEvent ? 0.99 : 0.98) + (isPeakEvent ? 0.06 : 0.04) * f_smooth;
+      let rx = (3.5 * (1 - enterT) - 2.0 * exitT) * (1 - f_smooth);
+      let ry = ((i - 2.0) * 2.5 * (1 - enterT)) * (1 - f_smooth);
+      let scale = 0.98 + 0.04 * f_smooth;
 
       if (this.isMobile) {
         rx *= 0.35;
         ry *= 0.35;
-        tz = Math.max(-18, Math.min(16, tz));
-        scale = Math.min(scale, 1.02);
+        tz = Math.max(-15, Math.min(12, tz));
+        scale = Math.min(scale, 1.018);
       }
 
       frame.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
-      if (isPeakEvent) {
-        if (f_smooth > 0.05) {
-          const glow = (0.35 + f_smooth * 0.55).toFixed(2);
-          frame.style.boxShadow = `0 0 ${(18 + f_smooth * 24).toFixed(1)}px rgba(232, 137, 43, ${glow}), inset 0 0 14px rgba(232, 137, 43, 0.2)`;
-          frame.style.borderColor = `rgba(255, 157, 59, ${(0.6 + f_smooth * 0.4).toFixed(2)})`;
-        } else {
-          frame.style.boxShadow = '';
-          frame.style.borderColor = '';
-        }
+      if (isFinal && f_smooth > 0.05) {
+        frame.style.boxShadow = `0 0 ${(16 + f_smooth * 20).toFixed(1)}px rgba(232, 137, 43, 0.4)`;
       } else if (f_smooth > 0.08) {
-        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 16).toFixed(1)}px rgba(217, 169, 58, 0.3)`;
+        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(217, 169, 58, 0.25)`;
       } else {
         frame.style.boxShadow = '';
       }
@@ -370,110 +370,87 @@ class BureauSpatialScrollController {
   }
 
   /* --------------------------------------------------------
-     4. 24H COUNTDOWN CRUCIBLE (PEAK ENERGY)
+     5. REGISTRATION (TERMINAL CARD)
   -------------------------------------------------------- */
-  updateCountdownSection() {
-    if (!this.crucibleSec) return;
-    const p = this.getSectionProgress(this.crucibleSec);
+  updateRegistrationSection() {
+    if (!this.registrationSec || !this.regTerminal) return;
+    const p = this.getSectionProgress(this.registrationSec);
     if (p < -0.1 || p > 1.1) return;
 
-    // Chamber 3D ingress tilt & alignment
-    if (this.crucibleChamber) {
-      const enterT = Math.min(1, Math.max(0, (p - 0.15) / 0.30));
-      const exitT = Math.min(1, Math.max(0, (p - 0.65) / 0.30));
-      let rx = (5.0 * (1 - enterT) - 3.0 * exitT);
-      let tz = -30 * (1 - enterT) - 20 * exitT;
-      let scale = 0.98 + 0.02 * enterT - 0.02 * exitT;
+    const enterT = Math.min(1, Math.max(0, (p - 0.15) / 0.35));
+    const exitT = Math.min(1, Math.max(0, (p - 0.65) / 0.35));
+    let rx = 3.5 * (1 - enterT) - 2.0 * exitT;
+    let tz = -30 * (1 - enterT) + 20 * enterT * (1 - exitT);
 
-      if (this.isMobile) {
-        rx *= 0.35;
-        tz = Math.max(-15, tz);
-        scale = 1;
-      }
-      this.crucibleChamber.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+    if (this.isMobile) {
+      rx *= 0.35;
+      tz = Math.max(-12, tz);
     }
-
-    // 5 Stage buttons continuous scroll-linked wave
-    if (this.stagePills.length > 0) {
-      const waveNorm = Math.min(1, Math.max(0, (p - 0.32) / 0.38));
-      const wavePos = waveNorm * (this.stagePills.length - 1);
-
-      this.stagePills.forEach((pill, k) => {
-        const dist = Math.abs(wavePos - k);
-        const a_k = Math.max(0, 1 - dist * 0.95);
-        const a_smooth = a_k * a_k * (3 - 2 * a_k);
-
-        const ty = -a_smooth * 5.0;
-        const tz = a_smooth * 15.0;
-        const scale = 1.0 + a_smooth * 0.05;
-
-        pill.style.transform = `perspective(600px) translate3d(0px, ${ty.toFixed(1)}px, ${tz.toFixed(1)}px) scale(${scale.toFixed(3)})`;
-
-        if (a_smooth > 0.05) {
-          pill.style.boxShadow = `0 0 ${(a_smooth * 16).toFixed(1)}px rgba(232, 137, 43, ${(a_smooth * 0.85).toFixed(2)})`;
-          pill.style.borderColor = `rgba(232, 137, 43, ${(0.35 + a_smooth * 0.65).toFixed(2)})`;
-          pill.style.color = a_smooth > 0.35 ? '#FFB347' : 'var(--mustard-secondary)';
-        } else {
-          pill.style.boxShadow = '';
-          pill.style.borderColor = '';
-          pill.style.color = '';
-        }
-      });
-    }
-
-    // Timer display elevation at center
-    if (this.timerDisplay) {
-      const centerFactor = Math.sin(Math.min(Math.PI, Math.max(0, (p - 0.25) / 0.50 * Math.PI)));
-      const tz = centerFactor * 22;
-      this.timerDisplay.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px)`;
-    }
-
-    // Secondary floor rules panel slight recession
-    if (this.floorRules) {
-      const centerFactor = Math.sin(Math.min(Math.PI, Math.max(0, (p - 0.25) / 0.50 * Math.PI)));
-      const tz = -centerFactor * 14;
-      this.floorRules.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px)`;
-    }
+    this.regTerminal.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg)`;
   }
 
   /* --------------------------------------------------------
-     5. LABS & EQUIPMENT (REQUISITION FORM)
+     6. ACCOMMODATION (QUARTERS STAT CARDS)
   -------------------------------------------------------- */
-  updateLabsSection() {
-    if (!this.labsSec) return;
-    const p = this.getSectionProgress(this.labsSec);
+  updateAccommodationSection() {
+    if (!this.accommodationSec || this.quartersCards.length === 0) return;
+    const p = this.getSectionProgress(this.accommodationSec);
     if (p < -0.1 || p > 1.1) return;
 
-    if (this.requisitionSheet) {
-      const enterT = Math.min(1, Math.max(0, (p - 0.15) / 0.30));
-      const exitT = Math.min(1, Math.max(0, (p - 0.65) / 0.30));
-      let rx = (4.0 * (1 - enterT) - 2.5 * exitT);
-      let tz = -25 * (1 - enterT) - 15 * exitT;
-      if (this.isMobile) {
-        rx *= 0.35;
-        tz = Math.max(-12, tz);
-      }
-      this.requisitionSheet.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg)`;
-    }
-
-    // Table rows subtle staggered focus
-    this.equipmentRows.forEach((row, i) => {
-      const c_i = 0.35 + i * 0.08;
+    this.quartersCards.forEach((card, i) => {
+      const c_i = 0.28 + i * 0.08;
       const d = p - c_i;
       const f = Math.max(0, 1 - Math.abs(d) / 0.12);
       const f_smooth = f * f * (3 - 2 * f);
-      const tz = f_smooth * 10.0;
-      row.style.transform = `perspective(600px) translate3d(0px, 0px, ${tz.toFixed(1)}px)`;
-      if (f_smooth > 0.1) {
-        row.style.backgroundColor = `rgba(232, 137, 43, ${(f_smooth * 0.12).toFixed(2)})`;
-      } else {
-        row.style.backgroundColor = '';
+
+      const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
+      const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
+
+      const baseZ = -30 * (1 - enterT) - 15 * exitT;
+      let tz = baseZ + (20 - baseZ) * f_smooth;
+      let scale = 0.98 + 0.03 * f_smooth;
+
+      if (this.isMobile) {
+        tz = Math.max(-12, Math.min(10, tz));
+        scale = 1;
       }
+
+      card.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px) scale(${scale.toFixed(3)})`;
     });
   }
 
   /* --------------------------------------------------------
-     6. SPONSORS (PINBOARD CLEARANCE CARDS)
+     7. JUDGING & RECOGNITION (EVALUATION PILLARS)
+  -------------------------------------------------------- */
+  updateJudgingSection() {
+    if (!this.judgingSec || this.pillarCards.length === 0) return;
+    const p = this.getSectionProgress(this.judgingSec);
+    if (p < -0.1 || p > 1.1) return;
+
+    this.pillarCards.forEach((card, i) => {
+      const c_i = 0.28 + i * 0.08;
+      const d = p - c_i;
+      const f = Math.max(0, 1 - Math.abs(d) / 0.12);
+      const f_smooth = f * f * (3 - 2 * f);
+
+      const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
+      const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
+
+      const baseZ = -30 * (1 - enterT) - 15 * exitT;
+      let tz = baseZ + (22 - baseZ) * f_smooth;
+      let scale = 0.98 + 0.035 * f_smooth;
+
+      if (this.isMobile) {
+        tz = Math.max(-12, Math.min(10, tz));
+        scale = 1;
+      }
+
+      card.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+    });
+  }
+
+  /* --------------------------------------------------------
+     8. SPONSORS (PINBOARD CLEARANCE CARDS)
   -------------------------------------------------------- */
   updateSponsorsSection() {
     if (!this.sponsorsSec) return;
@@ -517,7 +494,7 @@ class BureauSpatialScrollController {
   }
 
   /* --------------------------------------------------------
-     7. FAQ (MANILA CASE FOLDERS)
+     9. FAQ (MANILA CASE FOLDERS)
   -------------------------------------------------------- */
   updateFAQSection() {
     if (!this.faqSec || this.faqFolders.length === 0) return;
@@ -525,7 +502,7 @@ class BureauSpatialScrollController {
     if (p < -0.1 || p > 1.1) return;
 
     this.faqFolders.forEach((folder, i) => {
-      const c_i = 0.32 + i * 0.09;
+      const c_i = 0.32 + i * 0.08;
       const d = p - c_i;
       const f = Math.max(0, 1 - Math.abs(d) / 0.12);
       const f_smooth = f * f * (3 - 2 * f);
@@ -555,7 +532,37 @@ class BureauSpatialScrollController {
   }
 
   /* --------------------------------------------------------
-     8. FOOTER (FILING CABINET DRAWER & COMPLETION CARD)
+     10. CONTACT (DOSSIER CARDS)
+  -------------------------------------------------------- */
+  updateContactSection() {
+    if (!this.contactSec || this.contactCards.length === 0) return;
+    const p = this.getSectionProgress(this.contactSec);
+    if (p < -0.1 || p > 1.1) return;
+
+    this.contactCards.forEach((card, i) => {
+      const c_i = 0.30 + i * 0.09;
+      const d = p - c_i;
+      const f = Math.max(0, 1 - Math.abs(d) / 0.12);
+      const f_smooth = f * f * (3 - 2 * f);
+
+      const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
+      const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
+
+      const baseZ = -28 * (1 - enterT) - 12 * exitT;
+      let tz = baseZ + (18 - baseZ) * f_smooth;
+      let scale = 0.99 + 0.025 * f_smooth;
+
+      if (this.isMobile) {
+        tz = Math.max(-10, Math.min(8, tz));
+        scale = 1.0;
+      }
+
+      card.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+    });
+  }
+
+  /* --------------------------------------------------------
+     11. FOOTER (FILING CABINET DRAWER & COMPLETION CARD)
   -------------------------------------------------------- */
   updateFooterSection() {
     if (!this.footerSec) return;
@@ -589,16 +596,15 @@ class BureauSpatialScrollController {
   resetAllTransforms() {
     const all = [
       ...this.dossierCards,
-      ...this.crtCards,
+      ...this.domainCards,
+      this.resultsChamber,
       ...this.filmFrames,
-      this.crucibleChamber,
-      this.timerDisplay,
-      this.floorRules,
-      ...this.stagePills,
-      this.requisitionSheet,
-      ...this.equipmentRows,
+      this.regTerminal,
+      ...this.quartersCards,
+      ...this.pillarCards,
       ...(this.sponsorCards || []),
       ...this.faqFolders,
+      ...this.contactCards,
       this.filingDrawer,
       this.completionCard
     ];
@@ -617,7 +623,7 @@ class OverclockApp {
   constructor() {
     this.audioEnabled = false;
     this.audioCtx = null;
-    this.hasBooted = sessionStorage.getItem('oc2027_booted') === 'true';
+    this.hasBooted = sessionStorage.getItem('oc2027_booted') === 'true' || new URLSearchParams(window.location.search).has('skipboot');
     
     // Puzzle state
     this.puzzleSwitches = { 1: false, 2: false, 3: false };
@@ -630,14 +636,15 @@ class OverclockApp {
     this.currentActiveSection = 'hero';
     this.countdownStarted = false;
     this.sectionLabels = {
-      'hero': 'SEC 01/08: HERO',
-      'about': 'SEC 02/08: ABOUT',
-      'branches': 'SEC 03/08: BRANCHES',
-      'timeline': 'SEC 04/08: TIMELINE',
-      'overclock-24h': 'SEC 05/08: 24H',
-      'labs': 'SEC 06/08: LABS',
-      'sponsors': 'SEC 07/08: SPONSORS',
-      'faq': 'SEC 08/08: FAQ'
+      'hero': 'SEC 01/09: HERO',
+      'about': 'SEC 02/09: ABOUT',
+      'problems': 'SEC 03/09: PROBLEMS',
+      'results': 'SEC 04/09: RESULTS',
+      'timeline': 'SEC 05/09: TIMELINE',
+      'registration': 'SEC 06/09: REGISTRATION',
+      'sponsors': 'SEC 07/09: SPONSORS',
+      'faq': 'SEC 08/09: FAQ',
+      'contact': 'SEC 09/09: CONTACT'
     };
 
     this.init();
@@ -824,29 +831,83 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     4. PRIME TIMELINE (SCROLL TRACKER, NAV & HUD STATUS)
+     4. TVA TEMPORAL NAVIGATION RAIL & TIMELINE TRACKER
   ========================================================== */
   setupPrimeTimeline() {
-    const sections = document.querySelectorAll('.bureau-section');
-    const activeTrace = document.getElementById('active-timeline-trace');
-    const pulseRunner = document.getElementById('timeline-pulse-runner');
-    const navLinks = document.querySelectorAll('.nav-item-link');
+    const sectionIds = ['hero', 'about', 'problems', 'results', 'timeline', 'registration', 'sponsors', 'faq', 'contact'];
+    const sectionElements = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    const allSections = Array.from(document.querySelectorAll('.bureau-section'));
+    const railNodes = Array.from(document.querySelectorAll('.rail-node'));
+    const spineContainer = document.querySelector('.rail-spine-container');
+    const wireActive = document.getElementById('rail-wire-active');
+    const wireRunner = document.getElementById('rail-wire-runner');
+    const currentIdxEl = document.getElementById('rail-current-idx');
+    const navStatusSec = document.getElementById('nav-current-section-name');
+    const mobileNavLinks = Array.from(document.querySelectorAll('.mobile-nav-link'));
+
+    const sectionLabelsMap = {
+      'hero': 'HOME',
+      'about': 'ABOUT',
+      'problems': 'PROBLEM STATEMENTS',
+      'results': 'RESULTS',
+      'timeline': 'TIMELINE',
+      'registration': 'REGISTRATION',
+      'sponsors': 'SPONSORS',
+      'faq': 'FAQ',
+      'contact': 'CONTACT'
+    };
+
+    // Smooth-scroll click interaction for rail nodes
+    railNodes.forEach((node) => {
+      node.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetHref = node.getAttribute('href');
+        const targetSec = document.querySelector(targetHref);
+        if (targetSec) {
+          this.playRelayClick(880);
+          targetSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
 
     const updateScrollState = () => {
       const scrollY = window.scrollY;
-      const maxScroll = Math.max(document.body.scrollHeight - window.innerHeight, 1);
-      const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+      const viewportHeight = window.innerHeight;
+      const scrollBottom = scrollY + viewportHeight;
+      const docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
 
-      // 1. Update SVG Trace and Pulse
-      const svgHeight = 1000;
-      const currentY = progress * svgHeight;
-      if (activeTrace) activeTrace.setAttribute('y2', currentY);
-      if (pulseRunner) pulseRunner.setAttribute('cy', currentY);
+      // Determine active section index bidirectionally
+      let activeIdx = 0;
 
-      // 2. Check sections in view
-      sections.forEach((sec, idx) => {
+      if (scrollY < 120) {
+        activeIdx = 0;
+      } else if (scrollBottom >= docHeight - 50) {
+        activeIdx = sectionElements.length - 1;
+      } else {
+        const triggerLine = viewportHeight * 0.38;
+        let closestIdx = 0;
+        let minDistance = Infinity;
+
+        sectionElements.forEach((sec, idx) => {
+          const rect = sec.getBoundingClientRect();
+          if (rect.top <= triggerLine && rect.bottom > triggerLine) {
+            closestIdx = idx;
+            minDistance = 0;
+          } else {
+            const dist = Math.abs(rect.top - triggerLine);
+            if (dist < minDistance && rect.top <= triggerLine + 200) {
+              minDistance = dist;
+              closestIdx = idx;
+            }
+          }
+        });
+        activeIdx = closestIdx;
+      }
+
+      // Check section reveals & rubber stamp logs across ALL page sections
+      allSections.forEach((sec, idx) => {
         const rect = sec.getBoundingClientRect();
-        if (rect.top <= window.innerHeight * 0.72) {
+        if (rect.top <= viewportHeight * 0.72) {
           if (!sec.classList.contains('stamped')) {
             sec.classList.add('stamped');
             sec.classList.add('revealed');
@@ -855,34 +916,85 @@ class OverclockApp {
             if (stampBadge) stampBadge.textContent = `LOGGED #${secNum}`;
             this.playStampThunk();
 
-            // Special trigger for sponsors section card cascade
             if (sec.id === 'sponsors') {
               this.animateSponsorCards();
-            } else if (sec.id === 'overclock-24h') {
-              this.triggerCountdownStartupSequence();
             }
           }
         }
+      });
 
-        // Active navigation indicator & Corner HUD section update
-        if (rect.top <= window.innerHeight * 0.45 && rect.bottom >= window.innerHeight * 0.2) {
-          const secId = sec.getAttribute('id');
-          navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href === `#${secId}`) link.classList.add('active');
-            else link.classList.remove('active');
-          });
-
-          if (this.currentActiveSection !== secId) {
-            this.currentActiveSection = secId;
-            this.updateCornerHUDSection(secId);
-          }
+      // Update rail nodes states (active, passed, inactive)
+      railNodes.forEach((node, idx) => {
+        if (idx === activeIdx) {
+          node.classList.add('active');
+          node.classList.remove('passed');
+          node.setAttribute('aria-current', 'true');
+        } else if (idx < activeIdx) {
+          node.classList.remove('active');
+          node.classList.add('passed');
+          node.removeAttribute('aria-current');
+        } else {
+          node.classList.remove('active');
+          node.classList.remove('passed');
+          node.removeAttribute('aria-current');
         }
       });
+
+      // Update mobile nav drawer active states
+      mobileNavLinks.forEach((link, idx) => {
+        if (idx === activeIdx) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      // Update illuminated timeline wire height & moving pulse runner position
+      const activeNode = railNodes[activeIdx];
+      if (spineContainer && activeNode && wireActive && wireRunner) {
+        const spineRect = spineContainer.getBoundingClientRect();
+        const nodeRect = activeNode.getBoundingClientRect();
+        const relativeCenterY = (nodeRect.top + nodeRect.height / 2) - spineRect.top;
+
+        wireActive.style.height = `${Math.max(0, relativeCenterY - 14)}px`;
+        wireRunner.style.top = `${relativeCenterY}px`;
+      }
+
+      // Update footer index readout and top navbar log display
+      if (currentIdxEl) {
+        currentIdxEl.textContent = String(activeIdx + 1).padStart(2, '0');
+      }
+
+      const activeSecEl = sectionElements[activeIdx];
+      if (activeSecEl) {
+        const secId = activeSecEl.id;
+        if (navStatusSec) {
+          navStatusSec.textContent = sectionLabelsMap[secId] || secId.toUpperCase();
+        }
+
+        if (this.currentActiveSection !== secId) {
+          this.currentActiveSection = secId;
+          this.updateCornerHUDSection(secId);
+        }
+      }
     };
 
-    window.addEventListener('scroll', updateScrollState, { passive: true });
-    updateScrollState();
+    let isTicking = false;
+    const onScroll = () => {
+      if (!isTicking) {
+        requestAnimationFrame(() => {
+          updateScrollState();
+          isTicking = false;
+        });
+        isTicking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    // Initial state calculation after render
+    setTimeout(updateScrollState, 50);
   }
 
   /* ==========================================================
@@ -1309,7 +1421,10 @@ class OverclockApp {
 
     if (!modal) return;
 
-    const openModal = () => {
+    const openModal = (e) => {
+      if (e) {
+        e.preventDefault();
+      }
       const drawer = document.getElementById('mobile-nav-drawer');
       if (drawer && drawer.classList.contains('open')) {
         drawer.classList.remove('open');
@@ -1321,8 +1436,13 @@ class OverclockApp {
         }
         document.body.style.overflow = '';
       }
-      modal.classList.add('open');
-      this.playRelayClick(1100);
+      if (window.tvaInspectionGame) {
+        this.playRelayClick(1100);
+        window.tvaInspectionGame.open();
+      } else {
+        modal.classList.add('open');
+        this.playRelayClick(1100);
+      }
     };
 
     const closeModal = () => {
@@ -1409,9 +1529,20 @@ class OverclockApp {
     }
 
     navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        closeDrawer();
-        this.playRelayClick(800);
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            closeDrawer();
+            this.playRelayClick(800);
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        } else {
+          closeDrawer();
+          this.playRelayClick(800);
+        }
       });
     });
 

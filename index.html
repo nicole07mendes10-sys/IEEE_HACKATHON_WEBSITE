@@ -76,50 +76,196 @@
   <div class="crt-overlay" aria-hidden="true"></div>
 
   <!-- ==========================================================
-       3. SIGNATURE ELEMENT — THE PRIME TIMELINE (LEFT RAIL)
+       3. TVA TEMPORAL NAVIGATION RAIL (LEFT VIEWPORT INSTRUMENT)
   ========================================================== -->
-  <aside class="prime-timeline-rail" aria-hidden="true">
-    <svg class="timeline-svg-canvas" viewBox="0 0 48 1000" preserveAspectRatio="none">
-      <!-- Background Guide Line -->
-      <line x1="24" y1="0" x2="24" y2="1000" class="timeline-back-trace"/>
-      <!-- Active Illuminated Trace -->
-      <line id="active-timeline-trace" x1="24" y1="0" x2="24" y2="0" class="timeline-active-trace"/>
-      <!-- Scroll Runner Pulse -->
-      <circle id="timeline-pulse-runner" cx="24" cy="0" r="5" class="timeline-pulse-runner"/>
-      <!-- Small Clock-Tick Marks -->
-      <line x1="16" y1="120" x2="32" y2="120" class="timeline-tick-mark"/>
-      <line x1="16" y1="280" x2="32" y2="280" class="timeline-tick-mark"/>
-      <line x1="16" y1="440" x2="32" y2="440" class="timeline-tick-mark"/>
-      <line x1="16" y1="600" x2="32" y2="600" class="timeline-tick-mark"/>
-      <line x1="16" y1="760" x2="32" y2="760" class="timeline-tick-mark"/>
-      <line x1="16" y1="920" x2="32" y2="920" class="timeline-tick-mark"/>
-    </svg>
-  </aside>
+  <nav id="tva-temporal-rail" class="tva-temporal-rail" aria-label="TVA Temporal Timeline Navigation">
+    <!-- Top Instrument Telemetry Header -->
+    <div class="rail-header" aria-hidden="true">
+      <div class="rail-telemetry-badge">
+        <span class="rail-pulse-pip"></span>
+        <span class="rail-telemetry-code">TL-77</span>
+      </div>
+      <div class="rail-chrono-mark">TEMPORAL</div>
+    </div>
+
+    <!-- The Vertical Timeline Spine & Interactive Nodes -->
+    <div class="rail-spine-container">
+      <!-- Background Guide Wire -->
+      <div class="rail-wire-bg" aria-hidden="true"></div>
+      
+      <!-- Illuminated Active Trace (dynamically scaled height) -->
+      <div class="rail-wire-active" id="rail-wire-active" aria-hidden="true"></div>
+
+      <!-- Moving Temporal Pulse Runner -->
+      <div class="rail-wire-runner" id="rail-wire-runner" aria-hidden="true"></div>
+
+      <!-- 9 Connected Section Nodes -->
+      <ul class="rail-nodes-list" role="list">
+        <!-- Node 01: Hero / Home -->
+        <li class="rail-node-item">
+          <a href="#hero" class="rail-node active" data-section="hero" data-num="01" aria-label="Navigate to Section 01: Home">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">01</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">HOME</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 02: About -->
+        <li class="rail-node-item">
+          <a href="#about" class="rail-node" data-section="about" data-num="02" aria-label="Navigate to Section 02: About Briefing">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">02</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">ABOUT</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 03: Problem Statements -->
+        <li class="rail-node-item">
+          <a href="#problems" class="rail-node" data-section="problems" data-num="03" aria-label="Navigate to Section 03: Problem Statements">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">03</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">DOMAINS</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 04: Results / Shortlist -->
+        <li class="rail-node-item">
+          <a href="#results" class="rail-node" data-section="results" data-num="04" aria-label="Navigate to Section 04: Selection Status">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">04</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">RESULTS</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 05: Timeline -->
+        <li class="rail-node-item">
+          <a href="#timeline" class="rail-node" data-section="timeline" data-num="05" aria-label="Navigate to Section 05: Event Timeline">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">05</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">TIMELINE</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 06: Registration -->
+        <li class="rail-node-item">
+          <a href="#registration" class="rail-node" data-section="registration" data-num="06" aria-label="Navigate to Section 06: Registration">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">06</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">REGISTER</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 07: Sponsors -->
+        <li class="rail-node-item">
+          <a href="#sponsors" class="rail-node" data-section="sponsors" data-num="07" aria-label="Navigate to Section 07: Sponsors">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">07</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">SPONSORS</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 08: FAQ -->
+        <li class="rail-node-item">
+          <a href="#faq" class="rail-node" data-section="faq" data-num="08" aria-label="Navigate to Section 08: FAQ">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">08</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">FAQ</span>
+            </div>
+          </a>
+        </li>
+
+        <!-- Node 09: Contact -->
+        <li class="rail-node-item">
+          <a href="#contact" class="rail-node" data-section="contact" data-num="09" aria-label="Navigate to Section 09: Contact & Venue">
+            <span class="rail-node-reticle" aria-hidden="true">
+              <span class="rail-node-dot"></span>
+            </span>
+            <div class="rail-node-label" role="tooltip">
+              <span class="rail-label-num">09</span>
+              <span class="rail-label-sep">//</span>
+              <span class="rail-label-name">CONTACT</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Bottom Telemetry Instrument Footer -->
+    <div class="rail-footer" aria-hidden="true">
+      <div class="rail-sec-counter">
+        <span class="rail-sec-curr" id="rail-current-idx">01</span>
+        <span class="rail-sec-divider">/</span>
+        <span class="rail-sec-total">09</span>
+      </div>
+      <div class="rail-status-pill">
+        <span class="rail-status-dot"></span>
+        <span class="rail-status-txt">STABLE</span>
+      </div>
+    </div>
+  </nav>
 
   <!-- ==========================================================
        4. NAVBAR — BRASS BUREAU NAMEPLATE BAR
   ========================================================== -->
-  <header class="bureau-navbar">
+  <header class="bureau-navbar" id="bureau-navbar">
     <div class="nav-container">
       <a href="#hero" class="nav-brand-group" aria-label="OVERCLOCK 2027 Homepage">
         <div class="brand-badge">
           <span class="fcrit-tag">FCRIT</span>
           <span class="ieee-tag">× IEEE SB</span>
         </div>
-        <span class="brand-wordmark">OVERCLOCK</span>
+        <div class="brand-wordmark-wrap">
+          <span class="brand-wordmark">OVERCLOCK</span>
+          <span class="brand-year-tag">2027</span>
+        </div>
       </a>
 
-      <nav aria-label="Bureau Sections">
-        <ul class="nav-links-menu">
-          <li><a href="#about" class="nav-item-link"><span class="nav-indicator-dot"></span>About</a></li>
-          <li><a href="#branches" class="nav-item-link"><span class="nav-indicator-dot"></span>Branches</a></li>
-          <li><a href="#timeline" class="nav-item-link"><span class="nav-indicator-dot"></span>Timeline</a></li>
-          <li><a href="#overclock-24h" class="nav-item-link"><span class="nav-indicator-dot"></span>24H</a></li>
-          <li><a href="#labs" class="nav-item-link"><span class="nav-indicator-dot"></span>Labs</a></li>
-          <li><a href="#sponsors" class="nav-item-link"><span class="nav-indicator-dot"></span>Sponsors</a></li>
-          <li><a href="#faq" class="nav-item-link"><span class="nav-indicator-dot"></span>FAQ</a></li>
-        </ul>
-      </nav>
+      <!-- Current Timeline Status Indicator on top bar -->
+      <div class="nav-timeline-status" aria-hidden="true">
+        <span class="nav-status-pip"></span>
+        <span class="nav-status-label">TEMPORAL LOG</span>
+        <span class="nav-status-sep">//</span>
+        <span class="nav-status-sec" id="nav-current-section-name">HOME</span>
+      </div>
 
       <div class="nav-actions">
         <button id="audio-toggle-btn" class="audio-toggle-btn" aria-label="Toggle Relay & Clock Sound FX">
@@ -155,13 +301,15 @@
           <button id="mobile-nav-close" class="mobile-nav-close-btn" aria-label="Close navigation menu">✕</button>
         </div>
         <ul class="mobile-nav-links">
-          <li><a href="#about" class="mobile-nav-link"><span class="nav-sec-num">01</span><span class="nav-sec-name">About Dossier</span></a></li>
-          <li><a href="#branches" class="mobile-nav-link"><span class="nav-sec-num">02</span><span class="nav-sec-name">Four Branches</span></a></li>
-          <li><a href="#timeline" class="mobile-nav-link"><span class="nav-sec-num">03</span><span class="nav-sec-name">Timeline Reel</span></a></li>
-          <li><a href="#overclock-24h" class="mobile-nav-link"><span class="nav-sec-num">04</span><span class="nav-sec-name">24H Crucible</span></a></li>
-          <li><a href="#labs" class="mobile-nav-link"><span class="nav-sec-num">05</span><span class="nav-sec-name">Lab Requisitions</span></a></li>
-          <li><a href="#sponsors" class="mobile-nav-link"><span class="nav-sec-num">06</span><span class="nav-sec-name">Sponsors & Partners</span></a></li>
-          <li><a href="#faq" class="mobile-nav-link"><span class="nav-sec-num">07</span><span class="nav-sec-name">Case File FAQ</span></a></li>
+          <li><a href="#hero" class="mobile-nav-link active"><span class="nav-sec-num">01</span><span class="nav-sec-name">Home // Overview</span></a></li>
+          <li><a href="#about" class="mobile-nav-link"><span class="nav-sec-num">02</span><span class="nav-sec-name">About Briefing</span></a></li>
+          <li><a href="#problems" class="mobile-nav-link"><span class="nav-sec-num">03</span><span class="nav-sec-name">Problem Statements</span></a></li>
+          <li><a href="#results" class="mobile-nav-link"><span class="nav-sec-num">04</span><span class="nav-sec-name">Selection Status</span></a></li>
+          <li><a href="#timeline" class="mobile-nav-link"><span class="nav-sec-num">05</span><span class="nav-sec-name">Event Timeline</span></a></li>
+          <li><a href="#registration" class="mobile-nav-link"><span class="nav-sec-num">06</span><span class="nav-sec-name">Registration</span></a></li>
+          <li><a href="#sponsors" class="mobile-nav-link"><span class="nav-sec-num">07</span><span class="nav-sec-name">Sponsors & Partners</span></a></li>
+          <li><a href="#faq" class="mobile-nav-link"><span class="nav-sec-num">08</span><span class="nav-sec-name">Case Files (FAQ)</span></a></li>
+          <li><a href="#contact" class="mobile-nav-link"><span class="nav-sec-num">09</span><span class="nav-sec-name">Contact & Venue</span></a></li>
         </ul>
         <div class="mobile-nav-footer">
           <button class="btn-bureau-brass open-case-file-trigger mobile-case-file-btn" style="width: 100%; justify-content: center;">
@@ -182,7 +330,7 @@
   <main class="main-bureau-content">
 
     <!-- ========================================================
-         LEVEL 01: HERO SECTION
+         01. HOME // OVERVIEW (THE ENTRANCE)
     ======================================================== -->
     <section id="hero" class="bureau-section hero-bureau-section stamped" data-section-num="01">
       <div class="section-rubber-stamp">LOGGED #01</div>
@@ -197,7 +345,7 @@
       </div>
 
       <div class="hero-content-wrap">
-        <div class="bureau-tag amber">FCRIT × IEEE STUDENT BRANCH • PROPOSED THEME • SUBJECT TO APPROVAL</div>
+        <div class="bureau-tag amber">FCRIT × IEEE STUDENT BRANCH • TEMPORAL PROTOCOL</div>
 
         <div class="hero-title-container">
           <!-- Split-Flap Assembling Title -->
@@ -213,49 +361,97 @@
             <div class="flap-char-box">K</div>
           </div>
           <div class="hero-subhead">2027 — HARDWARE HACKATHON</div>
-          <p class="hero-tagline">Build before time runs out.</p>
+          <p class="hero-tagline">A platform for emerging builders to explore technical challenges, develop ideas, and engineer solutions.</p>
         </div>
 
         <!-- Typed Office Form Strip -->
         <div class="typed-form-strip">
           <div class="form-field-unit">
-            <span class="field-label">SCHEDULED</span>
-            <span class="field-value">January 2027 (Exact dates TBD)</span>
+            <span class="field-label">ORGANISER</span>
+            <span class="field-value">FCRIT × IEEE Student Branch</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">REGISTRATION OPENS</span>
+            <span class="field-value">01 November 2026</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">INITIAL PROBLEMS</span>
+            <span class="field-value">01 December 2026</span>
           </div>
           <div class="form-field-unit">
             <span class="field-label">FORMAT</span>
-            <span class="field-value">24-hour on-campus physical build</span>
-          </div>
-          <div class="form-field-unit">
-            <span class="field-label">TEAM SIZE</span>
-            <span class="field-value">TBD</span>
-          </div>
-          <div class="form-field-unit">
-            <span class="field-label">ELIGIBILITY</span>
-            <span class="field-value">TBD</span>
+            <span class="field-value">24-Hour Physical Prototyping</span>
           </div>
         </div>
 
         <div class="hero-cta-group">
+          <a href="#about" class="btn-bureau-secondary">Explore the Event</a>
           <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
-          <a href="#branches" class="btn-bureau-secondary">View the Branches</a>
+        </div>
+
+        <!-- Compact Information Marker -->
+        <div class="hero-registration-pill" style="margin-top: 20px; display: inline-flex; align-items: center; gap: 10px; background: rgba(22, 17, 13, 0.88); border: 1px solid var(--amber-glow); padding: 8px 18px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.08em; color: var(--amber-bright); box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--amber-bright); box-shadow: 0 0 8px var(--amber-glow);"></span>
+          <span>REGISTRATION OPENS // 01 NOVEMBER 2026</span>
         </div>
       </div>
     </section>
 
     <!-- ========================================================
-         LEVEL 02: ABOUT — MANILA CASE FILE BRIEFING
+         02. ABOUT — EVENT BRIEFING
     ======================================================== -->
     <section id="about" class="bureau-section" data-section-num="02">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag">CASE DOSSIER // LEVEL 02</div>
-        <h2 class="section-main-heading">Briefing: What is OVERCLOCK?</h2>
-        <p class="section-subtext">Official briefing notes from the Bureau. Physical hardware engineering under tight clock cycles.</p>
+        <div class="bureau-tag">EVENT BRIEFING // LEVEL 02</div>
+        <h2 class="section-main-heading">OVERCLOCK at a Glance</h2>
+        <p class="section-subtext">OVERCLOCK 2027 is a 24-hour on-campus physical hardware engineering hackathon organised by the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi. Emerging builders are invited to tackle rigorous technical challenges, engineer working circuits, and deploy physical systems under relentless clock cycles.</p>
       </div>
 
-      <div class="case-file-dossier">
+      <!-- Operational Status Panel -->
+      <div class="operational-status-panel">
+        <div class="panel-header-bar">
+          <div class="panel-header-title">
+            <span class="status-indicator-lamp"></span>
+            <span>TVA STATUS READOUT // OPERATIONAL PARAMETERS</span>
+          </div>
+          <div class="panel-header-badge">STABLE TIMELINE</div>
+        </div>
+        <div class="status-readout-grid">
+          <div class="status-cell">
+            <span class="status-k">EVENT</span>
+            <span class="status-v highlight">OVERCLOCK 2027</span>
+          </div>
+          <div class="status-cell">
+            <span class="status-k">ORGANISER</span>
+            <span class="status-v">FCRIT × IEEE STUDENT BRANCH</span>
+          </div>
+          <div class="status-cell">
+            <span class="status-k">REGISTRATION OPENS</span>
+            <span class="status-v highlight">01 NOVEMBER 2026</span>
+          </div>
+          <div class="status-cell">
+            <span class="status-k">INITIAL PROBLEM STATEMENTS</span>
+            <span class="status-v">01 DECEMBER 2026</span>
+          </div>
+          <div class="status-cell">
+            <span class="status-k">PPT SUBMISSION</span>
+            <span class="status-v">10–15 DECEMBER 2026</span>
+          </div>
+          <div class="status-cell">
+            <span class="status-k">SHORTLIST ANNOUNCEMENT</span>
+            <span class="status-v highlight">22 DECEMBER 2026</span>
+          </div>
+          <div class="status-cell span-full">
+            <span class="status-k">FINAL PROBLEM STATEMENT</span>
+            <span class="status-v highlight-amber">22 JANUARY 2027</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manila Case File Dossier (4 Information Cards) -->
+      <div class="case-file-dossier" style="margin-top: 32px;">
         <div class="case-file-tab">CLASSIFIED: BRIEFING</div>
         
         <div class="case-notes-grid">
@@ -264,7 +460,7 @@
             <div class="paperclip-graphic"></div>
             <div class="note-header-label">MEMO 01 // OVERVIEW</div>
             <h3 class="note-title">WHAT IT IS</h3>
-            <p class="note-body">A 24-hour on-campus hackathon where teams design and build working physical hardware prototypes, not just software or presentation decks.</p>
+            <p class="note-body">A 24-hour physical hardware engineering hackathon where teams wire, solder, code, and deploy working electronic prototypes and embedded hardware, not just presentation decks.</p>
           </div>
 
           <!-- Note 2 -->
@@ -272,7 +468,7 @@
             <div class="paperclip-graphic"></div>
             <div class="note-header-label">MEMO 02 // PERSONNEL</div>
             <h3 class="note-title">WHO CAN JOIN</h3>
-            <p class="note-body">Eligibility criteria, team compositions, and registration details: TBD following formal departmental approval.</p>
+            <p class="note-body">Open to undergraduate and polytechnic engineering students. Team composition parameters and eligibility guidelines will be detailed in the official rulebook upon registration release.</p>
           </div>
 
           <!-- Note 3 -->
@@ -280,7 +476,7 @@
             <div class="paperclip-graphic"></div>
             <div class="note-header-label">MEMO 03 // LOGISTICS</div>
             <h3 class="note-title">WHAT YOU GET</h3>
-            <p class="note-body">Full lab facility access, component provisioning, technical mentorship, and prize pool: details TBD post-sanction.</p>
+            <p class="note-body">Full access to campus testing laboratories, digital oscilloscopes, bench power supplies, technical guidance from faculty and IEEE mentors, and official institutional certificates.</p>
           </div>
 
           <!-- Note 4 -->
@@ -288,7 +484,7 @@
             <div class="paperclip-graphic"></div>
             <div class="note-header-label">MEMO 04 // RATIONALE</div>
             <h3 class="note-title">WHY HARDWARE</h3>
-            <p class="note-body">Real circuits, real physical sensors, real oscilloscope debugging: build something tangible you can actually hold and deploy.</p>
+            <p class="note-body">Real discrete circuitry, physical transducers, real-time microcontrollers, and oscilloscope debugging. Build tangible engineering solutions that interact with the physical world.</p>
           </div>
         </div>
       </div>
@@ -339,103 +535,354 @@
     </section>
 
     <!-- ========================================================
-         LEVEL 03: DOMAINS — THE FOUR BRANCHES (CRT MONITORS)
+         03. PROBLEM STATEMENTS — FIVE DOMAIN ENVIRONMENTS
     ======================================================== -->
-    <section id="branches" class="bureau-section" data-section-num="03">
+    <section id="problems" class="bureau-section" data-section-num="03">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag amber">PROPOSED DOMAINS • SUBJECT TO APPROVAL</div>
-        <h2 class="section-main-heading">The Four Branches</h2>
-        <p class="section-subtext">The Prime Timeline splits into four focused engineering sectors. Pick your hardware trajectory.</p>
+        <div class="bureau-tag amber">DOMAIN ENVIRONMENTS // LEVEL 03</div>
+        <h2 class="section-main-heading">Problem Statements</h2>
+        <p class="section-subtext">The Prime Timeline partitions into exactly five hardware engineering sectors. Official domain names, problem statements, and technical requirements are scheduled for release on 01 December 2026.</p>
       </div>
 
-      <!-- 4 CRT Monitor Domain Cards -->
-      <div class="crt-monitors-grid">
-        <!-- Branch 01: Green Phosphor -->
-        <div class="crt-monitor-card green">
-          <div class="crt-screen-housing">
-            <div class="crt-branch-code">BRANCH 01 // PHOSPHOR GREEN</div>
-            <h3 class="crt-title">Sustainable Technology</h3>
-            <p class="crt-description">Energy harvesting, low-power sensor arrays, circular electronics lifecycle, precision agricultural hardware, and smart water management systems.</p>
-            <div class="crt-tags-row">
-              <span class="crt-tag">Energy Harvesting</span>
-              <span class="crt-tag">AgriTech</span>
-              <span class="crt-tag">Low-Power</span>
-            </div>
+      <!-- Exactly Five Distinct Domain Slots -->
+      <div class="domain-slots-grid">
+
+        <!-- Domain Slot 01: Amber Carrier Trace -->
+        <div class="domain-slot-card slot-amber" data-slot="1">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 01</span>
+            <span class="slot-freq">CH-01 · 433 MHz</span>
           </div>
-          <div class="crt-chassis-footer">
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 433 MHz</span>
-            <div class="crt-dial"></div>
+          <div class="domain-screen-display">
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <svg viewBox="0 0 280 60" class="waveform-svg">
+                <path d="M 0 30 Q 35 10 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave amber-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">STANDBY CARRIER // AMBER TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse amber"></span>
+              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+            </div>
+            <div class="slot-title-placeholder">
+              <div class="wireframe-bar long"></div>
+              <div class="wireframe-bar short"></div>
+            </div>
+            <div class="slot-desc-placeholder">
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line quarter"></div>
+            </div>
+            <div class="slot-tags-placeholder">
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Dossier Sealed // Release 01 Dec 2026</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Branch 02: Cyan Phosphor -->
-        <div class="crt-monitor-card cyan">
-          <div class="crt-screen-housing">
-            <div class="crt-branch-code">BRANCH 02 // PHOSPHOR CYAN</div>
-            <h3 class="crt-title">Smart Communities</h3>
-            <p class="crt-description">Connected IoT sensor networks, intelligent traffic grid automation, smart campus systems, and decentralized environmental air monitoring.</p>
-            <div class="crt-tags-row">
-              <span class="crt-tag">IoT Mesh</span>
-              <span class="crt-tag">Grid Automation</span>
-              <span class="crt-tag">Urban Sensing</span>
-            </div>
+        <!-- Domain Slot 02: Cyan Carrier Trace -->
+        <div class="domain-slot-card slot-cyan" data-slot="2">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 02</span>
+            <span class="slot-freq">CH-02 · 868 MHz</span>
           </div>
-          <div class="crt-chassis-footer">
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 868 MHz</span>
-            <div class="crt-dial"></div>
+          <div class="domain-screen-display">
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <svg viewBox="0 0 280 60" class="waveform-svg">
+                <path d="M 0 30 Q 35 50 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave cyan-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">STANDBY CARRIER // CYAN TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse cyan"></span>
+              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+            </div>
+            <div class="slot-title-placeholder">
+              <div class="wireframe-bar long"></div>
+              <div class="wireframe-bar short"></div>
+            </div>
+            <div class="slot-desc-placeholder">
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line quarter"></div>
+            </div>
+            <div class="slot-tags-placeholder">
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Dossier Sealed // Release 01 Dec 2026</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Branch 03: Violet Phosphor -->
-        <div class="crt-monitor-card violet">
-          <div class="crt-screen-housing">
-            <div class="crt-branch-code">BRANCH 03 // PHOSPHOR VIOLET</div>
-            <h3 class="crt-title">Intelligent Systems</h3>
-            <p class="crt-description">Edge AI computing, on-device neural processing, autonomous robotic controllers, computer vision embedded rigs, and assistive biomedical hardware.</p>
-            <div class="crt-tags-row">
-              <span class="crt-tag">Edge AI</span>
-              <span class="crt-tag">Robotics</span>
-              <span class="crt-tag">BioTech</span>
-            </div>
+        <!-- Domain Slot 03: Emerald Carrier Trace -->
+        <div class="domain-slot-card slot-emerald" data-slot="3">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 03</span>
+            <span class="slot-freq">CH-03 · 2.4 GHz</span>
           </div>
-          <div class="crt-chassis-footer">
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 2.4 GHz</span>
-            <div class="crt-dial"></div>
+          <div class="domain-screen-display">
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <svg viewBox="0 0 280 60" class="waveform-svg">
+                <path d="M 0 30 Q 35 15 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave emerald-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">STANDBY CARRIER // EMERALD TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse emerald"></span>
+              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+            </div>
+            <div class="slot-title-placeholder">
+              <div class="wireframe-bar long"></div>
+              <div class="wireframe-bar short"></div>
+            </div>
+            <div class="slot-desc-placeholder">
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line quarter"></div>
+            </div>
+            <div class="slot-tags-placeholder">
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Dossier Sealed // Release 01 Dec 2026</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Branch 04: Amber Phosphor -->
-        <div class="crt-monitor-card amber">
-          <div class="crt-screen-housing">
-            <div class="crt-branch-code">BRANCH 04 // PHOSPHOR AMBER</div>
-            <h3 class="crt-title">Resilient Infrastructure</h3>
-            <p class="crt-description">Industrial automation, structural health vibration monitors, offline mesh communications, and fail-safe disaster emergency hardware nodes.</p>
-            <div class="crt-tags-row">
-              <span class="crt-tag">Industrial IoT</span>
-              <span class="crt-tag">Telemetry</span>
-              <span class="crt-tag">Fail-Safe</span>
+        <!-- Domain Slot 04: Violet Carrier Trace -->
+        <div class="domain-slot-card slot-violet" data-slot="4">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 04</span>
+            <span class="slot-freq">CH-04 · 915 MHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <svg viewBox="0 0 280 60" class="waveform-svg">
+                <path d="M 0 30 Q 35 45 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave violet-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">STANDBY CARRIER // VIOLET TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse violet"></span>
+              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+            </div>
+            <div class="slot-title-placeholder">
+              <div class="wireframe-bar long"></div>
+              <div class="wireframe-bar short"></div>
+            </div>
+            <div class="slot-desc-placeholder">
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line quarter"></div>
+            </div>
+            <div class="slot-tags-placeholder">
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Dossier Sealed // Release 01 Dec 2026</span>
+              </button>
             </div>
           </div>
-          <div class="crt-chassis-footer">
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 915 MHz</span>
-            <div class="crt-dial"></div>
+        </div>
+
+        <!-- Domain Slot 05: Copper-Gold Carrier Trace -->
+        <div class="domain-slot-card slot-copper" data-slot="5">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 05</span>
+            <span class="slot-freq">CH-05 · 5.8 GHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <svg viewBox="0 0 280 60" class="waveform-svg">
+                <path d="M 0 30 Q 35 20 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave copper-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">STANDBY CARRIER // COPPER-GOLD TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse copper"></span>
+              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+            </div>
+            <div class="slot-title-placeholder">
+              <div class="wireframe-bar long"></div>
+              <div class="wireframe-bar short"></div>
+            </div>
+            <div class="slot-desc-placeholder">
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line"></div>
+              <div class="wireframe-line quarter"></div>
+            </div>
+            <div class="slot-tags-placeholder">
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+              <span class="wireframe-tag">---</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Dossier Sealed // Release 01 Dec 2026</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================
+           PHASE 7: DETAILED PROBLEM-STATEMENT COMPONENT TEMPLATE
+           Structured data/DOM template ready to render official
+           specifications upon release without exposing fake content.
+      ====================================================== -->
+      <template id="tva-problem-statement-template">
+        <article class="problem-statement-dossier" data-problem-id="">
+          <header class="ps-header">
+            <div class="ps-meta-row">
+              <span class="ps-id-tag" data-field="problemIdentification"></span>
+              <span class="ps-domain-tag" data-field="domain"></span>
+            </div>
+            <h3 class="ps-title" data-field="problemTitle"></h3>
+          </header>
+          
+          <div class="ps-body-sections">
+            <section class="ps-section">
+              <h4 class="ps-subhead">BACKGROUND</h4>
+              <p class="ps-content" data-field="background"></p>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">THE CHALLENGE</h4>
+              <p class="ps-content" data-field="theChallenge"></p>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">OBJECTIVE</h4>
+              <p class="ps-content" data-field="objective"></p>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">TECHNICAL REQUIREMENTS</h4>
+              <ul class="ps-list" data-field="technicalRequirements"></ul>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">EXPECTED DELIVERABLES</h4>
+              <ul class="ps-list" data-field="expectedDeliverables"></ul>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">EVALUATION CRITERIA</h4>
+              <ul class="ps-list" data-field="evaluationCriteria"></ul>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">SUBMISSION INSTRUCTIONS</h4>
+              <p class="ps-content" data-field="submissionInstructions"></p>
+            </section>
+
+            <section class="ps-section ps-resources-section">
+              <h4 class="ps-subhead">RESOURCES & RELEVANT DATASETS</h4>
+              <div class="ps-resources-list" data-field="resources"></div>
+            </section>
+          </div>
+        </article>
+      </template>
+    </section>
+
+    <!-- ========================================================
+         04. RESULTS — SHORTLISTED TEAMS
+    ======================================================== -->
+    <section id="results" class="bureau-section" data-section-num="04">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">SELECTION STATUS // LEVEL 04</div>
+        <h2 class="section-main-heading">The Shortlist</h2>
+        <p class="section-subtext">Official qualification roster for teams advancing to the on-campus physical hackathon. Preliminary proposals submitted during the 10–15 December 2026 window are evaluated prior to announcement.</p>
+      </div>
+
+      <div class="results-dossier-chamber">
+        <div class="dossier-teletype-header">
+          <div class="teletype-indicator">
+            <span class="teletype-dot"></span>
+            <span class="teletype-title">OFFICIAL SELECTION TELETYPE ARCHIVE</span>
+          </div>
+          <div class="teletype-code">ARCHIVE REF: TVA-SL-2026/27</div>
+        </div>
+
+        <div class="results-status-banner">
+          <div class="status-data-column">
+            <span class="status-label">SHORTLIST ANNOUNCEMENT</span>
+            <span class="status-date-val">22 DECEMBER 2026</span>
+          </div>
+          <div class="status-data-column">
+            <span class="status-label">RESULT STATUS</span>
+            <span class="status-state-val">AWAITING OFFICIAL ANNOUNCEMENT</span>
+          </div>
+        </div>
+
+        <div class="results-notice-body">
+          <div class="notice-stamp-graphic" aria-hidden="true">PENDING RATIFICATION</div>
+          <div class="notice-paragraph">
+            <strong>SELECTION NOTICE:</strong> Following the PPT submission window (10–15 December 2026), the review panel will evaluate technical viability, schematic proposals, and hardware architecture.
+          </div>
+          <div class="notice-paragraph">
+            The confirmed roster of shortlisted teams authorized for the physical build will be published on this terminal on <strong>22 December 2026</strong>.
+          </div>
+        </div>
+
+        <!-- Structural container ready for search & official roster -->
+        <div class="results-roster-chamber" id="results-roster-chamber">
+          <div class="roster-standby-message">
+            <span class="standby-icon">🔒</span>
+            <span class="standby-text">No team records published. Roster activates post-evaluation on 22 December 2026.</span>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ========================================================
-         LEVEL 04: EVENT TIMELINE — TIMELINE REEL
+         05. TIMELINE — EVENT SCHEDULE
     ======================================================== -->
-    <section id="timeline" class="bureau-section" data-section-num="04">
+    <section id="timeline" class="bureau-section" data-section-num="05">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag">CHRONOMETRIC ARCHIVE // LEVEL 04</div>
+        <div class="bureau-tag">EVENT SCHEDULE // LEVEL 05</div>
         <h2 class="section-main-heading">The Timeline</h2>
-        <p class="section-subtext">Unrolling the phases of OVERCLOCK 2027. Step-by-step progression toward the physical build.</p>
+        <p class="section-subtext">Chronological progression of OVERCLOCK 2027. Milestones unrolled along the master temporal track.</p>
       </div>
 
       <div class="timeline-reel-deck">
@@ -453,10 +900,11 @@
             <div class="frame-sprocket-holes">
               <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
             </div>
-            <div class="frame-phase-tag">FRAME I</div>
-            <h3 class="frame-title">Call for Proposals</h3>
-            <div class="frame-date">Oct – Nov 2026</div>
-            <div class="frame-stamp-badge">PENDING APPROVAL</div>
+            <div class="frame-phase-tag">MILESTONE 01</div>
+            <h3 class="frame-title">Registration Opens</h3>
+            <div class="frame-date">01 November 2026</div>
+            <p class="frame-description">Intake portal opens for builder registration and team onboarding.</p>
+            <div class="frame-stamp-badge">CONFIRMED DATE</div>
           </div>
 
           <!-- Frame 2 -->
@@ -464,21 +912,23 @@
             <div class="frame-sprocket-holes">
               <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
             </div>
-            <div class="frame-phase-tag">FRAME II</div>
-            <h3 class="frame-title">Review & Shortlisting</h3>
-            <div class="frame-date">Dec 2026</div>
-            <div class="frame-stamp-badge">DRAFT</div>
+            <div class="frame-phase-tag">MILESTONE 02</div>
+            <h3 class="frame-title">Initial Problem Statements Released</h3>
+            <div class="frame-date">01 December 2026</div>
+            <p class="frame-description">Domain challenges and initial problem statements published across the five sectors.</p>
+            <div class="frame-stamp-badge">CONFIRMED DATE</div>
           </div>
 
           <!-- Frame 3 -->
-          <div class="film-frame-card active-phase">
+          <div class="film-frame-card">
             <div class="frame-sprocket-holes">
               <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
             </div>
-            <div class="frame-phase-tag" style="color: var(--amber-bright); font-weight: bold;">FRAME III (PEAK EVENT)</div>
-            <h3 class="frame-title">The 24-Hour OVERCLOCK</h3>
-            <div class="frame-date">January 2027 (Exact Dates TBD)</div>
-            <div class="frame-stamp-badge" style="border-color: var(--amber-bright); color: var(--amber-bright);">THE 24H BUILD</div>
+            <div class="frame-phase-tag">MILESTONE 03</div>
+            <h3 class="frame-title">PPT Submission Window</h3>
+            <div class="frame-date">10–15 December 2026</div>
+            <p class="frame-description">Five-day window for teams to submit conceptual hardware presentations.</p>
+            <div class="frame-stamp-badge">5-DAY WINDOW</div>
           </div>
 
           <!-- Frame 4 -->
@@ -486,133 +936,223 @@
             <div class="frame-sprocket-holes">
               <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
             </div>
-            <div class="frame-phase-tag">FRAME IV</div>
-            <h3 class="frame-title">Demo & Awards</h3>
-            <div class="frame-date">Finals Evaluation</div>
-            <div class="frame-stamp-badge">DRAFT</div>
+            <div class="frame-phase-tag">MILESTONE 04</div>
+            <h3 class="frame-title">Shortlisted Teams Announced</h3>
+            <div class="frame-date">22 December 2026</div>
+            <p class="frame-description">Official publication of teams selected for the on-campus build phase.</p>
+            <div class="frame-stamp-badge">CONFIRMED DATE</div>
+          </div>
+
+          <!-- Frame 5 -->
+          <div class="film-frame-card active-phase">
+            <div class="frame-sprocket-holes">
+              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+            </div>
+            <div class="frame-phase-tag" style="color: var(--amber-bright); font-weight: bold;">MILESTONE 05</div>
+            <h3 class="frame-title">Final Problem Statement Released</h3>
+            <div class="frame-date">22 January 2027</div>
+            <p class="frame-description">Final problem statement released as scheduled for the physical engineering phase.</p>
+            <div class="frame-stamp-badge" style="border-color: var(--amber-bright); color: var(--amber-bright);">FINAL STATEMENT</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ========================================================
-         LEVEL 05: 24 HOURS — THE OVERCLOCK (PEAK ENERGY)
+         06. REGISTRATION
     ======================================================== -->
-    <section id="overclock-24h" class="bureau-section" data-section-num="05">
+    <section id="registration" class="bureau-section" data-section-num="06">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag amber">HIGH ACTIVITY ZONE // LEVEL 05</div>
-        <h2 class="section-main-heading">24 Hours. One Build.</h2>
-        <p class="section-subtext">The core overclock crucible. Non-stop soldering, circuit debugging, microcontroller flashing, and hardware execution.</p>
+        <div class="bureau-tag amber">PARTICIPANT INTAKE // LEVEL 06</div>
+        <h2 class="section-main-heading">Register for OVERCLOCK 2027</h2>
+        <p class="section-subtext">Official participant onboarding, registration schedule, and fee breakdown as established by the organizing committee.</p>
       </div>
 
-      <div class="overclock-crucible-chamber">
-        <!-- Split Flap 24:00:00 Timer -->
-        <div class="split-flap-timer-display" aria-label="24:00:00 Duration">
-          <div class="timer-flap-unit">24</div>
-          <div class="timer-flap-unit">:</div>
-          <div class="timer-flap-unit">00</div>
-          <div class="timer-flap-unit">:</div>
-          <div class="timer-flap-unit">00</div>
+      <div class="registration-terminal-card">
+        <div class="terminal-card-topbar">
+          <div class="topbar-badge">SCHEDULE // REGISTRATION PROTOCOL</div>
+          <div class="topbar-status">INTAKE OPENS 01 NOV 2026</div>
         </div>
 
-        <div style="display: block;">
-          <div class="countdown-announcement-pill">
-            <span style="color: var(--amber-bright);">●</span> COUNTDOWN BEGINS WHEN DATES ARE ANNOUNCED
+        <div class="registration-content-grid">
+          <div class="reg-milestone-panel">
+            <div class="reg-k-label">REGISTRATION OPENS</div>
+            <div class="reg-date-headline">01 NOVEMBER 2026</div>
+            <p class="reg-helper-note">The official registration portal activates on 01 November 2026. Pre-register through the case intake terminal below to receive instant launch notification.</p>
+
+            <div class="reg-actions-row" style="margin-top: 24px;">
+              <button class="btn-bureau-brass open-case-file-trigger">Open a Case File / Pre-Register</button>
+            </div>
           </div>
-        </div>
 
-        <!-- 5 Stages Dial Markers -->
-        <div class="stages-dial-row">
-          <div class="stage-dial-pill active">STAGE 01: IDEATE</div>
-          <div class="stage-dial-pill active">STAGE 02: BUILD</div>
-          <div class="stage-dial-pill active">STAGE 03: TEST</div>
-          <div class="stage-dial-pill active">STAGE 04: DEBUG</div>
-          <div class="stage-dial-pill active">STAGE 05: DEMO</div>
-        </div>
+          <div class="fee-calculation-box">
+            <div class="fee-box-title">REGISTRATION FEE BREAKDOWN</div>
+            
+            <div class="fee-row">
+              <span class="fee-label">Listed Registration Fee:</span>
+              <span class="fee-value">₹1,500</span>
+            </div>
+            <div class="fee-row">
+              <span class="fee-label">Applicable Tax (18% GST approx.):</span>
+              <span class="fee-value">+ ₹270</span>
+            </div>
+            <div class="fee-divider"></div>
+            <div class="fee-row total-row">
+              <span class="fee-label">Calculated Total (incl. GST):</span>
+              <span class="fee-value total-val">₹1,770</span>
+            </div>
+            <div class="fee-calc-formula">Calculation: ₹1,500 × 1.18 = ₹1,770</div>
 
-        <!-- Floor Rules Spec Panel -->
-        <div class="floor-rules-panel">
-          <div style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--amber-bright); margin-bottom: 8px;">
-            BUREAU OPERATING NOTICE // FLOOR RULES (SUBJECT TO CONFIRMATION)
+            <div class="fee-transparency-memo">
+              <span class="memo-icon">ℹ</span>
+              <span class="memo-text"><strong>Fee Basis Note:</strong> The listed fee is ₹1,500 + 18% GST. Formal confirmation of whether this fee applies per participant or per team will be announced upon portal launch.</span>
+            </div>
           </div>
-          <p>1. All prototyping must take place physically on campus during the allocated 24-hour cycle.</p>
-          <p>2. Pre-assembled custom hardware boards are strictly prohibited. Generic breakout boards and modules permitted.</p>
-          <p>3. Dedicated debugging stations and electrical safety test benches will be staffed continuously.</p>
         </div>
       </div>
     </section>
 
     <!-- ========================================================
-         LEVEL 06: LABS — EQUIPMENT REQUISITION FORM
+         07. ACCOMMODATION
     ======================================================== -->
-    <section id="labs" class="bureau-section" data-section-num="06">
+    <section id="accommodation" class="bureau-section" data-section-num="07">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag">FACILITY REQUISITION // LEVEL 06</div>
-        <h2 class="section-main-heading">Labs & Equipment</h2>
-        <p class="section-subtext">Facilities and hardware equipment subject to confirmation by the department.</p>
+        <div class="bureau-tag">CAMPUS RESIDENCE // LEVEL 07</div>
+        <h2 class="section-main-heading">Stay on Campus</h2>
+        <p class="section-subtext">On-campus residential arrangements for outstation participants during OVERCLOCK 2027.</p>
       </div>
 
-      <div class="requisition-paper-sheet">
-        <div class="sheet-header-line">
-          <span>FORM OC-27/LAB · REV 0.1 · DRAFT</span>
-          <span>CAMPUS HARDWARE INVENTORY</span>
+      <div class="accommodation-container">
+        <!-- Confirmed Logistics Cards -->
+        <div class="accommodation-notes-grid">
+          <div class="quarters-stat-card">
+            <div class="stat-icon">🏷️</div>
+            <h3 class="stat-heading">NOMINAL COST</h3>
+            <p class="stat-body">On-campus accommodation is provided at nominal cost to assist participating and outstation teams.</p>
+          </div>
+
+          <div class="quarters-stat-card highlight-card">
+            <div class="stat-icon">⚡</div>
+            <h3 class="stat-heading">FIRST-COME, FIRST-SERVED</h3>
+            <p class="stat-body">Bed allocations are processed strictly on a first-come, first-served basis upon shortlist publication.</p>
+          </div>
+
+          <div class="quarters-stat-card">
+            <div class="stat-icon">🛏️</div>
+            <h3 class="stat-heading">~100 BEDS TOTAL</h3>
+            <p class="stat-body">Approximately 100 residential beds are available overall across campus residential quarters.</p>
+          </div>
+
+          <div class="quarters-stat-card">
+            <div class="stat-icon">👥</div>
+            <h3 class="stat-heading">2 BEDS PER TEAM</h3>
+            <p class="stat-body">Preliminary notes indicate an allocation standard of two beds per team to optimize capacity.</p>
+          </div>
         </div>
 
-        <div class="equipment-table-wrap">
-          <table class="equipment-table">
-            <thead>
-              <tr>
-                <th>CATEGORY</th>
-                <th>EQUIPMENT & TOOLS</th>
-                <th>AVAILABILITY</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Measurement</strong></td>
-                <td>Digital Storage Oscilloscopes (DSOs), Digital Multimeters (DMMs), Logic Analyzers, Frequency Counters</td>
-                <td><span class="status-badge-tbc">TBC</span></td>
-              </tr>
-              <tr>
-                <td><strong>Assembly & Soldering</strong></td>
-                <td>Temperature-Controlled Soldering Stations, De-soldering Pumps, Hot Air Rework Stations, Fume Extractors</td>
-                <td><span class="status-badge-tbc">TBC</span></td>
-              </tr>
-              <tr>
-                <td><strong>Prototyping</strong></td>
-                <td>Breadboards, Jumper Bundles, SMD Breakout Adapters, Component Drawers (Passives, ICs, Transistors)</td>
-                <td><span class="status-badge-tbc">TBC</span></td>
-              </tr>
-              <tr>
-                <td><strong>Power</strong></td>
-                <td>Multi-Channel Benchtop DC Power Supplies (0–30V, 5A), Current-Limited Regulators, Battery Holders</td>
-                <td><span class="status-badge-tbc">TBC</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div style="font-size: 0.8rem; color: #5a4b3d; text-align: right;">
-          * Specific equipment availability and lab allocations will be confirmed upon formal schedule publication.
+        <!-- Structural Placeholders for Future Specific Details -->
+        <div class="accommodation-details-panel">
+          <div class="panel-section-title">ADDITIONAL RESIDENTIAL SPECIFICATIONS</div>
+          <div class="specs-grid">
+            <div class="spec-unit">
+              <span class="spec-label">ACCOMMODATION COST</span>
+              <span class="spec-val-pending">Nominal rate to be announced post-shortlist</span>
+            </div>
+            <div class="spec-unit">
+              <span class="spec-label">BOOKING PROCESS</span>
+              <span class="spec-val-pending">Requisition opens following 22 Dec 2026 shortlist</span>
+            </div>
+            <div class="spec-unit">
+              <span class="spec-label">CHECK-IN & CHECK-OUT</span>
+              <span class="spec-val-pending">Schedules aligned with the 24H build cycle</span>
+            </div>
+            <div class="spec-unit">
+              <span class="spec-label">ALLOCATION CONDITIONS</span>
+              <span class="spec-val-pending">Valid institution ID required; 2 beds/team policy</span>
+            </div>
+            <div class="spec-unit span-two">
+              <span class="spec-label">CONTACT FOR ENQUIRIES</span>
+              <span class="spec-val-pending">Campus hospitality liaison details will be issued upon official schedule publication</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ========================================================
-         LEVEL 07: SPONSORS — AUTHORIZED PARTNERS
+         08. JUDGING AND RECOGNITION
     ======================================================== -->
-    <section id="sponsors" class="bureau-section" data-section-num="07">
+    <section id="judging" class="bureau-section" data-section-num="08">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag amber">AUTHORIZED PARTNERS // LEVEL 07</div>
-        <h2 class="section-main-heading">Our Sponsors</h2>
+        <div class="bureau-tag amber">EVALUATION PROTOCOL // LEVEL 08</div>
+        <h2 class="section-main-heading">Judging and Recognition</h2>
+        <p class="section-subtext">Rigorous, multi-faceted hardware evaluation protocol designed to test schematic precision, embedded execution, and functional reliability.</p>
+      </div>
+
+      <div class="judging-protocol-wrapper">
+        <!-- Provisional Panel Structure Notice -->
+        <div class="judging-bench-notice">
+          <div class="bench-notice-header">
+            <span class="bench-tag">PROVISIONAL EVALUATION BENCH</span>
+            <span class="bench-badge">SUBJECT TO FORMAL RATIFICATION</span>
+          </div>
+          <p class="bench-note">
+            Preliminary briefing notes specify a 3-judge evaluation bench consisting of <strong>2 Internal Judges</strong> (academic faculty) and <strong>1 External Judge</strong> (industry hardware specialist). Formal appointments will be announced prior to the finals.
+          </p>
+        </div>
+
+        <!-- 4 Evaluation Pillars -->
+        <div class="evaluation-pillars-grid">
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 01</div>
+            <h3 class="pillar-title">Hardware Architecture</h3>
+            <p class="pillar-desc">Circuit schematic integrity, component selection, board layout safety, power dissipation, and discrete signal cleanliness.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 02</div>
+            <h3 class="pillar-title">Embedded Firmware</h3>
+            <p class="pillar-desc">Real-time controller responsiveness, sensor calibration, communication bus reliability (I2C/SPI/UART), and bug-free execution.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 03</div>
+            <h3 class="pillar-title">Problem Alignment</h3>
+            <p class="pillar-desc">Novelty and technical depth applied to the selected domain challenge statement, with feasible real-world utility.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 04</div>
+            <h3 class="pillar-title">Physical Working Demo</h3>
+            <p class="pillar-desc">Live on-bench functional demonstration of the assembled physical prototype operating under evaluation test cycles.</p>
+          </div>
+        </div>
+
+        <!-- Space for Future Awards and Recognition -->
+        <div class="recognition-standby-panel">
+          <div class="rec-title">AWARDS & RECOGNITION</div>
+          <p class="rec-sub">Official awards, prize pool distribution, institutional mementos, and category honours will be revealed upon sanctioning by the organizing committee.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         09. SPONSORS AND PARTNERS
+    ======================================================== -->
+    <section id="sponsors" class="bureau-section" data-section-num="09">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">AUTHORIZED PARTNERS // LEVEL 09</div>
+        <h2 class="section-main-heading">Sponsors and Partners</h2>
         <div class="bureau-tag amber" style="margin-top: 4px;">SPONSORS TO BE ANNOUNCED</div>
-        <p class="section-subtext">Official partners supporting the hardware prototyping facilities and prize pool for OVERCLOCK 2027.</p>
+        <p class="section-subtext">Official institutional and technical partners supporting the hardware prototyping facilities for OVERCLOCK 2027.</p>
       </div>
 
       <div class="sponsors-pinboard-deck">
@@ -638,13 +1178,13 @@
     </section>
 
     <!-- ========================================================
-         LEVEL 08: FAQ — CASE FILES
+         10. FAQs — CASE FILES
     ======================================================== -->
-    <section id="faq" class="bureau-section" data-section-num="08">
+    <section id="faq" class="bureau-section" data-section-num="10">
       <div class="section-rubber-stamp">PENDING</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag">INQUIRY ARCHIVE // LEVEL 08</div>
+        <div class="bureau-tag">INQUIRY ARCHIVE // LEVEL 10</div>
         <h2 class="section-main-heading">Case Files (FAQ)</h2>
         <p class="section-subtext">Classified inquiries and operational questions answered directly by the Bureau.</p>
       </div>
@@ -662,7 +1202,7 @@
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              OVERCLOCK 2027 is organized by the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai. All theme parameters and dates are currently proposed and subject to formal institutional approvals.
+              OVERCLOCK 2027 is organized by the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai.
             </div>
           </div>
         </div>
@@ -672,14 +1212,14 @@
           <div class="folder-tab-bar">
             <div>
               <span class="folder-case-num">CASE #002</span>
-              <span class="folder-query-title">What is the team size and eligibility criteria?</span>
+              <span class="folder-query-title">When does registration open and what is the fee?</span>
             </div>
             <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              Eligibility and team size specifics are currently TBD and will be finalized upon release of the official rulebook.
+              Registration opens on 01 November 2026. The listed registration fee is ₹1,500 + 18% GST (approx. ₹1,770 total). Whether this fee applies per team or per participant will be confirmed upon registration portal launch.
             </div>
           </div>
         </div>
@@ -689,14 +1229,14 @@
           <div class="folder-tab-bar">
             <div>
               <span class="folder-case-num">CASE #003</span>
-              <span class="folder-query-title">Can we build software-only projects?</span>
+              <span class="folder-query-title">What is the problem statement and submission schedule?</span>
             </div>
             <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              No. OVERCLOCK is dedicated strictly to physical hardware engineering. Every project must interface with real microcontrollers, sensors, actuators, or discrete circuitry.
+              Initial problem statements will be released on 01 December 2026. Teams submit their preliminary approach during the PPT submission window from 10–15 December 2026. Shortlisted teams are announced on 22 December 2026, and the final problem statement releases on 22 January 2027.
             </div>
           </div>
         </div>
@@ -706,15 +1246,106 @@
           <div class="folder-tab-bar">
             <div>
               <span class="folder-case-num">CASE #004</span>
-              <span class="folder-query-title">Will hardware components be provided on campus?</span>
+              <span class="folder-query-title">Is on-campus accommodation provided?</span>
             </div>
             <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              Lab test instruments and fundamental prototyping equipment will be accessible. Specific kit provisions will be confirmed upon registration launch.
+              Yes. Accommodation on campus is available at nominal cost on a first-come, first-served basis. Approximately 100 beds are available overall, with a standard guideline of two beds per team.
             </div>
+          </div>
+        </div>
+
+        <!-- Case 005 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #005</span>
+              <span class="folder-query-title">Can we submit software-only projects?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              No. OVERCLOCK is dedicated strictly to physical hardware engineering. Every project must interface with physical electronic hardware, sensors, actuators, or discrete circuitry.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 006 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #006</span>
+              <span class="folder-query-title">How will projects be evaluated?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Preliminary notes indicate a panel of 2 internal judges and 1 external judge evaluating projects across circuit architecture, firmware reliability, problem statement alignment, and working physical prototype execution.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         11. CONTACT & VENUE
+    ======================================================== -->
+    <section id="contact" class="bureau-section" data-section-num="11">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">COMMUNICATIONS LOG // LEVEL 11</div>
+        <h2 class="section-main-heading">Contact & Venue</h2>
+        <p class="section-subtext">Official communication coordinates and campus location details for OVERCLOCK 2027.</p>
+      </div>
+
+      <div class="contact-cards-grid">
+        <!-- Campus Venue Card -->
+        <div class="contact-dossier-card">
+          <div class="contact-card-tag">CAMPUS VENUE</div>
+          <h3 class="contact-card-title">Fr. C. Rodrigues Institute of Technology</h3>
+          <p class="contact-card-body">
+            Agnel Technical Education Complex, Sector 9A, Vashi, Navi Mumbai, Maharashtra 400703.
+          </p>
+          <div class="contact-action-link">
+            <a href="https://maps.google.com/?q=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi" target="_blank" rel="noopener noreferrer" class="contact-sub-link">
+              📍 View Campus Location Map ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Organizing Committee Card -->
+        <div class="contact-dossier-card">
+          <div class="contact-card-tag">ORGANIZERS</div>
+          <h3 class="contact-card-title">IEEE Student Branch FCRIT</h3>
+          <p class="contact-card-body">
+            Official organizing bureau for OVERCLOCK 2027. Inquiries regarding registration, timelines, and partnerships.
+          </p>
+          <div class="contact-action-link">
+            <a href="mailto:ieee@fcrit.ac.in" class="contact-sub-link">
+              ✉ ieee@fcrit.ac.in
+            </a>
+          </div>
+        </div>
+
+        <!-- Transit & Transit Notes -->
+        <div class="contact-dossier-card">
+          <div class="contact-card-tag">TRANSIT & ACCESS</div>
+          <h3 class="contact-card-title">Navi Mumbai Transit Hub</h3>
+          <p class="contact-card-body">
+            Easily accessible via Vashi and Sanpada Railway Stations on the Mumbai Suburban Harbour Line. Frequent auto-rickshaw and bus connections directly to campus.
+          </p>
+          <div class="contact-action-link">
+            <a href="https://fcrit.ac.in" target="_blank" rel="noopener noreferrer" class="contact-sub-link">
+              🌐 Visit Official FCRIT Website ↗
+            </a>
           </div>
         </div>
       </div>
@@ -723,30 +1354,37 @@
   </main>
 
   <!-- ==========================================================
-       LEVEL 09: FOOTER — METAL FILING CABINET DRAWER
+       12. CLOSING SECTION & FOOTER (FILING CABINET DRAWER)
   ========================================================== -->
-  <footer class="filing-cabinet-footer">
+  <footer id="closing" class="filing-cabinet-footer bureau-section" data-section-num="12">
     <div class="footer-inner-container">
       <div class="filing-drawer-box">
         <div class="drawer-pull-handle"></div>
 
         <div class="cabinet-tabs-grid">
-          <a href="#" class="cabinet-index-tab">PIN 1: EMAIL</a>
-          <a href="#" class="cabinet-index-tab">PIN 2: INSTAGRAM</a>
-          <a href="#" class="cabinet-index-tab">PIN 3: LINKEDIN</a>
-          <button class="cabinet-index-tab open-case-file-trigger" style="cursor: pointer;">PIN 4: REGISTER</button>
-          <a href="#" class="cabinet-index-tab">PIN 5: FCRIT</a>
-          <a href="#" class="cabinet-index-tab">PIN 6: IEEE SB</a>
-          <a href="#sponsors" class="cabinet-index-tab">PIN 7: SPONSORS</a>
-          <a href="#" class="cabinet-index-tab">PIN 8: LOCATION</a>
-          <a href="#hero" class="cabinet-index-tab">PIN 9: TOP</a>
+          <a href="#hero" class="cabinet-index-tab">PIN 1: HOME</a>
+          <a href="#about" class="cabinet-index-tab">PIN 2: ABOUT</a>
+          <a href="#problems" class="cabinet-index-tab">PIN 3: PROBLEMS</a>
+          <a href="#results" class="cabinet-index-tab">PIN 4: RESULTS</a>
+          <a href="#timeline" class="cabinet-index-tab">PIN 5: TIMELINE</a>
+          <a href="#registration" class="cabinet-index-tab">PIN 6: REGISTER</a>
+          <a href="#accommodation" class="cabinet-index-tab">PIN 7: QUARTERS</a>
+          <a href="#judging" class="cabinet-index-tab">PIN 8: JUDGING</a>
+          <a href="#sponsors" class="cabinet-index-tab">PIN 9: SPONSORS</a>
+          <a href="#faq" class="cabinet-index-tab">PIN 10: FAQ</a>
+          <a href="#contact" class="cabinet-index-tab">PIN 11: CONTACT</a>
+          <a href="#hero" class="cabinet-index-tab">PIN 12: TOP</a>
         </div>
 
         <div class="center-timeline-complete-card">
-          <div class="complete-title">OVERCLOCK 2027 — TIMELINE COMPLETE</div>
+          <div class="complete-title">OVERCLOCK 2027 — FCRIT × IEEE STUDENT BRANCH</div>
           <p style="font-family: var(--font-typewriter); color: var(--text-muted); margin-top: 8px;">
-            All Bureau machine cycles synchronized. Thank you for visiting the timeline.
+            All Bureau machine cycles synchronized. Build before time runs out.
           </p>
+          <div style="display: flex; gap: 14px; justify-content: center; margin-top: 18px; flex-wrap: wrap;">
+            <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
+            <a href="#hero" class="btn-bureau-secondary">Return to Top ↑</a>
+          </div>
         </div>
       </div>
 
@@ -1177,10 +1815,12 @@
         <div class="modal-form-group">
           <label for="intake-domain">PREFERRED BRANCH</label>
           <select id="intake-domain" class="modal-input" style="cursor: pointer;">
-            <option value="sustainable">Branch 01 — Sustainable Technology</option>
-            <option value="smart-communities">Branch 02 — Smart Communities</option>
-            <option value="intelligent-systems">Branch 03 — Intelligent Systems</option>
-            <option value="resilient-infra">Branch 04 — Resilient Infrastructure</option>
+            <option value="general">General Participant Track (Awaiting Domain Release)</option>
+            <option value="slot-1">Domain Slot 01 (Release 01 Dec 2026)</option>
+            <option value="slot-2">Domain Slot 02 (Release 01 Dec 2026)</option>
+            <option value="slot-3">Domain Slot 03 (Release 01 Dec 2026)</option>
+            <option value="slot-4">Domain Slot 04 (Release 01 Dec 2026)</option>
+            <option value="slot-5">Domain Slot 05 (Release 01 Dec 2026)</option>
           </select>
         </div>
         <button type="submit" class="btn-bureau-brass" style="width: 100%; justify-content: center; margin-top: 12px;">
