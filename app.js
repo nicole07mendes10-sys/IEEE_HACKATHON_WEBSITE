@@ -1484,10 +1484,33 @@ class OverclockApp {
         overlay.style.width = `${overlaySize}px`;
         overlay.style.height = `${overlaySize}px`;
       } else {
-        // If watermark is cropped off-screen (e.g. on portrait mobile), do not show a meaningless floating overlay
-        overlay.style.display = 'none';
+        // Fallback for portrait mobile: keep Miss Minutes visible and accessible at bottom-right
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '1';
+        overlay.style.left = `${winW - 55}px`;
+        overlay.style.top = `${winH - 65}px`;
+        overlay.style.width = '84px';
+        overlay.style.height = '84px';
       }
     };
+
+    // Make Miss Minutes interactive — opens the TVA Inspection Terminal
+    const openTerminal = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (window.tvaInspectionGame) {
+        window.tvaInspectionGame.open();
+      }
+    };
+
+    overlay.addEventListener('click', openTerminal);
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        openTerminal(e);
+      }
+    });
 
     updatePosition();
     window.addEventListener('resize', updatePosition, { passive: true });

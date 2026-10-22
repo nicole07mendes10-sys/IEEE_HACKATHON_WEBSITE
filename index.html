@@ -7,7 +7,7 @@
   <meta name="description" content="Official website for OVERCLOCK 2027 — Hardware Hackathon, organized by FCRIT IEEE Student Branch. 24-hour on-campus hardware build in a retro-futuristic Time Bureau.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="preload" as="image" href="images/ezgif-frame-001.jpg">
   <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
@@ -771,7 +771,17 @@
   <!-- ==========================================================
        MISS MINUTES ANIMATED OVERLAY (CONCEALING GEMINI WATERMARK)
   ========================================================== -->
-  <div id="miss-minutes-overlay" class="miss-minutes-overlay" aria-label="Miss Minutes Bureau Mascot" aria-hidden="true">
+  <div
+    id="miss-minutes-overlay"
+    class="miss-minutes-overlay"
+    role="button"
+    tabindex="0"
+    aria-label="Miss Minutes — Open TVA Inspection Terminal"
+    aria-haspopup="dialog"
+  >
+    <div id="miss-minutes-speech" class="miss-minutes-speech" aria-hidden="true">
+      GOT A MINUTE, PARTNER?
+    </div>
     <video
       id="miss-minutes-video"
       class="miss-minutes-video"
@@ -788,6 +798,354 @@
     >
       <source src="videos/miss_minutes.webm" type="video/webm">
     </video>
+  </div>
+
+  <!-- ==========================================================
+       TVA INTERACTIVE INSPECTION TERMINAL (MISS MINUTES MINIGAME)
+  ========================================================== -->
+  <div
+    id="tva-inspection-modal"
+    class="tva-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tva-modal-title"
+    aria-hidden="true"
+  >
+    <div class="tva-modal-window" id="tva-modal-window">
+      <!-- CRT scanline overlay -->
+      <div class="tva-crt-scanlines" aria-hidden="true"></div>
+
+      <!-- Top Terminal Header -->
+      <header class="tva-modal-header">
+        <div class="tva-header-title-wrap">
+          <span class="tva-status-dot" aria-hidden="true"></span>
+          <span id="tva-modal-title" class="tva-header-title">TVA <span class="tva-header-slash">//</span> TEMPORAL INSPECTION</span>
+        </div>
+        
+        <div class="tva-header-controls">
+          <!-- Mission Progress Indicator -->
+          <div class="tva-progress-badge" id="tva-progress-badge" aria-label="Inspection Progress">
+            <span class="tva-progress-text" id="tva-progress-text">01 / 03</span>
+            <div class="tva-progress-pips" aria-hidden="true">
+              <span class="tva-pip" id="tva-pip-1"></span>
+              <span class="tva-pip" id="tva-pip-2"></span>
+              <span class="tva-pip" id="tva-pip-3"></span>
+            </div>
+          </div>
+
+          <!-- Close Button (X) -->
+          <button
+            type="button"
+            class="tva-close-btn"
+            id="tva-modal-close-btn"
+            aria-label="Close TVA inspection"
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TVA Live Notification / System Broadcast -->
+      <div id="tva-live-announcer" class="tva-terminal-notice" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- Terminal Body Content (dynamically managed state views) -->
+      <div class="tva-modal-body" id="tva-modal-body">
+        
+        <!-- ================= INTRO VIEW ================= -->
+        <section class="tva-view" id="tva-view-intro" aria-labelledby="tva-intro-heading">
+          <div class="tva-view-meta">TVA // FIELD INSPECTION</div>
+          <h2 class="tva-view-heading" id="tva-intro-heading">TEMPORAL ANOMALY DETECTED</h2>
+          
+          <div class="tva-intro-mascot-box">
+            <div class="tva-mascot-ring">
+              <video
+                class="tva-intro-mascot-video"
+                autoplay
+                loop
+                muted
+                playsinline
+                webkit-playsinline
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <source src="videos/miss_minutes.webm" type="video/webm">
+              </video>
+            </div>
+            <div class="tva-intro-quote-card">
+              <p class="tva-intro-quote">
+                &ldquo;Well, goodness! We've got a little timeline problem, partner. Think you can help me?&rdquo;
+              </p>
+              <div class="tva-intro-signature">&mdash; MISS MINUTES, TVA ARCHIVES</div>
+            </div>
+          </div>
+
+          <div class="tva-status-readout" id="tva-intro-status">
+            <span class="tva-readout-label">MISSION STATUS:</span>
+            <span class="tva-readout-val">AWAITING INSPECTOR</span>
+          </div>
+
+          <div class="tva-action-group">
+            <button type="button" class="btn-bureau-brass tva-primary-btn" id="tva-start-btn">
+              START INSPECTION
+            </button>
+          </div>
+
+          <div class="tva-view-subtext">
+            3 MISSIONS // APPROX. 30–45 SECONDS
+          </div>
+        </section>
+
+        <!-- ================= MISSION 1: SPOT THE ANOMALY ================= -->
+        <section class="tva-view" id="tva-view-mission1" style="display: none;" aria-labelledby="tva-m1-heading">
+          <div class="tva-view-meta">TVA // INSPECTION 01 OF 03</div>
+          <h2 class="tva-view-heading" id="tva-m1-heading">SPOT THE ANOMALY</h2>
+          <p class="tva-instructions">
+            &ldquo;One of these timelines is unstable. Identify the incorrect branch.&rdquo;
+          </p>
+
+          <div class="tva-timelines-grid" role="group" aria-label="Select the unstable timeline branch">
+            <!-- Timeline A -->
+            <button
+              type="button"
+              class="tva-timeline-card"
+              id="tva-branch-a"
+              data-branch="A"
+              aria-label="Timeline A: Sequential linear connection"
+            >
+              <div class="tva-card-header">
+                <span class="tva-branch-tag">TIMELINE A</span>
+                <span class="tva-branch-status">STANDARD</span>
+              </div>
+              <div class="tva-timeline-svg-wrap">
+                <svg viewBox="0 0 240 70" class="tva-timeline-svg" aria-hidden="true">
+                  <line x1="20" y1="35" x2="220" y2="35" class="tva-tl-line"/>
+                  <circle cx="35" cy="35" r="7" class="tva-tl-node"/>
+                  <circle cx="120" cy="35" r="7" class="tva-tl-node"/>
+                  <circle cx="205" cy="35" r="7" class="tva-tl-node"/>
+                  <text x="35" y="58" class="tva-tl-label" text-anchor="middle">NODE 01</text>
+                  <text x="120" y="58" class="tva-tl-label" text-anchor="middle">NODE 02</text>
+                  <text x="205" y="58" class="tva-tl-label" text-anchor="middle">NODE 03</text>
+                </svg>
+              </div>
+            </button>
+
+            <!-- Timeline B (THE ANOMALY) -->
+            <button
+              type="button"
+              class="tva-timeline-card"
+              id="tva-branch-b"
+              data-branch="B"
+              aria-label="Timeline B: Contains unexpected diverging branch"
+            >
+              <div class="tva-card-header">
+                <span class="tva-branch-tag">TIMELINE B</span>
+                <span class="tva-branch-status anomaly-flag">BRANCHED</span>
+              </div>
+              <div class="tva-timeline-svg-wrap">
+                <svg viewBox="0 0 240 70" class="tva-timeline-svg" aria-hidden="true">
+                  <!-- Main Sequential line -->
+                  <line x1="20" y1="44" x2="220" y2="44" class="tva-tl-line"/>
+                  <!-- Anomaly fork diverging upward from Node 2 -->
+                  <path d="M 120 44 Q 145 16 185 16 L 215 16" class="tva-tl-line-anomaly"/>
+                  <circle cx="215" cy="16" r="6" class="tva-tl-node-anomaly"/>
+                  <text x="215" y="10" class="tva-tl-label-err" text-anchor="middle">ROGUE FORK</text>
+                  <!-- Sequential Nodes -->
+                  <circle cx="35" cy="44" r="7" class="tva-tl-node"/>
+                  <circle cx="120" cy="44" r="7" class="tva-tl-node"/>
+                  <circle cx="205" cy="44" r="7" class="tva-tl-node"/>
+                  <text x="35" y="65" class="tva-tl-label" text-anchor="middle">NODE 01</text>
+                  <text x="120" y="65" class="tva-tl-label" text-anchor="middle">NODE 02</text>
+                  <text x="205" y="65" class="tva-tl-label" text-anchor="middle">NODE 03</text>
+                </svg>
+              </div>
+            </button>
+
+            <!-- Timeline C -->
+            <button
+              type="button"
+              class="tva-timeline-card"
+              id="tva-branch-c"
+              data-branch="C"
+              aria-label="Timeline C: Sequential linear connection"
+            >
+              <div class="tva-card-header">
+                <span class="tva-branch-tag">TIMELINE C</span>
+                <span class="tva-branch-status">STANDARD</span>
+              </div>
+              <div class="tva-timeline-svg-wrap">
+                <svg viewBox="0 0 240 70" class="tva-timeline-svg" aria-hidden="true">
+                  <line x1="20" y1="35" x2="220" y2="35" class="tva-tl-line"/>
+                  <circle cx="35" cy="35" r="7" class="tva-tl-node"/>
+                  <circle cx="120" cy="35" r="7" class="tva-tl-node"/>
+                  <circle cx="205" cy="35" r="7" class="tva-tl-node"/>
+                  <text x="35" y="58" class="tva-tl-label" text-anchor="middle">NODE 01</text>
+                  <text x="120" y="58" class="tva-tl-label" text-anchor="middle">NODE 02</text>
+                  <text x="205" y="58" class="tva-tl-label" text-anchor="middle">NODE 03</text>
+                </svg>
+              </div>
+            </button>
+          </div>
+
+          <div class="tva-feedback-banner" id="tva-m1-feedback" role="status" aria-live="polite">
+            <span class="tva-feedback-icon">⚡</span>
+            <span class="tva-feedback-text">INSPECT THE BRANCHES CAREFULLY</span>
+          </div>
+        </section>
+
+        <!-- ================= MISSION 2: CRACK ACCESS CODE ================= -->
+        <section class="tva-view" id="tva-view-mission2" style="display: none;" aria-labelledby="tva-m2-heading">
+          <div class="tva-view-meta">TVA // INSPECTION 02 OF 03</div>
+          <h2 class="tva-view-heading" id="tva-m2-heading">CLASSIFIED FILE <span class="tva-heading-separator">//</span> ACCESS DENIED</h2>
+          <p class="tva-instructions">
+            &ldquo;Decode the sequence to unlock the classified timeline record.&rdquo;
+          </p>
+
+          <!-- Classified File Lock Badge -->
+          <div class="tva-classified-badge" id="tva-m2-lock">
+            <span class="tva-lock-icon" id="tva-m2-lock-icon">🔒</span>
+            <span class="tva-lock-status" id="tva-m2-lock-status">FILE LOCKED // ACCESS RESTRICTED</span>
+          </div>
+
+          <!-- Sequence Display -->
+          <div class="tva-code-sequence-box" aria-label="Pattern sequence: Circle, Triangle, Circle, Triangle, Question Mark">
+            <div class="tva-seq-item"><span class="tva-sym">●</span><span class="tva-sym-name">CIRCLE</span></div>
+            <span class="tva-seq-arrow">→</span>
+            <div class="tva-seq-item"><span class="tva-sym">▲</span><span class="tva-sym-name">TRIANGLE</span></div>
+            <span class="tva-seq-arrow">→</span>
+            <div class="tva-seq-item"><span class="tva-sym">●</span><span class="tva-sym-name">CIRCLE</span></div>
+            <span class="tva-seq-arrow">→</span>
+            <div class="tva-seq-item"><span class="tva-sym">▲</span><span class="tva-sym-name">TRIANGLE</span></div>
+            <span class="tva-seq-arrow">→</span>
+            <div class="tva-seq-item tva-seq-mystery"><span class="tva-sym">?</span><span class="tva-sym-name">UNKNOWN</span></div>
+          </div>
+
+          <p class="tva-clue-text">
+            &ldquo;The pattern alternates between two symbols. Which symbol comes next?&rdquo;
+          </p>
+
+          <!-- Symbol Options -->
+          <div class="tva-symbols-grid" role="group" aria-label="Select the next symbol in sequence">
+            <button type="button" class="tva-symbol-btn" data-symbol="CIRCLE" id="tva-sym-circle">
+              <span class="tva-symbol-icon">●</span>
+              <span class="tva-symbol-label">CIRCLE</span>
+            </button>
+            <button type="button" class="tva-symbol-btn" data-symbol="TRIANGLE" id="tva-sym-triangle">
+              <span class="tva-symbol-icon">▲</span>
+              <span class="tva-symbol-label">TRIANGLE</span>
+            </button>
+            <button type="button" class="tva-symbol-btn" data-symbol="SQUARE" id="tva-sym-square">
+              <span class="tva-symbol-icon">■</span>
+              <span class="tva-symbol-label">SQUARE</span>
+            </button>
+          </div>
+
+          <div class="tva-feedback-banner" id="tva-m2-feedback" role="status" aria-live="polite">
+            <span class="tva-feedback-icon">⚡</span>
+            <span class="tva-feedback-text">DECODE THE PATTERN ABOVE</span>
+          </div>
+        </section>
+
+        <!-- ================= MISSION 3: STABILISE TIMELINE ================= -->
+        <section class="tva-view" id="tva-view-mission3" style="display: none;" aria-labelledby="tva-m3-heading">
+          <div class="tva-view-meta">TVA // INSPECTION 03 OF 03</div>
+          <h2 class="tva-view-heading" id="tva-m3-heading">STABILISE THE TIMELINE</h2>
+          <p class="tva-instructions">
+            &ldquo;Observe the sequence. Then activate the nodes in the same order.&rdquo;
+          </p>
+
+          <div class="tva-m3-sequence-indicator" id="tva-m3-status-banner">
+            <span class="tva-m3-status-pip" aria-hidden="true"></span>
+            <span id="tva-m3-status-text">INITIALIZING NODES...</span>
+          </div>
+
+          <!-- 5-Node Timeline Circuit -->
+          <div class="tva-nodes-circuit-container" id="tva-nodes-container" role="group" aria-label="Timeline nodes circuit">
+            <div class="tva-circuit-wire" aria-hidden="true"></div>
+            
+            <button type="button" class="tva-circuit-node" data-node="1" id="tva-node-1" aria-label="Node 1">
+              <span class="tva-node-inner">01</span>
+              <span class="tva-node-tag">NODE 1</span>
+            </button>
+            <button type="button" class="tva-circuit-node" data-node="2" id="tva-node-2" aria-label="Node 2">
+              <span class="tva-node-inner">02</span>
+              <span class="tva-node-tag">NODE 2</span>
+            </button>
+            <button type="button" class="tva-circuit-node" data-node="3" id="tva-node-3" aria-label="Node 3">
+              <span class="tva-node-inner">03</span>
+              <span class="tva-node-tag">NODE 3</span>
+            </button>
+            <button type="button" class="tva-circuit-node" data-node="4" id="tva-node-4" aria-label="Node 4">
+              <span class="tva-node-inner">04</span>
+              <span class="tva-node-tag">NODE 4</span>
+            </button>
+            <button type="button" class="tva-circuit-node" data-node="5" id="tva-node-5" aria-label="Node 5">
+              <span class="tva-node-inner">05</span>
+              <span class="tva-node-tag">NODE 5</span>
+            </button>
+          </div>
+
+          <!-- Replay Sequence button -->
+          <div class="tva-m3-actions">
+            <button type="button" class="tva-text-action-btn" id="tva-m3-replay-pattern-btn">
+              ↺ REPLAY PATTERN SEQUENCE
+            </button>
+          </div>
+
+          <div class="tva-feedback-banner" id="tva-m3-feedback" role="status" aria-live="polite">
+            <span class="tva-feedback-icon">⚡</span>
+            <span class="tva-feedback-text">AWAITING PATTERN DEMONSTRATION</span>
+          </div>
+        </section>
+
+        <!-- ================= COMPLETE VIEW ================= -->
+        <section class="tva-view" id="tva-view-complete" style="display: none;" aria-labelledby="tva-comp-heading">
+          <div class="tva-view-meta">TVA // INSPECTION REPORT</div>
+          <h2 class="tva-view-heading" id="tva-comp-heading">INSPECTION COMPLETE</h2>
+
+          <div class="tva-complete-report-box">
+            <div class="tva-report-line"><span class="tva-rep-k">TEMPORAL INTEGRITY:</span><span class="tva-rep-v highlight-green">100%</span></div>
+            <div class="tva-report-line"><span class="tva-rep-k">ANOMALIES IDENTIFIED:</span><span class="tva-rep-v">01</span></div>
+            <div class="tva-report-line"><span class="tva-rep-k">FILES UNLOCKED:</span><span class="tva-rep-v">01</span></div>
+            <div class="tva-report-line"><span class="tva-rep-k">TIMELINE STATUS:</span><span class="tva-rep-v highlight-amber">STABLE</span></div>
+            <div class="tva-report-line tva-report-divider"></div>
+            <div class="tva-report-line"><span class="tva-rep-k">MISSION RESULT:</span><span class="tva-rep-v highlight-green">SUCCESS</span></div>
+          </div>
+
+          <div class="tva-intro-mascot-box tva-complete-mascot-box">
+            <div class="tva-mascot-ring">
+              <video
+                class="tva-intro-mascot-video"
+                autoplay
+                loop
+                muted
+                playsinline
+                webkit-playsinline
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <source src="videos/miss_minutes.webm" type="video/webm">
+              </video>
+            </div>
+            <div class="tva-intro-quote-card">
+              <p class="tva-intro-quote">
+                &ldquo;Well, look at you! Timeline's back on track. Nice work, partner!&rdquo;
+              </p>
+              <div class="tva-intro-signature">&mdash; MISS MINUTES, TVA ARCHIVES</div>
+            </div>
+          </div>
+
+          <div class="tva-action-group tva-complete-actions">
+            <button type="button" class="btn-bureau-brass tva-primary-btn" id="tva-replay-inspection-btn">
+              RUN ANOTHER INSPECTION
+            </button>
+            <button type="button" class="tva-secondary-btn" id="tva-return-home-btn">
+              RETURN TO OVERCLOCK
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
   </div>
 
   <!-- ==========================================================
@@ -836,5 +1194,6 @@
   <script src="bureau-engine.js"></script>
   <script src="sponsors-config.js"></script>
   <script src="app.js"></script>
+  <script src="tva-inspection-game.js"></script>
 </body>
 </html>

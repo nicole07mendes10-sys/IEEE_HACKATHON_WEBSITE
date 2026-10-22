@@ -2018,7 +2018,8 @@ body {
 .miss-minutes-overlay {
   position: fixed;
   z-index: 150;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
   transform: translate(-50%, -50%);
   will-change: transform, left, top, width, height;
   user-select: none;
@@ -2032,6 +2033,61 @@ body {
   top: 83.26vh;
   width: 140px;
   height: 140px;
+  border-radius: 50%;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease;
+  outline: none;
+}
+
+.miss-minutes-overlay:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .miss-minutes-overlay:hover {
+    filter: drop-shadow(0 6px 18px var(--amber-glow)) drop-shadow(0 0 14px rgba(232, 137, 43, 0.45));
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+.miss-minutes-speech {
+  position: absolute;
+  bottom: calc(100% - 2px);
+  right: 50%;
+  background: #1C150F;
+  border: 1.5px solid var(--border-brass);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--amber-bright);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.75);
+  z-index: 155;
+}
+
+.miss-minutes-speech::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  border-width: 5px 5px 0 5px;
+  border-style: solid;
+  border-color: var(--border-brass) transparent transparent transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .miss-minutes-overlay:hover .miss-minutes-speech,
+  .miss-minutes-overlay:focus-visible .miss-minutes-speech {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .miss-minutes-video {
@@ -2043,6 +2099,1181 @@ body {
   background: transparent;
   border: none;
   outline: none;
+}
+
+/* ==========================================================
+   TVA TEMPORAL INSPECTION TERMINAL (MINI-GAME MODAL)
+   Refined TVA Typography & Interface Design System
+========================================================== */
+
+/* TVA Scoped Tokens */
+:root {
+  --tva-font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+  --tva-font-display: 'Barlow Condensed', 'Bebas Neue', 'Oswald', sans-serif;
+  --tva-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --tva-font-typewriter: 'Special Elite', 'Courier Prime', monospace;
+}
+
+.tva-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 920;
+  background: rgba(14, 10, 7, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s ease;
+}
+
+.tva-modal-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.tva-modal-window {
+  position: relative;
+  width: 100%;
+  max-width: 530px;
+  max-height: min(90vh, 720px);
+  background: #18120C;
+  border: 1.5px solid var(--border-brass);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 35px rgba(232, 137, 43, 0.22), 0 25px 60px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--paper-cream);
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tva-modal-backdrop.open .tva-modal-window {
+  transform: translateY(0) scale(1);
+}
+
+/* Subtle CRT scanlines */
+.tva-crt-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+  background-size: 100% 4px;
+  z-index: 5;
+  opacity: 0.32;
+}
+
+/* ==========================================================
+   A. TERMINAL HEADER & NOTIFICATIONS
+========================================================== */
+.tva-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #120D09;
+  border-bottom: 1.5px solid var(--border-brass);
+  z-index: 10;
+  position: relative;
+  gap: 12px;
+}
+
+.tva-header-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.tva-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 8px var(--amber-bright);
+  flex-shrink: 0;
+  animation: tvaPulse 2s infinite ease-in-out;
+}
+
+@keyframes tvaPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.tva-header-title {
+  font-family: var(--tva-font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper-cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tva-header-slash {
+  color: var(--amber-bright);
+  font-weight: 500;
+  margin: 0 0.15em;
+  opacity: 0.9;
+}
+
+.tva-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.tva-progress-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(232, 137, 43, 0.12);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 9px;
+  border-radius: var(--radius-sm);
+  font-family: var(--tva-font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-bright);
+}
+
+.tva-progress-pips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tva-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tva-pip.active {
+  background: var(--amber-bright);
+  box-shadow: 0 0 6px var(--amber-bright);
+}
+
+.tva-pip.completed {
+  background: var(--green-phosphor);
+  box-shadow: 0 0 6px var(--green-phosphor);
+}
+
+.tva-close-btn {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.tva-close-btn:hover {
+  color: var(--paper-cream);
+  border-color: var(--border-subtle);
+  background: rgba(239, 230, 210, 0.08);
+}
+
+.tva-close-btn:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 2px;
+}
+
+/* TVA Terminal Live Notification Broadcast */
+.tva-terminal-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: #120D09;
+  border-bottom: 1px solid rgba(217, 169, 58, 0.25);
+  font-family: var(--tva-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-cream);
+  z-index: 9;
+  position: relative;
+  min-height: 34px;
+  line-height: 1.4;
+  transition: background 0.2s ease;
+}
+
+.tva-terminal-notice:empty {
+  display: none;
+}
+
+.tva-terminal-notice::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 8px var(--amber-bright);
+  flex-shrink: 0;
+  animation: tvaPulse 2s infinite ease-in-out;
+}
+
+/* ==========================================================
+   MODAL BODY & VIEW CONTAINER
+========================================================== */
+.tva-modal-body {
+  padding: 22px 20px;
+  overflow-y: auto;
+  max-height: calc(90vh - 100px);
+  z-index: 6;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+.tva-modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+.tva-modal-body::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+
+/* ==========================================================
+   B. MAIN MISSION TITLES & C. STATUS METADATA
+========================================================== */
+.tva-view-meta {
+  font-family: var(--tva-font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber-bright);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tva-meta-slash {
+  color: var(--border-brass);
+  font-weight: 400;
+}
+
+.tva-view-heading {
+  font-family: var(--tva-font-display);
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.12;
+  color: var(--paper-cream);
+  text-transform: uppercase;
+  margin: 0 0 10px 0;
+  text-rendering: optimizeLegibility;
+}
+
+.tva-heading-separator {
+  color: var(--amber-bright);
+  font-family: var(--tva-font-mono);
+  font-weight: 500;
+  font-size: 0.72em;
+  vertical-align: middle;
+  margin: 0 0.15em;
+  opacity: 0.9;
+}
+
+/* ==========================================================
+   D. BODY TEXT & PUZZLE INSTRUCTIONS
+========================================================== */
+.tva-instructions {
+  font-family: var(--tva-font-body);
+  font-size: 0.95rem;
+  color: #DED3BF;
+  line-height: 1.55;
+  margin: 0 0 18px 0;
+  font-weight: 400;
+}
+
+/* Intro Mascot Box */
+.tva-intro-mascot-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(18, 13, 9, 0.75);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 18px;
+}
+
+.tva-mascot-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--border-brass);
+  background: #120D09;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9), 0 0 10px rgba(232, 137, 43, 0.25);
+}
+
+.tva-intro-mascot-video {
+  width: 110%;
+  height: 110%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.tva-intro-quote-card {
+  flex: 1;
+}
+
+.tva-intro-quote {
+  font-family: var(--tva-font-body);
+  font-size: 0.92rem;
+  color: var(--paper-cream);
+  line-height: 1.5;
+  margin: 0 0 8px 0;
+  font-weight: 400;
+}
+
+.tva-intro-signature {
+  font-family: var(--tva-font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--mustard-secondary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Status Readout Bar */
+.tva-status-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #120D09;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  font-family: var(--tva-font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.tva-readout-label {
+  color: var(--text-muted);
+}
+
+.tva-readout-val {
+  color: var(--amber-bright);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* ==========================================================
+   E. BUTTONS (STANDARDIZED & ACCESSIBLE)
+========================================================== */
+.tva-action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tva-primary-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 13px 24px;
+  background: linear-gradient(180deg, #E8892B 0%, #C46E18 100%);
+  border: 1.5px solid #FFBE70;
+  border-radius: var(--radius-sm);
+  color: #14100C;
+  font-family: var(--tva-font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.tva-primary-btn:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 0 20px rgba(232, 137, 43, 0.45), 0 4px 14px rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.tva-primary-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+.tva-primary-btn:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 3px;
+}
+
+.tva-secondary-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 16, 12, 0.7);
+  border: 1.5px solid var(--border-brass);
+  color: var(--paper-cream);
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  font-family: var(--tva-font-mono);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tva-secondary-btn:hover {
+  border-color: var(--amber-bright);
+  color: #FFF;
+  background: rgba(232, 137, 43, 0.12);
+  box-shadow: 0 0 12px rgba(232, 137, 43, 0.25);
+  transform: translateY(-1px);
+}
+
+.tva-secondary-btn:active {
+  transform: translateY(0);
+}
+
+.tva-secondary-btn:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 3px;
+}
+
+.tva-text-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 16, 12, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--tva-font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tva-text-action-btn:hover {
+  color: var(--amber-bright);
+  border-color: var(--border-brass);
+  background: rgba(232, 137, 43, 0.1);
+  box-shadow: 0 0 10px rgba(232, 137, 43, 0.2);
+}
+
+.tva-text-action-btn:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 2px;
+}
+
+.tva-view-subtext {
+  text-align: center;
+  font-family: var(--tva-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 14px;
+}
+
+/* ==========================================================
+   FEEDBACK BANNER (STATUS & VALIDATION)
+========================================================== */
+.tva-feedback-banner {
+  margin-top: 16px;
+  padding: 11px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(18, 14, 10, 0.95);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--tva-font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.4;
+  transition: all 0.25s ease;
+}
+
+.tva-feedback-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.tva-feedback-text {
+  flex: 1;
+}
+
+.tva-feedback-banner.status-success {
+  border-color: var(--green-phosphor);
+  color: var(--green-phosphor);
+  background: rgba(124, 255, 155, 0.09);
+  box-shadow: 0 0 16px rgba(124, 255, 155, 0.22);
+}
+
+.tva-feedback-banner.status-error {
+  border-color: #C8432F;
+  color: #FF8F80;
+  background: rgba(200, 67, 47, 0.1);
+  box-shadow: 0 0 12px rgba(200, 67, 47, 0.18);
+}
+
+.tva-feedback-banner.status-warning,
+.tva-feedback-banner.status-active {
+  border-color: var(--amber-bright);
+  color: var(--amber-bright);
+  background: rgba(232, 137, 43, 0.1);
+  box-shadow: 0 0 14px rgba(232, 137, 43, 0.2);
+}
+
+/* ==========================================================
+   MISSION 1: SPOT THE ANOMALY
+========================================================== */
+.tva-timelines-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tva-timeline-card {
+  width: 100%;
+  background: #14100C;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-sm);
+  padding: 11px 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.tva-timeline-card:hover {
+  border-color: var(--border-brass);
+  background: #19140E;
+}
+
+.tva-timeline-card:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 2px;
+}
+
+.tva-timeline-card.correct {
+  border-color: var(--green-phosphor);
+  background: rgba(124, 255, 155, 0.07);
+  box-shadow: 0 0 16px rgba(124, 255, 155, 0.25);
+}
+
+.tva-timeline-card.incorrect {
+  border-color: var(--stamp-red);
+  background: rgba(200, 67, 47, 0.08);
+  animation: tvaShake 0.4s ease;
+}
+
+@keyframes tvaShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.tva-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.tva-branch-tag {
+  font-family: var(--tva-font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--paper-cream);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tva-branch-status {
+  font-family: var(--tva-font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tva-branch-status.anomaly-flag {
+  color: var(--amber-bright);
+}
+
+.tva-timeline-svg-wrap {
+  width: 100%;
+}
+
+.tva-timeline-svg {
+  width: 100%;
+  height: 52px;
+  display: block;
+}
+
+.tva-tl-line {
+  stroke: var(--border-brass);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.tva-tl-line-anomaly {
+  stroke: #FF9D3B;
+  stroke-width: 2.5;
+  stroke-dasharray: 4 2;
+  fill: none;
+}
+
+.tva-tl-node {
+  fill: #1C150F;
+  stroke: var(--amber-bright);
+  stroke-width: 2.5;
+}
+
+.tva-tl-node-anomaly {
+  fill: #C8432F;
+  stroke: #FF9D3B;
+  stroke-width: 2;
+}
+
+.tva-tl-label {
+  fill: var(--text-dim);
+  font-family: var(--tva-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.tva-tl-label-err {
+  fill: #FF9D3B;
+  font-family: var(--tva-font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* ==========================================================
+   MISSION 2: CRACK ACCESS CODE
+========================================================== */
+.tva-classified-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #120D09;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-family: var(--tva-font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mustard-secondary);
+  transition: all 0.25s ease;
+}
+
+.tva-classified-badge.unlocked {
+  border-color: var(--green-phosphor);
+  color: var(--green-phosphor);
+  background: rgba(124, 255, 155, 0.08);
+  box-shadow: 0 0 12px rgba(124, 255, 155, 0.2);
+}
+
+.tva-lock-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.tva-lock-status {
+  flex: 1;
+}
+
+.tva-code-sequence-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #120D09;
+  border: 1.5px solid var(--border-brass);
+  border-radius: var(--radius-md);
+  padding: 16px 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.tva-seq-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #1A140E;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  min-width: 56px;
+}
+
+.tva-seq-item .tva-sym {
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--amber-bright);
+}
+
+.tva-seq-item .tva-sym-name {
+  font-family: var(--tva-font-mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tva-seq-item.tva-seq-mystery {
+  border-color: var(--amber-bright);
+  background: rgba(232, 137, 43, 0.15);
+  box-shadow: 0 0 10px rgba(232, 137, 43, 0.25);
+}
+
+.tva-seq-item.tva-seq-mystery .tva-sym {
+  color: var(--paper-cream);
+  font-weight: bold;
+}
+
+.tva-seq-arrow {
+  color: var(--border-brass);
+  font-size: 1.1rem;
+}
+
+.tva-clue-text {
+  font-family: var(--tva-font-body);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.tva-symbols-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.tva-symbol-btn {
+  background: #14100C;
+  border: 1.5px solid var(--border-dim);
+  border-radius: var(--radius-sm);
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.tva-symbol-btn:hover {
+  border-color: var(--border-brass);
+  background: #19140E;
+}
+
+.tva-symbol-btn:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 2px;
+}
+
+.tva-symbol-btn.correct {
+  border-color: var(--green-phosphor);
+  background: rgba(124, 255, 155, 0.08);
+  box-shadow: 0 0 16px rgba(124, 255, 155, 0.25);
+}
+
+.tva-symbol-btn.incorrect {
+  border-color: var(--stamp-red);
+  background: rgba(200, 67, 47, 0.08);
+  animation: tvaShake 0.4s ease;
+}
+
+.tva-symbol-icon {
+  font-size: 1.6rem;
+  color: var(--amber-bright);
+  line-height: 1;
+}
+
+.tva-symbol-label {
+  font-family: var(--tva-font-mono);
+  font-size: 0.76rem;
+  color: var(--paper-cream);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================
+   MISSION 3: STABILISE THE TIMELINE
+========================================================== */
+.tva-m3-sequence-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #120D09;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--tva-font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-bright);
+  margin-bottom: 20px;
+}
+
+.tva-m3-status-pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 6px var(--amber-bright);
+  flex-shrink: 0;
+}
+
+.tva-nodes-circuit-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 8px;
+  margin-bottom: 14px;
+}
+
+.tva-circuit-wire {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 50%;
+  height: 3px;
+  background: var(--border-dim);
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.tva-circuit-node {
+  position: relative;
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #14100C;
+  border: 2px solid var(--border-brass);
+  color: var(--paper-cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.tva-circuit-node:hover {
+  border-color: var(--amber-bright);
+  transform: scale(1.08);
+}
+
+.tva-circuit-node:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 3px;
+}
+
+.tva-node-inner {
+  font-family: var(--tva-font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tva-node-tag {
+  font-family: var(--tva-font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  position: absolute;
+  top: calc(100% + 5px);
+  white-space: nowrap;
+}
+
+/* Mission 3 Animations */
+.tva-circuit-node.pulse-active {
+  background: var(--amber-primary);
+  border-color: #FFF;
+  color: #14100C;
+  box-shadow: 0 0 20px var(--amber-bright), 0 0 40px var(--amber-glow);
+  transform: scale(1.15);
+}
+
+.tva-circuit-node.user-active {
+  background: var(--green-phosphor);
+  border-color: #FFF;
+  color: #14100C;
+  box-shadow: 0 0 16px var(--green-phosphor);
+  transform: scale(1.1);
+}
+
+.tva-circuit-node.user-error {
+  background: var(--stamp-red);
+  border-color: #FFF;
+  color: #FFF;
+  box-shadow: 0 0 16px var(--stamp-red);
+  animation: tvaShake 0.4s ease;
+}
+
+.tva-circuit-node.harmonic-success {
+  background: var(--amber-bright);
+  border-color: #FFF;
+  color: #14100C;
+  box-shadow: 0 0 24px var(--amber-bright), 0 0 40px var(--amber-glow);
+  animation: tvaHarmonic 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes tvaHarmonic {
+  from { transform: scale(1.08); filter: brightness(1); }
+  to { transform: scale(1.14); filter: brightness(1.3); }
+}
+
+.tva-m3-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+/* ==========================================================
+   COMPLETION VIEW: TVA INSPECTION REPORT
+========================================================== */
+.tva-complete-report-box {
+  background: #120D09;
+  border: 1.5px solid var(--border-brass);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  font-family: var(--tva-font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tva-report-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tva-report-divider {
+  height: 1px;
+  background: var(--border-dim);
+  margin: 4px 0;
+}
+
+.tva-rep-k {
+  color: var(--text-muted);
+}
+
+.tva-rep-v {
+  color: var(--paper-cream);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.tva-rep-v.highlight-green {
+  color: var(--green-phosphor);
+  text-shadow: 0 0 8px rgba(124, 255, 155, 0.35);
+}
+
+.tva-rep-v.highlight-amber {
+  color: var(--amber-bright);
+  text-shadow: 0 0 8px rgba(255, 157, 59, 0.35);
+}
+
+.tva-complete-actions {
+  margin-top: 18px;
+}
+
+/* ==========================================================
+   RESPONSIVE TYPOGRAPHY & LAYOUT ADJUSTMENTS
+========================================================== */
+@media (max-width: 480px) {
+  .tva-modal-window {
+    max-width: 100%;
+    border-radius: var(--radius-sm);
+  }
+
+  .tva-modal-header {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .tva-header-title {
+    font-size: 0.72rem;
+  }
+
+  .tva-modal-body {
+    padding: 18px 14px;
+  }
+
+  .tva-terminal-notice {
+    padding: 7px 14px;
+    font-size: 0.68rem;
+  }
+
+  .tva-view-heading {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+  }
+
+  .tva-view-meta {
+    font-size: 0.68rem;
+  }
+
+  .tva-instructions {
+    font-size: 0.88rem;
+    margin-bottom: 14px;
+  }
+
+  .tva-primary-btn {
+    padding: 12px 18px;
+    font-size: 0.84rem;
+  }
+
+  .tva-secondary-btn {
+    padding: 11px 16px;
+    font-size: 0.8rem;
+  }
+
+  .tva-nodes-circuit-container {
+    padding: 16px 2px;
+  }
+
+  .tva-circuit-node {
+    width: 48px;
+    height: 48px;
+  }
+
+  .tva-node-inner {
+    font-size: 1.15rem;
+  }
+
+  .tva-code-sequence-box {
+    gap: 6px;
+    padding: 12px 8px;
+  }
+
+  .tva-seq-item {
+    padding: 6px 8px;
+    min-width: 46px;
+  }
+}
+
+@media (max-width: 374px) {
+  .tva-modal-header {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .tva-header-title {
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+  }
+
+  .tva-progress-badge {
+    padding: 3px 6px;
+    font-size: 0.66rem;
+  }
+
+  .tva-view-heading {
+    font-size: 1.5rem;
+  }
+
+  .tva-circuit-node {
+    width: 42px;
+    height: 42px;
+  }
+
+  .tva-node-inner {
+    font-size: 1rem;
+  }
+
+  .tva-node-tag {
+    font-size: 0.52rem;
+  }
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tva-status-dot,
+  .tva-timeline-card.incorrect,
+  .tva-symbol-btn.incorrect,
+  .tva-circuit-node.user-error,
+  .tva-circuit-node.harmonic-success {
+    animation: none !important;
+  }
+  .tva-modal-backdrop,
+  .tva-modal-window {
+    transition: none !important;
+  }
 }
 
 /* ==========================================================
