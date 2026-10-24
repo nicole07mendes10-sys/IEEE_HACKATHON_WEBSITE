@@ -394,7 +394,7 @@
           this.transitionTo('MISSION_2');
         }, 900);
       } else {
-        // INCORRECT: Timeline A or C (linear timelines)
+        // INCORRECT: Timeline A (linear timeline)
         cardEl.classList.add('incorrect');
 
         if (feedbackBanner) {

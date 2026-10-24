@@ -20,9 +20,17 @@
     const onlySec = searchParams.get('only');
     if (onlySec) {
       document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('main > section').forEach(sec => {
-          if (sec.id !== onlySec) sec.style.display = 'none';
-        });
+        if (onlySec === 'domain-cta') {
+          document.querySelectorAll('main > section').forEach(sec => {
+            if (sec.id !== 'problems') sec.style.display = 'none';
+          });
+          const grid = document.querySelector('.domain-slots-grid');
+          if (grid) grid.style.display = 'none';
+        } else {
+          document.querySelectorAll('main > section').forEach(sec => {
+            if (sec.id !== onlySec) sec.style.display = 'none';
+          });
+        }
         const footer = document.querySelector('footer');
         if (footer && onlySec !== 'footer') footer.style.display = 'none';
       });
@@ -351,56 +359,6 @@
         <span class="nav-status-label">TEMPORAL LOG</span>
         <span class="nav-status-sep">//</span>
         <span class="nav-status-sec" id="nav-current-section-name">HOME</span>
-      </div>
-
-      <div class="nav-actions">
-        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Navigation" aria-expanded="false" aria-controls="mobile-nav-drawer">
-          <svg class="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-          <svg class="close-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Navigation Drawer -->
-    <div id="mobile-nav-drawer" class="mobile-nav-drawer" aria-hidden="true">
-      <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
-      <div class="mobile-nav-panel">
-        <div class="mobile-nav-header">
-          <div class="mobile-nav-title">
-            <span class="mobile-tva-dot"></span>
-            BUREAU DIRECTORY // NAV-77
-          </div>
-          <button id="mobile-nav-close" class="mobile-nav-close-btn" aria-label="Close navigation menu">✕</button>
-        </div>
-        <ul class="mobile-nav-links">
-          <li><a href="#hero" class="mobile-nav-link active"><span class="nav-sec-num">01</span><span class="nav-sec-name">Home // Overview</span></a></li>
-          <li><a href="#about" class="mobile-nav-link"><span class="nav-sec-num">02</span><span class="nav-sec-name">About Briefing</span></a></li>
-          <li><a href="#problems" class="mobile-nav-link"><span class="nav-sec-num">03</span><span class="nav-sec-name">Problem Statements</span></a></li>
-          <li><a href="#results" class="mobile-nav-link"><span class="nav-sec-num">04</span><span class="nav-sec-name">Selection Status</span></a></li>
-          <li><a href="#timeline" class="mobile-nav-link"><span class="nav-sec-num">05</span><span class="nav-sec-name">Event Timeline</span></a></li>
-          <li><a href="#registration" class="mobile-nav-link"><span class="nav-sec-num">06</span><span class="nav-sec-name">Registration</span></a></li>
-          <li><a href="#accommodation" class="mobile-nav-link"><span class="nav-sec-num">07</span><span class="nav-sec-name">Stay on Campus</span></a></li>
-          <li><a href="#judging" class="mobile-nav-link"><span class="nav-sec-num">08</span><span class="nav-sec-name">Judging & Recognition</span></a></li>
-          <li><a href="#sponsors" class="mobile-nav-link"><span class="nav-sec-num">09</span><span class="nav-sec-name">Sponsors & Partners</span></a></li>
-          <li><a href="#faq" class="mobile-nav-link"><span class="nav-sec-num">10</span><span class="nav-sec-name">Case Files (FAQ)</span></a></li>
-          <li><a href="#contact" class="mobile-nav-link"><span class="nav-sec-num">11</span><span class="nav-sec-name">Contact & Venue</span></a></li>
-        </ul>
-        <div class="mobile-nav-footer">
-          <button class="btn-bureau-brass open-case-file-trigger mobile-case-file-btn" style="width: 100%; justify-content: center;">
-            Open a Case File
-          </button>
-          <div class="mobile-nav-status">
-            <span>TIMELINE: STABLE</span>
-            <span>FREQ: 1.000 MHz</span>
-          </div>
-        </div>
       </div>
     </div>
   </header>
@@ -1787,9 +1745,9 @@
         <!-- ================= MISSION 1: SPOT THE ANOMALY ================= -->
         <section class="tva-view" id="tva-view-mission1" style="display: none;" aria-labelledby="tva-m1-heading">
           <div class="tva-view-meta">TVA // INSPECTION 01 OF 03</div>
-          <h2 class="tva-view-heading" id="tva-m1-heading">SPOT THE ANOMALY</h2>
+          <h2 class="tva-view-heading" id="tva-m1-heading">MISSION 1: SPOT THE ANOMALY.</h2>
           <p class="tva-instructions">
-            &ldquo;One of these timelines is unstable. Identify the incorrect branch.&rdquo;
+            TWO TIMELINES DISPLAYED.<br>IDENTIFY THE UNSTABLE BRANCH.
           </p>
 
           <div class="tva-timelines-grid" role="group" aria-label="Select the unstable timeline branch">
@@ -1845,31 +1803,6 @@
                   <text x="35" y="65" class="tva-tl-label" text-anchor="middle">NODE 01</text>
                   <text x="120" y="65" class="tva-tl-label" text-anchor="middle">NODE 02</text>
                   <text x="205" y="65" class="tva-tl-label" text-anchor="middle">NODE 03</text>
-                </svg>
-              </div>
-            </button>
-
-            <!-- Timeline C -->
-            <button
-              type="button"
-              class="tva-timeline-card"
-              id="tva-branch-c"
-              data-branch="C"
-              aria-label="Timeline C: Sequential linear connection"
-            >
-              <div class="tva-card-header">
-                <span class="tva-branch-tag">TIMELINE C</span>
-                <span class="tva-branch-status">STANDARD</span>
-              </div>
-              <div class="tva-timeline-svg-wrap">
-                <svg viewBox="0 0 240 70" class="tva-timeline-svg" aria-hidden="true">
-                  <line x1="20" y1="35" x2="220" y2="35" class="tva-tl-line"/>
-                  <circle cx="35" cy="35" r="7" class="tva-tl-node"/>
-                  <circle cx="120" cy="35" r="7" class="tva-tl-node"/>
-                  <circle cx="205" cy="35" r="7" class="tva-tl-node"/>
-                  <text x="35" y="58" class="tva-tl-label" text-anchor="middle">NODE 01</text>
-                  <text x="120" y="58" class="tva-tl-label" text-anchor="middle">NODE 02</text>
-                  <text x="205" y="58" class="tva-tl-label" text-anchor="middle">NODE 03</text>
                 </svg>
               </div>
             </button>

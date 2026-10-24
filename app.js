@@ -1628,17 +1628,6 @@ class OverclockApp {
       if (e) {
         e.preventDefault();
       }
-      const drawer = document.getElementById('mobile-nav-drawer');
-      if (drawer && drawer.classList.contains('open')) {
-        drawer.classList.remove('open');
-        drawer.setAttribute('aria-hidden', 'true');
-        const toggleBtn = document.getElementById('mobile-menu-toggle');
-        if (toggleBtn) {
-          toggleBtn.classList.remove('active');
-          toggleBtn.setAttribute('aria-expanded', 'false');
-        }
-        document.body.style.overflow = '';
-      }
       if (window.tvaInspectionGame) {
         this.playRelayClick(1100);
         window.tvaInspectionGame.open();

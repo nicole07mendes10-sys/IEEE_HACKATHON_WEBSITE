@@ -99,46 +99,58 @@
   }
 
   .nav-container {
-    padding: 0 16px;
+    padding: 0 70px 0 16px;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
   }
 
-  .brand-area {
-    gap: 6px;
+  .nav-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    max-width: 100%;
   }
 
   .brand-badge {
     font-size: 0.68rem;
     letter-spacing: 0.06em;
     padding-right: 8px;
+    border-right: 1px solid rgba(217, 169, 58, 0.35);
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  .brand-wordmark-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .brand-wordmark {
-    font-size: 1.32rem;
+    font-size: clamp(1.22rem, 4.4vw, 1.40rem);
     letter-spacing: 0.04em;
+    font-family: var(--font-display);
+    color: var(--amber-bright, #E8892B);
   }
 
-  .brand-subtext {
-    font-size: 0.90rem;
-  }
-
-  .nav-actions {
-    margin-right: 68px; /* Safe clearance away from corner dial */
+  .brand-year-tag {
+    font-size: 0.88rem;
+    font-family: var(--font-mono);
+    color: var(--paper-cream, #EFE6D2);
   }
 
   .nav-timeline-status,
-  .nav-desktop-cta {
-    display: none !important;
-  }
-
+  .nav-desktop-cta,
+  .nav-actions,
   .mobile-menu-toggle {
-    display: flex !important;
-    width: 38px;
-    height: 38px;
-    min-height: 44px;
-    min-width: 44px;
-    align-items: center;
-    justify-content: center;
+    display: none !important;
   }
 
   /* --- Temporal Clock Navigator (Upper-Right Instrument) --- */
@@ -548,6 +560,72 @@
     padding: 10px 12px;
     min-height: 44px;
     letter-spacing: 0.06em;
+  }
+
+  /* Secondary Registration CTA Banner (Domain Closing Card) */
+  .domain-closing-cta-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    padding: 22px 18px !important;
+    gap: 14px !important;
+    margin-top: 28px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    border: 1.5px solid var(--border-brass, #C89D42) !important;
+    border-radius: 6px !important;
+    background: rgba(26, 18, 12, 0.95) !important;
+  }
+
+  .domain-cta-content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .domain-cta-content .bureau-tag {
+    display: inline-block !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+    font-size: 0.70rem !important;
+    padding: 4px 10px !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 0.06em !important;
+    box-sizing: border-box !important;
+  }
+
+  .domain-cta-title {
+    font-size: clamp(1.25rem, 4.8vw, 1.65rem) !important;
+    line-height: 1.25 !important;
+    margin: 0 0 10px 0 !important;
+    width: 100% !important;
+    color: var(--paper-cream, #EFE6D2) !important;
+  }
+
+  .domain-cta-text {
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+    margin: 0 0 14px 0 !important;
+    width: 100% !important;
+    color: var(--text-dim, #C8B9A6) !important;
+  }
+
+  .domain-cta-action {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .domain-cta-action .btn-bureau-secondary {
+    width: 100% !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px 18px !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.06em !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
   }
 
   /* --- Section 04: The Shortlist --- */
@@ -1033,7 +1111,7 @@
   }
 
   .nav-container {
-    padding: 0 10px;
+    padding: 0 56px 0 10px;
   }
 
   .brand-wordmark {
@@ -1044,11 +1122,7 @@
   .brand-badge {
     font-size: 0.60rem;
     padding-right: 5px;
-    gap: 3px;
-  }
-
-  .nav-actions {
-    margin-right: 60px;
+    gap: 2px;
   }
 
   /* Ultra-Compact Clock Dial */
@@ -1125,5 +1199,27 @@
 
   .fee-amount-val {
     font-size: 1.4rem;
+  }
+
+  .domain-closing-cta-card {
+    padding: 16px 12px !important;
+  }
+
+  .domain-cta-content .bureau-tag {
+    font-size: 0.64rem !important;
+    padding: 3px 8px !important;
+  }
+
+  .domain-cta-title {
+    font-size: 1.15rem !important;
+  }
+
+  .domain-cta-text {
+    font-size: 0.82rem !important;
+  }
+
+  .domain-cta-action .btn-bureau-secondary {
+    font-size: 0.78rem !important;
+    padding: 10px 14px !important;
   }
 }
