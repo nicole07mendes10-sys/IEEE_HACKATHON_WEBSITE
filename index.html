@@ -76,172 +76,230 @@
   <div class="crt-overlay" aria-hidden="true"></div>
 
   <!-- ==========================================================
-       3. TVA TEMPORAL NAVIGATION RAIL (LEFT VIEWPORT INSTRUMENT)
+       3. TVA TEMPORAL CLOCK NAVIGATOR (PRECISION INSTRUMENT)
   ========================================================== -->
-  <nav id="tva-temporal-rail" class="tva-temporal-rail" aria-label="TVA Temporal Timeline Navigation">
-    <!-- Top Instrument Telemetry Header -->
-    <div class="rail-header" aria-hidden="true">
-      <div class="rail-telemetry-badge">
-        <span class="rail-pulse-pip"></span>
-        <span class="rail-telemetry-code">TL-77</span>
+  <!-- ==========================================================
+       3. TVA CORNER TEMPORAL CLOCK NAVIGATOR (PRECISION INSTRUMENT)
+       Compact quarter-circle anchored to upper-right corner.
+       Markers rotate with scrolling; click opens section directory.
+  ========================================================== -->
+  <aside id="temporal-clock-navigator" class="corner-clock-navigator" aria-label="TVA Temporal Navigation">
+    <!-- Clickable Precision Dial Trigger (Circular, anchored to top-right corner) -->
+    <button
+      type="button"
+      id="corner-dial-trigger"
+      class="corner-dial-trigger"
+      aria-expanded="false"
+      aria-haspopup="true"
+      aria-controls="corner-temporal-menu"
+      aria-label="Open section navigation"
+      title="Temporal Sector Navigator — Click to view directory"
+    >
+      <div class="corner-dial-stage">
+        <!-- Static Precision Outer Rings & Engraved Bezel -->
+        <svg class="corner-dial-svg" viewBox="0 0 200 200" aria-hidden="true">
+          <!-- Solid Opaque Base Plate Fill (#17120F / #1B1510) -->
+          <circle cx="100" cy="100" r="99" class="dial-svg-base-plate" fill="#17120F" />
+          <!-- Concentric Precision Dial Circles -->
+          <circle cx="100" cy="100" r="96" class="dial-svg-ring outer" />
+          <circle cx="100" cy="100" r="82" class="dial-svg-ring mid-dashed" />
+          <circle cx="100" cy="100" r="68" class="dial-svg-ring track" />
+          <circle cx="100" cy="100" r="46" class="dial-svg-ring inner-solid" />
+          <circle cx="100" cy="100" r="26" class="dial-svg-ring core" />
+
+          <!-- Precision Radial Tick Marks (Every 15deg and 30deg) -->
+          <g class="dial-ticks-group">
+            <line x1="100" y1="4" x2="100" y2="14" class="tick major" />
+            <line x1="100" y1="186" x2="100" y2="196" class="tick major" />
+            <line x1="4" y1="100" x2="14" y2="100" class="tick major" />
+            <line x1="186" y1="100" x2="196" y2="100" class="tick major" />
+            <line x1="32.13" y1="32.13" x2="39.2" y2="39.2" class="tick major" />
+            <line x1="167.87" y1="32.13" x2="160.8" y2="39.2" class="tick major" />
+            <line x1="32.13" y1="167.87" x2="39.2" y2="160.8" class="tick major" />
+            <line x1="167.87" y1="167.87" x2="160.8" y2="160.8" class="tick major" />
+            <line x1="148" y1="16.8" x2="143" y2="25.5" class="tick minor" />
+            <line x1="183.2" y1="52" x2="174.5" y2="57" class="tick minor" />
+            <line x1="183.2" y1="148" x2="174.5" y2="143" class="tick minor" />
+            <line x1="148" y1="183.2" x2="143" y2="174.5" class="tick minor" />
+            <line x1="52" y1="183.2" x2="57" y2="174.5" class="tick minor" />
+            <line x1="16.8" y1="148" x2="25.5" y2="143" class="tick minor" />
+            <line x1="16.8" y1="52" x2="25.5" y2="57" class="tick minor" />
+            <line x1="52" y1="16.8" x2="57" y2="25.5" class="tick minor" />
+          </g>
+        </svg>
+
+        <!-- Precision Clock Hand / Pointer (Originates at Center Pivot, Points at Active Section Marker) -->
+        <div class="corner-dial-pointer" id="corner-dial-pointer" aria-hidden="true">
+          <div class="pointer-needle"></div>
+          <div class="pointer-tip"></div>
+        </div>
+
+        <!-- 11 Section Markers Positioned Across Visible Arc (190deg to 260deg) -->
+        <div class="corner-markers-rotor" id="corner-markers-rotor" aria-hidden="true">
+          <span class="corner-rotor-marker active" data-section="hero" data-index="0" style="--base-angle: 190deg;" title="01 Home // Overview">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="about" data-index="1" style="--base-angle: 197deg;" title="02 About // Event Briefing">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="problems" data-index="2" style="--base-angle: 204deg;" title="03 Problem Domains">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="results" data-index="3" style="--base-angle: 211deg;" title="04 Selection Status">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="timeline" data-index="4" style="--base-angle: 218deg;" title="05 Event Timeline">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="registration" data-index="5" style="--base-angle: 225deg;" title="06 Registration Guidelines">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="accommodation" data-index="6" style="--base-angle: 232deg;" title="07 Campus Accommodation">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="judging" data-index="7" style="--base-angle: 239deg;" title="08 Judging & Recognition">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="sponsors" data-index="8" style="--base-angle: 246deg;" title="09 Sponsors & Partners">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="faq" data-index="9" style="--base-angle: 253deg;" title="10 Case Files // FAQs">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="contact" data-index="10" style="--base-angle: 260deg;" title="11 Contact & Venue Location">
+            <span class="marker-pip"></span>
+          </span>
+        </div>
+
+        <!-- Center Pivot Jewel & Brass Screw at the corner vertex -->
+        <div class="corner-dial-pivot" aria-hidden="true">
+          <div class="pivot-bezel"></div>
+          <div class="pivot-jewel"></div>
+        </div>
+
+        <!-- Subtle Alignment Radial Line in visible quadrant -->
+        <div class="corner-dial-ray" aria-hidden="true"></div>
       </div>
-      <div class="rail-chrono-mark">TEMPORAL</div>
-    </div>
+    </button>
 
-    <!-- The Vertical Timeline Spine & Interactive Nodes -->
-    <div class="rail-spine-container">
-      <!-- Background Guide Wire -->
-      <div class="rail-wire-bg" aria-hidden="true"></div>
-      
-      <!-- Illuminated Active Trace (dynamically scaled height) -->
-      <div class="rail-wire-active" id="rail-wire-active" aria-hidden="true"></div>
+    <!-- Expanded TVA Navigation Menu (Connected Golden-Line Directory) -->
+    <nav
+      id="corner-temporal-menu"
+      class="corner-temporal-menu"
+      aria-label="TVA Temporal Sector Directory"
+      hidden
+    >
+      <div class="temporal-directory-wrapper">
+        <div class="menu-header">
+          <div class="menu-header-badge">
+            <span class="menu-lamp live" aria-hidden="true"></span>
+            <span class="menu-header-title">TEMPORAL DIRECTORY</span>
+          </div>
+          <button
+            type="button"
+            class="menu-close-btn"
+            id="corner-menu-close-btn"
+            aria-label="Close section navigation"
+          >×</button>
+        </div>
 
-      <!-- Moving Temporal Pulse Runner -->
-      <div class="rail-wire-runner" id="rail-wire-runner" aria-hidden="true"></div>
-
-      <!-- 9 Connected Section Nodes -->
-      <ul class="rail-nodes-list" role="list">
-        <!-- Node 01: Hero / Home -->
-        <li class="rail-node-item">
-          <a href="#hero" class="rail-node active" data-section="hero" data-num="01" aria-label="Navigate to Section 01: Home">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">01</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">HOME</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 02: About -->
-        <li class="rail-node-item">
-          <a href="#about" class="rail-node" data-section="about" data-num="02" aria-label="Navigate to Section 02: About Briefing">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">02</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">ABOUT</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 03: Problem Statements -->
-        <li class="rail-node-item">
-          <a href="#problems" class="rail-node" data-section="problems" data-num="03" aria-label="Navigate to Section 03: Problem Statements">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">03</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">DOMAINS</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 04: Results / Shortlist -->
-        <li class="rail-node-item">
-          <a href="#results" class="rail-node" data-section="results" data-num="04" aria-label="Navigate to Section 04: Selection Status">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">04</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">RESULTS</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 05: Timeline -->
-        <li class="rail-node-item">
-          <a href="#timeline" class="rail-node" data-section="timeline" data-num="05" aria-label="Navigate to Section 05: Event Timeline">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">05</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">TIMELINE</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 06: Registration -->
-        <li class="rail-node-item">
-          <a href="#registration" class="rail-node" data-section="registration" data-num="06" aria-label="Navigate to Section 06: Registration">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">06</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">REGISTER</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 07: Sponsors -->
-        <li class="rail-node-item">
-          <a href="#sponsors" class="rail-node" data-section="sponsors" data-num="07" aria-label="Navigate to Section 07: Sponsors">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">07</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">SPONSORS</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 08: FAQ -->
-        <li class="rail-node-item">
-          <a href="#faq" class="rail-node" data-section="faq" data-num="08" aria-label="Navigate to Section 08: FAQ">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">08</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">FAQ</span>
-            </div>
-          </a>
-        </li>
-
-        <!-- Node 09: Contact -->
-        <li class="rail-node-item">
-          <a href="#contact" class="rail-node" data-section="contact" data-num="09" aria-label="Navigate to Section 09: Contact & Venue">
-            <span class="rail-node-reticle" aria-hidden="true">
-              <span class="rail-node-dot"></span>
-            </span>
-            <div class="rail-node-label" role="tooltip">
-              <span class="rail-label-num">09</span>
-              <span class="rail-label-sep">//</span>
-              <span class="rail-label-name">CONTACT</span>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Bottom Telemetry Instrument Footer -->
-    <div class="rail-footer" aria-hidden="true">
-      <div class="rail-sec-counter">
-        <span class="rail-sec-curr" id="rail-current-idx">01</span>
-        <span class="rail-sec-divider">/</span>
-        <span class="rail-sec-total">09</span>
+        <!-- Connected Golden-Line Spine List -->
+        <div class="temporal-spine-container">
+          <div class="temporal-golden-spine-line" aria-hidden="true"></div>
+          <ul class="temporal-sectors-spine-list" role="list">
+            <li class="temporal-spine-item">
+              <a href="#hero" class="sector-link active" data-section="hero">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">01</span>
+                <span class="sector-name">Home // Overview</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#about" class="sector-link" data-section="about">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">02</span>
+                <span class="sector-name">About // Event Briefing</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#problems" class="sector-link" data-section="problems">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">03</span>
+                <span class="sector-name">Problem Domains (5 Tracks)</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#results" class="sector-link" data-section="results">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">04</span>
+                <span class="sector-name">Selection Status & Shortlist</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#timeline" class="sector-link" data-section="timeline">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">05</span>
+                <span class="sector-name">Event Timeline (24 Hours)</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#registration" class="sector-link" data-section="registration">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">06</span>
+                <span class="sector-name">Registration Guidelines</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#accommodation" class="sector-link" data-section="accommodation">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">07</span>
+                <span class="sector-name">Campus Accommodation</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#judging" class="sector-link" data-section="judging">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">08</span>
+                <span class="sector-name">Judging & Recognition</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#sponsors" class="sector-link" data-section="sponsors">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">09</span>
+                <span class="sector-name">Sponsors & Partners</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#faq" class="sector-link" data-section="faq">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">10</span>
+                <span class="sector-name">Case Files // FAQs</span>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#contact" class="sector-link" data-section="contact">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <span class="nav-spine-branch" aria-hidden="true"></span>
+                <span class="sector-code">11</span>
+                <span class="sector-name">Contact & Venue Location</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="rail-status-pill">
-        <span class="rail-status-dot"></span>
-        <span class="rail-status-txt">STABLE</span>
-      </div>
-    </div>
-  </nav>
+    </nav>
+  </aside>
 
   <!-- ==========================================================
        4. NAVBAR — BRASS BUREAU NAMEPLATE BAR
@@ -268,13 +326,6 @@
       </div>
 
       <div class="nav-actions">
-        <button id="audio-toggle-btn" class="audio-toggle-btn" aria-label="Toggle Relay & Clock Sound FX">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path id="sound-icon-waves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          </svg>
-        </button>
-        <button class="btn-bureau-brass open-case-file-trigger nav-desktop-cta">Open a Case File</button>
         <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Mobile Navigation" aria-expanded="false" aria-controls="mobile-nav-drawer">
           <svg class="hamburger-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -307,9 +358,11 @@
           <li><a href="#results" class="mobile-nav-link"><span class="nav-sec-num">04</span><span class="nav-sec-name">Selection Status</span></a></li>
           <li><a href="#timeline" class="mobile-nav-link"><span class="nav-sec-num">05</span><span class="nav-sec-name">Event Timeline</span></a></li>
           <li><a href="#registration" class="mobile-nav-link"><span class="nav-sec-num">06</span><span class="nav-sec-name">Registration</span></a></li>
-          <li><a href="#sponsors" class="mobile-nav-link"><span class="nav-sec-num">07</span><span class="nav-sec-name">Sponsors & Partners</span></a></li>
-          <li><a href="#faq" class="mobile-nav-link"><span class="nav-sec-num">08</span><span class="nav-sec-name">Case Files (FAQ)</span></a></li>
-          <li><a href="#contact" class="mobile-nav-link"><span class="nav-sec-num">09</span><span class="nav-sec-name">Contact & Venue</span></a></li>
+          <li><a href="#accommodation" class="mobile-nav-link"><span class="nav-sec-num">07</span><span class="nav-sec-name">Stay on Campus</span></a></li>
+          <li><a href="#judging" class="mobile-nav-link"><span class="nav-sec-num">08</span><span class="nav-sec-name">Judging & Recognition</span></a></li>
+          <li><a href="#sponsors" class="mobile-nav-link"><span class="nav-sec-num">09</span><span class="nav-sec-name">Sponsors & Partners</span></a></li>
+          <li><a href="#faq" class="mobile-nav-link"><span class="nav-sec-num">10</span><span class="nav-sec-name">Case Files (FAQ)</span></a></li>
+          <li><a href="#contact" class="mobile-nav-link"><span class="nav-sec-num">11</span><span class="nav-sec-name">Contact & Venue</span></a></li>
         </ul>
         <div class="mobile-nav-footer">
           <button class="btn-bureau-brass open-case-file-trigger mobile-case-file-btn" style="width: 100%; justify-content: center;">
@@ -489,49 +542,6 @@
         </div>
       </div>
 
-      <!-- ======================================================
-           MINI PUZZLE: SYNC THE CLOCK (555 TIMER)
-      ====================================================== -->
-      <div class="puzzle-bureau-container">
-        <div class="bureau-tag amber">BUREAU BENCH // OPTIONAL PUZZLE</div>
-        <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--paper-cream); margin: 8px 0 18px;">Sync the Clock Oscillator</h3>
-        
-        <div class="puzzle-grid">
-          <div class="circuit-schematic-board">
-            <div class="ic-555-chip">
-              <span class="ic-label">NE555_TIMER // CLOCK PULSE GEN</span>
-              <span id="puzzle-led-indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #443; border: 1px solid var(--border-brass);"></span>
-            </div>
-
-            <div class="switches-control-row">
-              <div class="toggle-switch-unit" id="puzzle-sw-1" data-switch="1">
-                <span class="switch-indicator-led"></span>
-                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-cream);">SW_A (CAPACITOR BANK)</span>
-              </div>
-              <div class="toggle-switch-unit" id="puzzle-sw-2" data-switch="2">
-                <span class="switch-indicator-led"></span>
-                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-cream);">SW_B (DISCHARGE RESISTOR)</span>
-              </div>
-              <div class="toggle-switch-unit" id="puzzle-sw-3" data-switch="3">
-                <span class="switch-indicator-led"></span>
-                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-cream);">SW_C (CONTROL VOLTAGE)</span>
-              </div>
-            </div>
-
-            <div style="display: flex; gap: 16px; align-items: center; margin-top: 10px;">
-              <span class="puzzle-status-readout" id="puzzle-status">Status: Clock unsynchronized. Toggle switches to align frequency.</span>
-              <button id="puzzle-solution-btn" style="background: transparent; border: none; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); text-decoration: underline; cursor: pointer;">Show solution</button>
-            </div>
-          </div>
-
-          <div class="clock-sync-dial-wrap">
-            <div class="sync-clock-dial">
-              <div class="hand" id="sync-clock-hand" style="transform: rotate(0deg);"></div>
-            </div>
-            <button id="puzzle-unlocked-cta" class="btn-bureau-brass open-case-file-trigger" style="opacity: 0.5; pointer-events: none; margin-top: 6px;">Case File Locked</button>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ========================================================
@@ -762,6 +772,25 @@
       </div>
 
       <!-- ======================================================
+           SECONDARY REGISTRATION CTA BANNER (POST-DOMAINS ACTION)
+      ====================================================== -->
+      <div class="domain-closing-cta-card">
+        <div class="domain-cta-content">
+          <div class="bureau-tag amber">CROSS-SECTOR INITIATIVE // TIMELINE PROTOCOL</div>
+          <h3 class="domain-cta-title">Prepare Your Engineering Crew for OVERCLOCK 2027</h3>
+          <p class="domain-cta-text">
+            Five domains. 24 hours of real physical circuit wiring, embedded programming, and hardware deployment. Assemble your team and prepare for official registration on Unstop.
+          </p>
+        </div>
+        <div class="domain-cta-action">
+          <a href="#registration" class="btn-bureau-secondary">
+            <span>View Registration Guidelines</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- ======================================================
            PHASE 7: DETAILED PROBLEM-STATEMENT COMPONENT TEMPLATE
            Structured data/DOM template ready to render official
            specifications upon release without exposing fake content.
@@ -885,75 +914,140 @@
         <p class="section-subtext">Chronological progression of OVERCLOCK 2027. Milestones unrolled along the master temporal track.</p>
       </div>
 
-      <div class="timeline-reel-deck">
-        <div class="reel-spools-header">
-          <div class="spool-graphic" aria-hidden="true"></div>
-          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--amber-bright); letter-spacing: 0.1em; text-align: center;">
-            35MM MAGNETIC REEL // MASTER TIMELINE TAPE
-          </div>
-          <div class="spool-graphic" aria-hidden="true"></div>
+      <!-- TVA Chronological Event Timeline (Connected Progression Sequence) -->
+      <div class="tva-chronological-timeline" id="tva-chronological-timeline">
+        <!-- Continuous Golden Timeline Spine Track -->
+        <div class="timeline-spine-track" aria-hidden="true">
+          <div class="timeline-spine-base"></div>
+          <div class="timeline-spine-progress" id="timeline-spine-progress"></div>
         </div>
 
-        <div class="film-strip-track">
-          <!-- Frame 1 -->
-          <div class="film-frame-card">
-            <div class="frame-sprocket-holes">
-              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+        <!-- 5 Chronological Milestone Checkpoints -->
+        <div class="timeline-milestones-list">
+          <!-- Milestone 01 (Left on desktop) -->
+          <article class="timeline-milestone-item milestone-left" data-milestone="1">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
             </div>
-            <div class="frame-phase-tag">MILESTONE 01</div>
-            <h3 class="frame-title">Registration Opens</h3>
-            <div class="frame-date">01 November 2026</div>
-            <p class="frame-description">Intake portal opens for builder registration and team onboarding.</p>
-            <div class="frame-stamp-badge">CONFIRMED DATE</div>
-          </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 01</span>
+                <span class="milestone-status-stamp">CONFIRMED DATE</span>
+              </div>
+              <h3 class="milestone-title">Registration Opens</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-text">01 November 2026</span>
+              </div>
+              <p class="milestone-description">Intake portal opens for builder registration and team onboarding.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-01</span>
+              </div>
+            </div>
+          </article>
 
-          <!-- Frame 2 -->
-          <div class="film-frame-card">
-            <div class="frame-sprocket-holes">
-              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+          <!-- Milestone 02 (Right on desktop) -->
+          <article class="timeline-milestone-item milestone-right" data-milestone="2">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
             </div>
-            <div class="frame-phase-tag">MILESTONE 02</div>
-            <h3 class="frame-title">Initial Problem Statements Released</h3>
-            <div class="frame-date">01 December 2026</div>
-            <p class="frame-description">Domain challenges and initial problem statements published across the five sectors.</p>
-            <div class="frame-stamp-badge">CONFIRMED DATE</div>
-          </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 02</span>
+                <span class="milestone-status-stamp">CONFIRMED DATE</span>
+              </div>
+              <h3 class="milestone-title">Initial Problem Statements Released</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-text">01 December 2026</span>
+              </div>
+              <p class="milestone-description">Domain challenges and initial problem statements published across the five sectors.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-02</span>
+              </div>
+            </div>
+          </article>
 
-          <!-- Frame 3 -->
-          <div class="film-frame-card">
-            <div class="frame-sprocket-holes">
-              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+          <!-- Milestone 03 (Left on desktop) -->
+          <article class="timeline-milestone-item milestone-left" data-milestone="3">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
             </div>
-            <div class="frame-phase-tag">MILESTONE 03</div>
-            <h3 class="frame-title">PPT Submission Window</h3>
-            <div class="frame-date">10–15 December 2026</div>
-            <p class="frame-description">Five-day window for teams to submit conceptual hardware presentations.</p>
-            <div class="frame-stamp-badge">5-DAY WINDOW</div>
-          </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 03</span>
+                <span class="milestone-status-stamp window-stamp">5-DAY WINDOW</span>
+              </div>
+              <h3 class="milestone-title">PPT Submission Window</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-text">10–15 December 2026</span>
+              </div>
+              <p class="milestone-description">Five-day window for teams to submit conceptual hardware presentations.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-03</span>
+              </div>
+            </div>
+          </article>
 
-          <!-- Frame 4 -->
-          <div class="film-frame-card">
-            <div class="frame-sprocket-holes">
-              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+          <!-- Milestone 04 (Right on desktop) -->
+          <article class="timeline-milestone-item milestone-right" data-milestone="4">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
             </div>
-            <div class="frame-phase-tag">MILESTONE 04</div>
-            <h3 class="frame-title">Shortlisted Teams Announced</h3>
-            <div class="frame-date">22 December 2026</div>
-            <p class="frame-description">Official publication of teams selected for the on-campus build phase.</p>
-            <div class="frame-stamp-badge">CONFIRMED DATE</div>
-          </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 04</span>
+                <span class="milestone-status-stamp">CONFIRMED DATE</span>
+              </div>
+              <h3 class="milestone-title">Shortlisted Teams Announced</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-text">22 December 2026</span>
+              </div>
+              <p class="milestone-description">Official publication of teams selected for the on-campus build phase.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-04</span>
+              </div>
+            </div>
+          </article>
 
-          <!-- Frame 5 -->
-          <div class="film-frame-card active-phase">
-            <div class="frame-sprocket-holes">
-              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+          <!-- Milestone 05 (Left on desktop, final build target) -->
+          <article class="timeline-milestone-item milestone-left final-phase" data-milestone="5">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
             </div>
-            <div class="frame-phase-tag" style="color: var(--amber-bright); font-weight: bold;">MILESTONE 05</div>
-            <h3 class="frame-title">Final Problem Statement Released</h3>
-            <div class="frame-date">22 January 2027</div>
-            <p class="frame-description">Final problem statement released as scheduled for the physical engineering phase.</p>
-            <div class="frame-stamp-badge" style="border-color: var(--amber-bright); color: var(--amber-bright);">FINAL STATEMENT</div>
-          </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num highlight">MILESTONE 05</span>
+                <span class="milestone-status-stamp final-stamp">FINAL STATEMENT</span>
+              </div>
+              <h3 class="milestone-title">Final Problem Statement Released</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-text">22 January 2027</span>
+              </div>
+              <p class="milestone-description">Final problem statement released as scheduled for the physical engineering phase.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-05 · TARGET BUILD</span>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -982,7 +1076,19 @@
             <div class="reg-date-headline">01 NOVEMBER 2026</div>
             <p class="reg-helper-note">The official registration portal activates on 01 November 2026. Pre-register through the case intake terminal below to receive instant launch notification.</p>
 
-            <div class="reg-actions-row" style="margin-top: 24px;">
+            <div class="reg-actions-row" style="margin-top: 24px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+              <!-- Primary Registration Intake Call-To-Action (Consolidated) -->
+              <div class="registration-cta-block" data-registration-component>
+                <button type="button" id="primary-register-btn" class="btn-registration-cta" disabled aria-disabled="true" title="Registration link pending official Unstop launch">
+                  <span class="btn-reg-pip" aria-hidden="true"></span>
+                  <span class="btn-reg-text">REGISTER NOW</span>
+                  <span class="btn-reg-arrow" aria-hidden="true">↗</span>
+                </button>
+                <div class="registration-status-bar">
+                  <span class="status-lamp-mini pending" aria-hidden="true"></span>
+                  <span class="registration-status-text">REGISTRATION PORTAL // LINK PENDING</span>
+                </div>
+              </div>
               <button class="btn-bureau-brass open-case-file-trigger">Open a Case File / Pre-Register</button>
             </div>
           </div>
@@ -1354,57 +1460,146 @@
   </main>
 
   <!-- ==========================================================
-       12. CLOSING SECTION & FOOTER (FILING CABINET DRAWER)
+       12. FINAL TRANSMISSION // OVERCLOCK 2027 (EVENT FOOTER)
   ========================================================== -->
-  <footer id="closing" class="filing-cabinet-footer bureau-section" data-section-num="12">
+  <footer id="closing" class="tva-event-footer bureau-section" data-section-num="12">
     <div class="footer-inner-container">
-      <div class="filing-drawer-box">
-        <div class="drawer-pull-handle"></div>
+      <!-- Section Header -->
+      <div class="footer-transmission-header">
+        <div class="bureau-tag amber">FINAL TRANSMISSION // CHECKPOINT 12</div>
+        <h2 class="footer-main-heading">FINAL TRANSMISSION // OVERCLOCK 2027</h2>
+        <p class="footer-lead-text">
+          A national-level 24-hour physical hardware engineering hackathon organised by the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology, Vashi. Build before time runs out.
+        </p>
+      </div>
 
-        <div class="cabinet-tabs-grid">
-          <a href="#hero" class="cabinet-index-tab">PIN 1: HOME</a>
-          <a href="#about" class="cabinet-index-tab">PIN 2: ABOUT</a>
-          <a href="#problems" class="cabinet-index-tab">PIN 3: PROBLEMS</a>
-          <a href="#results" class="cabinet-index-tab">PIN 4: RESULTS</a>
-          <a href="#timeline" class="cabinet-index-tab">PIN 5: TIMELINE</a>
-          <a href="#registration" class="cabinet-index-tab">PIN 6: REGISTER</a>
-          <a href="#accommodation" class="cabinet-index-tab">PIN 7: QUARTERS</a>
-          <a href="#judging" class="cabinet-index-tab">PIN 8: JUDGING</a>
-          <a href="#sponsors" class="cabinet-index-tab">PIN 9: SPONSORS</a>
-          <a href="#faq" class="cabinet-index-tab">PIN 10: FAQ</a>
-          <a href="#contact" class="cabinet-index-tab">PIN 11: CONTACT</a>
-          <a href="#hero" class="cabinet-index-tab">PIN 12: TOP</a>
+      <!-- Main Footer Grid: 2 Content Pillars (Location/Map & Crew) -->
+      <div class="footer-control-grid footer-simplified-grid">
+        <!-- Panel 1: EVENT LOCATION / MAP (Preserved) -->
+        <div class="footer-panel footer-venue-panel">
+          <div class="panel-header-label">
+            <span class="panel-lamp"></span>
+            <span>LOCATION // EVENT VENUE</span>
+          </div>
+          
+          <!-- Map Preview Container -->
+          <div class="footer-map-card">
+            <div class="map-viewport-frame">
+              <iframe
+                src="https://maps.google.com/maps?q=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi+Navi+Mumbai&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+                class="footer-map-embed"
+                loading="lazy"
+                title="Fr. C. Rodrigues Institute of Technology Vashi Campus Location Map"
+                aria-label="Map showing campus location of FCRIT, Sector 9A, Vashi, Navi Mumbai">
+              </iframe>
+              <div class="map-frame-reticle" aria-hidden="true"></div>
+            </div>
+            <div class="venue-info-box">
+              <div class="venue-name">Fr. C. Rodrigues Institute of Technology</div>
+              <div class="venue-address">
+                Agnel Technical Education Complex, Sector 9A, Vashi, Navi Mumbai, Maharashtra 400703
+              </div>
+              <div class="venue-action-bar">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&amp;query=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi+Navi+Mumbai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-open-maps"
+                  aria-label="Open FCRIT Vashi in Google Maps in a new tab"
+                >
+                  <span class="maps-icon" aria-hidden="true">📍</span>
+                  <span>OPEN IN MAPS</span>
+                  <span class="maps-arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="center-timeline-complete-card">
-          <div class="complete-title">OVERCLOCK 2027 — FCRIT × IEEE STUDENT BRANCH</div>
-          <p style="font-family: var(--font-typewriter); color: var(--text-muted); margin-top: 8px;">
-            All Bureau machine cycles synchronized. Build before time runs out.
+        <!-- Panel 2: THE CREW / EVENT HEADS (Preserved) -->
+        <div class="footer-panel footer-crew-panel">
+          <div class="panel-header-label">
+            <span class="panel-lamp"></span>
+            <span>THE CREW // EVENT HEADS</span>
+          </div>
+          <p class="crew-intro-note">
+            Core organizing committee and event leads for OVERCLOCK 2027.
           </p>
-          <div style="display: flex; gap: 14px; justify-content: center; margin-top: 18px; flex-wrap: wrap;">
-            <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
-            <a href="#hero" class="btn-bureau-secondary">Return to Top ↑</a>
+          <div class="crew-roster-grid" id="footer-crew-roster">
+            <!-- Chairperson -->
+            <div class="crew-roster-card">
+              <div class="crew-role">Chairperson</div>
+              <div class="crew-name">Krishna Jaiswar</div>
+              <div class="crew-phone">
+                <a href="tel:+919082611721" class="crew-phone-link" aria-label="Call Krishna Jaiswar at +91 90826 11721">
+                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-number">+91 90826 11721</span>
+                </a>
+              </div>
+            </div>
+            <!-- Vice Chairperson -->
+            <div class="crew-roster-card">
+              <div class="crew-role">Vice Chairperson</div>
+              <div class="crew-name">Yash Bandkar</div>
+              <div class="crew-phone">
+                <a href="tel:+917738707573" class="crew-phone-link" aria-label="Call Yash Bandkar at +91 77387 07573">
+                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-number">+91 77387 07573</span>
+                </a>
+              </div>
+            </div>
+            <!-- Secretary -->
+            <div class="crew-roster-card">
+              <div class="crew-role">Secretary</div>
+              <div class="crew-name">Sujit Ratan</div>
+              <div class="crew-phone">
+                <a href="tel:+918591273903" class="crew-phone-link" aria-label="Call Sujit Ratan at +91 85912 73903">
+                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-number">+91 85912 73903</span>
+                </a>
+              </div>
+            </div>
+            <!-- Technical Head -->
+            <div class="crew-roster-card">
+              <div class="crew-role">Technical Head</div>
+              <div class="crew-name">Nicole Mendes</div>
+              <div class="crew-phone">
+                <a href="tel:+919822009126" class="crew-phone-link" aria-label="Call Nicole Mendes at +91 98220 09126">
+                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-number">+91 98220 09126</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="footer-single-attribution">
-        Organised by the IEEE Student Branch, Fr. C. Rodrigues Institute of Technology, Vashi, Navi Mumbai.
+      <!-- Single Footer Navigation Action: BACK TO START ↑ -->
+      <div class="footer-action-bar-single">
+        <a href="#hero" class="btn-back-to-start" id="footer-back-to-start" aria-label="Back to start of page">
+          <span class="btn-bts-text">BACK TO START</span>
+          <span class="btn-bts-arrow" aria-hidden="true">↑</span>
+        </a>
+      </div>
+
+      <!-- Footer Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <div class="bottom-bar-left">
+          <span class="brand-tag">OVERCLOCK 2027</span>
+          <span class="bar-divider">//</span>
+          <span class="attrib-tag">Organised by IEEE Student Branch, Fr. C. Rodrigues Institute of Technology, Vashi, Navi Mumbai.</span>
+        </div>
+        <div class="bottom-bar-center">
+          <span class="copyright-tag">© 2026–2027 IEEE Student Branch FCRIT. All rights reserved.</span>
+        </div>
+        <div class="bottom-bar-right">
+          <span class="status-pip-pulse" aria-hidden="true"></span>
+          <span class="system-status-tag">SYSTEM STATUS // STABLE</span>
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- ==========================================================
-       CORNER HUD (TERMINAL-STYLE STATUS INDICATOR)
-  ========================================================== -->
-  <aside class="corner-bureau-hud" id="corner-bureau-hud" aria-live="off">
-    <span class="hud-pulse-dot" id="hud-pulse-dot"></span>
-    <span id="hud-section-label">SEC 01/08: HERO</span>
-    <span class="hud-sep">·</span>
-    <span class="hud-status-text">TIMELINE STABLE</span>
-    <span class="hud-sep">·</span>
-    <span id="hud-live-clock">00:00:00</span>
-  </aside>
 
   <!-- ==========================================================
        MISS MINUTES ANIMATED OVERLAY (CONCEALING GEMINI WATERMARK)

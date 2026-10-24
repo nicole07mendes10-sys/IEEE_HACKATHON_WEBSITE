@@ -1,4 +1,42 @@
 /**
+ * OVERCLOCK 2027 — CENTRAL CONFIGURATION
+ * Connect official Unstop URL when live, update crew names, or customize status tags.
+ */
+window.OVERCLOCK_CONFIG = {
+  // When official Unstop registration URL is available, set it here (e.g. "https://unstop.com/..."):
+  registrationUrl: null,
+  registrationPendingStatus: "REGISTRATION PORTAL // LINK PENDING",
+  registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE"
+};
+
+window.OVERCLOCK_CREW = [
+  {
+    role: "Chairperson",
+    name: "Krishna Jaiswar",
+    phone: "+91 90826 11721",
+    tel: "tel:+919082611721"
+  },
+  {
+    role: "Vice Chairperson",
+    name: "Yash Bandkar",
+    phone: "+91 77387 07573",
+    tel: "tel:+917738707573"
+  },
+  {
+    role: "Secretary",
+    name: "Sujit Ratan",
+    phone: "+91 85912 73903",
+    tel: "tel:+918591273903"
+  },
+  {
+    role: "Technical Head",
+    name: "Nicole Mendes",
+    phone: "+91 98220 09126",
+    tel: "tel:+919822009126"
+  }
+];
+
+/**
  * OVERCLOCK 2027 — APPLICATION LOGIC & BUREAU INTERACTIVITY
  * FCRIT × IEEE Student Branch
  * Features:
@@ -636,15 +674,17 @@ class OverclockApp {
     this.currentActiveSection = 'hero';
     this.countdownStarted = false;
     this.sectionLabels = {
-      'hero': 'SEC 01/09: HERO',
-      'about': 'SEC 02/09: ABOUT',
-      'problems': 'SEC 03/09: PROBLEMS',
-      'results': 'SEC 04/09: RESULTS',
-      'timeline': 'SEC 05/09: TIMELINE',
-      'registration': 'SEC 06/09: REGISTRATION',
-      'sponsors': 'SEC 07/09: SPONSORS',
-      'faq': 'SEC 08/09: FAQ',
-      'contact': 'SEC 09/09: CONTACT'
+      'hero': 'SEC 01/11: HERO',
+      'about': 'SEC 02/11: ABOUT',
+      'problems': 'SEC 03/11: DOMAINS',
+      'results': 'SEC 04/11: RESULTS',
+      'timeline': 'SEC 05/11: TIMELINE',
+      'registration': 'SEC 06/11: REGISTER',
+      'accommodation': 'SEC 07/11: QUARTERS',
+      'judging': 'SEC 08/11: JUDGING',
+      'sponsors': 'SEC 09/11: SPONSORS',
+      'faq': 'SEC 10/11: FAQ',
+      'contact': 'SEC 11/11: CONTACT'
     };
 
     this.init();
@@ -654,11 +694,12 @@ class OverclockApp {
     this.setupAudio();
     this.setupBootSequence();
     this.setupHeroClock();
-    this.setupPrimeTimeline();
-    this.setupCornerHUD();
+    this.setupTemporalClockNavigator();
+    this.setupTimelineReveals();
     this.setupScrollAnimations();
     this.spatialController = new BureauSpatialScrollController(this);
-    this.setupPuzzle();
+    this.setupRegistrationCTA();
+    this.setupFooterCrew();
     this.setupSponsorsSection();
     this.setupFAQ();
     this.setupModals();
@@ -831,57 +872,207 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     4. TVA TEMPORAL NAVIGATION RAIL & TIMELINE TRACKER
+     4. TVA CORNER TEMPORAL CLOCK NAVIGATOR (PRECISION INSTRUMENT)
+     Anchored to upper-right corner. 1/4 visible circle.
+     Inner markers rotate with scrolling. Clicking opens sector directory.
   ========================================================== */
-  setupPrimeTimeline() {
-    const sectionIds = ['hero', 'about', 'problems', 'results', 'timeline', 'registration', 'sponsors', 'faq', 'contact'];
+  setupTemporalClockNavigator() {
+    const sectionIds = [
+      'hero',
+      'about',
+      'problems',
+      'results',
+      'timeline',
+      'registration',
+      'accommodation',
+      'judging',
+      'sponsors',
+      'faq',
+      'contact'
+    ];
     const sectionElements = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
     const allSections = Array.from(document.querySelectorAll('.bureau-section'));
-    const railNodes = Array.from(document.querySelectorAll('.rail-node'));
-    const spineContainer = document.querySelector('.rail-spine-container');
-    const wireActive = document.getElementById('rail-wire-active');
-    const wireRunner = document.getElementById('rail-wire-runner');
-    const currentIdxEl = document.getElementById('rail-current-idx');
+    const navContainer = document.getElementById('temporal-clock-navigator');
+    const dialTrigger = document.getElementById('corner-dial-trigger');
+    const dialPointer = document.getElementById('corner-dial-pointer');
+    const markersRotor = document.getElementById('corner-markers-rotor');
+    const dialMarkers = Array.from(document.querySelectorAll('.corner-rotor-marker'));
+    const temporalMenu = document.getElementById('corner-temporal-menu');
+    const menuCloseBtn = document.getElementById('corner-menu-close-btn');
+    const sectorLinks = Array.from(document.querySelectorAll('.corner-temporal-menu .sector-link'));
+    const menuCounter = document.getElementById('menu-active-counter');
     const navStatusSec = document.getElementById('nav-current-section-name');
     const mobileNavLinks = Array.from(document.querySelectorAll('.mobile-nav-link'));
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const backToStartBtn = document.getElementById('footer-back-to-start');
+
+    // 11 section marker angles spanning the visible bottom-left quadrant (190deg to 260deg)
+    const markerAngles = [190, 197, 204, 211, 218, 225, 232, 239, 246, 253, 260];
 
     const sectionLabelsMap = {
-      'hero': 'HOME',
-      'about': 'ABOUT',
+      'hero': 'HOME // OVERVIEW',
+      'about': 'ABOUT BRIEFING',
       'problems': 'PROBLEM STATEMENTS',
-      'results': 'RESULTS',
-      'timeline': 'TIMELINE',
+      'results': 'SELECTION STATUS',
+      'timeline': 'EVENT TIMELINE',
       'registration': 'REGISTRATION',
-      'sponsors': 'SPONSORS',
-      'faq': 'FAQ',
-      'contact': 'CONTACT'
+      'accommodation': 'STAY ON CAMPUS',
+      'judging': 'JUDGING & RECOGNITION',
+      'sponsors': 'SPONSORS & PARTNERS',
+      'faq': 'CASE FILES (FAQ)',
+      'contact': 'CONTACT & VENUE'
     };
 
-    // Smooth-scroll click interaction for rail nodes
-    railNodes.forEach((node) => {
-      node.addEventListener('click', (e) => {
+    // Toggle expanded section directory menu
+    let isMenuOpen = false;
+
+    const openMenu = () => {
+      if (isMenuOpen || !temporalMenu) return;
+      isMenuOpen = true;
+      temporalMenu.removeAttribute('hidden');
+      void temporalMenu.offsetWidth;
+      temporalMenu.classList.add('is-open');
+      if (dialTrigger) {
+        dialTrigger.setAttribute('aria-expanded', 'true');
+        dialTrigger.setAttribute('aria-label', 'Close section navigation');
+      }
+      this.playRelayClick(1020);
+    };
+
+    const closeMenu = () => {
+      if (!isMenuOpen || !temporalMenu) return;
+      isMenuOpen = false;
+      temporalMenu.classList.remove('is-open');
+      if (dialTrigger) {
+        dialTrigger.setAttribute('aria-expanded', 'false');
+        dialTrigger.setAttribute('aria-label', 'Open section navigation');
+      }
+      setTimeout(() => {
+        if (!isMenuOpen) {
+          temporalMenu.setAttribute('hidden', '');
+        }
+      }, 220);
+    };
+
+    const toggleMenu = () => {
+      if (isMenuOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    };
+
+    if (dialTrigger) {
+      dialTrigger.addEventListener('click', (e) => {
         e.preventDefault();
-        const targetHref = node.getAttribute('href');
-        const targetSec = document.querySelector(targetHref);
+        e.stopPropagation();
+        toggleMenu();
+      });
+    }
+
+    if (menuCloseBtn) {
+      menuCloseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeMenu();
+        if (dialTrigger) dialTrigger.focus();
+      });
+    }
+
+    // Dismiss on outside click
+    document.addEventListener('click', (e) => {
+      if (isMenuOpen && navContainer && !navContainer.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    // Dismiss on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        closeMenu();
+        if (dialTrigger) dialTrigger.focus();
+      }
+    });
+
+    // Sector link smooth-scroll click interaction (Syncs clock pointer and marker highlight)
+    sectorLinks.forEach((link, idx) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetSecId = link.getAttribute('data-section');
+        const targetSec = document.getElementById(targetSecId);
+
+        // Immediately update pointer angle and active marker
+        if (dialPointer && markerAngles[idx] !== undefined) {
+          dialPointer.style.transform = `rotate(${markerAngles[idx]}deg)`;
+        }
+        dialMarkers.forEach((marker, mIdx) => {
+          if (mIdx === idx) {
+            marker.classList.add('active');
+          } else {
+            marker.classList.remove('active');
+          }
+        });
+        sectorLinks.forEach((l, lIdx) => {
+          if (lIdx === idx) {
+            l.classList.add('active');
+            l.setAttribute('aria-current', 'true');
+          } else {
+            l.classList.remove('active');
+            l.removeAttribute('aria-current');
+          }
+        });
+
+        closeMenu();
         if (targetSec) {
           this.playRelayClick(880);
-          targetSec.scrollIntoView({ behavior: 'smooth' });
+          targetSec.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
         }
       });
     });
 
+    // Footer BACK TO START single navigation action
+    if (backToStartBtn) {
+      backToStartBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const heroSec = document.getElementById('hero');
+        if (heroSec) {
+          heroSec.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        } else {
+          window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        }
+        // Update dial pointer to Home (190deg)
+        if (dialPointer) {
+          dialPointer.style.transform = 'rotate(190deg)';
+        }
+        dialMarkers.forEach((m, mIdx) => {
+          if (mIdx === 0) m.classList.add('active');
+          else m.classList.remove('active');
+        });
+        sectorLinks.forEach((l, lIdx) => {
+          if (lIdx === 0) {
+            l.classList.add('active');
+            l.setAttribute('aria-current', 'true');
+          } else {
+            l.classList.remove('active');
+            l.removeAttribute('aria-current');
+          }
+        });
+      });
+    }
+
+    // Scroll state observer: updates active section, pointer angle, marker pulse & timeline progress
     const updateScrollState = () => {
-      const scrollY = window.scrollY;
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
       const viewportHeight = window.innerHeight;
       const scrollBottom = scrollY + viewportHeight;
       const docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
 
-      // Determine active section index bidirectionally
+      // Determine active section index
       let activeIdx = 0;
 
       if (scrollY < 120) {
         activeIdx = 0;
-      } else if (scrollBottom >= docHeight - 50) {
+      } else if (scrollBottom >= docHeight - 60) {
         activeIdx = sectionElements.length - 1;
       } else {
         const triggerLine = viewportHeight * 0.38;
@@ -895,7 +1086,7 @@ class OverclockApp {
             minDistance = 0;
           } else {
             const dist = Math.abs(rect.top - triggerLine);
-            if (dist < minDistance && rect.top <= triggerLine + 200) {
+            if (dist < minDistance && rect.top <= triggerLine + 220) {
               minDistance = dist;
               closestIdx = idx;
             }
@@ -923,24 +1114,33 @@ class OverclockApp {
         }
       });
 
-      // Update rail nodes states (active, passed, inactive)
-      railNodes.forEach((node, idx) => {
+      // Update precision clock hand / pointer angle to track active section
+      if (dialPointer) {
+        const targetAngle = markerAngles[activeIdx] !== undefined ? markerAngles[activeIdx] : 190;
+        dialPointer.style.transform = `rotate(${targetAngle}deg)`;
+      }
+
+      // Update corner dial markers states: active marker breathes subtly, others remain subdued bronze
+      dialMarkers.forEach((marker, idx) => {
         if (idx === activeIdx) {
-          node.classList.add('active');
-          node.classList.remove('passed');
-          node.setAttribute('aria-current', 'true');
-        } else if (idx < activeIdx) {
-          node.classList.remove('active');
-          node.classList.add('passed');
-          node.removeAttribute('aria-current');
+          marker.classList.add('active');
         } else {
-          node.classList.remove('active');
-          node.classList.remove('passed');
-          node.removeAttribute('aria-current');
+          marker.classList.remove('active');
         }
       });
 
-      // Update mobile nav drawer active states
+      // Update dropdown sector links
+      sectorLinks.forEach((link, idx) => {
+        if (idx === activeIdx) {
+          link.classList.add('active');
+          link.setAttribute('aria-current', 'true');
+        } else {
+          link.classList.remove('active');
+          link.removeAttribute('aria-current');
+        }
+      });
+
+      // Update mobile nav drawer links
       mobileNavLinks.forEach((link, idx) => {
         if (idx === activeIdx) {
           link.classList.add('active');
@@ -949,33 +1149,31 @@ class OverclockApp {
         }
       });
 
-      // Update illuminated timeline wire height & moving pulse runner position
-      const activeNode = railNodes[activeIdx];
-      if (spineContainer && activeNode && wireActive && wireRunner) {
-        const spineRect = spineContainer.getBoundingClientRect();
-        const nodeRect = activeNode.getBoundingClientRect();
-        const relativeCenterY = (nodeRect.top + nodeRect.height / 2) - spineRect.top;
-
-        wireActive.style.height = `${Math.max(0, relativeCenterY - 14)}px`;
-        wireRunner.style.top = `${relativeCenterY}px`;
+      // Update Timeline Golden Spine Progress Line
+      const timelineSec = document.getElementById('timeline');
+      const spineProgress = document.getElementById('timeline-spine-progress');
+      if (timelineSec && spineProgress) {
+        const tRect = timelineSec.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const totalHeight = tRect.height + vh * 0.2;
+        const currentScrolled = vh * 0.7 - tRect.top;
+        const progress = Math.min(1, Math.max(0, currentScrolled / totalHeight));
+        spineProgress.style.height = `${(progress * 100).toFixed(1)}%`;
       }
 
-      // Update footer index readout and top navbar log display
-      if (currentIdxEl) {
-        currentIdxEl.textContent = String(activeIdx + 1).padStart(2, '0');
+      // Update telemetry readouts in menu and navbar
+      if (menuCounter) {
+        menuCounter.textContent = `${String(activeIdx + 1).padStart(2, '0')}/${String(sectionElements.length).padStart(2, '0')}`;
       }
 
       const activeSecEl = sectionElements[activeIdx];
       if (activeSecEl) {
         const secId = activeSecEl.id;
+        const fullLabel = sectionLabelsMap[secId] || secId.toUpperCase();
         if (navStatusSec) {
-          navStatusSec.textContent = sectionLabelsMap[secId] || secId.toUpperCase();
+          navStatusSec.textContent = fullLabel;
         }
-
-        if (this.currentActiveSection !== secId) {
-          this.currentActiveSection = secId;
-          this.updateCornerHUDSection(secId);
-        }
+        this.currentActiveSection = secId;
       }
     };
 
@@ -993,47 +1191,36 @@ class OverclockApp {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
 
-    // Initial state calculation after render
     setTimeout(updateScrollState, 50);
   }
 
   /* ==========================================================
-     CORNER HUD DISPLAY (TERMINAL STATUS INDICATOR)
+     4B. TVA EVENT TIMELINE ONE-TIME PROGRESSIVE SCROLL REVEAL
+     IntersectionObserver ensures each milestone reveals ONLY ONCE
+     per page session. Scrolling up keeps them fully visible,
+     and scrolling down again never replays entrance animations.
   ========================================================== */
-  setupCornerHUD() {
-    const clockEl = document.getElementById('hud-live-clock');
-    if (!clockEl) return;
+  setupTimelineReveals() {
+    const milestoneItems = document.querySelectorAll('.timeline-milestone-item');
+    if (!milestoneItems.length) return;
 
-    const updateClock = () => {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      clockEl.textContent = `${h}:${m}:${s}`;
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.15
     };
 
-    setInterval(updateClock, 1000);
-    updateClock();
-  }
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          // Once revealed, unobserve permanently so animation never repeats or disappears
+          obs.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
 
-  updateCornerHUDSection(secId) {
-    const labelEl = document.getElementById('hud-section-label');
-    const dot = document.getElementById('hud-pulse-dot');
-    if (!labelEl) return;
-
-    const newLabel = this.sectionLabels[secId] || `SEC: ${secId.toUpperCase()}`;
-    if (labelEl.textContent !== newLabel) {
-      labelEl.classList.add('text-fade');
-      if (dot) {
-        dot.classList.remove('pulse');
-        void dot.offsetWidth;
-        dot.classList.add('pulse');
-      }
-      setTimeout(() => {
-        labelEl.textContent = newLabel;
-        labelEl.classList.remove('text-fade');
-      }, 100);
-    }
+    milestoneItems.forEach(item => observer.observe(item));
   }
 
   /* ==========================================================
@@ -1155,81 +1342,81 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     5. MINI PUZZLE: 555 TIMER "SYNC THE CLOCK"
+     5. TVA REGISTER NOW CALL TO ACTION INITIALIZER
+     Handles central config, disabled states, accessibility,
+     and seamless connection to official Unstop URL.
   ========================================================== */
-  setupPuzzle() {
-    const sw1 = document.getElementById('puzzle-sw-1');
-    const sw2 = document.getElementById('puzzle-sw-2');
-    const sw3 = document.getElementById('puzzle-sw-3');
-    const led = document.getElementById('puzzle-led-indicator');
-    const clockHand = document.getElementById('sync-clock-hand');
-    const statusText = document.getElementById('puzzle-status');
-    const ctaBtn = document.getElementById('puzzle-unlocked-cta');
-    const solutionBtn = document.getElementById('puzzle-solution-btn');
+  setupRegistrationCTA() {
+    const config = window.OVERCLOCK_CONFIG || {};
+    const url = config.registrationUrl;
+    const ctaBlocks = document.querySelectorAll('[data-registration-component]');
 
-    if (!sw1 || !sw2 || !sw3) return;
+    ctaBlocks.forEach(block => {
+      const btn = block.querySelector('.btn-registration-cta');
+      const statusText = block.querySelector('.registration-status-text');
+      const lamp = block.querySelector('.status-lamp-mini');
 
-    const checkPuzzleState = () => {
-      // Correct solution combination: SW1: ON, SW2: OFF, SW3: ON
-      const isSynced = this.puzzleSwitches[1] === true && 
-                       this.puzzleSwitches[2] === false && 
-                       this.puzzleSwitches[3] === true;
+      if (!btn) return;
 
-      this.playRelayClick(800 + Math.random() * 400);
-
-      if (isSynced && !this.puzzleSolved) {
-        this.puzzleSolved = true;
-        if (led) {
-          led.style.background = '#7CFF9B';
-          led.style.boxShadow = '0 0 12px #7CFF9B';
-        }
-        if (clockHand) clockHand.style.transform = 'rotate(360deg)';
+      if (!url) {
+        // Disabled pending state: accessible, styled, non-interactive
+        btn.setAttribute('disabled', 'true');
+        btn.setAttribute('aria-disabled', 'true');
+        btn.classList.add('is-pending');
+        btn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        };
         if (statusText) {
-          statusText.textContent = 'OUTPUT HIGH — CLOCK SYNCHRONIZED. CLEARED FOR BUILD!';
-          statusText.classList.add('success');
+          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // LINK PENDING';
         }
-        if (ctaBtn) {
-          ctaBtn.style.opacity = '1';
-          ctaBtn.style.pointerEvents = 'auto';
-          ctaBtn.textContent = 'Open a Case File';
-          ctaBtn.style.boxShadow = '0 0 20px rgba(124, 255, 155, 0.6)';
+        if (lamp) {
+          lamp.classList.remove('live');
+          lamp.classList.add('pending');
         }
-        this.playStampThunk();
-      } else if (!isSynced) {
-        this.puzzleSolved = false;
-        if (led) {
-          led.style.background = '#443';
-          led.style.boxShadow = 'none';
-        }
-        const angle = (this.puzzleSwitches[1] ? 90 : 0) + 
-                      (this.puzzleSwitches[2] ? 120 : 0) + 
-                      (this.puzzleSwitches[3] ? 150 : 0);
-        if (clockHand) clockHand.style.transform = `rotate(${angle}deg)`;
+      } else {
+        // Active registration link
+        btn.removeAttribute('disabled');
+        btn.setAttribute('aria-disabled', 'false');
+        btn.classList.remove('is-pending');
+        btn.onclick = () => {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        };
         if (statusText) {
-          statusText.textContent = 'Status: Clock unsynchronized. Toggle switches to align frequency.';
-          statusText.classList.remove('success');
+          statusText.textContent = config.registrationLiveStatus || 'REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE';
+        }
+        if (lamp) {
+          lamp.classList.remove('pending');
+          lamp.classList.add('live');
         }
       }
-    };
+    });
+  }
 
-    const toggle = (swEl, num) => {
-      this.puzzleSwitches[num] = !this.puzzleSwitches[num];
-      swEl.classList.toggle('active', this.puzzleSwitches[num]);
-      checkPuzzleState();
-    };
+  /* ==========================================================
+     6. FOOTER CREW ROSTER INITIALIZER
+     Populates crew roles and sample-name placeholders from config.
+  ========================================================== */
+  setupFooterCrew() {
+    const rosterContainer = document.getElementById('footer-crew-roster');
+    if (!rosterContainer || !Array.isArray(window.OVERCLOCK_CREW)) return;
 
-    sw1.addEventListener('click', () => toggle(sw1, 1));
-    sw2.addEventListener('click', () => toggle(sw2, 2));
-    sw3.addEventListener('click', () => toggle(sw3, 3));
-
-    if (solutionBtn) {
-      solutionBtn.addEventListener('click', () => {
-        this.puzzleSwitches[1] = true; sw1.classList.add('active');
-        this.puzzleSwitches[2] = false; sw2.classList.remove('active');
-        this.puzzleSwitches[3] = true; sw3.classList.add('active');
-        checkPuzzleState();
-      });
-    }
+    rosterContainer.innerHTML = '';
+    window.OVERCLOCK_CREW.forEach(member => {
+      const card = document.createElement('div');
+      card.className = 'crew-roster-card';
+      card.innerHTML = `
+        <div class="crew-role">${member.role}</div>
+        <div class="crew-name">${member.name}</div>
+        <div class="crew-phone">
+          <a href="${member.tel}" class="crew-phone-link" aria-label="Call ${member.name} at ${member.phone}">
+            <span class="crew-phone-icon" aria-hidden="true">☎</span>
+            <span class="crew-phone-number">${member.phone}</span>
+          </a>
+        </div>
+      `;
+      rosterContainer.appendChild(card);
+    });
   }
 
   /* ==========================================================
