@@ -6726,3 +6726,989 @@ body {
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+   OVERCLOCK 2027 — NEW MODULES & UPDATED COMPONENTS (styles.css)
+   EESA · ISLE · IEEE Student Branch, FCRIT
+   ========================================================================== */
+
+/* 1. Header Unstop Element */
+.nav-unstop-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 24px;
+}
+
+.header-unstop-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(22, 17, 13, 0.85);
+  border: 1px solid rgba(217, 169, 58, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 5px 14px;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.header-unstop-link:hover {
+  background: rgba(36, 26, 17, 0.95);
+  border-color: var(--amber-bright);
+  box-shadow: 0 0 12px rgba(232, 137, 43, 0.4);
+}
+
+.header-unstop-logo {
+  height: 18px;
+  width: auto;
+  max-width: 75px;
+  object-fit: contain;
+  display: block;
+}
+
+/* 2. Hero Organiser Info & Compact Logo Strip */
+.organiser-field-unit .field-value {
+  color: var(--amber-bright);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.organiser-logos-strip {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 18px 0 24px;
+  padding: 12px 18px;
+  background: rgba(20, 16, 12, 0.72);
+  border: 1px solid rgba(217, 169, 58, 0.3);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.organiser-logo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.organiser-logo-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid var(--border-brass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.organiser-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 50%;
+}
+
+.organiser-logo-tag {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--paper-cream);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Hero CTA Button */
+.hero-register-cta {
+  font-size: 0.92rem;
+  padding: 12px 28px;
+  letter-spacing: 0.08em;
+}
+
+.hero-register-cta.is-pending {
+  background: #241a12;
+  border-color: rgba(217, 169, 58, 0.4);
+  color: var(--amber-dim);
+  cursor: pointer;
+}
+
+.hero-register-cta.is-pending:hover {
+  background: #2d2015;
+  border-color: var(--amber-bright);
+  box-shadow: 0 0 12px rgba(232, 137, 43, 0.3);
+}
+
+/* 3. The Organising Clubs Section */
+.organising-clubs-section {
+  margin-top: 48px;
+  padding-top: 36px;
+  border-top: 1px dashed rgba(217, 169, 58, 0.25);
+  width: 100%;
+}
+
+.subsection-header-wrap {
+  margin-bottom: 24px;
+}
+
+.subsection-main-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  letter-spacing: 0.04em;
+  color: var(--paper-cream);
+  margin: 6px 0 8px;
+  text-transform: uppercase;
+}
+
+.subsection-subtext {
+  font-family: var(--font-typewriter);
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 720px;
+}
+
+.clubs-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.club-profile-card {
+  background: #18120c;
+  border: 1.5px solid var(--border-brass);
+  border-radius: var(--radius-sm);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transition: var(--transition-fast);
+}
+
+.club-profile-card:hover {
+  border-color: var(--amber-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(232, 137, 43, 0.2);
+}
+
+.club-logo-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--border-brass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.club-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.club-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.club-acronym {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--amber-bright);
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.club-fullname {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+
+.club-description {
+  font-family: var(--font-typewriter);
+  font-size: 0.88rem;
+  color: var(--paper-cream);
+  line-height: 1.55;
+  margin: 4px 0 0;
+}
+
+/* 4. Round 1 PPT Free Submission Notice */
+.round-one-notice-panel {
+  background: #17120e;
+  border: 1.5px solid rgba(232, 137, 43, 0.55);
+  border-left: 5px solid var(--amber-bright);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.notice-indicator-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.notice-badge {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--amber-bright);
+  background: rgba(232, 137, 43, 0.15);
+  border: 1px solid rgba(232, 137, 43, 0.35);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.notice-meta {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--mustard-secondary);
+}
+
+.notice-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  letter-spacing: 0.04em;
+  color: var(--amber-bright);
+  margin: 0 0 6px;
+}
+
+.notice-body {
+  font-family: var(--font-typewriter);
+  font-size: 0.95rem;
+  color: var(--paper-cream);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 5. Downloads Section */
+.downloads-bureau-section {
+  position: relative;
+}
+
+.downloads-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.download-resource-card {
+  background: #18120c;
+  border: 1.5px solid var(--border-brass);
+  border-radius: var(--radius-sm);
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  transition: var(--transition-fast);
+}
+
+.download-resource-card:hover {
+  border-color: var(--amber-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(232, 137, 43, 0.2);
+}
+
+.download-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+  padding-bottom: 10px;
+}
+
+.doc-format-badge {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--mustard-secondary);
+}
+
+.doc-status-pill {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+.doc-status-pill.pending {
+  background: rgba(232, 137, 43, 0.12);
+  border: 1px solid rgba(232, 137, 43, 0.4);
+  color: var(--amber-bright);
+}
+
+.doc-status-pill.ready {
+  background: rgba(124, 255, 155, 0.15);
+  border: 1px solid #7CFF9B;
+  color: #7CFF9B;
+}
+
+.download-card-title {
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--paper-cream);
+  margin: 0 0 8px;
+}
+
+.download-card-desc {
+  font-family: var(--font-typewriter);
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.download-card-action {
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.btn-download-resource {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  transition: var(--transition-fast);
+}
+
+.btn-download-resource.is-pending {
+  background: #241a12;
+  border: 1px solid rgba(217, 169, 58, 0.4);
+  color: var(--amber-dim);
+  cursor: pointer;
+}
+
+.btn-download-resource.is-pending:hover {
+  background: #2f2115;
+  border-color: var(--amber-bright);
+  color: var(--amber-bright);
+}
+
+.btn-download-resource.is-ready {
+  background: linear-gradient(180deg, #E8892B 0%, #B86518 100%);
+  color: #14100C;
+  border: 1px solid #FFB347;
+}
+
+.btn-download-resource.is-ready:hover {
+  background: linear-gradient(180deg, #FFA347 0%, #C9721D 100%);
+  box-shadow: 0 0 14px rgba(232, 137, 43, 0.6);
+}
+
+/* 6. Simplified Accommodation (2 cards layout) */
+.accommodation-two-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* 7. Miss Minutes Centred Registration Modal */
+.mm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(10, 8, 6, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.mm-modal-backdrop.is-open {
+  display: flex;
+}
+
+body.modal-blurred-open main,
+body.modal-blurred-open header,
+body.modal-blurred-open footer,
+body.modal-blurred-open aside {
+  filter: blur(4px);
+  transition: filter 0.25s ease;
+  pointer-events: none;
+}
+
+.mm-modal-card {
+  position: relative;
+  background: radial-gradient(circle at 50% 20%, #251b13 0%, #17110c 70%, #110d0a 100%);
+  border: 2px solid var(--amber-bright);
+  border-radius: var(--radius-md);
+  padding: 34px 28px 30px;
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9), 0 0 35px rgba(232, 137, 43, 0.25);
+  animation: mmModalEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes mmModalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.mm-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: #241a12;
+  border: 1px solid var(--border-brass);
+  color: var(--paper-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: var(--transition-fast);
+}
+
+.mm-modal-close:hover {
+  background: #332314;
+  color: var(--amber-bright);
+  border-color: var(--amber-bright);
+}
+
+.mm-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--amber-bright);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.mm-badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 6px var(--amber-bright);
+}
+
+.mm-modal-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  letter-spacing: 0.06em;
+  color: var(--paper-cream);
+  margin: 0 0 16px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.mm-character-stage {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.mm-modal-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.mm-modal-img-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+}
+
+.mm-modal-dialogue {
+  font-family: var(--font-typewriter);
+  font-size: 0.90rem;
+  color: var(--paper-cream);
+  line-height: 1.5;
+  margin: 0 0 22px;
+  padding: 0 8px;
+}
+
+.mm-cta-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.mm-modal-register-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 0.95rem;
+  padding: 13px 20px;
+  letter-spacing: 0.08em;
+}
+
+.mm-status-note {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  letter-spacing: 0.08em;
+  color: var(--mustard-secondary);
+  text-transform: uppercase;
+}
+
+/* 8. Footer Travel Section */
+.footer-travel-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed rgba(217, 169, 58, 0.25);
+}
+
+.travel-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.travel-lamp {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber-bright);
+  box-shadow: 0 0 8px var(--amber-bright);
+}
+
+.travel-title {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--amber-bright);
+  text-transform: uppercase;
+}
+
+/* Shared Auto Card */
+.shared-auto-card {
+  background: #1e1610;
+  border: 1.5px solid var(--amber-bright);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.auto-fare-badge {
+  background: rgba(232, 137, 43, 0.15);
+  border: 1px solid var(--amber-bright);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.auto-fare-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--paper-cream);
+  text-transform: uppercase;
+}
+
+.auto-fare-val {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--amber-bright);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.auto-card-heading {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--paper-cream);
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.auto-card-body {
+  font-family: var(--font-typewriter);
+  font-size: 0.86rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Rail Directions Grid */
+.rail-directions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.rail-route-card {
+  background: #16110c;
+  border: 1px solid var(--border-brass);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: var(--transition-fast);
+}
+
+.rail-route-card:hover {
+  border-color: rgba(232, 137, 43, 0.6);
+}
+
+.route-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed rgba(217, 169, 58, 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.route-origin {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--paper-cream);
+}
+
+.route-line-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--amber-bright);
+  background: rgba(232, 137, 43, 0.12);
+  border: 1px solid rgba(232, 137, 43, 0.3);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+.route-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.route-instruction {
+  font-family: var(--font-typewriter);
+  font-size: 0.84rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.route-instruction strong {
+  font-family: var(--font-mono);
+  color: var(--paper-cream);
+  font-weight: 600;
+}
+
+.route-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.route-link {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--amber-bright);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition-fast);
+}
+
+.route-link:hover {
+  color: #FFA347;
+  text-decoration: underline;
+}
+
+/* Last Mile Card */
+.station-to-venue-card {
+  background: #14100c;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.stv-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--paper-cream);
+  margin-bottom: 4px;
+}
+
+.stv-desc {
+  font-family: var(--font-typewriter);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* 9. Footer Unstop Platform Link */
+.bottom-bar-unstop {
+  display: flex;
+  align-items: center;
+}
+
+.footer-unstop-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(22, 17, 13, 0.75);
+  border: 1px solid rgba(217, 169, 58, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.footer-unstop-link:hover {
+  background: rgba(36, 26, 17, 0.9);
+  border-color: var(--amber-bright);
+}
+
+.unstop-footer-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--amber-bright);
+  text-transform: uppercase;
+}
+
+.footer-unstop-logo {
+  height: 16px;
+  width: auto;
+  max-width: 55px;
+  object-fit: contain;
+  display: block;
+}
+
+/* 10. Bureau Toast Notice */
+.bureau-toast-notice {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #241a12;
+  border: 1.5px solid var(--amber-bright);
+  color: var(--paper-cream);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(232, 137, 43, 0.3);
+  z-index: 3000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.bureau-toast-notice.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* 11. Contact Dossier Clubs Strip */
+.contact-card-clubs-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 12px;
+  flex-wrap: wrap;
+}
+
+.contact-club-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(22, 17, 13, 0.9);
+  border: 1px solid rgba(217, 169, 58, 0.35);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--paper-cream);
+  letter-spacing: 0.04em;
+}
+
+.contact-club-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  object-fit: contain;
+  display: block;
+}
+
+/* 12. 50K Cash Prize Pool Features */
+.prize-highlight-val {
+  color: var(--amber-bright, #E8892B) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  text-shadow: 0 0 10px rgba(232, 137, 43, 0.35);
+}
+
+.hero-prize-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(22, 17, 13, 0.92);
+  border: 1px solid rgba(232, 137, 43, 0.55);
+  border-radius: var(--radius-sm);
+  padding: 10px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--amber-bright, #E8892B);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(232, 137, 43, 0.08);
+}
+
+.prize-pill-pip {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber-bright, #E8892B);
+  box-shadow: 0 0 8px rgba(232, 137, 43, 0.8);
+  animation: prizePipPulse 2s infinite ease-in-out;
+}
+
+@keyframes prizePipPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.prize-pool-card-box {
+  border-color: rgba(232, 137, 43, 0.5) !important;
+  background: rgba(28, 21, 15, 0.95) !important;
+  box-shadow: inset 0 0 16px rgba(232, 137, 43, 0.08);
+}
+
+.prize-val {
+  color: var(--amber-bright, #E8892B) !important;
+  text-shadow: 0 0 14px rgba(232, 137, 43, 0.4);
+}
+
+.prize-card-sub {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--mustard-secondary, #D9A93A);
+  letter-spacing: 0.08em;
+}
+
+.rec-prize-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 12px;
+  background: rgba(20, 15, 11, 0.92);
+  border: 1px solid rgba(232, 137, 43, 0.45);
+  border-radius: 6px;
+  padding: 8px 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.rec-prize-badge {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: #14100C;
+  background: var(--amber-bright, #E8892B);
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.rec-prize-amount {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--amber-bright, #E8892B);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(232, 137, 43, 0.35);
+}
+

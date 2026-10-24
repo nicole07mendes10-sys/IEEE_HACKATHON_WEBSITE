@@ -3,10 +3,58 @@
  * Connect official Unstop URL when live, update crew names, or customize status tags.
  */
 window.OVERCLOCK_CONFIG = {
-  // When official Unstop registration URL is available, set it here (e.g. "https://unstop.com/..."):
-  registrationUrl: null,
-  registrationPendingStatus: "REGISTRATION PORTAL // LINK PENDING",
-  registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE"
+  // Official Unstop registration URL for OVERCLOCK 2027:
+  // When official Unstop registration URL is announced, set it here (e.g. "https://unstop.com/o/overclock-2027"):
+  UNSTOP_EVENT_URL: null,
+  UNSTOP_PLATFORM_URL: "https://unstop.com",
+  registrationUrl: null, // Unified backward-compatible alias
+  registrationPendingStatus: "REGISTRATION PORTAL // OPENS 01 NOV 2026",
+  registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
+
+  // Central Downloads Resources Configuration
+  downloads: {
+    brochure: {
+      id: "brochure",
+      title: "EVENT BROCHURE — PDF",
+      description: "Official event prospectus covering hackathon format, challenge tracks, and campus facilities.",
+      filePath: null, // Path to PDF when official asset is supplied
+      status: "PDF PENDING"
+    },
+    pptTemplate: {
+      id: "ppt",
+      title: "PPT SUBMISSION TEMPLATE — PDF",
+      description: "Standard presentation slide deck format for the free Round 1 problem-statement submission.",
+      filePath: null, // Path to PDF when official asset is supplied
+      status: "AVAILABLE SOON"
+    },
+    rules: {
+      id: "rules",
+      title: "RULES & REGULATIONS — PDF",
+      description: "Complete regulatory framework, component usage limits, safety guidelines, and code of conduct.",
+      filePath: null, // Path to PDF when official asset is supplied
+      status: "PDF PENDING"
+    }
+  },
+
+  // Central Event Rewards Configuration
+  prizes: {
+    totalCashPool: "₹50,000",
+    cashPrizeLabel: "₹50K CASH PRIZE",
+    description: "Compete for the ₹50,000 cash prize pool, institutional honours, and category awards sanctioned by EESA, ISLE, and IEEE Student Branch, FCRIT."
+  },
+
+  // Central Travel Information Configuration
+  travel: {
+    sharedAuto: {
+      fare: "₹15 PER SEAT",
+      route: "Vashi Station to FCRIT Campus (Sector 9A)",
+      description: "Shared autos are available from Vashi Station to the venue. The fare supplied for this route is ₹15 per seat."
+    },
+    lastMile: {
+      address: "Fr. C. Rodrigues Institute of Technology, Agnel Technical Education Complex, Sector 9A, Vashi, Navi Mumbai, Maharashtra 400703",
+      notes: "From Vashi Railway Station, FCRIT is situated approximately 1.8 km away. Attendees can take a shared auto at ₹15 per seat from the station auto stand directly to the campus gate, or take a metered auto."
+    }
+  }
 };
 
 window.OVERCLOCK_CREW = [
@@ -699,6 +747,8 @@ class OverclockApp {
     this.setupScrollAnimations();
     this.spatialController = new BureauSpatialScrollController(this);
     this.setupRegistrationCTA();
+    this.setupDownloadsSection();
+    this.setupUnstopLinks();
     this.setupFooterCrew();
     this.setupSponsorsSection();
     this.setupFAQ();
@@ -1362,9 +1412,63 @@ class OverclockApp {
   ========================================================== */
   setupRegistrationCTA() {
     const config = window.OVERCLOCK_CONFIG || {};
-    const url = config.registrationUrl;
-    const ctaBlocks = document.querySelectorAll('[data-registration-component]');
+    const url = config.UNSTOP_EVENT_URL || config.registrationUrl;
+    
+    // 1. Homepage Hero Register Now CTA
+    const heroBtn = document.getElementById('hero-register-btn');
+    if (heroBtn) {
+      if (url) {
+        heroBtn.href = url;
+        heroBtn.target = '_blank';
+        heroBtn.rel = 'noopener noreferrer';
+        heroBtn.removeAttribute('aria-disabled');
+        heroBtn.classList.remove('is-pending');
+        heroBtn.title = 'Register for OVERCLOCK 2027 on Unstop';
+      } else {
+        heroBtn.href = '#';
+        heroBtn.setAttribute('aria-disabled', 'true');
+        heroBtn.classList.add('is-pending');
+        heroBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        heroBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.playRelayClick(650);
+          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+        });
+      }
+    }
 
+    // 2. Miss Minutes Registration Modal CTA
+    const mmBtn = document.getElementById('mm-register-btn');
+    const mmStatusNote = document.getElementById('mm-status-note');
+    if (mmBtn) {
+      if (url) {
+        mmBtn.href = url;
+        mmBtn.target = '_blank';
+        mmBtn.rel = 'noopener noreferrer';
+        mmBtn.removeAttribute('aria-disabled');
+        mmBtn.classList.remove('is-pending');
+        mmBtn.title = 'Proceed to official Unstop registration page';
+        if (mmStatusNote) {
+          mmStatusNote.textContent = config.registrationLiveStatus || 'REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE';
+        }
+      } else {
+        mmBtn.href = '#';
+        mmBtn.setAttribute('aria-disabled', 'true');
+        mmBtn.classList.add('is-pending');
+        mmBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        if (mmStatusNote) {
+          mmStatusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 01 NOV 2026';
+        }
+        mmBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.playRelayClick(650);
+          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+        });
+      }
+    }
+
+    // 3. Any additional registered CTA blocks
+    const ctaBlocks = document.querySelectorAll('[data-registration-component]');
     ctaBlocks.forEach(block => {
       const btn = block.querySelector('.btn-registration-cta');
       const statusText = block.querySelector('.registration-status-text');
@@ -1373,23 +1477,22 @@ class OverclockApp {
       if (!btn) return;
 
       if (!url) {
-        // Disabled pending state: accessible, styled, non-interactive
         btn.setAttribute('disabled', 'true');
         btn.setAttribute('aria-disabled', 'true');
         btn.classList.add('is-pending');
         btn.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
+          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026.');
         };
         if (statusText) {
-          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // LINK PENDING';
+          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // OPENS 01 NOV 2026';
         }
         if (lamp) {
           lamp.classList.remove('live');
           lamp.classList.add('pending');
         }
       } else {
-        // Active registration link
         btn.removeAttribute('disabled');
         btn.setAttribute('aria-disabled', 'false');
         btn.classList.remove('is-pending');
@@ -1403,6 +1506,112 @@ class OverclockApp {
           lamp.classList.remove('pending');
           lamp.classList.add('live');
         }
+      }
+    });
+  }
+
+  /* Temporary toast / status banner for pending registration portal */
+  showRegistrationNotice(message) {
+    let notice = document.getElementById('bureau-toast-notice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.id = 'bureau-toast-notice';
+      notice.className = 'bureau-toast-notice';
+      notice.setAttribute('role', 'status');
+      notice.setAttribute('aria-live', 'polite');
+      document.body.appendChild(notice);
+    }
+    notice.textContent = message;
+    notice.classList.add('is-visible');
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => {
+      notice.classList.remove('is-visible');
+    }, 4000);
+  }
+
+  /* ==========================================================
+     5B. EVENT RESOURCES // DOWNLOADS INITIALIZER
+     Configures brochure, PPT template, and rules PDF links.
+     Maintains honest "AVAILABLE SOON" / "PDF PENDING" state
+     when files are pending without broken links.
+  ========================================================== */
+  setupDownloadsSection() {
+    const config = window.OVERCLOCK_CONFIG || {};
+    const downloads = config.downloads || {};
+
+    const items = [
+      { key: 'brochure', data: downloads.brochure },
+      { key: 'ppt', data: downloads.pptTemplate },
+      { key: 'rules', data: downloads.rules }
+    ];
+
+    items.forEach(item => {
+      const btn = document.getElementById(`btn-download-${item.key}`);
+      const statusBadge = document.getElementById(`status-download-${item.key}`);
+      const data = item.data || {};
+
+      if (!btn) return;
+
+      if (data.filePath) {
+        btn.href = data.filePath;
+        btn.download = '';
+        btn.removeAttribute('aria-disabled');
+        btn.classList.remove('is-pending');
+        btn.classList.add('is-ready');
+        btn.setAttribute('title', `Download ${data.title}`);
+        const btnText = btn.querySelector('.download-btn-text');
+        if (btnText) btnText.textContent = 'DOWNLOAD PDF';
+
+        if (statusBadge) {
+          statusBadge.textContent = 'OFFICIAL PDF';
+          statusBadge.classList.remove('pending');
+          statusBadge.classList.add('ready');
+        }
+      } else {
+        btn.href = '#';
+        btn.setAttribute('aria-disabled', 'true');
+        btn.classList.add('is-pending');
+        btn.classList.remove('is-ready');
+        btn.setAttribute('title', `${data.title} — ${data.status || 'AVAILABLE SOON'}`);
+        const btnText = btn.querySelector('.download-btn-text');
+        if (btnText) btnText.textContent = data.status || 'AVAILABLE SOON';
+
+        if (statusBadge) {
+          statusBadge.textContent = data.status || 'PDF PENDING';
+          statusBadge.classList.add('pending');
+          statusBadge.classList.remove('ready');
+        }
+
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.playRelayClick(750);
+          this.showRegistrationNotice(`${data.title}: Official PDF file is pending release by the organizing committee.`);
+        });
+      }
+    });
+  }
+
+  /* ==========================================================
+     5C. UNSTOP PLATFORM / EVENT LINKS INITIALIZER
+     Ensures header and footer Unstop links route appropriately.
+  ========================================================== */
+  setupUnstopLinks() {
+    const config = window.OVERCLOCK_CONFIG || {};
+    const eventUrl = config.UNSTOP_EVENT_URL || config.registrationUrl;
+    const platformUrl = config.UNSTOP_PLATFORM_URL || 'https://unstop.com';
+
+    const headerLink = document.getElementById('header-unstop-link');
+    const footerLink = document.getElementById('footer-unstop-link');
+
+    [headerLink, footerLink].forEach(link => {
+      if (!link) return;
+      link.href = eventUrl || platformUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      if (eventUrl) {
+        link.setAttribute('title', 'Official OVERCLOCK 2027 Registration on Unstop');
+      } else {
+        link.setAttribute('title', 'Unstop — Official Hackathon Platform Partner');
       }
     });
   }
@@ -1829,13 +2038,15 @@ class OverclockApp {
       }
     };
 
-    // Make Miss Minutes interactive — opens the TVA Inspection Terminal
+    // Make Miss Minutes interactive — opens the polished Miss Minutes Registration Modal
     const openTerminal = (e) => {
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
-      if (window.tvaInspectionGame) {
+      if (window.missMinutesModal && typeof window.missMinutesModal.open === 'function') {
+        window.missMinutesModal.open();
+      } else if (window.tvaInspectionGame && typeof window.tvaInspectionGame.open === 'function') {
         window.tvaInspectionGame.open();
       }
     };
