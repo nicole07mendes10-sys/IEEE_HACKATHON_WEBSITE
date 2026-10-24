@@ -8,9 +8,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="preload" as="image" href="images/ezgif-frame-001.jpg">
+  <link rel="stylesheet" href="styles.css?v=2.1">
+  <link rel="stylesheet" href="mobile.css?v=1.0">
+  <link rel="preload" as="image" href="images/ezgif-frame-001.jpg" fetchpriority="high">
   <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
+  <script>
+    const searchParams = new URLSearchParams(window.location.search);
+    if (window.location.hash || window.matchMedia('(prefers-reduced-motion: reduce)').matches || searchParams.has('noboot')) {
+      document.documentElement.classList.add('skip-boot');
+    }
+    const onlySec = searchParams.get('only');
+    if (onlySec) {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('main > section').forEach(sec => {
+          if (sec.id !== onlySec) sec.style.display = 'none';
+        });
+        const footer = document.querySelector('footer');
+        if (footer && onlySec !== 'footer') footer.style.display = 'none';
+      });
+    }
+  </script>
 </head>
 <body>
 
@@ -210,89 +227,100 @@
             <li class="temporal-spine-item">
               <a href="#hero" class="sector-link active" data-section="hero">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">01</span>
-                <span class="sector-name">Home // Overview</span>
+                <div class="sector-box">
+                  <span class="sector-code">01</span>
+                  <span class="sector-name">Home // Overview</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#about" class="sector-link" data-section="about">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">02</span>
-                <span class="sector-name">About // Event Briefing</span>
+                <div class="sector-box">
+                  <span class="sector-code">02</span>
+                  <span class="sector-name">About // Event Briefing</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#problems" class="sector-link" data-section="problems">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">03</span>
-                <span class="sector-name">Problem Domains (5 Tracks)</span>
+                <div class="sector-box">
+                  <span class="sector-code">03</span>
+                  <span class="sector-name">Problem Domains (5 Tracks)</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#results" class="sector-link" data-section="results">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">04</span>
-                <span class="sector-name">Selection Status & Shortlist</span>
+                <div class="sector-box">
+                  <span class="sector-code">04</span>
+                  <span class="sector-name">Selection Status & Shortlist</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#timeline" class="sector-link" data-section="timeline">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">05</span>
-                <span class="sector-name">Event Timeline (24 Hours)</span>
+                <div class="sector-box">
+                  <span class="sector-code">05</span>
+                  <span class="sector-name">Event Timeline (24 Hours)</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#registration" class="sector-link" data-section="registration">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">06</span>
-                <span class="sector-name">Registration Guidelines</span>
+                <div class="sector-box">
+                  <span class="sector-code">06</span>
+                  <span class="sector-name">Registration Guidelines</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#accommodation" class="sector-link" data-section="accommodation">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">07</span>
-                <span class="sector-name">Campus Accommodation</span>
+                <div class="sector-box">
+                  <span class="sector-code">07</span>
+                  <span class="sector-name">Campus Accommodation</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#judging" class="sector-link" data-section="judging">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">08</span>
-                <span class="sector-name">Judging & Recognition</span>
+                <div class="sector-box">
+                  <span class="sector-code">08</span>
+                  <span class="sector-name">Judging & Recognition</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#sponsors" class="sector-link" data-section="sponsors">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">09</span>
-                <span class="sector-name">Sponsors & Partners</span>
+                <div class="sector-box">
+                  <span class="sector-code">09</span>
+                  <span class="sector-name">Sponsors & Partners</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#faq" class="sector-link" data-section="faq">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">10</span>
-                <span class="sector-name">Case Files // FAQs</span>
+                <div class="sector-box">
+                  <span class="sector-code">10</span>
+                  <span class="sector-name">Case Files // FAQs</span>
+                </div>
               </a>
             </li>
             <li class="temporal-spine-item">
               <a href="#contact" class="sector-link" data-section="contact">
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
-                <span class="nav-spine-branch" aria-hidden="true"></span>
-                <span class="sector-code">11</span>
-                <span class="sector-name">Contact & Venue Location</span>
+                <div class="sector-box">
+                  <span class="sector-code">11</span>
+                  <span class="sector-name">Contact & Venue Location</span>
+                </div>
               </a>
             </li>
           </ul>
@@ -439,7 +467,6 @@
 
         <div class="hero-cta-group">
           <a href="#about" class="btn-bureau-secondary">Explore the Event</a>
-          <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
         </div>
 
         <!-- Compact Information Marker -->
@@ -895,7 +922,9 @@
         <!-- Structural container ready for search & official roster -->
         <div class="results-roster-chamber" id="results-roster-chamber">
           <div class="roster-standby-message">
-            <span class="standby-icon">🔒</span>
+            <span class="standby-icon" aria-hidden="true">
+              <svg class="standby-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
             <span class="standby-text">No team records published. Roster activates post-evaluation on 22 December 2026.</span>
           </div>
         </div>
@@ -939,7 +968,9 @@
               </div>
               <h3 class="milestone-title">Registration Opens</h3>
               <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
                 <span class="date-text">01 November 2026</span>
               </div>
               <p class="milestone-description">Intake portal opens for builder registration and team onboarding.</p>
@@ -964,7 +995,9 @@
               </div>
               <h3 class="milestone-title">Initial Problem Statements Released</h3>
               <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
                 <span class="date-text">01 December 2026</span>
               </div>
               <p class="milestone-description">Domain challenges and initial problem statements published across the five sectors.</p>
@@ -989,7 +1022,9 @@
               </div>
               <h3 class="milestone-title">PPT Submission Window</h3>
               <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
                 <span class="date-text">10–15 December 2026</span>
               </div>
               <p class="milestone-description">Five-day window for teams to submit conceptual hardware presentations.</p>
@@ -1014,7 +1049,9 @@
               </div>
               <h3 class="milestone-title">Shortlisted Teams Announced</h3>
               <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
                 <span class="date-text">22 December 2026</span>
               </div>
               <p class="milestone-description">Official publication of teams selected for the on-campus build phase.</p>
@@ -1039,7 +1076,9 @@
               </div>
               <h3 class="milestone-title">Final Problem Statement Released</h3>
               <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">🗓</span>
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
                 <span class="date-text">22 January 2027</span>
               </div>
               <p class="milestone-description">Final problem statement released as scheduled for the physical engineering phase.</p>
@@ -1074,46 +1113,13 @@
           <div class="reg-milestone-panel">
             <div class="reg-k-label">REGISTRATION OPENS</div>
             <div class="reg-date-headline">01 NOVEMBER 2026</div>
-            <p class="reg-helper-note">The official registration portal activates on 01 November 2026. Pre-register through the case intake terminal below to receive instant launch notification.</p>
-
-            <div class="reg-actions-row" style="margin-top: 24px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
-              <!-- Primary Registration Intake Call-To-Action (Consolidated) -->
-              <div class="registration-cta-block" data-registration-component>
-                <button type="button" id="primary-register-btn" class="btn-registration-cta" disabled aria-disabled="true" title="Registration link pending official Unstop launch">
-                  <span class="btn-reg-pip" aria-hidden="true"></span>
-                  <span class="btn-reg-text">REGISTER NOW</span>
-                  <span class="btn-reg-arrow" aria-hidden="true">↗</span>
-                </button>
-                <div class="registration-status-bar">
-                  <span class="status-lamp-mini pending" aria-hidden="true"></span>
-                  <span class="registration-status-text">REGISTRATION PORTAL // LINK PENDING</span>
-                </div>
-              </div>
-              <button class="btn-bureau-brass open-case-file-trigger">Open a Case File / Pre-Register</button>
-            </div>
+            <p class="reg-helper-note">The official registration portal activates on 01 November 2026.</p>
           </div>
 
           <div class="fee-calculation-box">
-            <div class="fee-box-title">REGISTRATION FEE BREAKDOWN</div>
-            
-            <div class="fee-row">
-              <span class="fee-label">Listed Registration Fee:</span>
-              <span class="fee-value">₹1,500</span>
-            </div>
-            <div class="fee-row">
-              <span class="fee-label">Applicable Tax (18% GST approx.):</span>
-              <span class="fee-value">+ ₹270</span>
-            </div>
-            <div class="fee-divider"></div>
-            <div class="fee-row total-row">
-              <span class="fee-label">Calculated Total (incl. GST):</span>
-              <span class="fee-value total-val">₹1,770</span>
-            </div>
-            <div class="fee-calc-formula">Calculation: ₹1,500 × 1.18 = ₹1,770</div>
-
-            <div class="fee-transparency-memo">
-              <span class="memo-icon">ℹ</span>
-              <span class="memo-text"><strong>Fee Basis Note:</strong> The listed fee is ₹1,500 + 18% GST. Formal confirmation of whether this fee applies per participant or per team will be announced upon portal launch.</span>
+            <div class="fee-box-title">REGISTRATION FEE</div>
+            <div class="fee-amount-display">
+              <span class="fee-amount-val">Rs. 1,770</span>
             </div>
           </div>
         </div>
@@ -1136,25 +1142,46 @@
         <!-- Confirmed Logistics Cards -->
         <div class="accommodation-notes-grid">
           <div class="quarters-stat-card">
-            <div class="stat-icon">🏷️</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <circle cx="7" cy="7" r="1.5" fill="currentColor"/>
+              </svg>
+            </div>
             <h3 class="stat-heading">NOMINAL COST</h3>
             <p class="stat-body">On-campus accommodation is provided at nominal cost to assist participating and outstation teams.</p>
           </div>
 
           <div class="quarters-stat-card highlight-card">
-            <div class="stat-icon">⚡</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
             <h3 class="stat-heading">FIRST-COME, FIRST-SERVED</h3>
             <p class="stat-body">Bed allocations are processed strictly on a first-come, first-served basis upon shortlist publication.</p>
           </div>
 
           <div class="quarters-stat-card">
-            <div class="stat-icon">🛏️</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>
+              </svg>
+            </div>
             <h3 class="stat-heading">~100 BEDS TOTAL</h3>
             <p class="stat-body">Approximately 100 residential beds are available overall across campus residential quarters.</p>
           </div>
 
           <div class="quarters-stat-card">
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
             <h3 class="stat-heading">2 BEDS PER TEAM</h3>
             <p class="stat-body">Preliminary notes indicate an allocation standard of two beds per team to optimize capacity.</p>
           </div>
@@ -1422,7 +1449,11 @@
           </p>
           <div class="contact-action-link">
             <a href="https://maps.google.com/?q=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi" target="_blank" rel="noopener noreferrer" class="contact-sub-link">
-              📍 View Campus Location Map ↗
+              <span class="contact-link-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <span>View Campus Location Map</span>
+              <span class="arrow-ext" aria-hidden="true">↗</span>
             </a>
           </div>
         </div>
@@ -1436,7 +1467,10 @@
           </p>
           <div class="contact-action-link">
             <a href="mailto:ieee@fcrit.ac.in" class="contact-sub-link">
-              ✉ ieee@fcrit.ac.in
+              <span class="contact-link-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </span>
+              <span>ieee@fcrit.ac.in</span>
             </a>
           </div>
         </div>
@@ -1450,7 +1484,11 @@
           </p>
           <div class="contact-action-link">
             <a href="https://fcrit.ac.in" target="_blank" rel="noopener noreferrer" class="contact-sub-link">
-              🌐 Visit Official FCRIT Website ↗
+              <span class="contact-link-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </span>
+              <span>Visit Official FCRIT Website</span>
+              <span class="arrow-ext" aria-hidden="true">↗</span>
             </a>
           </div>
         </div>
@@ -1507,7 +1545,9 @@
                   class="btn-open-maps"
                   aria-label="Open FCRIT Vashi in Google Maps in a new tab"
                 >
-                  <span class="maps-icon" aria-hidden="true">📍</span>
+                  <span class="maps-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </span>
                   <span>OPEN IN MAPS</span>
                   <span class="maps-arrow" aria-hidden="true">↗</span>
                 </a>
@@ -1532,7 +1572,9 @@
               <div class="crew-name">Krishna Jaiswar</div>
               <div class="crew-phone">
                 <a href="tel:+919082611721" class="crew-phone-link" aria-label="Call Krishna Jaiswar at +91 90826 11721">
-                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
                   <span class="crew-phone-number">+91 90826 11721</span>
                 </a>
               </div>
@@ -1543,7 +1585,9 @@
               <div class="crew-name">Yash Bandkar</div>
               <div class="crew-phone">
                 <a href="tel:+917738707573" class="crew-phone-link" aria-label="Call Yash Bandkar at +91 77387 07573">
-                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
                   <span class="crew-phone-number">+91 77387 07573</span>
                 </a>
               </div>
@@ -1554,7 +1598,9 @@
               <div class="crew-name">Sujit Ratan</div>
               <div class="crew-phone">
                 <a href="tel:+918591273903" class="crew-phone-link" aria-label="Call Sujit Ratan at +91 85912 73903">
-                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
                   <span class="crew-phone-number">+91 85912 73903</span>
                 </a>
               </div>
@@ -1565,7 +1611,9 @@
               <div class="crew-name">Nicole Mendes</div>
               <div class="crew-phone">
                 <a href="tel:+919822009126" class="crew-phone-link" aria-label="Call Nicole Mendes at +91 98220 09126">
-                  <span class="crew-phone-icon" aria-hidden="true">☎</span>
+                  <span class="crew-phone-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
                   <span class="crew-phone-number">+91 98220 09126</span>
                 </a>
               </div>
@@ -1615,9 +1663,17 @@
     <div id="miss-minutes-speech" class="miss-minutes-speech" aria-hidden="true">
       GOT A MINUTE, PARTNER?
     </div>
+    <img
+      id="miss-minutes-img"
+      class="miss-minutes-img"
+      src="images/miss_minutes_poster.png?v=3"
+      alt="Miss Minutes"
+      aria-hidden="true"
+    >
     <video
       id="miss-minutes-video"
       class="miss-minutes-video"
+      style="display: none;"
       autoplay
       loop
       muted
@@ -1820,7 +1876,9 @@
           </div>
 
           <div class="tva-feedback-banner" id="tva-m1-feedback" role="status" aria-live="polite">
-            <span class="tva-feedback-icon">⚡</span>
+            <span class="tva-feedback-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
             <span class="tva-feedback-text">INSPECT THE BRANCHES CAREFULLY</span>
           </div>
         </section>
@@ -1835,7 +1893,9 @@
 
           <!-- Classified File Lock Badge -->
           <div class="tva-classified-badge" id="tva-m2-lock">
-            <span class="tva-lock-icon" id="tva-m2-lock-icon">🔒</span>
+            <span class="tva-lock-icon" id="tva-m2-lock-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
             <span class="tva-lock-status" id="tva-m2-lock-status">FILE LOCKED // ACCESS RESTRICTED</span>
           </div>
 
@@ -1873,7 +1933,9 @@
           </div>
 
           <div class="tva-feedback-banner" id="tva-m2-feedback" role="status" aria-live="polite">
-            <span class="tva-feedback-icon">⚡</span>
+            <span class="tva-feedback-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
             <span class="tva-feedback-text">DECODE THE PATTERN ABOVE</span>
           </div>
         </section>
@@ -1920,12 +1982,14 @@
           <!-- Replay Sequence button -->
           <div class="tva-m3-actions">
             <button type="button" class="tva-text-action-btn" id="tva-m3-replay-pattern-btn">
-              ↺ REPLAY PATTERN SEQUENCE
+              REPLAY PATTERN SEQUENCE
             </button>
           </div>
 
           <div class="tva-feedback-banner" id="tva-m3-feedback" role="status" aria-live="polite">
-            <span class="tva-feedback-icon">⚡</span>
+            <span class="tva-feedback-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
             <span class="tva-feedback-text">AWAITING PATTERN DEMONSTRATION</span>
           </div>
         </section>

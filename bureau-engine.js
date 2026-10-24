@@ -83,7 +83,7 @@ class BureauScrollSequenceEngine {
   updateDimensions() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    this.dpr = this.width <= 768 ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 2.5);
 
     const targetWidth = Math.round(this.width * this.dpr);
     const targetHeight = Math.round(this.height * this.dpr);
@@ -91,6 +91,7 @@ class BureauScrollSequenceEngine {
     if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
       this.canvas.width = targetWidth;
       this.canvas.height = targetHeight;
+      this.lastRenderedProgress = -1;
     }
 
     this.canvas.style.width = `${this.width}px`;
@@ -110,6 +111,7 @@ class BureauScrollSequenceEngine {
     this.updateDimensions();
     this.calculateScrollProgress();
     this.lastRenderedProgress = -1; // Force immediate redraw
+    this.renderFrame();
     this.requestTick();
   }
 
@@ -133,13 +135,14 @@ class BureauScrollSequenceEngine {
       this.frames[0] = initialImg;
       this.framesLoaded[0] = true;
       this.loadedCount++;
-      if (!this.hasDrawnFirstFrame) {
-        this.renderFrame();
-        this.hasDrawnFirstFrame = true;
-      }
+      this.lastRenderedProgress = -1;
+      this.renderFrame();
+      this.hasDrawnFirstFrame = true;
     };
 
-    if ('decode' in initialImg) {
+    if (initialImg.complete && initialImg.naturalWidth > 0) {
+      onInitialReady();
+    } else if ('decode' in initialImg) {
       initialImg.decode().then(onInitialReady).catch(() => {
         initialImg.onload = onInitialReady;
       });
@@ -210,16 +213,35 @@ class BureauScrollSequenceEngine {
     let drawW, drawH, drawX, drawY;
 
     // Preserve exact aspect ratio without distortion or downscaling compression
-    if (canvasAspect > imageAspect) {
-      drawW = canvasW;
-      drawH = canvasW / imageAspect;
-      drawX = 0;
-      drawY = (canvasH - drawH) / 2;
+    if (canvasAspect >= 1.0) {
+      // Desktop / Landscape: Preserve full widescreen cover framing
+      if (canvasAspect > imageAspect) {
+        drawW = canvasW;
+        drawH = canvasW / imageAspect;
+        drawX = 0;
+        drawY = (canvasH - drawH) / 2;
+      } else {
+        drawH = canvasH;
+        drawW = canvasH * imageAspect;
+        drawX = (canvasW - drawW) / 2;
+        drawY = 0;
+      }
     } else {
-      drawH = canvasH;
-      drawW = canvasH * imageAspect;
-      drawX = (canvasW - drawW) / 2;
-      drawY = 0;
+      // Mobile / Portrait: Scale and position to ensure the cinematic amber-and-gold
+      // ribbon is immediately visible spanning the hero area directly beneath the header.
+      // Sized to ensure 100% viewport coverage with zero top or bottom gaps across all phones.
+      const scale = 1.55;
+      drawH = Math.round(canvasH * scale);
+      drawW = Math.round(drawH * imageAspect);
+
+      // Smooth focal transition:
+      // At progress = 0 (hero): align amber ribbon with hero title/subtitle
+      // As scroll advances (timeline/content): smoothly center the explosion
+      const heroWeight = Math.max(0, 1 - (this.currentProgress / 0.20));
+      const easeWeight = heroWeight * heroWeight * (3 - 2 * heroWeight); // smoothstep
+
+      drawX = Math.round((canvasW - drawW) / 2 + (canvasW * 0.65 * easeWeight));
+      drawY = Math.round((canvasH - drawH) / 2 - (canvasH * 0.26 * easeWeight));
     }
 
     // High clarity rendering settings
@@ -267,7 +289,7 @@ class BureauScrollSequenceEngine {
       if (Math.abs(delta) > 0.0001) {
         this.currentProgress += delta * this.lerpFactor;
         this.renderFrame();
-      } else if (this.currentProgress !== this.targetProgress) {
+      } else if (this.currentProgress !== this.targetProgress || this.lastRenderedProgress !== this.currentProgress || !this.hasDrawnFirstFrame) {
         this.currentProgress = this.targetProgress;
         this.renderFrame();
       }

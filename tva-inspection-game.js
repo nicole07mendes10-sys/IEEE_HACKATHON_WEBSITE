@@ -355,7 +355,7 @@
           activeIndex = 2;
           break;
         case 'COMPLETE':
-          stageLabel = '03 / 03 ✓';
+          stageLabel = '03 / 03';
           activeIndex = 3;
           break;
       }
@@ -425,7 +425,9 @@
         this.isTransitioning = true;
         btnEl.classList.add('correct');
 
-        if (lockIcon) lockIcon.textContent = '🔓';
+        if (lockIcon) {
+          lockIcon.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
+        }
         if (lockStatus) lockStatus.textContent = 'ACCESS GRANTED // CLASSIFIED FILE UNLOCKED';
         if (lockCard) lockCard.classList.add('unlocked');
 
@@ -627,7 +629,9 @@
       const lockIcon = document.getElementById('tva-m2-lock-icon');
       const lockStatus = document.getElementById('tva-m2-lock-status');
       const lockCard = document.getElementById('tva-m2-lock');
-      if (lockIcon) lockIcon.textContent = '🔒';
+      if (lockIcon) {
+        lockIcon.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      }
       if (lockStatus) lockStatus.textContent = 'FILE LOCKED // ACCESS RESTRICTED';
       if (lockCard) lockCard.classList.remove('unlocked');
       const m2Feedback = document.getElementById('tva-m2-feedback');

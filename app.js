@@ -168,7 +168,7 @@ class BureauSpatialScrollController {
   }
 
   render() {
-    if (this.isReducedMotion) {
+    if (this.isReducedMotion || this.isMobile) {
       this.resetAllTransforms();
       this.isTicking = false;
       return;
@@ -786,7 +786,7 @@ class OverclockApp {
       return;
     }
 
-    if (this.hasBooted) {
+    if (this.hasBooted || window.location.search.includes('noboot') || window.location.search.includes('menu=open')) {
       overlay.classList.add('hidden');
       setTimeout(() => this.triggerHeroAnimations(), 50);
       return;
@@ -968,6 +968,20 @@ class OverclockApp {
         e.stopPropagation();
         toggleMenu();
       });
+    }
+
+    if (window.location.search.includes('menu=open')) {
+      setTimeout(openMenu, 150);
+    }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const gotoParam = searchParams.get('goto');
+    if (gotoParam) {
+      const target = document.getElementById(gotoParam);
+      if (target) {
+        window.scrollTo(0, target.offsetTop);
+        this.targetScrollY = target.offsetTop;
+      }
     }
 
     if (menuCloseBtn) {
@@ -1410,7 +1424,9 @@ class OverclockApp {
         <div class="crew-name">${member.name}</div>
         <div class="crew-phone">
           <a href="${member.tel}" class="crew-phone-link" aria-label="Call ${member.name} at ${member.phone}">
-            <span class="crew-phone-icon" aria-hidden="true">☎</span>
+            <span class="crew-phone-icon" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </span>
             <span class="crew-phone-number">${member.phone}</span>
           </a>
         </div>
@@ -1648,7 +1664,7 @@ class OverclockApp {
         e.preventDefault();
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
-          submitBtn.textContent = 'LOGGED TO ARCHIVE ✓';
+          submitBtn.textContent = 'LOGGED TO ARCHIVE [RECORDED]';
           submitBtn.style.background = '#7CFF9B';
           submitBtn.style.color = '#14100C';
         }
@@ -1703,6 +1719,10 @@ class OverclockApp {
         openDrawer();
       }
     });
+
+    if (window.location.search.includes('drawer=open')) {
+      openDrawer();
+    }
 
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
@@ -1794,7 +1814,16 @@ class OverclockApp {
         geminiY - overlaySize / 2 <= winH
       );
 
-      if (isWatermarkOnScreen) {
+      if (winW <= 1023) {
+        // Mobile & tablet: Let mobile.css position cleanly at bottom-right viewport anchor
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '1';
+        overlay.style.left = '';
+        overlay.style.top = '';
+        overlay.style.width = '';
+        overlay.style.height = '';
+        return;
+      } else if (isWatermarkOnScreen) {
         overlay.style.display = 'flex';
         overlay.style.opacity = '1';
         overlay.style.left = `${Math.round(geminiX - offsetX)}px`;
@@ -1802,7 +1831,6 @@ class OverclockApp {
         overlay.style.width = `${overlaySize}px`;
         overlay.style.height = `${overlaySize}px`;
       } else {
-        // Fallback for portrait mobile: keep Miss Minutes visible and accessible at bottom-right
         overlay.style.display = 'flex';
         overlay.style.opacity = '1';
         overlay.style.left = `${winW - 55}px`;
@@ -1871,10 +1899,17 @@ class OverclockApp {
       }
     });
 
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        playVideo();
-      }
+    video.addEventListener('playing', () => {
+      video.style.display = 'block';
+      video.classList.add('is-playing');
+      const img = document.getElementById('miss-minutes-img');
+      if (img) img.style.opacity = '0';
+    });
+    video.addEventListener('error', () => {
+      video.style.display = 'none';
+      video.classList.remove('is-playing');
+      const img = document.getElementById('miss-minutes-img');
+      if (img) img.style.opacity = '1';
     });
 
     playVideo();
