@@ -8,13 +8,47 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2.1">
-  <link rel="stylesheet" href="mobile.css?v=1.0">
+  <link rel="stylesheet" href="styles.css?v=2.2">
+  <link rel="stylesheet" href="mobile.css?v=1.1">
+  <link rel="stylesheet" href="tva-temporal-intro.css?v=1.0">
   <link rel="preload" as="image" href="images/ezgif-frame-001.jpg" fetchpriority="high">
   <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
   <script>
+    // Force browser to always start at the very top (start of website) on refresh
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    // Remove any anchor hash on initial load/refresh so browser does not jump to middle sections
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
+    const resetScrollToTop = () => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } catch (e) {
+        window.scrollTo(0, 0);
+      }
+      document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    };
+
+    resetScrollToTop();
+
+    window.addEventListener('beforeunload', () => {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      resetScrollToTop();
+    });
+    window.addEventListener('pageshow', resetScrollToTop);
+    window.addEventListener('DOMContentLoaded', resetScrollToTop);
+    window.addEventListener('load', () => {
+      resetScrollToTop();
+      setTimeout(resetScrollToTop, 50);
+      setTimeout(resetScrollToTop, 150);
+    });
+
     const searchParams = new URLSearchParams(window.location.search);
-    if (window.location.hash || window.matchMedia('(prefers-reduced-motion: reduce)').matches || searchParams.has('noboot')) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || searchParams.has('noboot') || searchParams.has('skipboot')) {
       document.documentElement.classList.add('skip-boot');
     }
     const onlySec = searchParams.get('only');
@@ -40,57 +74,95 @@
 <body>
 
   <!-- ==========================================================
-       1. FAST BOOT SEQUENCE OVERLAY (MAX 2.5S / SESSION CACHED)
+       1. TVA TEMPORAL ENTRY — 3D CINEMATIC INTRO ANIMATION
   ========================================================== -->
-  <div id="boot-overlay" class="boot-overlay" aria-live="polite" aria-label="Bureau Boot Sequence">
-    <div class="boot-terminal-card">
-      <div class="boot-header">
-        <span class="boot-dot amber"></span>
-        <span class="boot-dot mustard"></span>
-        <span class="boot-dot green"></span>
-        <span class="boot-title">OVERCLOCK_BUREAU // TIME SYNC v2.7</span>
-      </div>
-      
-      <!-- Original Mascot: TICK (555 Timer IC) -->
-      <div class="boot-mascot-container">
-        <svg class="tick-mascot-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- 8 DIP Pins (legs) -->
-          <rect x="8" y="10" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="8" y="24" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="8" y="38" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="8" y="52" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="50" y="10" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="50" y="24" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="50" y="38" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <rect x="50" y="52" width="6" height="4" rx="1" fill="#D9A93A"/>
-          <!-- IC Body -->
-          <rect x="14" y="6" width="36" height="52" rx="4" fill="#1C150F" stroke="#E8892B" stroke-width="2"/>
-          <!-- Top Notch -->
-          <path d="M28 6 C28 10 36 10 36 6" fill="#14100C" stroke="#E8892B" stroke-width="1.5"/>
-          <!-- Cute Retro Eyes & Dial -->
-          <circle cx="26" cy="28" r="3.5" fill="#FF9D3B"/>
-          <circle cx="38" cy="28" r="3.5" fill="#FF9D3B"/>
-          <!-- Smile -->
-          <path d="M28 38 Q32 44 36 38" stroke="#EFE6D2" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <!-- Clock Hand Antenna -->
-          <line x1="32" y1="6" x2="32" y2="0" stroke="#EFE6D2" stroke-width="2"/>
-          <circle cx="32" cy="0" r="2.5" fill="#E8892B"/>
-        </svg>
-        <div class="mascot-speech-bubble">
-          "Clock check... OK! Bureau systems ready."
+  <div id="tva-temporal-intro" class="tva-temporal-intro" role="dialog" aria-modal="true" aria-label="TVA Temporal Entry Cinematic Intro">
+    <canvas id="tva-intro-canvas" class="tva-intro-canvas"></canvas>
+    
+    <!-- Cinematic Letterbox Aspect Bars -->
+    <div class="tva-letterbox-bar bar-top" aria-hidden="true"></div>
+    <div class="tva-letterbox-bar bar-bottom" aria-hidden="true"></div>
+    
+    <!-- Atmospheric CRT Scanline & Grain Overlays -->
+    <div class="tva-intro-scanlines" aria-hidden="true"></div>
+    <div class="tva-intro-flare-overlay" aria-hidden="true"></div>
+
+    <!-- HUD Top Telemetry & Controls -->
+    <div class="tva-intro-hud-top">
+      <div class="tva-hud-telemetry">
+        <div class="tva-hud-line-1">
+          <span class="tva-pulse-pip"></span>
+          <span>TVA TEMPORAL GATEWAY // SECTOR 09</span>
+        </div>
+        <div class="tva-hud-line-2">
+          COORDINATES: 2027.02.19 // SACRED TIMELINE PROTOCOL // TRANSDIMENSIONAL LOCK
         </div>
       </div>
 
-      <div class="boot-log" id="boot-log">
-        <div class="boot-line" data-step="1"><span class="prompt">&gt;</span> BUREAU SYSTEMS ONLINE</div>
-        <div class="boot-line" data-step="2"><span class="prompt">&gt;</span> SYNCHRONIZING CLOCKS...</div>
-        <div class="boot-line" data-step="3"><span class="prompt">&gt;</span> PRIME TIMELINE: STABLE</div>
-        <div class="boot-line highlight" data-step="4"><span class="prompt">&gt;</span> OVERCLOCK PROTOCOL: READY</div>
+      <div class="tva-hud-controls">
+        <button id="tva-intro-audio-btn" class="tva-intro-audio-btn" aria-label="Toggle Sound" title="Toggle Sound (Audio Drone)">
+          <span>🔊</span>
+        </button>
       </div>
-      <div class="boot-progress-bar">
-        <div class="boot-progress-fill" id="boot-progress-fill"></div>
+    </div>
+
+    <!-- Scene 4: Grand OVERCLOCK 2027 Reveal Card -->
+    <div id="tva-intro-reveal" class="tva-intro-reveal" aria-hidden="true">
+      <div class="reveal-tva-watermark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" class="reveal-watermark-svg" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="1.5" />
+          <circle cx="50" cy="50" r="36" stroke="currentColor" stroke-width="1" />
+          <polygon points="50,18 78,74 22,74" stroke="currentColor" stroke-width="1.2" />
+          <polygon points="50,82 22,26 78,26" stroke="currentColor" stroke-width="1.2" />
+        </svg>
       </div>
-      <div class="boot-skip-hint">Click or press any key to skip</div>
+
+      <div class="reveal-presents-badge" aria-label="FCRIT Presents in association with IEEE, EESA, and ISLE">
+        <div class="reveal-emblems-group">
+          <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Student Branch FCRIT Logo" class="reveal-club-emblem" title="IEEE Student Branch, FCRIT">
+          <img src="images/eesa-logo.jpg" alt="EESA Logo" class="reveal-club-emblem" title="EESA — Electrical Engineering Students Association">
+          <img src="images/isle-logo.jpg" alt="ISLE Logo" class="reveal-club-emblem" title="ISLE — Indian Society of Lighting Engineers">
+        </div>
+        <div class="reveal-presents-content">
+          <span class="reveal-presents-text">FCRIT PRESENTS</span>
+          <span class="reveal-presents-clubs">IEEE · EESA · ISLE</span>
+        </div>
+      </div>
+
+      <div class="reveal-title-wrap">
+        <h1 class="reveal-master-title">
+          <span class="reveal-word-over">OVER</span><span class="reveal-word-clock">CLOCK</span>
+          <span class="reveal-year-tag">2027</span>
+        </h1>
+      </div>
+
+      <p class="reveal-tagline">SAME IDEAS. DIFFERENT TIMELINES. A BRIGHTER TOMORROW.</p>
+      <div class="reveal-subtitle">A 24-HOUR HARDWARE HACKATHON</div>
+
+      <div class="reveal-tracks-pill-strip">
+        <span class="reveal-track-pill">ROBOTICS &amp; AUTONOMOUS SYSTEMS</span>
+        <span class="reveal-track-pill">EMBEDDED SYSTEMS &amp; IoT</span>
+        <span class="reveal-track-pill">ENERGY &amp; SUSTAINABILITY</span>
+        <span class="reveal-track-pill">INDUSTRIAL AUTOMATION</span>
+        <span class="reveal-track-pill">OPEN INNOVATION</span>
+      </div>
+    </div>
+
+    <!-- HUD Bottom Status Readout & Sequence Filament -->
+    <div class="tva-intro-hud-bottom">
+      <div id="tva-status-text" class="tva-status-readout">
+        INITIALIZING TVA TEMPORAL DRIVE...
+      </div>
+      <div class="tva-timeline-progress-track">
+        <div id="tva-progress-fill" class="tva-timeline-progress-fill"></div>
+      </div>
+      <div class="tva-timeline-phases-labels">
+        <span class="tva-phase-item active">ACTIVATION</span>
+        <span class="tva-phase-item">PORTAL</span>
+        <span class="tva-phase-item">WARP</span>
+        <span class="tva-phase-item">OVERCLOCK 2027</span>
+        <span class="tva-phase-item">ENTRY</span>
+      </div>
     </div>
   </div>
 
@@ -255,7 +327,7 @@
                 <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
                 <div class="sector-box">
                   <span class="sector-code">03</span>
-                  <span class="sector-name">Problem Domains (5 Tracks)</span>
+                  <span class="sector-name">Problem Domains (6 Tracks)</span>
                 </div>
               </a>
             </li>
@@ -332,6 +404,12 @@
               </a>
             </li>
           </ul>
+          <div class="menu-replay-action-wrap" style="padding: 16px 8px 8px 8px; border-top: 1px dashed rgba(232, 137, 43, 0.25); margin-top: 12px;">
+            <button type="button" class="btn-replay-intro menu-replay-btn" data-action="replay-intro" aria-label="Replay 3D Cinematic Intro">
+              <span class="replay-icon">⏱</span>
+              <span>REPLAY 3D CINEMATIC INTRO</span>
+            </button>
+          </div>
         </div>
       </div>
     </nav>
@@ -343,9 +421,9 @@
   <header class="bureau-navbar" id="bureau-navbar">
     <div class="nav-container">
       <a href="#hero" class="nav-brand-group" aria-label="OVERCLOCK 2027 Homepage">
-        <div class="brand-badge">
-          <span class="fcrit-tag">FCRIT</span>
-          <span class="ieee-tag">× IEEE SB</span>
+        <div class="brand-badge" title="Agnel Charities F.C.R.I.T Vashi">
+          <span class="fcrit-tag">Agnel Charities</span>
+          <span class="ieee-tag">F.C.R.I.T Vashi</span>
         </div>
         <div class="brand-wordmark-wrap">
           <span class="brand-wordmark">OVERCLOCK</span>
@@ -353,27 +431,37 @@
         </div>
       </a>
 
-      <!-- Unstop Header Element -->
-      <div class="nav-unstop-wrapper">
+      <!-- Current Timeline Status Indicator, Unstop Partner Badge, Audio Toggle & Replay Intro Button -->
+      <div class="nav-actions-group">
         <a
           href="https://unstop.com"
           target="_blank"
           rel="noopener noreferrer"
           class="header-unstop-link"
           id="header-unstop-link"
-          aria-label="Unstop"
-          title="Unstop"
+          aria-label="Register on Unstop Platform"
+          title="Unstop — Official Hackathon Platform Partner (Click to Register)"
         >
-          <img src="images/unstop-logo.png" alt="Unstop Logo" class="header-unstop-logo">
+          <span class="unstop-logo-chip" aria-hidden="true">
+            <img src="images/unstop-logo.png" alt="Unstop" class="header-unstop-logo">
+          </span>
+          <span class="unstop-btn-text">UNSTOP</span>
+          <span class="unstop-header-badge-tag">OFFICIAL</span>
         </a>
-      </div>
-
-      <!-- Current Timeline Status Indicator on top bar -->
-      <div class="nav-timeline-status" aria-hidden="true">
-        <span class="nav-status-pip"></span>
-        <span class="nav-status-label">TEMPORAL LOG</span>
-        <span class="nav-status-sep">//</span>
-        <span class="nav-status-sec" id="nav-current-section-name">HOME</span>
+        <button id="audio-toggle-btn" class="nav-audio-btn" type="button" aria-label="Cycle Sound Profile" title="Acoustic Profile: TVA Industrial Relay (Click to Switch Sound Profile)">
+          <span class="audio-icon">⚡</span>
+          <span class="audio-label">SOUND: TVA RELAY</span>
+        </button>
+        <button id="btn-replay-intro" class="nav-replay-btn btn-replay-intro" data-action="replay-intro" type="button" aria-label="Replay 3D Cinematic Intro" title="Replay TVA Temporal Entry Intro">
+          <span class="replay-icon">⏱</span>
+          <span class="replay-label">REPLAY INTRO</span>
+        </button>
+        <div class="nav-timeline-status" aria-hidden="true">
+          <span class="nav-status-pip"></span>
+          <span class="nav-status-label">TEMPORAL LOG</span>
+          <span class="nav-status-sep">//</span>
+          <span class="nav-status-sec" id="nav-current-section-name">HOME</span>
+        </div>
       </div>
     </div>
   </header>
@@ -627,15 +715,15 @@
     </section>
 
     <!-- ========================================================
-         03. PROBLEM STATEMENTS — FIVE DOMAIN ENVIRONMENTS
+         03. PROBLEM STATEMENTS — SIX DOMAIN ENVIRONMENTS
     ======================================================== -->
     <section id="problems" class="bureau-section" data-section-num="03">
-      <div class="section-rubber-stamp">PENDING</div>
+      <div class="section-rubber-stamp">LEVEL 03</div>
 
       <div class="section-header-wrap">
         <div class="bureau-tag amber">DOMAIN ENVIRONMENTS // LEVEL 03</div>
-        <h2 class="section-main-heading">Problem Statements</h2>
-        <p class="section-subtext">The Prime Timeline partitions into exactly five hardware engineering sectors. Official domain names, problem statements, and technical requirements are scheduled for release on 01 December 2026.</p>
+        <h2 class="section-main-heading">Explore the Domains</h2>
+        <p class="section-subtext">The challenge space features six multidisciplinary technology domains. Official, detailed problem statements will be revealed in one month (01 December 2026). Explore the scope below, identify your preferred track, and start assembling your team.</p>
       </div>
 
       <!-- Free Round 1 PPT Submission Notice -->
@@ -650,214 +738,321 @@
         </p>
       </div>
 
-      <!-- Exactly Five Distinct Domain Slots -->
+      <!-- Domain Wave Sonic Telemetry Ribbon -->
+      <div class="domain-sonic-telemetry-ribbon" role="region" aria-label="Domain Wave Acoustic Telemetry">
+        <div class="sonic-ribbon-left">
+          <span class="sonic-pulse-dot" aria-hidden="true"></span>
+          <span class="sonic-ribbon-tag">ACOUSTIC TELEMETRY // 6 DOMAIN WAVE FREQUENCIES ACTIVE</span>
+        </div>
+        <div class="sonic-ribbon-right">
+          <span class="sonic-ribbon-hint">🔊 Hover, probe, or tap each CRT monitor to experience authentic wave voices &amp; haptic vibration</span>
+        </div>
+      </div>
+
+      <!-- Exactly Six Distinct Domain Slots -->
       <div class="domain-slots-grid">
 
-        <!-- Domain Slot 01: Amber Carrier Trace -->
+        <!-- Domain Slot 01: General Innovation & Open Innovation -->
         <div class="domain-slot-card slot-amber" data-slot="1">
           <div class="domain-slot-topbar">
             <span class="slot-badge">DOMAIN SLOT 01</span>
             <span class="slot-freq">CH-01 · 433 MHz</span>
           </div>
           <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
             <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
             <div class="screen-waveform-container" aria-hidden="true">
-              <svg viewBox="0 0 280 60" class="waveform-svg">
+              <canvas class="domain-scope-canvas" data-slot="1"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
                 <path d="M 0 30 Q 35 10 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave amber-wave" />
               </svg>
             </div>
-            <div class="slot-channel-tag">STANDBY CARRIER // AMBER TRACE</div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // AMBER TRACE</div>
           </div>
           <div class="slot-content-chamber">
             <div class="slot-status-indicator">
               <span class="status-dot-pulse amber"></span>
-              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
             </div>
-            <div class="slot-title-placeholder">
-              <div class="wireframe-bar long"></div>
-              <div class="wireframe-bar short"></div>
+            <h3 class="slot-title">General Innovation & Open Innovation</h3>
+            <p class="slot-desc">Focuses on creative, non-traditional solutions for everyday challenges, accessibility, and social welfare. It empowers teams to bridge hardware, software, and human experience to build practical tools that don't fit into rigid silos.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Assistive Tech</span>
+                <span class="slot-tag">Civic Hardware</span>
+                <span class="slot-tag">Campus Utilities</span>
+                <span class="slot-tag">Community IoT</span>
+                <span class="slot-tag">Wearable Gear</span>
+              </div>
             </div>
-            <div class="slot-desc-placeholder">
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line quarter"></div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Rapid Prototyping, Multidisciplinary Teams, Product Design & Human-Centric Hardware</span>
             </div>
-            <div class="slot-tags-placeholder">
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">⚡</span>
+              <span class="teaser-text">"Where unconventional thinking meets tangible impact—rethink everyday mechanics before the clock starts ticking."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>Dossier Sealed // Release 01 Dec 2026</span>
+                <span>🔒 Challenges Unlocking Soon</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Domain Slot 02: Cyan Carrier Trace -->
+        <!-- Domain Slot 02: Defence & National Security -->
         <div class="domain-slot-card slot-cyan" data-slot="2">
           <div class="domain-slot-topbar">
             <span class="slot-badge">DOMAIN SLOT 02</span>
             <span class="slot-freq">CH-02 · 868 MHz</span>
           </div>
           <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
             <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
             <div class="screen-waveform-container" aria-hidden="true">
-              <svg viewBox="0 0 280 60" class="waveform-svg">
+              <canvas class="domain-scope-canvas" data-slot="2"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
                 <path d="M 0 30 Q 35 50 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave cyan-wave" />
               </svg>
             </div>
-            <div class="slot-channel-tag">STANDBY CARRIER // CYAN TRACE</div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // CYAN TRACE</div>
           </div>
           <div class="slot-content-chamber">
             <div class="slot-status-indicator">
               <span class="status-dot-pulse cyan"></span>
-              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
             </div>
-            <div class="slot-title-placeholder">
-              <div class="wireframe-bar long"></div>
-              <div class="wireframe-bar short"></div>
+            <h3 class="slot-title">Defence & National Security</h3>
+            <p class="slot-desc">Explores ruggedized, mission-critical engineering designed to protect infrastructure, secure communication lines, and assist emergency response teams. Projects demand resilient architectures operating in hostile, remote, or constrained environments.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Reconnaissance Robotics</span>
+                <span class="slot-tag">Encrypted Edge Comms</span>
+                <span class="slot-tag">Perimeter Telemetry</span>
+                <span class="slot-tag">Search & Rescue Tech</span>
+                <span class="slot-tag">Threat Detection</span>
+              </div>
             </div>
-            <div class="slot-desc-placeholder">
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line quarter"></div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Robotics, Embedded Systems, RF Communications, Cyber-Physical Security & Rugged Electronics</span>
             </div>
-            <div class="slot-tags-placeholder">
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">⚡</span>
+              <span class="teaser-text">"High stakes and zero tolerance for failure—engineer systems that stay online when everything else goes down."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>Dossier Sealed // Release 01 Dec 2026</span>
+                <span>🔒 Classified Briefing Dropping Soon</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Domain Slot 03: Emerald Carrier Trace -->
+        <!-- Domain Slot 03: Healthcare & Assistive Technology -->
         <div class="domain-slot-card slot-emerald" data-slot="3">
           <div class="domain-slot-topbar">
             <span class="slot-badge">DOMAIN SLOT 03</span>
             <span class="slot-freq">CH-03 · 2.4 GHz</span>
           </div>
           <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
             <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
             <div class="screen-waveform-container" aria-hidden="true">
-              <svg viewBox="0 0 280 60" class="waveform-svg">
+              <canvas class="domain-scope-canvas" data-slot="3"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
                 <path d="M 0 30 Q 35 15 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave emerald-wave" />
               </svg>
             </div>
-            <div class="slot-channel-tag">STANDBY CARRIER // EMERALD TRACE</div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // EMERALD TRACE</div>
           </div>
           <div class="slot-content-chamber">
             <div class="slot-status-indicator">
               <span class="status-dot-pulse emerald"></span>
-              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
             </div>
-            <div class="slot-title-placeholder">
-              <div class="wireframe-bar long"></div>
-              <div class="wireframe-bar short"></div>
+            <h3 class="slot-title">Healthcare & Assistive Technology</h3>
+            <p class="slot-desc">Dedicated to elevating patient outcomes, clinical efficiency, and physical independence through intelligent biomedical hardware and point-of-care diagnostics. Design non-invasive, dependable devices that save critical seconds in emergencies.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Vital Signs Telemetry</span>
+                <span class="slot-tag">Rehabilitation Hardware</span>
+                <span class="slot-tag">Smart Emergency Triage</span>
+                <span class="slot-tag">Portable Diagnostics</span>
+                <span class="slot-tag">Sensory Feedback</span>
+              </div>
             </div>
-            <div class="slot-desc-placeholder">
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line quarter"></div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Biomedical Instrumentation, Analog Sensor Integration, DSP, Wearable Tech & Health Informatics</span>
             </div>
-            <div class="slot-tags-placeholder">
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">⚡</span>
+              <span class="teaser-text">"The pulse of precision engineering—design the hardware that will save seconds and lives."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>Dossier Sealed // Release 01 Dec 2026</span>
+                <span>🔒 Clinical Dossier Coming Soon</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Domain Slot 04: Violet Carrier Trace -->
+        <!-- Domain Slot 04: Smart Home & Consumer Electronics -->
         <div class="domain-slot-card slot-violet" data-slot="4">
           <div class="domain-slot-topbar">
             <span class="slot-badge">DOMAIN SLOT 04</span>
             <span class="slot-freq">CH-04 · 915 MHz</span>
           </div>
           <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
             <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
             <div class="screen-waveform-container" aria-hidden="true">
-              <svg viewBox="0 0 280 60" class="waveform-svg">
+              <canvas class="domain-scope-canvas" data-slot="4"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
                 <path d="M 0 30 Q 35 45 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave violet-wave" />
               </svg>
             </div>
-            <div class="slot-channel-tag">STANDBY CARRIER // VIOLET TRACE</div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // VIOLET TRACE</div>
           </div>
           <div class="slot-content-chamber">
             <div class="slot-status-indicator">
               <span class="status-dot-pulse violet"></span>
-              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
             </div>
-            <div class="slot-title-placeholder">
-              <div class="wireframe-bar long"></div>
-              <div class="wireframe-bar short"></div>
+            <h3 class="slot-title">Smart Home & Consumer Electronics</h3>
+            <p class="slot-desc">Targets the next generation of intelligent, energy-aware, and secure consumer appliances. Embed edge intelligence, robust fail-safes, and intuitive automation directly into the physical devices inhabiting modern residential environments.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Low-Latency Automation</span>
+                <span class="slot-tag">Smart Energy Metering</span>
+                <span class="slot-tag">Ambient Hazard Sensors</span>
+                <span class="slot-tag">Edge AI Local Hubs</span>
+                <span class="slot-tag">Matter & BLE Mesh</span>
+              </div>
             </div>
-            <div class="slot-desc-placeholder">
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line quarter"></div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">IoT Architectures, Embedded Microcontrollers (ESP32/ARM Cortex), Wireless Mesh & Consumer UX</span>
             </div>
-            <div class="slot-tags-placeholder">
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">⚡</span>
+              <span class="teaser-text">"Bringing intelligence inside the home—turn ordinary circuits into autonomous living spaces."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>Dossier Sealed // Release 01 Dec 2026</span>
+                <span>🔒 Protocols Revealed Soon</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Domain Slot 05: Copper-Gold Carrier Trace -->
+        <!-- Domain Slot 05: Industrial Automation & Monitoring -->
         <div class="domain-slot-card slot-copper" data-slot="5">
           <div class="domain-slot-topbar">
             <span class="slot-badge">DOMAIN SLOT 05</span>
             <span class="slot-freq">CH-05 · 5.8 GHz</span>
           </div>
           <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
             <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
             <div class="screen-waveform-container" aria-hidden="true">
-              <svg viewBox="0 0 280 60" class="waveform-svg">
+              <canvas class="domain-scope-canvas" data-slot="5"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
                 <path d="M 0 30 Q 35 20 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave copper-wave" />
               </svg>
             </div>
-            <div class="slot-channel-tag">STANDBY CARRIER // COPPER-GOLD TRACE</div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // COPPER TRACE</div>
           </div>
           <div class="slot-content-chamber">
             <div class="slot-status-indicator">
               <span class="status-dot-pulse copper"></span>
-              <span class="status-text">Awaiting Official Release · 01 Dec 2026</span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
             </div>
-            <div class="slot-title-placeholder">
-              <div class="wireframe-bar long"></div>
-              <div class="wireframe-bar short"></div>
+            <h3 class="slot-title">Industrial Automation & Monitoring</h3>
+            <p class="slot-desc">Tackles the demands of modern manufacturing, assembly floors, and heavy machinery uptime through predictive intelligence. Design ruggedized data acquisition and actuation systems that preempt costly breakdowns and optimize industrial throughput.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Predictive Maintenance</span>
+                <span class="slot-tag">IIoT Gateways</span>
+                <span class="slot-tag">Machine Vision Quality</span>
+                <span class="slot-tag">Automated Sorting</span>
+                <span class="slot-tag">PLC & SCADA Interfacing</span>
+              </div>
             </div>
-            <div class="slot-desc-placeholder">
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line"></div>
-              <div class="wireframe-line quarter"></div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Instrumentation, Mechatronics, Power Electronics, Sensor Fusion & Predictive Telemetry</span>
             </div>
-            <div class="slot-tags-placeholder">
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
-              <span class="wireframe-tag">---</span>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">⚡</span>
+              <span class="teaser-text">"The heartbeat of heavy industry—engineer the feedback loops that keep the factories running."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>Dossier Sealed // Release 01 Dec 2026</span>
+                <span>🔒 Industrial Briefing Coming Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Slot 06: Energy, Power & Sustainability -->
+        <div class="domain-slot-card slot-ruby" data-slot="6">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 06</span>
+            <span class="slot-freq">CH-06 · 10.5 GHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="6"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 25 5 50 30 T 100 30 T 150 30 T 200 30 T 250 30 T 280 30" class="carrier-wave ruby-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // RUBY TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse ruby"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">Energy, Power & Sustainability</h3>
+            <p class="slot-desc">Drives the transition toward cleaner, resilient energy distribution, electrification, and high-efficiency power management. Builders design physical systems that optimize renewable capture, battery reliability, and grid stability for sustainable community power.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Smart Grid Telemetry</span>
+                <span class="slot-tag">EV Charging & BMS</span>
+                <span class="slot-tag">Solar/Wind MPPT</span>
+                <span class="slot-tag">Energy Harvesting</span>
+                <span class="slot-tag">Power Conditioning</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Electrical Machines, Power Systems, Battery Storage, Renewable Energy & Embedded Control</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">⚡</span>
+              <span class="teaser-text">"From raw generation to intelligent distribution—harness the current and power a sustainable tomorrow."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>🔒 Power Matrix Unlocking Soon</span>
               </button>
             </div>
           </div>
@@ -873,7 +1068,7 @@
           <div class="bureau-tag amber">CROSS-SECTOR INITIATIVE // TIMELINE PROTOCOL</div>
           <h3 class="domain-cta-title">Prepare Your Engineering Crew for OVERCLOCK 2027</h3>
           <p class="domain-cta-text">
-            Five domains. 24 hours of real physical circuit wiring, embedded programming, and hardware deployment. Assemble your team and prepare for official registration on Unstop.
+            Six domains. 24 hours of real physical circuit wiring, embedded programming, and hardware deployment. Assemble your team and prepare for official registration on Unstop.
           </p>
         </div>
         <div class="domain-cta-action">
@@ -1040,7 +1235,41 @@
                 </span>
                 <span class="date-text">01 November 2026</span>
               </div>
-              <p class="milestone-description">Intake portal opens for builder registration and team onboarding.</p>
+              <p class="milestone-description">The intake portal opens for participant registration and Round 1 idea submissions.</p>
+
+              <!-- Registration Fee Section -->
+              <div class="milestone-fee-structure">
+                <div class="fee-divider" aria-hidden="true"></div>
+                <div class="fee-rows-group">
+                  <div class="fee-row-item">
+                    <div class="fee-row-header">
+                      <svg class="fee-icon fee-icon-free" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg>
+                      <span class="fee-stage-title">ROUND 1</span>
+                      <span class="fee-sep">—</span>
+                      <span class="fee-pill fee-pill-free">FREE</span>
+                    </div>
+                    <p class="fee-detail-text">Submit your idea PPT with no registration fee.</p>
+                  </div>
+                  <div class="fee-row-item">
+                    <div class="fee-row-header">
+                      <svg class="fee-icon fee-icon-paid" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
+                        <path d="M13 5v2"></path>
+                        <path d="M13 11v2"></path>
+                        <path d="M13 17v2"></path>
+                      </svg>
+                      <span class="fee-stage-title">ROUND 2</span>
+                      <span class="fee-sep">—</span>
+                      <span class="fee-pill fee-pill-paid">PAID</span>
+                    </div>
+                    <p class="fee-detail-text">Participation fees apply only to shortlisted teams advancing to Round 2.</p>
+                  </div>
+                </div>
+              </div>
+
               <div class="milestone-card-footer">
                 <span class="milestone-track-code">CHRONO-REF // SEC-01</span>
               </div>
@@ -1067,7 +1296,7 @@
                 </span>
                 <span class="date-text">01 December 2026</span>
               </div>
-              <p class="milestone-description">Domain challenges and initial problem statements published across the five sectors.</p>
+              <p class="milestone-description">Domain challenges and initial problem statements published across the six sectors.</p>
               <div class="milestone-card-footer">
                 <span class="milestone-track-code">CHRONO-REF // SEC-02</span>
               </div>
@@ -1198,6 +1427,24 @@
             <span class="prize-card-sub">50K CASH PRIZE</span>
           </div>
         </div>
+
+        <!-- Official Directive Callout Banner -->
+        <div class="registration-directive-callout">
+          <div class="directive-callout-icon" aria-hidden="true">📜</div>
+          <div class="directive-callout-body">
+            <div class="directive-callout-tag">OFFICIAL DIRECTIVE // FORM OC-27 / RR · REV 01</div>
+            <h4 class="directive-callout-title">Participant Rules &amp; Regulations Dossier Cleared</h4>
+            <p class="directive-callout-text">The official 7-section regulatory framework (eligibility, free Round 1 PPT submission, ₹1,770 Round 2 fee, hardware build spec, and safety rules) is now cleared for all timelines.</p>
+          </div>
+          <div class="directive-callout-actions">
+            <button type="button" class="btn-directive-open" id="btn-open-rules-from-reg" aria-haspopup="dialog">
+              <span>VIEW DOSSIER</span>
+            </button>
+            <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" class="btn-directive-dl" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer">
+              <span>DOWNLOAD PDF (3.8 MB)</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1215,56 +1462,60 @@
       </div>
 
       <div class="downloads-resource-grid">
-        <!-- Resource 1: Event Brochure -->
-        <div class="download-resource-card" id="card-download-brochure">
+        <!-- Resource 1: Participant Rules & Field Guide -->
+        <div class="download-resource-card" id="card-download-participant-guide">
           <div class="download-card-header">
-            <span class="doc-format-badge">PDF // DOSSIER</span>
-            <span class="doc-status-pill pending" id="status-download-brochure">PDF PENDING</span>
+            <span class="doc-format-badge">PDF // FIELD MANUAL (OC-27/PG)</span>
+            <span class="doc-status-pill ready" id="status-download-participant-guide">OFFICIAL PDF</span>
           </div>
           <div class="download-card-body">
-            <h3 class="download-card-title">EVENT BROCHURE — PDF</h3>
-            <p class="download-card-desc">Official event prospectus covering hackathon format, challenge tracks, and campus facilities.</p>
+            <h3 class="download-card-title">PARTICIPANT RULES &amp; GUIDE — PDF</h3>
+            <p class="download-card-desc">Official TVA Participant Field Manual (Form OC-27/PG) covering required hardware equipment, campus facilities, lab toolkits, and preparation directives.</p>
           </div>
           <div class="download-card-action">
-            <a href="#" class="btn-download-resource is-pending" id="btn-download-brochure" aria-disabled="true" tabindex="-1">
+            <a href="docs/OVERCLOCK_2027_Participant_Guide.pdf" class="btn-download-resource is-ready" id="btn-download-participant-guide" download="OVERCLOCK_2027_Participant_Guide.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Participant Rules & Guide PDF (3.8 MB)">
               <span class="download-icon" aria-hidden="true">↓</span>
-              <span class="download-btn-text">AVAILABLE SOON</span>
+              <span class="download-btn-text">DOWNLOAD PDF (3.8 MB)</span>
             </a>
           </div>
         </div>
 
-        <!-- Resource 2: PPT Submission Template -->
-        <div class="download-resource-card" id="card-download-ppt">
-          <div class="download-card-header">
-            <span class="doc-format-badge">PDF // TEMPLATE</span>
-            <span class="doc-status-pill pending" id="status-download-ppt">AVAILABLE SOON</span>
-          </div>
-          <div class="download-card-body">
-            <h3 class="download-card-title">PPT SUBMISSION TEMPLATE — PDF</h3>
-            <p class="download-card-desc">Standard presentation slide deck format for the free Round 1 problem-statement submission.</p>
-          </div>
-          <div class="download-card-action">
-            <a href="#" class="btn-download-resource is-pending" id="btn-download-ppt" aria-disabled="true" tabindex="-1">
-              <span class="download-icon" aria-hidden="true">↓</span>
-              <span class="download-btn-text">AVAILABLE SOON</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Resource 3: Rules & Regulations -->
+        <!-- Resource 2: Rules & Regulations -->
         <div class="download-resource-card" id="card-download-rules">
           <div class="download-card-header">
-            <span class="doc-format-badge">PDF // DIRECTIVE</span>
-            <span class="doc-status-pill pending" id="status-download-rules">PDF PENDING</span>
+            <span class="doc-format-badge">PDF // DIRECTIVE (OC-27/RR)</span>
+            <span class="doc-status-pill ready" id="status-download-rules">OFFICIAL PDF</span>
           </div>
           <div class="download-card-body">
-            <h3 class="download-card-title">RULES & REGULATIONS — PDF</h3>
-            <p class="download-card-desc">Complete regulatory framework, component usage limits, safety guidelines, and code of conduct.</p>
+            <h3 class="download-card-title">RULES &amp; REGULATIONS — PDF</h3>
+            <p class="download-card-desc">Official TVA Participant Directive (Form OC-27/RR) covering team eligibility, 2-round structure, ₹1,770 fee, hardware build specs, and safety guidelines.</p>
+          </div>
+          <div class="download-card-action download-card-action-dual">
+            <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" class="btn-download-resource is-ready" id="btn-download-rules" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Rules & Regulations PDF (3.8 MB)">
+              <span class="download-icon" aria-hidden="true">↓</span>
+              <span class="download-btn-text">DOWNLOAD PDF (3.8 MB)</span>
+            </a>
+            <button type="button" class="btn-view-directive-modal" id="btn-open-rules-modal" aria-haspopup="dialog" title="Read Interactive Rules & Regulations Dossier">
+              <span class="btn-icon" aria-hidden="true">📜</span>
+              <span class="btn-text">READ DOSSIER</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Resource 3: PPT Submission Template -->
+        <div class="download-resource-card" id="card-download-ppt">
+          <div class="download-card-header">
+            <span class="doc-format-badge">PPTX // TEMPLATE (OC-27/PPT)</span>
+            <span class="doc-status-pill ready" id="status-download-ppt">OFFICIAL PPTX</span>
+          </div>
+          <div class="download-card-body">
+            <h3 class="download-card-title">PPT SUBMISSION TEMPLATE — PPTX</h3>
+            <p class="download-card-desc">Official 9-slide PowerPoint template for the free Round 1 preliminary evaluation. Includes Problem Statement, Proposed Solution, Methodology, Technical Approach, Hardware Requirements, Feasibility, and References.</p>
           </div>
           <div class="download-card-action">
-            <a href="#" class="btn-download-resource is-pending" id="btn-download-rules" aria-disabled="true" tabindex="-1">
+            <a href="docs/OVERCLOCK_2027_Participant_Template.pptx" class="btn-download-resource is-ready" id="btn-download-ppt" download="OVERCLOCK_2027_Participant_Template.pptx" target="_blank" rel="noopener noreferrer" title="Download Official Round 1 PPTX Template (1.6 MB)">
               <span class="download-icon" aria-hidden="true">↓</span>
-              <span class="download-btn-text">AVAILABLE SOON</span>
+              <span class="download-btn-text">DOWNLOAD PPTX (1.6 MB)</span>
             </a>
           </div>
         </div>
@@ -1776,7 +2027,7 @@
                 </a>
               </div>
             </div>
-            <!-- Technical Head -->
+            <!-- Technical Head (Nicole Mendes) -->
             <div class="crew-roster-card">
               <div class="crew-role">Technical Head</div>
               <div class="crew-name">Nicole Mendes</div>
@@ -1786,6 +2037,19 @@
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                   </span>
                   <span class="crew-phone-number">+91 98220 09126</span>
+                </a>
+              </div>
+            </div>
+            <!-- Technical Head (Kunal Pate) -->
+            <div class="crew-roster-card">
+              <div class="crew-role">Technical Head</div>
+              <div class="crew-name">Kunal Pate</div>
+              <div class="crew-phone">
+                <a href="tel:+919820526617" class="crew-phone-link" aria-label="Call Kunal Pate at +91 98205 26617">
+                  <span class="crew-phone-icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
+                  <span class="crew-phone-number">+91 98205 26617</span>
                 </a>
               </div>
             </div>
@@ -1986,10 +2250,437 @@
     </div>
   </div>
 
+  <!-- ========================================================
+       OFFICIAL RULES & REGULATIONS DOSSIER MODAL
+       Form OC-27 / RR · Sacred Timeline Participant Directive
+  ======================================================== -->
+  <div id="rules-dossier-modal" class="bureau-modal-overlay rules-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title" hidden>
+    <div class="rules-dossier-card" id="rules-dossier-card">
+      <!-- Modal Top Bar -->
+      <div class="rules-modal-topbar">
+        <div class="rules-topbar-meta">
+          <span class="rules-division-tag">TEMPORAL CONDUCT DIVISION</span>
+          <span class="rules-bullet-sep">•</span>
+          <span class="rules-doc-ref">FORM OC-27 / RR</span>
+          <span class="rules-bullet-sep">•</span>
+          <span class="rules-rev-pill">REV 01</span>
+          <span class="rules-stamp-pill">CLEARED FOR ALL TIMELINES</span>
+        </div>
+        <button type="button" class="rules-modal-close-btn" id="rules-modal-close-btn" aria-label="Close Rules and Regulations Dossier">✕</button>
+      </div>
+
+      <!-- Dossier Hero Banner -->
+      <div class="rules-dossier-banner">
+        <div class="rules-banner-classification">SACRED TIMELINE // PARTICIPANT DIRECTIVE</div>
+        <h2 id="rules-modal-title" class="rules-dossier-heading">OVERCLOCK 2027</h2>
+        <div class="rules-dossier-subhead">RULES &amp; REGULATIONS — FORM OC-27 / RR</div>
+        <p class="rules-banner-meta">24-Hour National-Level Hardware Hackathon • 29–30 January 2027 • Fr. C. Rodrigues Institute of Technology, Vashi</p>
+        
+        <!-- Key Quick-Telemetry Badges -->
+        <div class="rules-telemetry-grid">
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">TEAM SIZE</span>
+            <span class="rules-tele-v">2–4 MEMBERS</span>
+          </div>
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">ELIGIBILITY</span>
+            <span class="rules-tele-v">UG · ALL INDIA</span>
+          </div>
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">ROUND 1 ENTRY</span>
+            <span class="rules-tele-v tele-free">FREE</span>
+          </div>
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">ROUND 2 ENTRY</span>
+            <span class="rules-tele-v tele-cost">₹1,770 / TEAM (INCL. GST)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable Dossier Content -->
+      <div class="rules-dossier-scroll" tabindex="0">
+        <!-- 01: Eligibility & Team Formation -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">01</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">ELIGIBILITY &amp; TEAM FORMATION</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 01</span>
+            </div>
+            <span class="rules-block-status-stamp verified">VERIFIED</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">The hackathon is open to <strong>undergraduate students</strong> from recognized institutions across India.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Each team must consist of <strong>2–4 members</strong>.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text"><strong>Cross-college teams are permitted.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Each participant may register with <strong>only one team</strong>.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">All participants must complete registration and submit valid details before the deadline.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 02: Registration & Shortlisting -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">02</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">REGISTRATION &amp; SHORTLISTING</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 02</span>
+            </div>
+            <span class="rules-block-status-stamp verified">VERIFIED</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text"><strong>Registration for Round 1 is completely FREE</strong> — no entry fee to register, submit a proposal, or participate in the preliminary evaluation.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Teams must submit their initial problem proposal and presentation (PPT) within the announced deadlines.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text">Shortlisting is based on the submitted proposal, technical feasibility, innovation, and relevance to the selected domain.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Only shortlisted teams are eligible for Round 2, the final on-site hackathon.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Organizers reserve the right to reject incomplete or inaccurate submissions.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Shortlisted teams must complete Round 2 registration and pay the applicable entry fee to confirm participation.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 03: Hackathon Structure -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">03</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">HACKATHON STRUCTURE</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 03</span>
+            </div>
+            <span class="rules-block-status-stamp rounds-stamp">TWO ROUNDS</span>
+          </div>
+
+          <!-- Round 1 Subcard -->
+          <div class="rules-round-subcard round-1-subcard">
+            <div class="round-subcard-header">
+              <div class="round-subcard-heading">
+                <span class="round-dot green" aria-hidden="true"></span>
+                <span class="round-label">ROUND 1 — PRELIMINARY EVALUATION &amp; FILTERING</span>
+              </div>
+              <div class="round-fee-badge free">
+                <span class="fee-big">FREE</span>
+                <span class="fee-sub">ENTRY FEE · ROUND 1 (No fee required)</span>
+              </div>
+            </div>
+            <ol class="rules-clause-list">
+              <li class="rules-clause-item">
+                <span class="clause-num">01</span>
+                <span class="clause-text">Teams submit their proposed solution via a PPT or other format specified by the organizers.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">02</span>
+                <span class="clause-text">The presentation should cover the problem statement, proposed solution, system architecture, hardware requirements, feasibility, and expected impact.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">03</span>
+                <span class="clause-text">Judges evaluate on innovation, technical feasibility, problem relevance, and implementation potential.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">04</span>
+                <span class="clause-text">Only shortlisted teams advance to Round 2.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">05</span>
+                <span class="clause-text">The shortlist and submission deadlines are communicated through official channels.</span>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Round 2 Subcard -->
+          <div class="rules-round-subcard round-2-subcard">
+            <div class="round-subcard-header">
+              <div class="round-subcard-heading">
+                <span class="round-dot amber" aria-hidden="true"></span>
+                <span class="round-label">ROUND 2 — FINAL EVALUATION &amp; PROTOTYPE DEMONSTRATION</span>
+              </div>
+              <div class="round-fee-badge paid">
+                <span class="fee-big">₹1,770</span>
+                <span class="fee-sub">PER TEAM (₹1,500 + 18% GST)</span>
+              </div>
+            </div>
+            <div class="round-fee-inclusions-note">
+              ✓ Covers meals, snacks, tea breaks &amp; event stationery (ID cards, essentials). Accommodation not included.
+            </div>
+            <ol class="rules-clause-list">
+              <li class="rules-clause-item">
+                <span class="clause-num">01</span>
+                <span class="clause-text">Only shortlisted teams are eligible to participate in Round 2.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">02</span>
+                <span class="clause-text">Selected teams must register and pay the prescribed fee to confirm participation.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">03</span>
+                <span class="clause-text">Teams develop their solutions during the <strong>24-hour on-site hackathon</strong>.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">04</span>
+                <span class="clause-text">A <strong>functional hardware prototype</strong>, supported by software where required, must be demonstrated at final evaluation.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">05</span>
+                <span class="clause-text">Teams present their implementation, demonstrate functionality, explain the technical design, and answer the judging panel.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">06</span>
+                <span class="clause-text">Final evaluation considers technical implementation, functionality, innovation, real-world impact, feasibility, reliability, and presentation.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">07</span>
+                <span class="clause-text">The judges' decisions will be final.</span>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- 04: Hardware & Development Rules -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">04</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">HARDWARE &amp; DEVELOPMENT RULES</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 04</span>
+            </div>
+            <span class="rules-block-status-stamp spec-stamp">BUILD SPEC</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">Individual components, sensors, microcontrollers, development boards, and standalone modules are permitted.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Teams may bring their own components and specialized equipment, subject to organizer approval and safety requirements.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text"><strong>Pre-built projects, previously completed prototypes, and ready-made integrated solutions may not be submitted as entries.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text"><strong>The core solution must be developed during the event.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Open-source libraries, frameworks, and reference materials may be used, provided their use is disclosed when requested.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Teams must acknowledge third-party designs, code, datasets, and other external resources used.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">07</span>
+              <span class="clause-text">Any use of pre-existing work must be clearly disclosed to the organizers and judges.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">08</span>
+              <span class="clause-text">Participants needing specialized equipment (induction motors, autotransformers, three-phase supplies, PCB fabrication) must submit requirements in advance.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">09</span>
+              <span class="clause-text">All equipment usage is subject to availability, approval, and applicable safety requirements.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 05: Code of Conduct & Safety -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">05</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">CODE OF CONDUCT &amp; SAFETY</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 05</span>
+            </div>
+            <span class="rules-block-status-stamp mandatory-stamp">MANDATORY</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">Follow all instructions from organizers, faculty coordinators, mentors, and venue staff.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Use equipment responsibly and maintain a safe working environment.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text"><strong>High-voltage equipment, hazardous materials, and dangerous experiments require prior approval and supervision.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Do not damage, misuse, or remove institute equipment without authorization.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Harassment, cheating, plagiarism, sabotage, and disruptive behavior will not be tolerated.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Organizers may disqualify teams that violate safety requirements or engage in misconduct.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">07</span>
+              <span class="clause-text">Comply with venue security rules and overnight access restrictions, and report accidents or unsafe conditions immediately.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 06: Judging & Results -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">06</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">JUDGING &amp; RESULTS</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 06</span>
+            </div>
+            <span class="rules-block-status-stamp final-stamp">FINAL</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">All eligible final-round teams are evaluated using the published judging criteria and weightages.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Judges may ask about design decisions, implementation, testing, originality, and practical feasibility.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text">Teams must ensure their prototype is ready for demonstration at the assigned evaluation time.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Judges may request evidence of functionality or clarification on the development process.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Any attempt to misrepresent progress, originality, or functionality may result in disqualification.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text"><strong>The judges' decisions will be binding.</strong></span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 07: Accommodation & General Conditions -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">07</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">ACCOMMODATION &amp; GENERAL CONDITIONS</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 07</span>
+            </div>
+            <span class="rules-block-status-stamp general-stamp">GENERAL</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text"><strong>Accommodation is not included in the Round 2 registration fee.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Accommodation, if available, is provided separately at a nominal cost, <strong>first-come first-served</strong>.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text">Availability, charges, and allocation are subject to organizer confirmation.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Follow the venue's overnight access, security, and accommodation rules.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Participants are responsible for their personal belongings and specialized equipment.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Organizers provide common facilities and equipment subject to availability and prior approval.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">07</span>
+              <span class="clause-text">Teams bring any specialized components required unless provision is confirmed by the organizers.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">08</span>
+              <span class="clause-text">Comply with all instructions on food, workspace allocation, equipment handling, and schedules.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">09</span>
+              <span class="clause-text">Organizers may modify schedules or arrangements when necessary; significant changes are communicated officially.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">10</span>
+              <span class="clause-text">By participating, teams agree to comply with these rules and any additional official instructions.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- Final Stabilization Seal -->
+        <div class="rules-timeline-seal">
+          <div class="seal-diamond-symbol">◆ TIMELINE STABILIZED ◆</div>
+          <p class="seal-directive-text">By participating in OVERCLOCK 2027, every team agrees to abide by these rules and all instructions officially communicated by the organizers.</p>
+          <div class="seal-footnote">DOC · OC-27/RR · REV 01 • SACRED TIMELINE • PAGES 01–06 COMPLETE</div>
+        </div>
+      </div>
+
+      <!-- Modal Action Bar -->
+      <div class="rules-modal-actions">
+        <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" class="btn-dossier-download">
+          <span class="action-icon">📥</span>
+          <span class="action-text">DOWNLOAD OFFICIAL PDF (3.8 MB)</span>
+        </a>
+        <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" class="btn-dossier-tab">
+          <span class="action-icon">↗</span>
+          <span class="action-text">OPEN IN NEW TAB</span>
+        </a>
+        <button type="button" class="btn-dossier-close" id="btn-close-rules-dossier-bottom">
+          <span>CLOSE DOSSIER</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Application & Engine Scripts -->
   <script src="bureau-engine.js"></script>
   <script src="sponsors-config.js"></script>
   <script src="app.js"></script>
   <script src="tva-inspection-game.js"></script>
+  <script src="domain-oscilloscope.js"></script>
+  <script type="module" src="tva-temporal-intro.js"></script>
 </body>
 </html>

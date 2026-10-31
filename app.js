@@ -13,26 +13,26 @@ window.OVERCLOCK_CONFIG = {
 
   // Central Downloads Resources Configuration
   downloads: {
-    brochure: {
-      id: "brochure",
-      title: "EVENT BROCHURE — PDF",
-      description: "Official event prospectus covering hackathon format, challenge tracks, and campus facilities.",
-      filePath: null, // Path to PDF when official asset is supplied
-      status: "PDF PENDING"
-    },
-    pptTemplate: {
-      id: "ppt",
-      title: "PPT SUBMISSION TEMPLATE — PDF",
-      description: "Standard presentation slide deck format for the free Round 1 problem-statement submission.",
-      filePath: null, // Path to PDF when official asset is supplied
-      status: "AVAILABLE SOON"
+    participantGuide: {
+      id: "participant-guide",
+      title: "PARTICIPANT RULES & GUIDE — PDF",
+      description: "Official TVA Participant Field Manual (Form OC-27/PG) covering required equipment, campus lab facilities, component rules, toolkit allowances, and event preparation.",
+      filePath: "docs/OVERCLOCK_2027_Participant_Guide.pdf",
+      status: "DOWNLOAD PDF"
     },
     rules: {
       id: "rules",
       title: "RULES & REGULATIONS — PDF",
-      description: "Complete regulatory framework, component usage limits, safety guidelines, and code of conduct.",
-      filePath: null, // Path to PDF when official asset is supplied
-      status: "PDF PENDING"
+      description: "Official TVA Participant Directive (Form OC-27/RR) covering team eligibility, 2-round structure, ₹1,770 fee, hardware build specs, and campus safety rules.",
+      filePath: "docs/OVERCLOCK_2027_Rules_and_Regulations.pdf",
+      status: "DOWNLOAD PDF"
+    },
+    pptTemplate: {
+      id: "ppt",
+      title: "PPT SUBMISSION TEMPLATE — PPTX",
+      description: "Official 9-slide presentation deck format for the free Round 1 problem-statement submission (Problem, Solution, Methodology, Technical Approach, Hardware Requirements, Feasibility, Impact).",
+      filePath: "docs/OVERCLOCK_2027_Participant_Template.pptx",
+      status: "DOWNLOAD PPTX"
     }
   },
 
@@ -81,6 +81,12 @@ window.OVERCLOCK_CREW = [
     name: "Nicole Mendes",
     phone: "+91 98220 09126",
     tel: "tel:+919822009126"
+  },
+  {
+    role: "Technical Head",
+    name: "Kunal Pate",
+    phone: "+91 98205 26617",
+    tel: "tel:+919820526617"
   }
 ];
 
@@ -106,8 +112,8 @@ window.OVERCLOCK_CREW = [
 class BureauSpatialScrollController {
   constructor(app) {
     this.app = app;
-    this.targetScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-    this.smoothScrollY = this.targetScrollY;
+    this.targetScrollY = 0;
+    this.smoothScrollY = 0;
     this.lerpFactor = 0.18;
     this.isTicking = false;
     this.isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -125,8 +131,9 @@ class BureauSpatialScrollController {
     this.dossierGrid = this.aboutSec ? this.aboutSec.querySelector('.case-notes-grid') : null;
     this.dossierCards = this.aboutSec ? Array.from(this.aboutSec.querySelectorAll('.case-note-card')) : [];
 
-    // Section 03: Problem Statements Five Domains
+    // Section 03: Problem Statements Six Domains (Balanced 3x2 Grid)
     this.problemsSec = document.getElementById('problems');
+    this.domainGrid = this.problemsSec ? this.problemsSec.querySelector('.domain-slots-grid') : null;
     this.domainCards = this.problemsSec ? Array.from(this.problemsSec.querySelectorAll('.domain-slot-card')) : [];
 
     // Section 04: Results Shortlist Teletype
@@ -340,47 +347,43 @@ class BureauSpatialScrollController {
   }
 
   /* --------------------------------------------------------
-     2. PROBLEM STATEMENTS (FIVE DOMAIN SLOTS)
+     2. PROBLEM STATEMENTS (SIX DOMAIN SLOTS — BALANCED 3x2 GRID)
   -------------------------------------------------------- */
   updateProblemsSection() {
-    if (!this.problemsSec || this.domainCards.length === 0) return;
+    if (!this.problemsSec) return;
     const p = this.getSectionProgress(this.problemsSec);
     if (p < -0.1 || p > 1.1) return;
 
-    const rotXInits = [5.5, 6.5, 6.0, 6.5, 5.5];
-    const rotYInits = [-3.5, -1.8, 0, 1.8, 3.5];
-
-    this.domainCards.forEach((card, i) => {
-      const c_i = 0.28 + i * 0.08;
-      const d = p - c_i;
-      const f = Math.max(0, 1 - Math.abs(d) / 0.13);
-      const f_smooth = f * f * (3 - 2 * f);
-
-      const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
-      const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
-
-      const baseZ = -45 * (1 - enterT) - 20 * exitT;
-      let tz = baseZ + (26 - baseZ) * f_smooth;
-
-      let rx = (rotXInits[i] * (1 - enterT) - 2.5 * exitT) * (1 - f_smooth);
-      let ry = (rotYInits[i] * (1 - enterT) + (rotYInits[i] * 0.35) * exitT) * (1 - f_smooth);
-      let scale = 0.98 + 0.035 * f_smooth;
-      let tx = (i - 2.0) * 4 * (1 - f_smooth * 0.5);
-
+    // Preserve uniform horizontal alignment: clear any residual scroll transforms on individual cards,
+    // while seamlessly supporting pointer-tilt on hover.
+    this.domainCards.forEach((card) => {
       const pt = this.getPointerTilt(card);
-      rx += pt.tiltX;
-      ry += pt.tiltY;
+      if (pt.tiltX || pt.tiltY) {
+        let rx = pt.tiltX;
+        let ry = pt.tiltY;
+        if (this.isMobile) {
+          rx *= 0.35;
+          ry *= 0.35;
+        }
+        card.style.transform = `perspective(1000px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+      } else if (card.style.transform) {
+        card.style.transform = '';
+      }
+    });
+
+    // Animate the entire domain grid chamber harmoniously without distorting row alignments
+    if (this.domainGrid) {
+      const enterT = Math.min(1, Math.max(0, (p - 0.12) / 0.32));
+      const exitT = Math.min(1, Math.max(0, (p - 0.70) / 0.30));
+      let rx = (2.0 * (1 - enterT) - 1.2 * exitT);
+      let tz = -20 * (1 - enterT) + 10 * enterT * (1 - exitT);
 
       if (this.isMobile) {
         rx *= 0.35;
-        ry *= 0.35;
-        tx = 0;
-        tz = Math.max(-15, Math.min(12, tz));
-        scale = Math.min(scale, 1.015);
+        tz = Math.max(-8, tz);
       }
-
-      card.style.transform = `perspective(1000px) translate3d(${tx.toFixed(1)}px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-    });
+      this.domainGrid.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg)`;
+    }
   }
 
   /* --------------------------------------------------------
@@ -556,10 +559,11 @@ class BureauSpatialScrollController {
         const baseZ = -35 * (1 - enterT) - 15 * exitT;
         let tz = baseZ + (22 - baseZ) * f_smooth;
 
-        const tiltInit = (i % 2 === 0 ? -1.8 : 1.8);
+        const organicTilts = [0, -1.2, 1.2, -1.0, 0.4, 1.2];
+        const tiltInit = organicTilts[i % organicTilts.length];
         let rz = tiltInit * (1 - f_smooth);
-        let rx = (3.5 * (1 - enterT)) * (1 - f_smooth);
-        let scale = 0.98 + 0.04 * f_smooth;
+        let rx = (2.5 * (1 - enterT)) * (1 - f_smooth);
+        let scale = 0.98 + 0.03 * f_smooth;
 
         if (this.isMobile) {
           rx *= 0.35;
@@ -682,6 +686,7 @@ class BureauSpatialScrollController {
   resetAllTransforms() {
     const all = [
       ...this.dossierCards,
+      this.domainGrid,
       ...this.domainCards,
       this.resultsChamber,
       ...this.filmFrames,
@@ -707,9 +712,16 @@ class BureauSpatialScrollController {
 
 class OverclockApp {
   constructor() {
-    this.audioEnabled = false;
+    this.soundProfiles = ['tactile', 'tva-relay', 'sci-fi', 'typewriter'];
+    const savedProfile = localStorage.getItem('oc2027_sound_profile');
+    this.soundProfile = (savedProfile && this.soundProfiles.includes(savedProfile)) ? savedProfile : 'tva-relay';
+    this.audioEnabled = true; // Audio is continuously active; mute option removed per directive
     this.audioCtx = null;
+    this.noiseBuffer = null;
+    this.lastClickSoundTime = 0;
     this.hasBooted = sessionStorage.getItem('oc2027_booted') === 'true' || new URLSearchParams(window.location.search).has('skipboot');
+    this.isHomepageActive = false;
+    this.clockInterval = null;
     
     // Puzzle state
     this.puzzleSwitches = { 1: false, 2: false, 3: false };
@@ -739,7 +751,16 @@ class OverclockApp {
   }
 
   init() {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
+    document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+
     this.setupAudio();
+    this.setupGlobalClickSound();
     this.setupBootSequence();
     this.setupHeroClock();
     this.setupTemporalClockNavigator();
@@ -755,71 +776,387 @@ class OverclockApp {
     this.setupModals();
     this.setupMobileNav();
     this.setupMissMinutesOverlay();
+    this.setupReplayIntro();
   }
 
   /* ==========================================================
-     1. WEB AUDIO SYNTHESIZER
+     1. WEB AUDIO SYNTHESIZER & MULTI-PROFILE ACOUSTIC SYSTEM
   ========================================================== */
+  ensureAudioContext() {
+    if (!this.audioCtx) {
+      if (window.TVATemporalIntro && window.TVATemporalIntro.audioCtx) {
+        this.audioCtx = window.TVATemporalIntro.audioCtx;
+      } else {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          this.audioCtx = new AudioContextClass();
+        }
+      }
+    }
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      try { this.audioCtx.resume(); } catch (e) {}
+    }
+    return this.audioCtx;
+  }
+
+  createNoiseBuffer() {
+    if (this.noiseBuffer) return this.noiseBuffer;
+    const sampleRate = this.audioCtx ? this.audioCtx.sampleRate : 44100;
+    const bufferSize = Math.floor(sampleRate * 0.04); // 40ms noise buffer
+    const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+    this.noiseBuffer = buffer;
+    return buffer;
+  }
+
   setupAudio() {
     const audioBtn = document.getElementById('audio-toggle-btn');
     if (!audioBtn) return;
 
-    audioBtn.addEventListener('click', () => {
-      if (!this.audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.audioCtx = new AudioContext();
-      }
-      if (this.audioCtx.state === 'suspended') {
-        this.audioCtx.resume();
-      }
+    const profileConfigs = {
+      'tva-relay': { label: 'SOUND: TVA RELAY', icon: '⚡', title: 'Active Profile: TVA Industrial Relay (Click to Switch Sound Profile)' },
+      'tactile': { label: 'SOUND: TACTILE', icon: '🔊', title: 'Active Profile: Tactile Haptic Tap (Click to Switch Sound Profile)' },
+      'sci-fi': { label: 'SOUND: QUANTUM', icon: '✨', title: 'Active Profile: Futuristic Quantum Blip (Click to Switch Sound Profile)' },
+      'typewriter': { label: 'SOUND: TYPEWRITER', icon: '⌨️', title: 'Active Profile: Vintage Mechanical Key (Click to Switch Sound Profile)' }
+    };
 
-      this.audioEnabled = !this.audioEnabled;
-      audioBtn.style.color = this.audioEnabled ? '#7CFF9B' : '#D9A93A';
-      audioBtn.style.borderColor = this.audioEnabled ? '#7CFF9B' : '#D9A93A';
-      
-      if (this.audioEnabled) {
-        this.playRelayClick();
-      }
+    const updateBtnUI = () => {
+      const cfg = profileConfigs[this.soundProfile] || profileConfigs['tva-relay'];
+      const label = audioBtn.querySelector('.audio-label');
+      if (label) label.textContent = cfg.label;
+      const icon = audioBtn.querySelector('.audio-icon');
+      if (icon) icon.textContent = cfg.icon;
+      audioBtn.title = cfg.title;
+
+      audioBtn.classList.remove('muted');
+      audioBtn.setAttribute('aria-pressed', 'true');
+    };
+
+    updateBtnUI();
+
+    audioBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.ensureAudioContext();
+
+      // Cycle through active acoustic profiles (continuous sound; mute option removed)
+      const currentIdx = this.soundProfiles.indexOf(this.soundProfile);
+      const nextIdx = (currentIdx + 1) % this.soundProfiles.length;
+      this.soundProfile = this.soundProfiles[nextIdx];
+      this.audioEnabled = true;
+      try {
+        localStorage.setItem('oc2027_sound_profile', this.soundProfile);
+      } catch (err) {}
+
+      updateBtnUI();
+      this.playClickSound(null, true);
     });
   }
 
-  playRelayClick(freq = 1200) {
-    if (!this.audioEnabled || !this.audioCtx) return;
+  setupGlobalClickSound() {
+    this.lastClickSoundTime = 0;
+
+    const onUserInteraction = (e) => {
+      if (!this.audioEnabled) return;
+
+      const now = performance.now();
+      // Debounce rapid event fires within 25ms
+      if (now - this.lastClickSoundTime < 25) return;
+      this.lastClickSoundTime = now;
+
+      this.ensureAudioContext();
+      this.playClickSound(e.target);
+    };
+
+    // Capture phase on pointerdown guarantees instantaneous 0ms tactile response
+    window.addEventListener('pointerdown', onUserInteraction, { capture: true, passive: true });
+    // Keyboard activation (Enter/Space on focused interactive elements)
+    window.addEventListener('click', (e) => {
+      if (e.detail === 0) onUserInteraction(e);
+    }, { capture: true, passive: true });
+
+    // First interaction un-suspends AudioContext for smooth clock ticking
+    const unlockAudio = () => {
+      this.ensureAudioContext();
+    };
+    window.addEventListener('scroll', unlockAudio, { once: true, passive: true });
+    window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+  }
+
+  playClickSound(target = null, isPreview = false) {
+    if (!this.audioEnabled || this.soundProfile === 'muted') return;
+    const ctx = this.ensureAudioContext();
+    if (!ctx) return;
+
     try {
-      const osc = this.audioCtx.createOscillator();
-      const gain = this.audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(300, this.audioCtx.currentTime + 0.04);
-      
-      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.04);
-      
-      osc.connect(gain);
-      gain.connect(this.audioCtx.destination);
-      osc.start();
-      osc.stop(this.audioCtx.currentTime + 0.05);
+      switch (this.soundProfile) {
+        case 'tactile':
+          this.playTactileTick(target);
+          break;
+        case 'tva-relay':
+          this.playTVARelay(target);
+          break;
+        case 'sci-fi':
+          this.playSciFiBlip(target);
+          break;
+        case 'typewriter':
+          this.playTypewriterClack(target);
+          break;
+        default:
+          this.playTactileTick(target);
+      }
     } catch (e) {
-      // Audio fallback
+      // Audio safety fallback
     }
   }
 
-  playStampThunk() {
-    if (!this.audioEnabled || !this.audioCtx) return;
-    try {
-      const osc = this.audioCtx.createOscillator();
-      const gain = this.audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(160, this.audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(40, this.audioCtx.currentTime + 0.12);
+  /* --- PROFILE 1: Modern Tactile Haptic Tap (Apple / High-end Mechanical Switch) --- */
+  playTactileTick(target) {
+    const ctx = this.audioCtx;
+    if (!ctx) return;
+    const now = ctx.currentTime;
 
-      gain.gain.setValueAtTime(0.25, this.audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.12);
+    const isButton = target && target.closest('a, button, .btn, .cta-button, .sector-link');
+    const filterFreq = isButton ? 3400 : 3100;
+
+    // Layer 1: Filtered micro-noise burst (sharp 3ms tactile snap, no pitch chirp)
+    const noise = ctx.createBufferSource();
+    noise.buffer = this.createNoiseBuffer();
+
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.setValueAtTime(filterFreq + (Math.random() - 0.5) * 300, now);
+    bandpass.Q.setValueAtTime(2.2, now);
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.09, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.008);
+
+    noise.connect(bandpass);
+    bandpass.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.01);
+
+    // Layer 2: Subtle low tactile haptic body (180Hz sine decaying in 12ms)
+    const osc = ctx.createOscillator();
+    const oscGain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(isButton ? 190 : 160, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.012);
+
+    oscGain.gain.setValueAtTime(0.08, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.015);
+  }
+
+  /* --- PROFILE 2: Vintage TVA Industrial Solenoid Relay --- */
+  playTVARelay(target) {
+    const ctx = this.audioCtx;
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    // Metallic microswitch contact
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'square';
+    osc1.frequency.setValueAtTime(1900 + (Math.random() - 0.5) * 150, now);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(2400, now);
+    filter.Q.setValueAtTime(3.8, now);
+
+    gain1.gain.setValueAtTime(0.07, now);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.016);
+
+    osc1.connect(filter);
+    filter.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.018);
+
+    // Magnetic solenoid core thunk
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(110, now);
+    osc2.frequency.exponentialRampToValueAtTime(38, now + 0.035);
+
+    gain2.gain.setValueAtTime(0.14, now);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now);
+    osc2.stop(now + 0.038);
+  }
+
+  /* --- PROFILE 3: Futuristic Sci-Fi Quantum Blip / Crystal Glass Chime --- */
+  playSciFiBlip(target) {
+    const ctx = this.audioCtx;
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    const baseFreq = target && target.closest('a, button, .btn') ? 1980 : 1760;
+    [1, 2.02].forEach((mult, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(baseFreq * mult, now);
+
+      const vol = i === 0 ? 0.08 : 0.04;
+      gain.gain.setValueAtTime(vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.042);
 
       osc.connect(gain);
-      gain.connect(this.audioCtx.destination);
-      osc.start();
-      osc.stop(this.audioCtx.currentTime + 0.13);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.045);
+    });
+  }
+
+  /* --- PROFILE 4: Mechanical Typewriter Key Clack --- */
+  playTypewriterClack(target) {
+    const ctx = this.audioCtx;
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    // High metal striker impulse
+    const noise = ctx.createBufferSource();
+    noise.buffer = this.createNoiseBuffer();
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(4600 + (Math.random() - 0.5) * 400, now);
+    filter.Q.setValueAtTime(2.8, now);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.11, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.015);
+
+    // Damped platen body resonance
+    const osc = ctx.createOscillator();
+    const bodyGain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.024);
+
+    bodyGain.gain.setValueAtTime(0.07, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.024);
+
+    osc.connect(bodyGain);
+    bodyGain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.026);
+  }
+
+  playRelayClick(freq = 1200) {
+    this.playClickSound(null);
+  }
+
+  playStampThunk() {
+    if (!this.audioEnabled || this.soundProfile === 'muted') return;
+    const ctx = this.ensureAudioContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+
+      // 1. Crisp physical paper/ink contact click
+      const click = ctx.createOscillator();
+      const clickGain = ctx.createGain();
+      click.type = 'triangle';
+      click.frequency.setValueAtTime(1600, now);
+      click.frequency.exponentialRampToValueAtTime(450, now + 0.015);
+
+      clickGain.gain.setValueAtTime(0.08, now);
+      clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
+
+      click.connect(clickGain);
+      clickGain.connect(ctx.destination);
+      click.start(now);
+      click.stop(now + 0.018);
+
+      // 2. Damped wooden desk / brass stamp weight
+      const desk = ctx.createOscillator();
+      const deskGain = ctx.createGain();
+      desk.type = 'sine';
+      desk.frequency.setValueAtTime(120, now);
+      desk.frequency.exponentialRampToValueAtTime(48, now + 0.05);
+
+      deskGain.gain.setValueAtTime(0.10, now);
+      deskGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+
+      desk.connect(deskGain);
+      deskGain.connect(ctx.destination);
+      desk.start(now);
+      desk.stop(now + 0.06);
+    } catch (e) {}
+  }
+
+  playHeroTitleArrival() {
+    if (!this.audioEnabled || this.soundProfile === 'muted') return;
+    const ctx = this.ensureAudioContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      // Soft, organic split-flap cardstock fluttering (gentle mechanical card arrivals)
+      const numFlaps = 9;
+      for (let i = 0; i < numFlaps; i++) {
+        const t = now + i * 0.038;
+        
+        // Filtered card micro-impulse
+        const noise = ctx.createBufferSource();
+        noise.buffer = this.createNoiseBuffer();
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(3600 + i * 40, t);
+        filter.Q.setValueAtTime(2.2, t);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.028, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.014);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(t);
+        noise.stop(t + 0.016);
+      }
+
+      // Elegant TVA chronometer bell accent as the title finishes assembling
+      setTimeout(() => {
+        if (!this.audioEnabled || this.soundProfile === 'muted') return;
+        const bellTime = ctx.currentTime;
+        const bell = ctx.createOscillator();
+        const bellGain = ctx.createGain();
+        bell.type = 'sine';
+        bell.frequency.setValueAtTime(587.33, bellTime); // D5 pure bell
+        bellGain.gain.setValueAtTime(0.0001, bellTime);
+        bellGain.gain.exponentialRampToValueAtTime(0.035, bellTime + 0.01);
+        bellGain.gain.exponentialRampToValueAtTime(0.0001, bellTime + 0.65);
+
+        bell.connect(bellGain);
+        bellGain.connect(ctx.destination);
+        bell.start(bellTime);
+        bell.stop(bellTime + 0.7);
+
+        this.playStampThunk();
+      }, 380);
     } catch (e) {}
   }
 
@@ -827,10 +1164,14 @@ class OverclockApp {
      2. FAST BOOTLOADER SEQUENCE (MAX 2.5S)
   ========================================================== */
   setupBootSequence() {
+    window.bureauApp = this;
+    const tvaIntro = document.getElementById('tva-temporal-intro');
+    if (tvaIntro && !tvaIntro.classList.contains('intro-complete')) {
+      // The 3D TVA Temporal Entry Intro is active; it will trigger hero animations upon scene completion/handover
+      return;
+    }
+
     const overlay = document.getElementById('boot-overlay');
-    const fill = document.getElementById('boot-progress-fill');
-    const lines = document.querySelectorAll('.boot-line');
-    
     if (!overlay) {
       this.triggerHeroAnimations();
       return;
@@ -867,6 +1208,18 @@ class OverclockApp {
   }
 
   triggerHeroAnimations() {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
+    document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+
+    // Homepage is now active and directed
+    this.isHomepageActive = true;
+    this.ensureAudioContext();
+
     const heroSec = document.getElementById('hero');
     if (!heroSec || heroSec.classList.contains('hero-anim-active')) return;
 
@@ -874,22 +1227,73 @@ class OverclockApp {
     heroSec.classList.add('stamped');
     heroSec.classList.add('revealed');
 
-    // Sequential audio clicks for OVERCLOCK letters
-    const flapBoxes = heroSec.querySelectorAll('.flap-char-box');
-    flapBoxes.forEach((box, idx) => {
-      setTimeout(() => {
-        this.playRelayClick(1100 + idx * 75);
-      }, idx * 40 + 40);
-    });
+    // Play subtle, elegant split-flap departure flutter for title cards
+    this.playHeroTitleArrival();
 
-    // TVA stamp impact sound for LOGGED #01
+    // Soft initial clock tick to immediately establish presence
     setTimeout(() => {
-      this.playStampThunk();
-    }, 380);
+      this.playClockTick(false);
+    }, 420);
+  }
+
+  /* --- Clock Ticking Sound: Vintage TVA Mechanical Chronometer Escapement --- */
+  playClockTick(isTock = false) {
+    if (!this.audioEnabled || this.soundProfile === 'muted') return;
+    const ctx = this.ensureAudioContext();
+    if (!ctx || ctx.state !== 'running') return;
+
+    try {
+      // Spatial distance attenuation: When user scrolls away from hero clock,
+      // smoothly fade out volume so it feels physically placed in the hero sector
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const heroHeight = window.innerHeight || 800;
+      let distanceMultiplier = 1;
+      if (scrollY > 0) {
+        distanceMultiplier = Math.max(0, 1 - (scrollY / (heroHeight * 1.15)));
+      }
+      if (distanceMultiplier <= 0.02) return; // Silent when scrolled down
+
+      const now = ctx.currentTime;
+      const masterVol = (isTock ? 0.024 : 0.030) * distanceMultiplier;
+
+      // 1. Crisp Escapement Pallet Strike (Mechanical escapement tooth contact)
+      const noise = ctx.createBufferSource();
+      noise.buffer = this.createNoiseBuffer();
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(isTock ? 2100 : 2750, now);
+      filter.Q.setValueAtTime(3.2, now);
+
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(masterVol, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.007);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.009);
+
+      // 2. Escapement Jewel / Brass Body Resonance
+      const body = ctx.createOscillator();
+      const bodyGain = ctx.createGain();
+      body.type = 'triangle';
+      body.frequency.setValueAtTime(isTock ? 340 : 420, now);
+      body.frequency.exponentialRampToValueAtTime(isTock ? 120 : 160, now + 0.016);
+
+      bodyGain.gain.setValueAtTime(masterVol * 0.75, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
+
+      body.connect(bodyGain);
+      bodyGain.connect(ctx.destination);
+      body.start(now);
+      body.stop(now + 0.02);
+    } catch (e) {}
   }
 
   /* ==========================================================
-     3. HERO CLOCK ANIMATION WITH 60S OVERCLOCK SPIN
+     3. HERO CLOCK ANIMATION WITH 60S OVERCLOCK SPIN & TICKING
   ========================================================== */
   setupHeroClock() {
     const secHand = document.getElementById('hero-clock-sec');
@@ -900,7 +1304,17 @@ class OverclockApp {
     let seconds = 0;
     let isOverclockSpin = false;
 
-    setInterval(() => {
+    // Check if intro is already complete or absent on load
+    const tvaIntro = document.getElementById('tva-temporal-intro');
+    if (!tvaIntro || tvaIntro.classList.contains('intro-complete')) {
+      this.isHomepageActive = true;
+    }
+
+    if (this.clockInterval) {
+      clearInterval(this.clockInterval);
+    }
+
+    this.clockInterval = setInterval(() => {
       seconds++;
       if (seconds % 60 === 0) {
         // Trigger fast 60s overclock spin
@@ -918,6 +1332,11 @@ class OverclockApp {
 
       if (minHand) minHand.style.transform = `rotate(${seconds * 0.1}deg)`;
       if (hourHand) hourHand.style.transform = `rotate(${seconds * (0.1 / 12) + 45}deg)`;
+
+      // Play authentic mechanical clock tick when site is directed to homepage
+      if (this.isHomepageActive && !document.hidden && !isOverclockSpin) {
+        this.playClockTick(seconds % 2 === 1);
+      }
     }, 1000);
   }
 
@@ -1540,9 +1959,9 @@ class OverclockApp {
     const downloads = config.downloads || {};
 
     const items = [
-      { key: 'brochure', data: downloads.brochure },
-      { key: 'ppt', data: downloads.pptTemplate },
-      { key: 'rules', data: downloads.rules }
+      { key: 'participant-guide', data: downloads.participantGuide },
+      { key: 'rules', data: downloads.rules },
+      { key: 'ppt', data: downloads.pptTemplate }
     ];
 
     items.forEach(item => {
@@ -1560,10 +1979,11 @@ class OverclockApp {
         btn.classList.add('is-ready');
         btn.setAttribute('title', `Download ${data.title}`);
         const btnText = btn.querySelector('.download-btn-text');
-        if (btnText) btnText.textContent = 'DOWNLOAD PDF';
+        const isPptx = data.filePath.endsWith('.pptx');
+        if (btnText) btnText.textContent = data.status || (isPptx ? 'DOWNLOAD PPTX' : 'DOWNLOAD PDF');
 
         if (statusBadge) {
-          statusBadge.textContent = 'OFFICIAL PDF';
+          statusBadge.textContent = isPptx ? 'OFFICIAL PPTX' : 'OFFICIAL PDF';
           statusBadge.classList.remove('pending');
           statusBadge.classList.add('ready');
         }
@@ -1587,6 +2007,71 @@ class OverclockApp {
           this.playRelayClick(750);
           this.showRegistrationNotice(`${data.title}: Official PDF file is pending release by the organizing committee.`);
         });
+      }
+    });
+
+    this.setupRulesDossierModal();
+  }
+
+  /* ==========================================================
+     5B-1. RULES & REGULATIONS DOSSIER MODAL
+     Interactive reader for official Form OC-27 / RR (7 sections).
+  ========================================================== */
+  setupRulesDossierModal() {
+    const modal = document.getElementById('rules-dossier-modal');
+    if (!modal) return;
+
+    const closeBtn = document.getElementById('rules-modal-close-btn');
+    const bottomCloseBtn = document.getElementById('btn-close-rules-dossier-bottom');
+    const openBtns = [
+      document.getElementById('btn-open-rules-modal'),
+      document.getElementById('btn-open-rules-from-reg')
+    ].filter(Boolean);
+
+    let lastFocusedElement = null;
+
+    const openDossier = (e) => {
+      if (e) e.preventDefault();
+      lastFocusedElement = document.activeElement;
+      modal.removeAttribute('hidden');
+      void modal.offsetWidth;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      this.playRelayClick(1200);
+
+      const scrollable = modal.querySelector('.rules-dossier-scroll');
+      if (scrollable) scrollable.focus();
+    };
+
+    const closeDossier = () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      this.playRelayClick(800);
+      setTimeout(() => {
+        if (!modal.classList.contains('open')) {
+          modal.setAttribute('hidden', '');
+        }
+      }, 300);
+
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
+    };
+
+    openBtns.forEach(btn => {
+      btn.addEventListener('click', openDossier);
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeDossier);
+    if (bottomCloseBtn) bottomCloseBtn.addEventListener('click', closeDossier);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeDossier();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        closeDossier();
       }
     });
   }
@@ -1743,17 +2228,21 @@ class OverclockApp {
         nameEl.textContent = sponsor.name;
         card.appendChild(nameEl);
 
-        // Tier Stamp Badge
+        // Card Clearance Footer Strip (Badge + Approved Stamp side-by-side)
+        const footerStrip = document.createElement('div');
+        footerStrip.className = 'card-clearance-footer';
+
         const tierBadge = document.createElement('div');
         tierBadge.className = `card-tier-stamp ${tierDef.badgeClass}`;
         tierBadge.textContent = tierDef.stampText;
-        card.appendChild(tierBadge);
+        footerStrip.appendChild(tierBadge);
 
-        // Approved Stamp Watermark
         const stampWatermark = document.createElement('div');
         stampWatermark.className = 'card-approved-stamp';
         stampWatermark.textContent = 'APPROVED';
-        card.appendChild(stampWatermark);
+        footerStrip.appendChild(stampWatermark);
+
+        card.appendChild(footerStrip);
 
         gridEl.appendChild(card);
       });
@@ -1954,6 +2443,22 @@ class OverclockApp {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && drawer.classList.contains('open')) {
         closeDrawer();
+      }
+    });
+  }
+
+  setupReplayIntro() {
+    document.addEventListener('click', (e) => {
+      const replayBtn = e.target.closest('#btn-replay-intro, .btn-replay-intro, [data-action="replay-intro"]');
+      if (replayBtn) {
+        e.preventDefault();
+        try { this.playRelayClick(1200); } catch (err) {}
+        if (window.TVATemporalIntro && typeof window.TVATemporalIntro.replay === 'function') {
+          window.TVATemporalIntro.replay();
+        } else {
+          sessionStorage.removeItem('oc2027_temporal_intro_played');
+          window.location.href = window.location.pathname + '?intro=replay';
+        }
       }
     });
   }

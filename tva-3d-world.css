@@ -1,0 +1,453 @@
+/* ==========================================================================
+   OVERCLOCK 2027 — FULL-BLEED 3D TVA UNIVERSE STYLES
+   Cinematic WebGL Viewport, Frosted HUD Glass, & Monolithic Typography
+   FCRIT × EESA · ISLE · IEEE Student Branch
+   ========================================================================== */
+
+/* 1. Lenis Smooth Scroll Rules */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* 2. Interactive 3D Chrono-Core Viewport inside Telemetry Console */
+.console-holo-viewport {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background: radial-gradient(circle at center, rgba(32, 22, 14, 0.95) 0%, rgba(12, 8, 5, 0.98) 100%);
+  border: 1px solid rgba(217, 169, 58, 0.4);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 
+    inset 0 0 25px rgba(0, 0, 0, 0.95),
+    0 0 20px rgba(255, 140, 0, 0.15);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.console-holo-viewport:active {
+  cursor: grabbing;
+}
+
+#chrono-holo-3d {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Hologram Crosshairs */
+.holo-scan-crosshair {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.crosshair-axis.h {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(217, 169, 58, 0.25) 50%, transparent);
+}
+
+.crosshair-axis.v {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(217, 169, 58, 0.25) 50%, transparent);
+}
+
+.crosshair-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 140px;
+  margin-top: -70px;
+  margin-left: -70px;
+  border: 1px dashed rgba(217, 169, 58, 0.2);
+  border-radius: 50%;
+  animation: holoRingRotate 20s linear infinite;
+}
+
+@keyframes holoRingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.holo-telemetry-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: #d9a93a;
+  background: rgba(14, 10, 7, 0.75);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(217, 169, 58, 0.25);
+  pointer-events: none;
+}
+
+.holo-telemetry-badge .holo-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff8c00;
+  box-shadow: 0 0 6px #ff8c00;
+  animation: consolePip 1.5s infinite;
+}
+
+/* 3. Hero Monolithic Brand Header */
+.hero-monolith-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin: 18px 0 24px 0;
+}
+
+.hero-brand-text {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: clamp(3.8rem, 8.5vw, 7.8rem);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: 0.04em;
+  color: #fff;
+  white-space: nowrap !important;
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 2vw, 28px);
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #ffe6cc 45%, #ff8c00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 35px rgba(255, 140, 0, 0.65));
+  margin: 0;
+}
+
+.hero-year-badge {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: clamp(1.8rem, 3.8vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ffaa33;
+  -webkit-text-fill-color: #ffaa33;
+  border: 2px solid #d9a93a;
+  padding: 4px 16px;
+  border-radius: 6px;
+  background: rgba(30, 20, 14, 0.75);
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.45);
+}
+
+.hero-subline-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.subline-segment {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+  letter-spacing: 0.14em;
+  color: #f7eedd;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.subline-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff8c00;
+  box-shadow: 0 0 8px #ff8c00;
+}
+
+/* 4. Frosted Glass HUD Floating Panels */
+.hero-hud-cockpit {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 992px) {
+  .hero-hud-cockpit {
+    grid-template-columns: 1.25fr 0.95fr;
+    gap: 32px;
+  }
+}
+
+/* Overclock Frequency Telemetry Console in Hero */
+.hud-telemetry-console {
+  background: rgba(20, 14, 9, 0.78);
+  border: 1px solid rgba(217, 169, 58, 0.45);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 
+    0 16px 45px rgba(0, 0, 0, 0.75),
+    0 0 30px rgba(255, 140, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.console-header-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(217, 169, 58, 0.25);
+  padding-bottom: 10px;
+}
+
+.console-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #ffaa33;
+}
+
+.console-led-pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #39ff14;
+  box-shadow: 0 0 10px #39ff14;
+  animation: consolePip 2s infinite ease-in-out;
+}
+
+.console-led-pip.overclocked {
+  background: #ff3300;
+  box-shadow: 0 0 16px #ff3300;
+}
+
+@keyframes consolePip {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+.console-sector-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  color: rgba(220, 200, 180, 0.7);
+  letter-spacing: 0.08em;
+}
+
+/* Stepper Switcher */
+.console-stepper-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(14, 10, 7, 0.88);
+  border: 1px solid rgba(217, 169, 58, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.stepper-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #d9a93a;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.stepper-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-freq-btn {
+  background: rgba(35, 24, 16, 0.85);
+  border: 1px solid rgba(217, 169, 58, 0.35);
+  color: #d8c2aa;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.70rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hud-freq-btn:hover {
+  background: rgba(255, 140, 0, 0.25);
+  border-color: #ffaa33;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.hud-freq-btn.active {
+  background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);
+  border-color: #ffd070;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(255, 140, 0, 0.75);
+}
+
+.hud-freq-btn.active.extreme {
+  background: linear-gradient(135deg, #ff3300 0%, #ff0055 100%);
+  box-shadow: 0 0 22px rgba(255, 50, 0, 0.95);
+  animation: extremeFlicker 0.4s infinite alternate;
+}
+
+/* Diagnostics Strip */
+.console-diag-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: rgba(12, 8, 5, 0.85);
+  border: 1px solid rgba(217, 169, 58, 0.22);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.diag-stat-unit {
+  display: flex;
+  flex-direction: column;
+}
+
+.diag-stat-k {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.60rem;
+  color: rgba(217, 169, 58, 0.75);
+  letter-spacing: 0.08em;
+}
+
+.diag-stat-v {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.06em;
+}
+
+.diag-stat-v.highlight {
+  color: #ffaa33;
+  text-shadow: 0 0 8px rgba(255, 170, 51, 0.6);
+}
+
+/* Timeline Lightbox Triggers */
+.console-portals-row {
+  display: flex;
+  gap: 10px;
+}
+
+.portal-trigger-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(30, 20, 14, 0.85);
+  border: 1px solid #c88a35;
+  color: #d9a93a;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.portal-trigger-btn:hover {
+  background: rgba(255, 140, 0, 0.25);
+  border-color: #ffaa33;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(255, 140, 0, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Frosted Glass Overlay for Content Sections */
+.bureau-section {
+  position: relative;
+  z-index: 10;
+  background: transparent !important;
+}
+
+/* Give cards and panels high-end frosted glass appearance */
+.operational-status-panel,
+.case-note-card,
+.domain-slot-card,
+.timeline-card,
+.prize-card,
+.faq-accordion-item {
+  background: rgba(20, 14, 10, 0.78) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-color: rgba(217, 169, 58, 0.35) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65) !important;
+}
+
+.domain-slot-card:hover {
+  border-color: rgba(255, 140, 0, 0.8) !important;
+  box-shadow: 0 18px 45px rgba(255, 140, 0, 0.3) !important;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .hero-brand-text {
+    flex-wrap: wrap;
+    font-size: clamp(3.0rem, 14vw, 4.8rem);
+  }
+  
+  .hero-year-badge {
+    font-size: 1.6rem;
+    padding: 2px 10px;
+  }
+  
+  .console-stepper-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .stepper-buttons-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .hud-freq-btn {
+    padding: 6px 8px;
+    font-size: 0.65rem;
+  }
+}

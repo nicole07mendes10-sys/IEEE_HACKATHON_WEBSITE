@@ -10,5 +10,9 @@
   },
   "devDependencies": {
     "serve": "^14.2.4"
+  },
+  "dependencies": {
+    "lenis": "^1.3.27",
+    "three": "^0.186.1"
   }
 }

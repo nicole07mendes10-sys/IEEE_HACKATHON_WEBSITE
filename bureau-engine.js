@@ -1,14 +1,14 @@
 /**
- * OVERCLOCK 2027 — SCROLL-DRIVEN FRAME SEQUENCE BACKGROUND ENGINE
+ * OVERCLOCK 2027 — ELEVATED CINEMATIC SCROLL-DRIVEN BACKGROUND ENGINE
  * FCRIT × IEEE Student Branch
  * 
- * High-performance, scroll-driven frame-by-frame animation pipeline.
- * - Scrubs smoothly forward and backward through 50 frames (/images/ezgif-frame-001.jpg .. 050.jpg).
- * - Fully preserves native 1280x720 clarity with responsive high-DPI (Retina) cover scaling.
- * - Asynchronous preloading and GPU pre-decoding (img.decode) to eliminate main-thread jank.
- * - Decoupled requestAnimationFrame vsync render loop with inertia/lerp smoothing.
- * - Sub-frame temporal crossfade between adjacent frames for zero-stutter cinematic playback.
- * - Failsafe fallback ensuring zero blank frames, visual tearing, or rendering glitches.
+ * Features:
+ * - Scrub-smooth 50-frame temporal explosion footage (/images/ezgif-frame-001.jpg .. 050.jpg)
+ * - Sub-frame temporal crossfade between adjacent frames for zero-stutter cinematic playback
+ * - High-performance interactive tachyon particle spark system reacting to mouse & scroll
+ * - Reactive Overclock Surge states (1.0 GHz, 3.6 GHz, 5.2 GHz, 8.4 GHz)
+ * - Procedural electrical lightning arcs and chromatic shockwave ripples
+ * - Integrated tactile Web Audio relay click synthesizer
  */
 
 class BureauScrollSequenceEngine {
@@ -33,31 +33,79 @@ class BureauScrollSequenceEngine {
     // Viewport & Scaling
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
 
     // Scroll mapping
-    this.scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    this.scrollY = 0;
     this.maxScroll = 1;
     this.targetProgress = 0;
     this.currentProgress = 0;
     this.lastRenderedProgress = -1;
+    this.scrollVelocity = 0;
+    this.lastScrollY = 0;
 
     // Animation physics
-    // Lerp factor: 0.18 gives responsive immediate feedback with silky inertia
     this.lerpFactor = 0.18;
     this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (this.prefersReducedMotion) {
       this.lerpFactor = 1.0;
     }
 
-    // Lifecycle
-    this.isTicking = false;
+    // Interactive Overclock State (1.0 to 8.42 GHz)
+    this.clockFrequency = 1.0;
+    this.targetSpeedMult = 1.0;
+    this.currentSpeedMult = 1.0;
+    this.shockwaveActive = false;
+    this.shockwaveRadius = 0;
+    this.shockwaveAlpha = 0;
+    this.shockwaveOrigin = { x: 0, y: 0 };
+
+    // Mouse Tracking for Interactive Sparks
+    this.mouse = { x: this.width * 0.5, y: this.height * 0.5, isHovering: false, lastActive: 0 };
+
+    // Particle & Lightning System
+    this.particles = [];
+    this.lightningArcs = [];
+    this.lastLightningTime = 0;
+
+    // Audio Context
+    this.audioCtx = null;
+
+    this.initParticles();
     this.init();
   }
 
   getFrameUrl(index) {
     const frameNum = String(index + 1).padStart(3, '0');
     return `images/ezgif-frame-${frameNum}.jpg`;
+  }
+
+  initParticles() {
+    this.particles = [];
+    const count = 90;
+    const colors = [
+      '#f59e0b', // Amber primary
+      '#fbbf24', // Warm gold
+      '#ff8c00', // Deep orange
+      '#ffe082', // Bright highlight
+      '#38bdf8'  // Cyan tachyon spark
+    ];
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * (this.width || 1280),
+        y: Math.random() * (this.height || 720),
+        baseVx: (Math.random() - 0.5) * 0.45,
+        baseVy: (Math.random() - 0.5) * 0.45 - 0.15,
+        vx: 0,
+        vy: 0,
+        size: Math.random() * 2.4 + 1.1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: Math.random() * 0.65 + 0.25,
+        pulseSpeed: Math.random() * 0.03 + 0.015,
+        pulseOffset: Math.random() * Math.PI * 2
+      });
+    }
   }
 
   init() {
@@ -67,11 +115,21 @@ class BureauScrollSequenceEngine {
     // Event listeners
     window.addEventListener('scroll', () => this.onScroll(), { passive: true });
     window.addEventListener('resize', () => this.onResize(), { passive: true });
-
-    // Also track orientation changes
     window.addEventListener('orientationchange', () => {
       setTimeout(() => this.onResize(), 100);
     }, { passive: true });
+
+    // Interactive Mouse Tracking
+    window.addEventListener('mousemove', (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+      this.mouse.isHovering = true;
+      this.mouse.lastActive = performance.now();
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      this.mouse.isHovering = false;
+    });
 
     // Begin preload pipeline
     this.preloadFrames();
@@ -83,7 +141,7 @@ class BureauScrollSequenceEngine {
   updateDimensions() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    this.dpr = this.width <= 768 ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 2.5);
+    this.dpr = this.width <= 768 ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 2.0);
 
     const targetWidth = Math.round(this.width * this.dpr);
     const targetHeight = Math.round(this.height * this.dpr);
@@ -110,7 +168,7 @@ class BureauScrollSequenceEngine {
   onResize() {
     this.updateDimensions();
     this.calculateScrollProgress();
-    this.lastRenderedProgress = -1; // Force immediate redraw
+    this.lastRenderedProgress = -1;
     this.renderFrame();
     this.requestTick();
   }
@@ -124,6 +182,10 @@ class BureauScrollSequenceEngine {
     this.scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
     const progress = this.scrollY / this.maxScroll;
     this.targetProgress = Math.min(Math.max(progress, 0), 1);
+
+    // Track scroll velocity for particle streaking
+    this.scrollVelocity = Math.abs(this.scrollY - this.lastScrollY);
+    this.lastScrollY = this.scrollY;
   }
 
   preloadFrames() {
@@ -160,7 +222,6 @@ class BureauScrollSequenceEngine {
         this.frames[idx] = img;
         this.framesLoaded[idx] = true;
         this.loadedCount++;
-        // If current position requires this frame, request tick
         const rawIndex = this.currentProgress * (this.frameCount - 1);
         if (Math.abs(rawIndex - idx) <= 1.5) {
           this.requestTick();
@@ -183,7 +244,7 @@ class BureauScrollSequenceEngine {
       return this.frames[idealIndex];
     }
 
-    // Nearest-neighbor fallback search to prevent blank frames or tearing
+    // Nearest-neighbor fallback search
     for (let offset = 1; offset < this.frameCount; offset++) {
       const left = idealIndex - offset;
       if (left >= 0 && this.framesLoaded[left] && this.frames[left]) {
@@ -212,9 +273,7 @@ class BureauScrollSequenceEngine {
 
     let drawW, drawH, drawX, drawY;
 
-    // Preserve exact aspect ratio without distortion or downscaling compression
     if (canvasAspect >= 1.0) {
-      // Desktop / Landscape: Preserve full widescreen cover framing
       if (canvasAspect > imageAspect) {
         drawW = canvasW;
         drawH = canvasW / imageAspect;
@@ -227,24 +286,17 @@ class BureauScrollSequenceEngine {
         drawY = 0;
       }
     } else {
-      // Mobile / Portrait: Scale and position to ensure the cinematic amber-and-gold
-      // ribbon is immediately visible spanning the hero area directly beneath the header.
-      // Sized to ensure 100% viewport coverage with zero top or bottom gaps across all phones.
       const scale = 1.55;
       drawH = Math.round(canvasH * scale);
       drawW = Math.round(drawH * imageAspect);
 
-      // Smooth focal transition:
-      // At progress = 0 (hero): align amber ribbon with hero title/subtitle
-      // As scroll advances (timeline/content): smoothly center the explosion
       const heroWeight = Math.max(0, 1 - (this.currentProgress / 0.20));
-      const easeWeight = heroWeight * heroWeight * (3 - 2 * heroWeight); // smoothstep
+      const easeWeight = heroWeight * heroWeight * (3 - 2 * heroWeight);
 
       drawX = Math.round((canvasW - drawW) / 2 + (canvasW * 0.65 * easeWeight));
       drawY = Math.round((canvasH - drawH) / 2 - (canvasH * 0.26 * easeWeight));
     }
 
-    // High clarity rendering settings
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
@@ -254,7 +306,180 @@ class BureauScrollSequenceEngine {
     ctx.restore();
   }
 
-  renderFrame() {
+  drawParticleLayer(time) {
+    const ctx = this.ctx;
+    const dpr = this.dpr;
+    const speed = this.currentSpeedMult;
+    const mouseX = this.mouse.x;
+    const mouseY = this.mouse.y;
+    const hasMouse = this.mouse.isHovering;
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+
+    const now = performance.now();
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
+
+      // Update position with speed factor and turbulence
+      const wobble = Math.sin(time * 0.002 + p.pulseOffset) * 0.2;
+      p.vx = (p.baseVx + wobble) * speed;
+      p.vy = (p.baseVy) * speed;
+
+      // Mouse repulsion physics
+      if (hasMouse) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distSq = dx * dx + dy * dy;
+        const maxDist = 180;
+        if (distSq < maxDist * maxDist && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const force = (1 - dist / maxDist) * 3.5 * speed;
+          p.x += (dx / dist) * force;
+          p.y += (dy / dist) * force;
+        }
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Screen boundary wrap
+      if (p.x < -20) p.x = this.width + 20;
+      if (p.x > this.width + 20) p.x = -20;
+      if (p.y < -20) p.y = this.height + 20;
+      if (p.y > this.height + 20) p.y = -20;
+
+      // Pulse alpha
+      const currentAlpha = p.alpha * (0.7 + 0.3 * Math.sin(time * p.pulseSpeed + p.pulseOffset));
+
+      // Draw particle with soft halo
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.8);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(0.4, p.color);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+      ctx.globalAlpha = Math.min(Math.max(currentAlpha, 0), 1);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Occasional procedural electrical micro-arcs when overclocked
+    if (this.clockFrequency >= 5.0 && now - this.lastLightningTime > (this.clockFrequency >= 8.0 ? 300 : 900)) {
+      if (Math.random() < 0.65) {
+        this.spawnLightningArc();
+        this.lastLightningTime = now;
+      }
+    }
+
+    this.drawLightningArcs();
+    this.drawShockwave();
+
+    ctx.restore();
+  }
+
+  spawnLightningArc() {
+    if (this.particles.length < 2) return;
+    const p1 = this.particles[Math.floor(Math.random() * this.particles.length)];
+    const p2 = this.particles[Math.floor(Math.random() * this.particles.length)];
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 50 && dist < 320) {
+      this.lightningArcs.push({
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+        life: 1.0,
+        color: Math.random() > 0.4 ? '#ffaa33' : '#38bdf8'
+      });
+    }
+  }
+
+  drawLightningArcs() {
+    const ctx = this.ctx;
+    for (let i = this.lightningArcs.length - 1; i >= 0; i--) {
+      const arc = this.lightningArcs[i];
+      arc.life -= 0.16;
+
+      if (arc.life <= 0) {
+        this.lightningArcs.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = arc.life * 0.9;
+      ctx.strokeStyle = arc.color;
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = arc.color;
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(arc.x1, arc.y1);
+
+      // Jagged zig-zag interpolation
+      const segments = 5;
+      for (let s = 1; s < segments; s++) {
+        const t = s / segments;
+        const mx = arc.x1 + (arc.x2 - arc.x1) * t + (Math.random() - 0.5) * 16;
+        const my = arc.y1 + (arc.y2 - arc.y1) * t + (Math.random() - 0.5) * 16;
+        ctx.lineTo(mx, my);
+      }
+      ctx.lineTo(arc.x2, arc.y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  drawShockwave() {
+    if (!this.shockwaveActive) return;
+
+    const ctx = this.ctx;
+    this.shockwaveRadius += 16 * this.currentSpeedMult;
+    this.shockwaveAlpha -= 0.024;
+
+    if (this.shockwaveAlpha <= 0) {
+      this.shockwaveActive = false;
+      return;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.shockwaveAlpha);
+    ctx.strokeStyle = '#ff9900';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = '#ff6600';
+    ctx.shadowBlur = 24;
+
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, this.shockwaveRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner chromatic resonance ring
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, Math.max(0, this.shockwaveRadius - 14), 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  triggerShockwave(originX, originY) {
+    this.shockwaveActive = true;
+    this.shockwaveRadius = 10;
+    this.shockwaveAlpha = 0.85;
+    this.shockwaveOrigin = {
+      x: originX !== undefined ? originX : this.width * 0.5,
+      y: originY !== undefined ? originY : this.height * 0.4
+    };
+  }
+
+  renderFrame(time = 0) {
     const rawIndex = this.currentProgress * (this.frameCount - 1);
     const baseIndex = Math.floor(rawIndex);
     const nextIndex = Math.min(baseIndex + 1, this.frameCount - 1);
@@ -273,28 +498,34 @@ class BureauScrollSequenceEngine {
     }
 
     // 2. Sub-frame temporal crossfade between adjacent frames
-    // Creates continuous 60fps/120fps motion blur blending without stepping stutter
     if (nextFrame && nextFrame !== baseFrame && subFrame > 0.005) {
       this.drawCover(nextFrame, subFrame);
     }
+
+    // 3. Draw elevated Tachyon particle and energy spark layer on top of video
+    this.drawParticleLayer(time);
 
     this.lastRenderedProgress = this.currentProgress;
     this.hasDrawnFirstFrame = true;
   }
 
   startLoop() {
-    const tick = () => {
+    const tick = (now) => {
+      // Smoothly interpolate overclock speed multiplier
+      this.currentSpeedMult += (this.targetSpeedMult - this.currentSpeedMult) * 0.08;
+
       const delta = this.targetProgress - this.currentProgress;
 
       if (Math.abs(delta) > 0.0001) {
         this.currentProgress += delta * this.lerpFactor;
-        this.renderFrame();
-      } else if (this.currentProgress !== this.targetProgress || this.lastRenderedProgress !== this.currentProgress || !this.hasDrawnFirstFrame) {
+      } else {
         this.currentProgress = this.targetProgress;
-        this.renderFrame();
       }
 
-      // Check if docHeight changed dynamically (e.g. FAQ opened or sponsors loaded)
+      // Always render so particles and energy effects animate continuously
+      this.renderFrame(now);
+
+      // Check if docHeight changed dynamically
       const docHeight = Math.max(
         document.body.scrollHeight,
         document.documentElement.scrollHeight
@@ -305,7 +536,6 @@ class BureauScrollSequenceEngine {
         this.calculateScrollProgress();
       }
 
-      // Keep running rAF loop for responsive scrolling
       requestAnimationFrame(tick);
     };
 
@@ -313,8 +543,61 @@ class BureauScrollSequenceEngine {
   }
 
   requestTick() {
-    // When scroll or resize occurs, ensure targetProgress is updated
     this.calculateScrollProgress();
+  }
+
+  // Reactive Overclock API (Called by HUD Telemetry Console)
+  setClockFrequency(freq) {
+    this.clockFrequency = parseFloat(freq) || 1.0;
+    this.targetSpeedMult = Math.min(Math.max(this.clockFrequency / 1.0, 1.0), 3.5);
+
+    // If supercharged or breach, trigger shockwave
+    if (this.clockFrequency >= 8.0) {
+      this.triggerShockwave();
+    }
+
+    this.playRelayClick(this.clockFrequency);
+  }
+
+  playRelayClick(freq = 1.0) {
+    try {
+      if (!this.audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) this.audioCtx = new AudioContext();
+      }
+      if (!this.audioCtx) return;
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      const pitch = 220 * (0.8 + (freq / 4.0));
+      osc.type = freq >= 8.0 ? 'sawtooth' : 'sine';
+      osc.frequency.setValueAtTime(pitch, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(pitch * 0.4, this.audioCtx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.08);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (_) {
+      // Audio autoplay policy fallback
+    }
+  }
+
+  showRegistrationNotice(message) {
+    if (window.bureauApp && typeof window.bureauApp.showRegistrationNotice === 'function') {
+      window.bureauApp.showRegistrationNotice(message);
+    } else {
+      alert(message);
+    }
   }
 }
 
@@ -323,7 +606,6 @@ window.addEventListener('DOMContentLoaded', () => {
   window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
 });
 
-// Fallback in case DOMContentLoaded already fired
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   if (!window.bureauEngine) {
     window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
