@@ -1,0 +1,2740 @@
+/**
+ * OVERCLOCK 2027 â€” TVA TEMPORAL ENTRY
+ * Cinematic, Immersive 3D Intro Animation
+ * 
+ * Concept: Marvel TVA-inspired temporal facility entry portal.
+ * Technology: Three.js WebGL procedural geometry, custom lighting,
+ * particle vortex system, volumetric rays, and Web Audio synthesis.
+ */
+
+class TVATemporalIntroController {
+  constructor() {
+    this.container = null;
+    this.canvas = null;
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.portalGroup = null;
+    this.rings = [];
+    this.particles = null;
+    this.particleData = [];
+    this.coreMesh = null;
+    this.coronaMesh = null;
+    this.electricStrands = [];
+    this.volumetricCones = [];
+    this.leftBanner = null;
+    this.rightBanner = null;
+    this.pointLight = null;
+    this.keyLight = null;
+    this.ambientLight = null;
+
+    this.animFrameId = null;
+    this.startTime = null;
+    this.duration = 8800; // ~8.8 seconds total
+    this.isPlaying = false;
+    this.isAudioMuted = false;
+    this.audioCtx = null;
+    this.audioDrone = null;
+    this.audioGain = null;
+    this.hasBoundControls = false;
+
+    this.mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    this.hasFinished = false;
+    this.hasTriggeredWarpAudio = false;
+    this.hasTriggeredRevealAudio = false;
+
+    // Attach global replay delegate immediately so replay button works even if initial load bypassed intro
+    this.bindGlobalReplayDelegate();
+
+    this.init();
+  }
+
+  /* ----------------------------------------------------------
+     1. INITIALIZATION & ACCESSIBILITY CHECKS
+  ---------------------------------------------------------- */
+  bindGlobalReplayDelegate() {
+    document.addEventListener('click', (e) => {
+      const replayBtn = e.target.closest('#btn-replay-intro, .btn-replay-intro, [data-action="replay-intro"]');
+      if (replayBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.replay();
+      }
+    });
+  }
+
+  resetScrollToTop() {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
+    document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
+  async init() {
+    // Check Reduced Motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceReplay = urlParams.get('intro') === 'replay' || urlParams.get('replay') === '1';
+    const noIntro = urlParams.has('nointro') || urlParams.has('noboot');
+    const alreadyPlayed = sessionStorage.getItem('oc2027_temporal_intro_played') === 'true';
+
+    this.container = document.getElementById('tva-temporal-intro');
+    if (!this.container) return;
+
+    if (noIntro || (alreadyPlayed && !forceReplay) || prefersReducedMotion) {
+      this.bypassIntroImmediate();
+      return;
+    }
+
+    if (!window.location.hash && !urlParams.has('goto')) {
+      this.resetScrollToTop();
+    }
+
+    // Load Three.js dynamically
+    const threeLoaded = await this.ensureThreeJS();
+    if (!threeLoaded) {
+      console.warn('[TVA Intro] Three.js not available; using fast fallback transition.');
+      this.fastFallbackSequence();
+      return;
+    }
+
+    this.setupDOMControls();
+    this.build3DScene();
+    this.bindEvents();
+    this.startSequence();
+  }
+
+  async ensureThreeJS() {
+    if (window.THREE) return true;
+    try {
+      const module = await import('./node_modules/three/build/three.module.js');
+      window.THREE = module;
+      return true;
+    } catch (err) {
+      // CDN Fallback
+      return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        script.onload = () => resolve(!!window.THREE);
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      });
+    }
+  }
+
+  /* ----------------------------------------------------------
+     2. DOM CONTROLS & EVENT BINDINGS
+  ---------------------------------------------------------- */
+  setupDOMControls() {
+    if (this.hasBoundControls) return;
+    this.hasBoundControls = true;
+
+    const audioBtn = document.getElementById('tva-intro-audio-btn');
+    if (audioBtn) {
+      audioBtn.addEventListener('click', () => this.toggleAudio());
+    }
+
+    // Mouse parallax listener
+    this.mouseHandler = (e) => {
+      this.mouse.targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+      this.mouse.targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener('mousemove', this.mouseHandler, { passive: true });
+
+    // Window resize
+    this.resizeHandler = () => this.onResize();
+    window.addEventListener('resize', this.resizeHandler);
+  }
+
+  bindEvents() {
+    // Touch interaction for mobile gyro/drag
+    this.container.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        this.mouse.targetX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+        this.mouse.targetY = (e.touches[0].clientY / window.innerHeight - 0.5) * 2;
+      }
+    }, { passive: true });
+  }
+
+  /* ----------------------------------------------------------
+     3. BUILD 3D TIME PORTAL SCENE (THREE.JS)
+  ---------------------------------------------------------- */
+  build3DScene() {
+    const THREE = window.THREE;
+    this.canvas = document.getElementById('tva-intro-canvas');
+    if (!this.canvas) return;
+
+    // Scene & Atmospheric Fog
+    this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.FogExp2(0x070503, 0.038);
+
+    // Camera
+    const aspect = window.innerWidth / window.innerHeight;
+    this.camera = new THREE.PerspectiveCamera(46, aspect, 0.1, 100);
+    this.camera.position.set(0, 0, 16.5);
+    this.camera.lookAt(0, 0, 0);
+
+    // Renderer
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.25;
+
+    // Lighting (Warm amber, fiery orange, bronze metallic highlights)
+    this.ambientLight = new THREE.AmbientLight(0x28190e, 0.5);
+    this.scene.add(this.ambientLight);
+
+    // PointLight at the singularity core
+    this.pointLight = new THREE.PointLight(0xff6600, 0.1, 35, 1.8);
+    this.pointLight.position.set(0, 0, 0);
+    this.scene.add(this.pointLight);
+
+    // Key Directional Light for metallic surface sheen
+    this.keyLight = new THREE.DirectionalLight(0xffd799, 1.8);
+    this.keyLight.position.set(6, 9, 12);
+    this.scene.add(this.keyLight);
+
+    // Cyan/Teal Edge Counter-Light (creates cinematic contrast against dark charcoal)
+    const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.55);
+    rimLight.position.set(-8, -6, -4);
+    this.scene.add(rimLight);
+
+    // Portal Master Group
+    this.portalGroup = new THREE.Group();
+    this.scene.add(this.portalGroup);
+
+    // --- A. Concentric Metallic Portal Rings ---
+    this.createPortalRings(THREE);
+
+    // --- B. Glowing Singularity Core & Plasma Spheres ---
+    this.createCoreSingularity(THREE);
+
+    // --- C. Branching Electric Temporal Strands ---
+    this.createElectricStrands(THREE);
+
+    // --- D. Volumetric Light Rays ---
+    this.createVolumetricRays(THREE);
+
+    // --- E. Flanking TVA Timeline Banners ---
+    this.createTVABanners(THREE);
+
+    // --- F. 1,600 Swirling Timeline Particles ---
+    this.createParticleVortex(THREE);
+  }
+
+  createPortalRings(THREE) {
+    // Ring 1: Outer Heavy Industrial Ring
+    const outerGeo = new THREE.TorusGeometry(5.2, 0.22, 28, 120);
+    const outerMat = new THREE.MeshStandardMaterial({
+      color: 0x1a120b,
+      metalness: 0.94,
+      roughness: 0.26,
+      emissive: 0x331604,
+      emissiveIntensity: 0.2
+    });
+    const outerRing = new THREE.Mesh(outerGeo, outerMat);
+    this.portalGroup.add(outerRing);
+
+    // Add 24 Mechanical Chrono-Lugs on outer ring
+    const lugGeo = new THREE.BoxGeometry(0.18, 0.45, 0.35);
+    const lugMat = new THREE.MeshStandardMaterial({ color: 0x4a3219, metalness: 0.9, roughness: 0.2 });
+    for (let i = 0; i < 24; i++) {
+      const angle = (i / 24) * Math.PI * 2;
+      const lug = new THREE.Mesh(lugGeo, lugMat);
+      lug.position.set(Math.cos(angle) * 5.2, Math.sin(angle) * 5.2, 0);
+      lug.rotation.z = angle + Math.PI / 2;
+      outerRing.add(lug);
+    }
+    this.rings.push({ mesh: outerRing, rotSpeedZ: 0.003, rotSpeedY: 0.001 });
+
+    // Ring 2: Chrono Glyph Coordinate Ring (Hourglass Inscriptions)
+    const midGeo1 = new THREE.TorusGeometry(4.0, 0.16, 24, 96);
+    const midMat1 = new THREE.MeshStandardMaterial({
+      color: 0x2b180a,
+      metalness: 0.92,
+      roughness: 0.18,
+      emissive: 0xe8892b,
+      emissiveIntensity: 0.75
+    });
+    const midRing1 = new THREE.Mesh(midGeo1, midMat1);
+    midRing1.rotation.x = 0.08;
+    this.portalGroup.add(midRing1);
+
+    // 12 Glowing Amber Hour Markers
+    const markerGeo = new THREE.BoxGeometry(0.12, 0.32, 0.22);
+    const markerMat = new THREE.MeshBasicMaterial({ color: 0xffaa33 });
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const marker = new THREE.Mesh(markerGeo, markerMat);
+      marker.position.set(Math.cos(angle) * 4.0, Math.sin(angle) * 4.0, 0.05);
+      marker.rotation.z = angle;
+      midRing1.add(marker);
+    }
+    this.rings.push({ mesh: midRing1, rotSpeedZ: -0.0055, rotSpeedX: 0.0015 });
+
+    // Ring 3: High-Energy Plasma Conduit Ring
+    const midGeo2 = new THREE.TorusGeometry(2.95, 0.11, 24, 80);
+    const midMat2 = new THREE.MeshStandardMaterial({
+      color: 0xff6600,
+      metalness: 0.5,
+      roughness: 0.1,
+      emissive: 0xff7700,
+      emissiveIntensity: 2.2
+    });
+    const midRing2 = new THREE.Mesh(midGeo2, midMat2);
+    midRing2.rotation.y = -0.1;
+    this.portalGroup.add(midRing2);
+    this.rings.push({ mesh: midRing2, rotSpeedZ: 0.0085, rotSpeedY: -0.002 });
+
+    // Ring 4: Inner Aperture Shutter Ring
+    const innerGeo = new THREE.TorusGeometry(1.9, 0.08, 20, 64);
+    const innerMat = new THREE.MeshStandardMaterial({
+      color: 0xffb347,
+      metalness: 0.88,
+      roughness: 0.2,
+      emissive: 0xff4400,
+      emissiveIntensity: 1.5
+    });
+    const innerRing = new THREE.Mesh(innerGeo, innerMat);
+    this.portalGroup.add(innerRing);
+
+    // 16 Mechanical Aperture Blades
+    const bladeGeo = new THREE.ConeGeometry(0.28, 0.9, 3);
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x331c0a, metalness: 0.85, roughness: 0.3 });
+    for (let i = 0; i < 16; i++) {
+      const angle = (i / 16) * Math.PI * 2;
+      const blade = new THREE.Mesh(bladeGeo, bladeMat);
+      blade.position.set(Math.cos(angle) * 1.6, Math.sin(angle) * 1.6, 0);
+      blade.rotation.z = angle - Math.PI / 2;
+      innerRing.add(blade);
+    }
+    this.rings.push({ mesh: innerRing, rotSpeedZ: -0.012, rotSpeedZBase: -0.012 });
+  }
+
+  createCoreSingularity(THREE) {
+    // Intense Hot Singularity Core
+    const coreGeo = new THREE.SphereGeometry(0.72, 32, 32);
+    const coreMat = new THREE.MeshBasicMaterial({
+      color: 0xfffae6,
+      transparent: true,
+      opacity: 0.98,
+      blending: THREE.AdditiveBlending
+    });
+    this.coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    this.coreMesh.scale.set(0.01, 0.01, 0.01);
+    this.portalGroup.add(this.coreMesh);
+
+    // Radiant Plasma Corona
+    const coronaGeo = new THREE.SphereGeometry(1.28, 32, 32);
+    const coronaMat = new THREE.MeshBasicMaterial({
+      color: 0xff6600,
+      transparent: true,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending
+    });
+    this.coronaMesh = new THREE.Mesh(coronaGeo, coronaMat);
+    this.coronaMesh.scale.set(0.01, 0.01, 0.01);
+    this.portalGroup.add(this.coronaMesh);
+
+    // Outer Vortex Glow Shell
+    const shellGeo = new THREE.SphereGeometry(1.85, 24, 24);
+    const shellMat = new THREE.MeshBasicMaterial({
+      color: 0xcc3300,
+      transparent: true,
+      opacity: 0.25,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide
+    });
+    const shellMesh = new THREE.Mesh(shellGeo, shellMat);
+    this.portalGroup.add(shellMesh);
+  }
+
+  createElectricStrands(THREE) {
+    // 4 Orbiting Electric Timeline Loops
+    const strandMat = new THREE.LineBasicMaterial({
+      color: 0xffaa33,
+      linewidth: 2,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+
+    for (let i = 0; i < 4; i++) {
+      const radiusX = 1.3 + i * 0.35;
+      const radiusY = 0.75 + i * 0.25;
+      const curve = new THREE.EllipseCurve(0, 0, radiusX, radiusY, 0, 2 * Math.PI, false, 0);
+      const points = curve.getPoints(50);
+      const geo = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geo, strandMat);
+      line.rotation.x = Math.random() * Math.PI;
+      line.rotation.y = Math.random() * Math.PI;
+      this.portalGroup.add(line);
+      this.electricStrands.push({
+        line,
+        rotX: 0.02 + i * 0.01,
+        rotY: 0.03 + i * 0.015,
+        rotZ: 0.015
+      });
+    }
+  }
+
+  createVolumetricRays(THREE) {
+    // 8 Radial Light Shaft Cones
+    const rayMat = new THREE.MeshBasicMaterial({
+      color: 0xff9922,
+      transparent: true,
+      opacity: 0.12,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+
+    for (let i = 0; i < 8; i++) {
+      const coneGeo = new THREE.ConeGeometry(1.2, 9.0, 16, 1, true);
+      const cone = new THREE.Mesh(coneGeo, rayMat);
+      cone.rotation.x = Math.PI / 2;
+      cone.position.z = 4.5;
+      const rayGroup = new THREE.Group();
+      rayGroup.rotation.z = (i / 8) * Math.PI * 2;
+      rayGroup.add(cone);
+      this.portalGroup.add(rayGroup);
+      this.volumetricCones.push(rayGroup);
+    }
+  }
+
+  createTVABanners(THREE) {
+    // Procedural TVA Canvas Banners matching uploaded poster
+    const createBannerTexture = (title, subtitle, tag) => {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 1024;
+      const ctx = c.getContext('2d');
+
+      // Bronze/Charcoal Gradient Background
+      const grad = ctx.createLinearGradient(0, 0, 0, 1024);
+      grad.addColorStop(0, '#26201A');
+      grad.addColorStop(0.5, '#1C1813');
+      grad.addColorStop(1, '#14110D');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 1024);
+
+      // Distressed Grid Lines & Brass Borders
+      ctx.strokeStyle = 'rgba(184, 146, 58, 0.4)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(20, 20, 472, 984);
+      ctx.strokeRect(32, 32, 448, 960);
+
+      // TVA Bold Wordmark
+      ctx.fillStyle = '#E8872B';
+      ctx.font = 'bold 110px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('TVA', 256, 220);
+
+      // Hourglass Emblem
+      ctx.strokeStyle = '#B8923A';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(256, 330, 48, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Banner Text
+      ctx.fillStyle = '#EADFC4';
+      ctx.font = 'bold 36px sans-serif';
+      ctx.letterSpacing = '6px';
+      ctx.fillText(title, 256, 480);
+
+      ctx.fillStyle = '#B9AD92';
+      ctx.font = '26px monospace';
+      ctx.fillText(subtitle, 256, 560);
+
+      ctx.fillStyle = '#3FB5A0';
+      ctx.font = 'bold 30px monospace';
+      ctx.fillText(tag, 256, 740);
+
+      const tex = new THREE.CanvasTexture(c);
+      return tex;
+    };
+
+    const bannerGeo = new THREE.PlaneGeometry(2.3, 8.2);
+    const leftTex = createBannerTexture('FOR A BRIGHTER', 'TOMORROW', 'BUILD Â· FIX Â· BRANCH');
+    const rightTex = createBannerTexture('SAME IDEAS', 'DIFFERENT TIMELINES', 'A BRIGHTER TOMORROW');
+
+    const bannerMatLeft = new THREE.MeshStandardMaterial({
+      map: leftTex,
+      metalness: 0.6,
+      roughness: 0.4,
+      emissive: 0x442200,
+      emissiveIntensity: 0.25,
+      side: THREE.DoubleSide
+    });
+    const bannerMatRight = new THREE.MeshStandardMaterial({
+      map: rightTex,
+      metalness: 0.6,
+      roughness: 0.4,
+      emissive: 0x442200,
+      emissiveIntensity: 0.25,
+      side: THREE.DoubleSide
+    });
+
+    this.leftBanner = new THREE.Mesh(bannerGeo, bannerMatLeft);
+    this.leftBanner.position.set(-8.2, 0.2, -1.8);
+    this.leftBanner.rotation.y = 0.38;
+    this.portalGroup.add(this.leftBanner);
+
+    this.rightBanner = new THREE.Mesh(bannerGeo, bannerMatRight);
+    this.rightBanner.position.set(8.2, 0.2, -1.8);
+    this.rightBanner.rotation.y = -0.38;
+    this.portalGroup.add(this.rightBanner);
+  }
+
+  createParticleVortex(THREE) {
+    const particleCount = 1600;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    const cAmber = new THREE.Color(0xffaa22);
+    const cOrange = new THREE.Color(0xff5500);
+    const cGold = new THREE.Color(0xffd700);
+    const cWhite = new THREE.Color(0xffffff);
+
+    this.particleData = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      const radius = 0.6 + Math.pow(Math.random(), 1.6) * 7.5;
+      const angle = Math.random() * Math.PI * 2;
+      const z = -6.0 + Math.random() * 24.0;
+
+      positions[i * 3] = Math.cos(angle) * radius;
+      positions[i * 3 + 1] = Math.sin(angle) * radius;
+      positions[i * 3 + 2] = z;
+
+      // Color selection based on distance
+      const rColor = Math.random();
+      let color;
+      if (rColor < 0.4) color = cAmber;
+      else if (rColor < 0.7) color = cOrange;
+      else if (rColor < 0.9) color = cGold;
+      else color = cWhite;
+
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+
+      this.particleData.push({
+        radius,
+        angle,
+        speed: 0.008 + (1.0 / (radius + 0.5)) * 0.02,
+        zSpeed: 0.02 + Math.random() * 0.04,
+        z,
+        baseRadius: radius
+      });
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 0.085,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.88,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    this.particles = new THREE.Points(geometry, material);
+    this.portalGroup.add(this.particles);
+  }
+
+  /* ----------------------------------------------------------
+     4. PROCEDURAL WEB AUDIO SYNTHESIS
+  ---------------------------------------------------------- */
+  initAudio() {
+    if (this.audioCtx || this.isAudioMuted) return;
+    try {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtxClass) return;
+      this.audioCtx = new AudioCtxClass();
+
+      // Master Gain with soft fade-in
+      this.audioGain = this.audioCtx.createGain();
+      this.audioGain.gain.setValueAtTime(0.001, this.audioCtx.currentTime);
+      this.audioGain.connect(this.audioCtx.destination);
+
+      // Warm, atmospheric dual-sine ambient drone (TVA Sub-Quantum Gateway)
+      this.audioDrone = this.audioCtx.createOscillator();
+      this.audioDrone.type = 'sine';
+      this.audioDrone.frequency.setValueAtTime(55, this.audioCtx.currentTime);
+
+      this.audioDroneSub = this.audioCtx.createOscillator();
+      this.audioDroneSub.type = 'sine';
+      this.audioDroneSub.frequency.setValueAtTime(110, this.audioCtx.currentTime);
+
+      const subGain = this.audioCtx.createGain();
+      subGain.gain.setValueAtTime(0.22, this.audioCtx.currentTime);
+
+      // Resonant Warm Lowpass Filter (eliminates all electrical buzz)
+      this.audioFilter = this.audioCtx.createBiquadFilter();
+      this.audioFilter.type = 'lowpass';
+      this.audioFilter.frequency.setValueAtTime(125, this.audioCtx.currentTime);
+      this.audioFilter.Q.setValueAtTime(1.4, this.audioCtx.currentTime);
+
+      this.audioDrone.connect(this.audioFilter);
+      this.audioDroneSub.connect(subGain);
+      subGain.connect(this.audioFilter);
+      this.audioFilter.connect(this.audioGain);
+
+      this.audioDrone.start();
+      this.audioDroneSub.start();
+
+      // Smooth cinematic fade in
+      this.audioGain.gain.exponentialRampToValueAtTime(0.16, this.audioCtx.currentTime + 1.8);
+    } catch (e) {
+      // Audio autoplay policy fallback
+    }
+  }
+
+  triggerAudioWarp() {
+    if (!this.audioCtx || this.isAudioMuted || this.hasTriggeredWarpAudio) return;
+    this.hasTriggeredWarpAudio = true;
+    try {
+      const now = this.audioCtx.currentTime;
+      // Smooth cinematic Doppler warp
+      if (this.audioFilter) {
+        this.audioFilter.frequency.exponentialRampToValueAtTime(320, now + 1.2);
+      }
+      if (this.audioDrone) {
+        this.audioDrone.frequency.exponentialRampToValueAtTime(78, now + 1.2);
+      }
+    } catch (e) {}
+  }
+
+  triggerAudioRevealBoom() {
+    // Strict single-shot guard: prevent duplicate frame triggers
+    if (!this.audioCtx || this.isAudioMuted || this.hasTriggeredRevealAudio) return;
+    this.hasTriggeredRevealAudio = true;
+
+    try {
+      const ctx = this.audioCtx;
+      const now = ctx.currentTime;
+
+      // Master Reveal Sub-mix
+      const revealMaster = ctx.createGain();
+      revealMaster.gain.setValueAtTime(0.22, now);
+      revealMaster.connect(ctx.destination);
+
+      // 1. TVA Bronze Chronometer Bell Chime (Pure acoustic harmonic partials)
+      const bellPartials = [
+        { freq: 587.33, vol: 0.12, decay: 2.0 },  // Fundamental (D5) - warm bell resonance
+        { freq: 880.00, vol: 0.055, decay: 1.4 }, // Fifth overtone (A5) - crystalline overtone
+        { freq: 1174.66, vol: 0.028, decay: 0.8 }, // Octave ring (D6) - golden shimmer
+        { freq: 1618.00, vol: 0.014, decay: 0.45 } // Golden ratio metallic bell strike
+      ];
+
+      bellPartials.forEach(partial => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(partial.freq, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(partial.vol, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + partial.decay);
+
+        osc.connect(gain);
+        gain.connect(revealMaster);
+        osc.start(now);
+        osc.stop(now + partial.decay + 0.05);
+      });
+
+      // 2. Warm Orchestral Cello/Brass Chord Swell (D-minor cinematic pad)
+      const chordFrequencies = [146.83, 220.00, 329.63]; // D3, A3, E4
+      chordFrequencies.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const chordGain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'triangle'; // Warm, non-abrasive cello/horn tone
+        osc.frequency.setValueAtTime(freq, now);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(260, now);
+        filter.frequency.exponentialRampToValueAtTime(480, now + 0.4);
+        filter.frequency.exponentialRampToValueAtTime(180, now + 2.2);
+
+        const vol = 0.08 / (idx * 0.7 + 1);
+        chordGain.gain.setValueAtTime(0.0001, now);
+        chordGain.gain.exponentialRampToValueAtTime(vol, now + 0.12);
+        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.3);
+
+        osc.connect(filter);
+        filter.connect(chordGain);
+        chordGain.connect(revealMaster);
+
+        osc.start(now);
+        osc.stop(now + 2.4);
+      });
+
+      // 3. Deep Velvet Sub Bass Pulse (Clean 52Hz -> 32Hz cinematic gravity lock)
+      const subOsc = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(52, now);
+      subOsc.frequency.exponentialRampToValueAtTime(32, now + 0.35);
+
+      subGain.gain.setValueAtTime(0.0001, now);
+      subGain.gain.exponentialRampToValueAtTime(0.13, now + 0.018);
+      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+      subOsc.connect(subGain);
+      subGain.connect(revealMaster);
+      subOsc.start(now);
+      subOsc.stop(now + 0.65);
+    } catch (e) {}
+  }
+
+  toggleAudio() {
+    this.isAudioMuted = !this.isAudioMuted;
+    const btn = document.getElementById('tva-intro-audio-btn');
+    if (btn) btn.innerHTML = this.isAudioMuted ? '<span>ğŸ”‡</span>' : '<span>ğŸ”Š</span>';
+    if (this.audioGain && this.audioCtx) {
+      this.audioGain.gain.setValueAtTime(this.isAudioMuted ? 0.0001 : 0.22, this.audioCtx.currentTime);
+    } else if (!this.isAudioMuted) {
+      this.initAudio();
+    }
+  }
+
+  /* ----------------------------------------------------------
+     5. MAIN CINEMATIC ANIMATION LOOP & SCENE PHASING
+  ---------------------------------------------------------- */
+  startSequence() {
+    this.isPlaying = true;
+    this.hasFinished = false;
+    this.startTime = performance.now();
+
+    // Prevent body scrolling during intro
+    document.documentElement.classList.add('tva-intro-active');
+    document.body.classList.add('tva-intro-active');
+
+    // Attempt subtle audio start
+    const startAudioOnce = () => {
+      this.initAudio();
+      window.removeEventListener('click', startAudioOnce);
+      window.removeEventListener('keydown', startAudioOnce);
+    };
+    window.addEventListener('click', startAudioOnce);
+    window.addEventListener('keydown', startAudioOnce);
+
+    this.tick(this.startTime);
+  }
+
+  tick(now) {
+    if (!this.isPlaying) return;
+
+    const elapsed = now - this.startTime;
+    const progress = Math.min(elapsed / this.duration, 1.0);
+
+    // Update Bottom Timeline UI
+    this.updateHUDProgress(progress, elapsed);
+
+    // Smooth Mouse / Gyro Parallax with silky inertia
+    this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.04;
+    this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.04;
+
+    // --- SCENE 1: Darkness & Temporal Activation (0 - 2.0s) ---
+    if (elapsed < 2000) {
+      const p1 = elapsed / 2000;
+      // Smooth cubic ease-out ignition of the core singularity
+      const ease1 = 1 - Math.pow(1 - p1, 3);
+      const s = 0.02 + ease1 * 0.98;
+      this.coreMesh.scale.set(s, s, s);
+      this.coronaMesh.scale.set(s * 0.85, s * 0.85, s * 0.85);
+      this.pointLight.intensity = ease1 * 3.2;
+
+      // Gentle continuous camera dolly
+      this.camera.position.x = this.mouse.x * 0.4;
+      this.camera.position.y = -this.mouse.y * 0.3;
+      this.camera.position.z = 16.5 - ease1 * 0.5;
+
+      this.setStatusText('DETECTING TEMPORAL ACTIVATION Â· QUANTUM ANOMALY ENGAGED');
+      this.setPhaseActive(0);
+    }
+    // --- SCENE 2: Portal Formation (2.0s - 4.6s) ---
+    else if (elapsed < 4600) {
+      const p2 = (elapsed - 2000) / 2600;
+      // Singularity reaches full plasma bloom with organic multi-frequency breathing
+      const pulse = 1.0 + Math.sin(elapsed * 0.005) * 0.08 + Math.cos(elapsed * 0.009) * 0.04;
+      this.coreMesh.scale.set(pulse, pulse, pulse);
+      this.coronaMesh.scale.set(pulse * 1.25, pulse * 1.25, pulse * 1.25);
+      this.pointLight.intensity = 3.2 + p2 * 4.5 + Math.sin(elapsed * 0.01) * 0.7;
+
+      // 3D Portal slowly tilts with gentle inertial parallax
+      this.portalGroup.rotation.x = this.mouse.y * 0.10 + Math.sin(elapsed * 0.001) * 0.05;
+      this.portalGroup.rotation.y = this.mouse.x * 0.15 + Math.cos(elapsed * 0.001) * 0.05;
+
+      const camZ2 = 16.0 - p2 * 1.2;
+      this.camera.position.x = this.mouse.x * 0.6;
+      this.camera.position.y = -this.mouse.y * 0.5;
+      this.camera.position.z = camZ2;
+
+      this.setStatusText('CONCENTRIC TIME PORTAL FORMED Â· FREQUENCY LOCKED');
+      this.setPhaseActive(1);
+    }
+    // --- SCENE 3: Camera Travel & Warp Fly-Through (4.6s - 6.4s) ---
+    else if (elapsed < 6400) {
+      const p3 = (elapsed - 4600) / 1800;
+      if (p3 < 0.04) this.triggerAudioWarp();
+
+      // Progressive exponential acceleration forward into the core singularity
+      const warpEase = Math.pow(p3, 2.4);
+      this.camera.position.z = 14.8 - warpEase * 14.2; // Smooth plunge right to z ~ 0.6
+      this.camera.position.x = (1 - p3) * (this.mouse.x * 0.6);
+      this.camera.position.y = (1 - p3) * (-this.mouse.y * 0.5);
+
+      // Optical acceleration flare wash: blooms as camera enters singularity throat
+      const flare = document.querySelector('.tva-intro-flare-overlay');
+      if (flare) {
+        const flareOp = p3 > 0.58 ? Math.min(1.0, (p3 - 0.58) / 0.38) : 0;
+        flare.style.opacity = flareOp.toString();
+      }
+
+      this.setStatusText('ENTERING SUB-QUANTUM TIMELINE STREAM...');
+      this.setPhaseActive(2);
+    }
+    // --- SCENE 4: OVERCLOCK 2027 Reveal (6.4s - 8.4s) ---
+    else if (elapsed < 8400) {
+      const p4 = (elapsed - 6400) / 2000;
+      if (p4 < 0.04) this.triggerAudioRevealBoom();
+
+      // Seamless optical flare dissolve: smoothly dissipates from 1.0 down to 0
+      const flare = document.querySelector('.tva-intro-flare-overlay');
+      if (flare) {
+        const flareDissolve = Math.max(0, 1.0 - p4 * 2.2);
+        flare.style.opacity = flareDissolve.toString();
+      }
+
+      // Continuous cinematic camera deceleration out of warp
+      const decelEase = 1 - Math.pow(1 - Math.min(p4, 1.0), 3);
+      const camZ4 = 13.0 - decelEase * 1.5; // Decelerates gracefully from 13.0 to 11.5
+      this.camera.position.set(this.mouse.x * 0.35, -this.mouse.y * 0.25, camZ4);
+      this.camera.lookAt(0, 0, 0);
+
+      // Portal rings aura stabilization
+      const aura = 1.0 + Math.sin(p4 * Math.PI) * 0.03;
+      this.portalGroup.scale.set(aura, aura, aura);
+
+      // Activate HTML/CSS Typography Reveal Card with optical focus rack
+      const revealCard = document.getElementById('tva-intro-reveal');
+      if (revealCard && !revealCard.classList.contains('reveal-active')) {
+        revealCard.classList.add('reveal-active');
+      }
+
+      this.setStatusText('OVERCLOCK 2027 TEMPORAL FACILITY DISCOVERED');
+      this.setPhaseActive(3);
+    }
+    // --- SCENE 5: Smooth Homepage Cross-Dissolve Transition (8.4s+) ---
+    else {
+      const p5 = Math.min((elapsed - 8400) / 1000, 1.0);
+      this.setPhaseActive(4);
+      this.setStatusText('INITIALIZING OVERCLOCK BUREAU SYSTEMS...');
+
+      // Gentle camera push forward into the Bureau sector
+      const forwardPush = p5 * p5;
+      this.camera.position.z = 11.5 - forwardPush * 2.6;
+      this.camera.position.x = this.mouse.x * 0.35 * (1 - p5);
+      this.camera.position.y = -this.mouse.y * 0.25 * (1 - p5);
+
+      if (!this.hasFinished) {
+        this.transitionToHomepage();
+      }
+    }
+
+    // --- CONTINUOUS ROTATION OF PORTAL RINGS & STRANDS ---
+    this.rings.forEach(r => {
+      r.mesh.rotation.z += r.rotSpeedZ || 0.005;
+      if (r.rotSpeedX) r.mesh.rotation.x += r.rotSpeedX;
+      if (r.rotSpeedY) r.mesh.rotation.y += r.rotSpeedY;
+    });
+
+    this.electricStrands.forEach(s => {
+      s.line.rotation.x += s.rotX;
+      s.line.rotation.y += s.rotY;
+      s.line.rotation.z += s.rotZ;
+    });
+
+    this.volumetricCones.forEach((vg, i) => {
+      vg.rotation.z += (i % 2 === 0 ? 0.004 : -0.004);
+    });
+
+    // --- PARTICLE VORTEX ANIMATION ---
+    this.updateParticles(elapsed);
+
+    // Render WebGL
+    this.renderer.render(this.scene, this.camera);
+
+    this.animFrameId = requestAnimationFrame((t) => this.tick(t));
+  }
+
+  updateParticles(elapsed) {
+    if (!this.particles) return;
+    const positions = this.particles.geometry.attributes.position.array;
+    
+    // Smooth particle warp acceleration and deceleration
+    let warpFactor = 1.0;
+    if (elapsed >= 4600 && elapsed < 6400) {
+      const wProg = (elapsed - 4600) / 1800;
+      warpFactor = 1.0 + Math.pow(wProg, 2) * 8.5;
+    } else if (elapsed >= 6400 && elapsed < 7400) {
+      const dProg = 1.0 - (elapsed - 6400) / 1000;
+      warpFactor = 1.0 + dProg * 4.0;
+    }
+
+    for (let i = 0; i < this.particleData.length; i++) {
+      const pd = this.particleData[i];
+
+      // Swirling angular velocity
+      pd.angle += pd.speed * (warpFactor > 1.5 ? 2.2 : 1.0);
+      positions[i * 3] = Math.cos(pd.angle) * pd.radius;
+      positions[i * 3 + 1] = Math.sin(pd.angle) * pd.radius;
+
+      // Z motion (vortex stream)
+      pd.z -= pd.zSpeed * warpFactor;
+      if (pd.z < -6.0) pd.z = 20.0;
+      positions[i * 3 + 2] = pd.z;
+    }
+
+    this.particles.geometry.attributes.position.needsUpdate = true;
+  }
+
+  updateHUDProgress(progress, elapsed) {
+    const fill = document.getElementById('tva-progress-fill');
+    if (fill) fill.style.width = `${Math.min(progress * 100, 100).toFixed(1)}%`;
+  }
+
+  setStatusText(text) {
+    const el = document.getElementById('tva-status-text');
+    if (el && el.textContent !== text) {
+      el.textContent = text;
+    }
+  }
+
+  setPhaseActive(index) {
+    const items = document.querySelectorAll('.tva-phase-item');
+    items.forEach((item, i) => {
+      if (i === index) item.classList.add('active');
+      else item.classList.remove('active');
+    });
+  }
+
+  /* ----------------------------------------------------------
+     6. HOMEPAGE HANDOVER & CLEANUP
+  ---------------------------------------------------------- */
+  skipIntro() {
+    if (this.hasFinished) return;
+    this.transitionToHomepage(true);
+  }
+
+  transitionToHomepage(isInstant = false) {
+    if (this.hasFinished) return;
+    this.hasFinished = true;
+
+    // Fade Audio smoothly
+    if (this.audioGain && this.audioCtx) {
+      try {
+        this.audioGain.gain.exponentialRampToValueAtTime(0.0001, this.audioCtx.currentTime + 0.8);
+      } catch (e) {}
+    }
+
+    // Save session flag so it only auto-plays once per visit
+    sessionStorage.setItem('oc2027_temporal_intro_played', 'true');
+
+    // Fade out 3D intro container
+    if (this.container) {
+      this.container.classList.add('fading-out');
+
+      // Seamless cross-dissolve: wake up homepage hero early so as the 3D veil fades,
+      // the analog clock and bureau elements are smoothly emerging into view
+      setTimeout(() => {
+        this.triggerMainAppLifecycle();
+      }, isInstant ? 50 : 250);
+
+      setTimeout(() => {
+        this.container.classList.add('intro-complete');
+        this.container.classList.remove('fading-out');
+
+        // Restore scrolling & pointer events
+        document.documentElement.classList.remove('tva-intro-active');
+        document.body.classList.remove('tva-intro-active');
+        this.resetScrollToTop();
+
+        // Stop render loop once intro is completely invisible
+        this.isPlaying = false;
+        if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
+        this.animFrameId = null;
+      }, isInstant ? 350 : 950);
+    } else {
+      this.resetScrollToTop();
+      this.triggerMainAppLifecycle();
+    }
+  }
+
+  triggerMainAppLifecycle() {
+    this.resetScrollToTop();
+    if (window.bureauApp && typeof window.bureauApp.triggerHeroAnimations === 'function') {
+      window.bureauApp.triggerHeroAnimations();
+    } else {
+      const heroSec = document.getElementById('hero');
+      if (heroSec) {
+        heroSec.classList.add('hero-anim-active');
+        heroSec.classList.add('stamped');
+      }
+    }
+    this.resetScrollToTop();
+  }
+
+  bypassIntroImmediate() {
+    this.resetScrollToTop();
+    if (this.container) {
+      this.container.classList.add('intro-complete');
+    }
+    document.documentElement.classList.remove('tva-intro-active');
+    document.body.classList.remove('tva-intro-active');
+    this.resetScrollToTop();
+    setTimeout(() => {
+      this.resetScrollToTop();
+      this.triggerMainAppLifecycle();
+    }, 50);
+  }
+
+  fastFallbackSequence() {
+    this.resetScrollToTop();
+    // If WebGL fails, fast CSS reveal
+    const revealCard = document.getElementById('tva-intro-reveal');
+    if (revealCard) revealCard.classList.add('reveal-active');
+    setTimeout(() => this.transitionToHomepage(), 3000);
+  }
+
+  async replay() {
+    this.resetScrollToTop();
+    sessionStorage.removeItem('oc2027_temporal_intro_played');
+
+    if (!this.container) {
+      this.container = document.getElementById('tva-temporal-intro');
+    }
+    if (!this.container) return;
+
+    this.container.classList.remove('intro-complete', 'fading-out');
+    const reveal = document.getElementById('tva-intro-reveal');
+    if (reveal) reveal.classList.remove('reveal-active');
+    const flare = document.querySelector('.tva-intro-flare-overlay');
+    if (flare) flare.style.opacity = '0';
+
+    // Prevent body scrolling during intro replay
+    document.documentElement.classList.add('tva-intro-active');
+    document.body.classList.add('tva-intro-active');
+
+    if (this.animFrameId) {
+      cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = null;
+    }
+
+    this.hasFinished = false;
+    this.isPlaying = false;
+    this.hasTriggeredWarpAudio = false;
+    this.hasTriggeredRevealAudio = false;
+
+    // Pause homepage clock ticking while 3D intro is replaying
+    if (window.bureauApp) {
+      window.bureauApp.isHomepageActive = false;
+    }
+
+    // Reset HUD
+    this.updateHUDProgress(0, 0);
+    this.setPhaseActive(0);
+    this.setStatusText('DETECTING TEMPORAL ACTIVATION Â· QUANTUM ANOMALY ENGAGED');
+
+    // Reset hero section animation classes so it will animate upon finish
+    const heroSec = document.getElementById('hero');
+    if (heroSec) {
+      heroSec.classList.remove('hero-anim-active', 'stamped', 'revealed');
+    }
+
+    // Ensure Three.js and 3D scene are built
+    if (!this.scene) {
+      const threeLoaded = await this.ensureThreeJS();
+      if (!threeLoaded) {
+        this.fastFallbackSequence();
+        return;
+      }
+      this.setupDOMControls();
+      this.build3DScene();
+      this.bindEvents();
+    } else {
+      this.setupDOMControls();
+    }
+
+    // Reset camera & 3D objects to Scene 1 initial positions
+    if (this.camera) {
+      this.camera.position.set(0, 0, 16.5);
+      this.camera.lookAt(0, 0, 0);
+    }
+    if (this.coreMesh) {
+      this.coreMesh.scale.set(0.05, 0.05, 0.05);
+    }
+    if (this.coronaMesh) {
+      this.coronaMesh.scale.set(0.04, 0.04, 0.04);
+    }
+    if (this.portalGroup) {
+      this.portalGroup.rotation.set(0, 0, 0);
+    }
+    if (this.pointLight) {
+      this.pointLight.intensity = 0.1;
+    }
+
+    // Immediate audio restart upon user click
+    if (!this.audioCtx) {
+      this.initAudio();
+    } else {
+      if (this.audioCtx.state === 'suspended') {
+        try { this.audioCtx.resume(); } catch (e) {}
+      }
+      if (this.audioGain && !this.isAudioMuted) {
+        try {
+          this.audioGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
+          this.audioGain.gain.setValueAtTime(0.001, this.audioCtx.currentTime);
+          this.audioGain.gain.exponentialRampToValueAtTime(0.16, this.audioCtx.currentTime + 1.8);
+        } catch (e) {}
+      }
+      if (this.audioFilter) {
+        try {
+          this.audioFilter.frequency.setValueAtTime(125, this.audioCtx.currentTime);
+        } catch (e) {}
+      }
+    }
+
+    this.startSequence();
+  }
+
+  onResize() {
+    if (!this.camera || !this.renderer) return;
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+}
+
+// Instantiate and expose globally
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => {
+    window.TVATemporalIntro = new TVATemporalIntroController();
+  });
+} else {
+  window.TVATemporalIntro = new TVATemporalIntroController();
+}
+        Dy x ÿÿ     20261006030843-8l'y ÇE	+   http://localhost:3000/tva-temporal-intro.js      Qš  /**
+ * OVERCLOCK 2027 â€” TVA TEMPORAL ENTRY
+ * Cinematic, Immersive 3D Intro Animation
+ * 
+ * Concept: Marvel TVA-inspired temporal facility entry portal.
+ * Technology: Three.js WebGL procedural geometry, custom lighting,
+ * particle vortex system, volumetric rays, and Web Audio synthesis.
+ */
+
+class TVATemporalIntroController {
+  constructor() {
+    this.container = null;
+    this.canvas = null;
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.portalGroup = null;
+    this.rings = [];
+    this.particles = null;
+    this.particleData = [];
+    this.coreMesh = null;
+    this.coronaMesh = null;
+    this.electricStrands = [];
+    this.volumetricCones = [];
+    this.leftBanner = null;
+    this.rightBanner = null;
+    this.pointLight = null;
+    this.keyLight = null;
+    this.ambientLight = null;
+
+    this.animFrameId = null;
+    this.startTime = null;
+    this.duration = 8800; // ~8.8 seconds total
+    this.isPlaying = false;
+    this.isAudioMuted = false;
+    this.audioCtx = null;
+    this.audioDrone = null;
+    this.audioGain = null;
+    this.hasBoundControls = false;
+
+    this.mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    this.hasFinished = false;
+    this.hasTriggeredWarpAudio = false;
+    this.hasTriggeredRevealAudio = false;
+
+    // Attach global replay delegate immediately so replay button works even if initial load bypassed intro
+    this.bindGlobalReplayDelegate();
+
+    this.init();
+  }
+
+  /* ----------------------------------------------------------
+     1. INITIALIZATION & ACCESSIBILITY CHECKS
+  ---------------------------------------------------------- */
+  bindGlobalReplayDelegate() {
+    document.addEventListener('click', (e) => {
+      const replayBtn = e.target.closest('#btn-replay-intro, .btn-replay-intro, [data-action="replay-intro"]');
+      if (replayBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.replay();
+      }
+    });
+  }
+
+  resetScrollToTop() {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
+    document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }
+
+  async init() {
+    // Check Reduced Motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceReplay = urlParams.get('intro') === 'replay' || urlParams.get('replay') === '1';
+    const noIntro = urlParams.has('nointro') || urlParams.has('noboot');
+    const alreadyPlayed = sessionStorage.getItem('oc2027_temporal_intro_played') === 'true';
+
+    this.container = document.getElementById('tva-temporal-intro');
+    if (!this.container) return;
+
+    if (noIntro || (alreadyPlayed && !forceReplay) || prefersReducedMotion) {
+      this.bypassIntroImmediate();
+      return;
+    }
+
+    if (!window.location.hash && !urlParams.has('goto')) {
+      this.resetScrollToTop();
+    }
+
+    // Load Three.js dynamically
+    const threeLoaded = await this.ensureThreeJS();
+    if (!threeLoaded) {
+      console.warn('[TVA Intro] Three.js not available; using fast fallback transition.');
+      this.fastFallbackSequence();
+      return;
+    }
+
+    this.setupDOMControls();
+    this.build3DScene();
+    this.bindEvents();
+    this.startSequence();
+  }
+
+  async ensureThreeJS() {
+    if (window.THREE) return true;
+    try {
+      const module = await import('./node_modules/three/build/three.module.js');
+      window.THREE = module;
+      return true;
+    } catch (err) {
+      // CDN Fallback
+      return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        script.onload = () => resolve(!!window.THREE);
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      });
+    }
+  }
+
+  /* ----------------------------------------------------------
+     2. DOM CONTROLS & EVENT BINDINGS
+  ---------------------------------------------------------- */
+  setupDOMControls() {
+    if (this.hasBoundControls) return;
+    this.hasBoundControls = true;
+
+    const audioBtn = document.getElementById('tva-intro-audio-btn');
+    if (audioBtn) {
+      audioBtn.addEventListener('click', () => this.toggleAudio());
+    }
+
+    // Mouse parallax listener
+    this.mouseHandler = (e) => {
+      this.mouse.targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+      this.mouse.targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener('mousemove', this.mouseHandler, { passive: true });
+
+    // Window resize
+    this.resizeHandler = () => this.onResize();
+    window.addEventListener('resize', this.resizeHandler);
+  }
+
+  bindEvents() {
+    // Touch interaction for mobile gyro/drag
+    this.container.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        this.mouse.targetX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+        this.mouse.targetY = (e.touches[0].clientY / window.innerHeight - 0.5) * 2;
+      }
+    }, { passive: true });
+  }
+
+  /* ----------------------------------------------------------
+     3. BUILD 3D TIME PORTAL SCENE (THREE.JS)
+  ---------------------------------------------------------- */
+  build3DScene() {
+    const THREE = window.THREE;
+    this.canvas = document.getElementById('tva-intro-canvas');
+    if (!this.canvas) return;
+
+    // Scene & Atmospheric Fog
+    this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.FogExp2(0x070503, 0.038);
+
+    // Camera
+    const aspect = window.innerWidth / window.innerHeight;
+    this.camera = new THREE.PerspectiveCamera(46, aspect, 0.1, 100);
+    this.camera.position.set(0, 0, 16.5);
+    this.camera.lookAt(0, 0, 0);
+
+    // Renderer
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.25;
+
+    // Lighting (Warm amber, fiery orange, bronze metallic highlights)
+    this.ambientLight = new THREE.AmbientLight(0x28190e, 0.5);
+    this.scene.add(this.ambientLight);
+
+    // PointLight at the singularity core
+    this.pointLight = new THREE.PointLight(0xff6600, 0.1, 35, 1.8);
+    this.pointLight.position.set(0, 0, 0);
+    this.scene.add(this.pointLight);
+
+    // Key Directional Light for metallic surface sheen
+    this.keyLight = new THREE.DirectionalLight(0xffd799, 1.8);
+    this.keyLight.position.set(6, 9, 12);
+    this.scene.add(this.keyLight);
+
+    // Cyan/Teal Edge Counter-Light (creates cinematic contrast against dark charcoal)
+    const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.55);
+    rimLight.position.set(-8, -6, -4);
+    this.scene.add(rimLight);
+
+    // Portal Master Group
+    this.portalGroup = new THREE.Group();
+    this.scene.add(this.portalGroup);
+
+    // --- A. Concentric Metallic Portal Rings ---
+    this.createPortalRings(THREE);
+
+    // --- B. Glowing Singularity Core & Plasma Spheres ---
+    this.createCoreSingularity(THREE);
+
+    // --- C. Branching Electric Temporal Strands ---
+    this.createElectricStrands(THREE);
+
+    // --- D. Volumetric Light Rays ---
+    this.createVolumetricRays(THREE);
+
+    // --- E. Flanking TVA Timeline Banners ---
+    this.createTVABanners(THREE);
+
+    // --- F. 1,600 Swirling Timeline Particles ---
+    this.createParticleVortex(THREE);
+  }
+
+  createPortalRings(THREE) {
+    // Ring 1: Outer Heavy Industrial Ring
+    const outerGeo = new THREE.TorusGeometry(5.2, 0.22, 28, 120);
+    const outerMat = new THREE.MeshStandardMaterial({
+      color: 0x1a120b,
+      metalness: 0.94,
+      roughness: 0.26,
+      emissive: 0x331604,
+      emissiveIntensity: 0.2
+    });
+    const outerRing = new THREE.Mesh(outerGeo, outerMat);
+    this.portalGroup.add(outerRing);
+
+    // Add 24 Mechanical Chrono-Lugs on outer ring
+    const lugGeo = new THREE.BoxGeometry(0.18, 0.45, 0.35);
+    const lugMat = new THREE.MeshStandardMaterial({ color: 0x4a3219, metalness: 0.9, roughness: 0.2 });
+    for (let i = 0; i < 24; i++) {
+      const angle = (i / 24) * Math.PI * 2;
+      const lug = new THREE.Mesh(lugGeo, lugMat);
+      lug.position.set(Math.cos(angle) * 5.2, Math.sin(angle) * 5.2, 0);
+      lug.rotation.z = angle + Math.PI / 2;
+      outerRing.add(lug);
+    }
+    this.rings.push({ mesh: outerRing, rotSpeedZ: 0.003, rotSpeedY: 0.001 });
+
+    // Ring 2: Chrono Glyph Coordinate Ring (Hourglass Inscriptions)
+    const midGeo1 = new THREE.TorusGeometry(4.0, 0.16, 24, 96);
+    const midMat1 = new THREE.MeshStandardMaterial({
+      color: 0x2b180a,
+      metalness: 0.92,
+      roughness: 0.18,
+      emissive: 0xe8892b,
+      emissiveIntensity: 0.75
+    });
+    const midRing1 = new THREE.Mesh(midGeo1, midMat1);
+    midRing1.rotation.x = 0.08;
+    this.portalGroup.add(midRing1);
+
+    // 12 Glowing Amber Hour Markers
+    const markerGeo = new THREE.BoxGeometry(0.12, 0.32, 0.22);
+    const markerMat = new THREE.MeshBasicMaterial({ color: 0xffaa33 });
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const marker = new THREE.Mesh(markerGeo, markerMat);
+      marker.position.set(Math.cos(angle) * 4.0, Math.sin(angle) * 4.0, 0.05);
+      marker.rotation.z = angle;
+      midRing1.add(marker);
+    }
+    this.rings.push({ mesh: midRing1, rotSpeedZ: -0.0055, rotSpeedX: 0.0015 });
+
+    // Ring 3: High-Energy Plasma Conduit Ring
+    const midGeo2 = new THREE.TorusGeometry(2.95, 0.11, 24, 80);
+    const midMat2 = new THREE.MeshStandardMaterial({
+      color: 0xff6600,
+      metalness: 0.5,
+      roughness: 0.1,
+      emissive: 0xff7700,
+      emissiveIntensity: 2.2
+    });
+    const midRing2 = new THREE.Mesh(midGeo2, midMat2);
+    midRing2.rotation.y = -0.1;
+    this.portalGroup.add(midRing2);
+    this.rings.push({ mesh: midRing2, rotSpeedZ: 0.0085, rotSpeedY: -0.002 });
+
+    // Ring 4: Inner Aperture Shutter Ring
+    const innerGeo = new THREE.TorusGeometry(1.9, 0.08, 20, 64);
+    const innerMat = new THREE.MeshStandardMaterial({
+      color: 0xffb347,
+      metalness: 0.88,
+      roughness: 0.2,
+      emissive: 0xff4400,
+      emissiveIntensity: 1.5
+    });
+    const innerRing = new THREE.Mesh(innerGeo, innerMat);
+    this.portalGroup.add(innerRing);
+
+    // 16 Mechanical Aperture Blades
+    const bladeGeo = new THREE.ConeGeometry(0.28, 0.9, 3);
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x331c0a, metalness: 0.85, roughness: 0.3 });
+    for (let i = 0; i < 16; i++) {
+      const angle = (i / 16) * Math.PI * 2;
+      const blade = new THREE.Mesh(bladeGeo, bladeMat);
+      blade.position.set(Math.cos(angle) * 1.6, Math.sin(angle) * 1.6, 0);
+      blade.rotation.z = angle - Math.PI / 2;
+      innerRing.add(blade);
+    }
+    this.rings.push({ mesh: innerRing, rotSpeedZ: -0.012, rotSpeedZBase: -0.012 });
+  }
+
+  createCoreSingularity(THREE) {
+    // Intense Hot Singularity Core
+    const coreGeo = new THREE.SphereGeometry(0.72, 32, 32);
+    const coreMat = new THREE.MeshBasicMaterial({
+      color: 0xfffae6,
+      transparent: true,
+      opacity: 0.98,
+      blending: THREE.AdditiveBlending
+    });
+    this.coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    this.coreMesh.scale.set(0.01, 0.01, 0.01);
+    this.portalGroup.add(this.coreMesh);
+
+    // Radiant Plasma Corona
+    const coronaGeo = new THREE.SphereGeometry(1.28, 32, 32);
+    const coronaMat = new THREE.MeshBasicMaterial({
+      color: 0xff6600,
+      transparent: true,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending
+    });
+    this.coronaMesh = new THREE.Mesh(coronaGeo, coronaMat);
+    this.coronaMesh.scale.set(0.01, 0.01, 0.01);
+    this.portalGroup.add(this.coronaMesh);
+
+    // Outer Vortex Glow Shell
+    const shellGeo = new THREE.SphereGeometry(1.85, 24, 24);
+    const shellMat = new THREE.MeshBasicMaterial({
+      color: 0xcc3300,
+      transparent: true,
+      opacity: 0.25,
+      blending: THREE.AdditiveBlending,
+      side: THREE.BackSide
+    });
+    const shellMesh = new THREE.Mesh(shellGeo, shellMat);
+    this.portalGroup.add(shellMesh);
+  }
+
+  createElectricStrands(THREE) {
+    // 4 Orbiting Electric Timeline Loops
+    const strandMat = new THREE.LineBasicMaterial({
+      color: 0xffaa33,
+      linewidth: 2,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+
+    for (let i = 0; i < 4; i++) {
+      const radiusX = 1.3 + i * 0.35;
+      const radiusY = 0.75 + i * 0.25;
+      const curve = new THREE.EllipseCurve(0, 0, radiusX, radiusY, 0, 2 * Math.PI, false, 0);
+      const points = curve.getPoints(50);
+      const geo = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(geo, strandMat);
+      line.rotation.x = Math.random() * Math.PI;
+      line.rotation.y = Math.random() * Math.PI;
+      this.portalGroup.add(line);
+      this.electricStrands.push({
+        line,
+        rotX: 0.02 + i * 0.01,
+        rotY: 0.03 + i * 0.015,
+        rotZ: 0.015
+      });
+    }
+  }
+
+  createVolumetricRays(THREE) {
+    // 8 Radial Light Shaft Cones
+    const rayMat = new THREE.MeshBasicMaterial({
+      color: 0xff9922,
+      transparent: true,
+      opacity: 0.12,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+
+    for (let i = 0; i < 8; i++) {
+      const coneGeo = new THREE.ConeGeometry(1.2, 9.0, 16, 1, true);
+      const cone = new THREE.Mesh(coneGeo, rayMat);
+      cone.rotation.x = Math.PI / 2;
+      cone.position.z = 4.5;
+      const rayGroup = new THREE.Group();
+      rayGroup.rotation.z = (i / 8) * Math.PI * 2;
+      rayGroup.add(cone);
+      this.portalGroup.add(rayGroup);
+      this.volumetricCones.push(rayGroup);
+    }
+  }
+
+  createTVABanners(THREE) {
+    // Procedural TVA Canvas Banners matching uploaded poster
+    const createBannerTexture = (title, subtitle, tag) => {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 1024;
+      const ctx = c.getContext('2d');
+
+      // Bronze/Charcoal Gradient Background
+      const grad = ctx.createLinearGradient(0, 0, 0, 1024);
+      grad.addColorStop(0, '#26201A');
+      grad.addColorStop(0.5, '#1C1813');
+      grad.addColorStop(1, '#14110D');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 1024);
+
+      // Distressed Grid Lines & Brass Borders
+      ctx.strokeStyle = 'rgba(184, 146, 58, 0.4)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(20, 20, 472, 984);
+      ctx.strokeRect(32, 32, 448, 960);
+
+      // TVA Bold Wordmark
+      ctx.fillStyle = '#E8872B';
+      ctx.font = 'bold 110px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('TVA', 256, 220);
+
+      // Hourglass Emblem
+      ctx.strokeStyle = '#B8923A';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(256, 330, 48, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Banner Text
+      ctx.fillStyle = '#EADFC4';
+      ctx.font = 'bold 36px sans-serif';
+      ctx.letterSpacing = '6px';
+      ctx.fillText(title, 256, 480);
+
+      ctx.fillStyle = '#B9AD92';
+      ctx.font = '26px monospace';
+      ctx.fillText(subtitle, 256, 560);
+
+      ctx.fillStyle = '#3FB5A0';
+      ctx.font = 'bold 30px monospace';
+      ctx.fillText(tag, 256, 740);
+
+      const tex = new THREE.CanvasTexture(c);
+      return tex;
+    };
+
+    const bannerGeo = new THREE.PlaneGeometry(2.3, 8.2);
+    const leftTex = createBannerTexture('FOR A BRIGHTER', 'TOMORROW', 'BUILD Â· FIX Â· BRANCH');
+    const rightTex = createBannerTexture('SAME IDEAS', 'DIFFERENT TIMELINES', 'A BRIGHTER TOMORROW');
+
+    const bannerMatLeft = new THREE.MeshStandardMaterial({
+      map: leftTex,
+      metalness: 0.6,
+      roughness: 0.4,
+      emissive: 0x442200,
+      emissiveIntensity: 0.25,
+      side: THREE.DoubleSide
+    });
+    const bannerMatRight = new THREE.MeshStandardMaterial({
+      map: rightTex,
+      metalness: 0.6,
+      roughness: 0.4,
+      emissive: 0x442200,
+      emissiveIntensity: 0.25,
+      side: THREE.DoubleSide
+    });
+
+    this.leftBanner = new THREE.Mesh(bannerGeo, bannerMatLeft);
+    this.leftBanner.position.set(-8.2, 0.2, -1.8);
+    this.leftBanner.rotation.y = 0.38;
+    this.portalGroup.add(this.leftBanner);
+
+    this.rightBanner = new THREE.Mesh(bannerGeo, bannerMatRight);
+    this.rightBanner.position.set(8.2, 0.2, -1.8);
+    this.rightBanner.rotation.y = -0.38;
+    this.portalGroup.add(this.rightBanner);
+  }
+
+  createParticleVortex(THREE) {
+    const particleCount = 1600;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    const cAmber = new THREE.Color(0xffaa22);
+    const cOrange = new THREE.Color(0xff5500);
+    const cGold = new THREE.Color(0xffd700);
+    const cWhite = new THREE.Color(0xffffff);
+
+    this.particleData = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      const radius = 0.6 + Math.pow(Math.random(), 1.6) * 7.5;
+      const angle = Math.random() * Math.PI * 2;
+      const z = -6.0 + Math.random() * 24.0;
+
+      positions[i * 3] = Math.cos(angle) * radius;
+      positions[i * 3 + 1] = Math.sin(angle) * radius;
+      positions[i * 3 + 2] = z;
+
+      // Color selection based on distance
+      const rColor = Math.random();
+      let color;
+      if (rColor < 0.4) color = cAmber;
+      else if (rColor < 0.7) color = cOrange;
+      else if (rColor < 0.9) color = cGold;
+      else color = cWhite;
+
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+
+      this.particleData.push({
+        radius,
+        angle,
+        speed: 0.008 + (1.0 / (radius + 0.5)) * 0.02,
+        zSpeed: 0.02 + Math.random() * 0.04,
+        z,
+        baseRadius: radius
+      });
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 0.085,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.88,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    this.particles = new THREE.Points(geometry, material);
+    this.portalGroup.add(this.particles);
+  }
+
+  /* ----------------------------------------------------------
+     4. PROCEDURAL WEB AUDIO SYNTHESIS
+  ---------------------------------------------------------- */
+  initAudio() {
+    if (this.audioCtx || this.isAudioMuted) return;
+    try {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtxClass) return;
+      this.audioCtx = new AudioCtxClass();
+
+      // Master Gain with soft fade-in
+      this.audioGain = this.audioCtx.createGain();
+      this.audioGain.gain.setValueAtTime(0.001, this.audioCtx.currentTime);
+      this.audioGain.connect(this.audioCtx.destination);
+
+      // Warm, atmospheric dual-sine ambient drone (TVA Sub-Quantum Gateway)
+      this.audioDrone = this.audioCtx.createOscillator();
+      this.audioDrone.type = 'sine';
+      this.audioDrone.frequency.setValueAtTime(55, this.audioCtx.currentTime);
+
+      this.audioDroneSub = this.audioCtx.createOscillator();
+      this.audioDroneSub.type = 'sine';
+      this.audioDroneSub.frequency.setValueAtTime(110, this.audioCtx.currentTime);
+
+      const subGain = this.audioCtx.createGain();
+      subGain.gain.setValueAtTime(0.22, this.audioCtx.currentTime);
+
+      // Resonant Warm Lowpass Filter (eliminates all electrical buzz)
+      this.audioFilter = this.audioCtx.createBiquadFilter();
+      this.audioFilter.type = 'lowpass';
+      this.audioFilter.frequency.setValueAtTime(125, this.audioCtx.currentTime);
+      this.audioFilter.Q.setValueAtTime(1.4, this.audioCtx.currentTime);
+
+      this.audioDrone.connect(this.audioFilter);
+      this.audioDroneSub.connect(subGain);
+      subGain.connect(this.audioFilter);
+      this.audioFilter.connect(this.audioGain);
+
+      this.audioDrone.start();
+      this.audioDroneSub.start();
+
+      // Smooth cinematic fade in
+      this.audioGain.gain.exponentialRampToValueAtTime(0.16, this.audioCtx.currentTime + 1.8);
+    } catch (e) {
+      // Audio autoplay policy fallback
+    }
+  }
+
+  triggerAudioWarp() {
+    if (!this.audioCtx || this.isAudioMuted || this.hasTriggeredWarpAudio) return;
+    this.hasTriggeredWarpAudio = true;
+    try {
+      const now = this.audioCtx.currentTime;
+      // Smooth cinematic Doppler warp
+      if (this.audioFilter) {
+        this.audioFilter.frequency.exponentialRampToValueAtTime(320, now + 1.2);
+      }
+      if (this.audioDrone) {
+        this.audioDrone.frequency.exponentialRampToValueAtTime(78, now + 1.2);
+      }
+    } catch (e) {}
+  }
+
+  triggerAudioRevealBoom() {
+    // Strict single-shot guard: prevent duplicate frame triggers
+    if (!this.audioCtx || this.isAudioMuted || this.hasTriggeredRevealAudio) return;
+    this.hasTriggeredRevealAudio = true;
+
+    try {
+      const ctx = this.audioCtx;
+      const now = ctx.currentTime;
+
+      // Master Reveal Sub-mix
+      const revealMaster = ctx.createGain();
+      revealMaster.gain.setValueAtTime(0.22, now);
+      revealMaster.connect(ctx.destination);
+
+      // 1. TVA Bronze Chronometer Bell Chime (Pure acoustic harmonic partials)
+      const bellPartials = [
+        { freq: 587.33, vol: 0.12, decay: 2.0 },  // Fundamental (D5) - warm bell resonance
+        { freq: 880.00, vol: 0.055, decay: 1.4 }, // Fifth overtone (A5) - crystalline overtone
+        { freq: 1174.66, vol: 0.028, decay: 0.8 }, // Octave ring (D6) - golden shimmer
+        { freq: 1618.00, vol: 0.014, decay: 0.45 } // Golden ratio metallic bell strike
+      ];
+
+      bellPartials.forEach(partial => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(partial.freq, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(partial.vol, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + partial.decay);
+
+        osc.connect(gain);
+        gain.connect(revealMaster);
+        osc.start(now);
+        osc.stop(now + partial.decay + 0.05);
+      });
+
+      // 2. Warm Orchestral Cello/Brass Chord Swell (D-minor cinematic pad)
+      const chordFrequencies = [146.83, 220.00, 329.63]; // D3, A3, E4
+      chordFrequencies.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const chordGain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'triangle'; // Warm, non-abrasive cello/horn tone
+        osc.frequency.setValueAtTime(freq, now);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(260, now);
+        filter.frequency.exponentialRampToValueAtTime(480, now + 0.4);
+        filter.frequency.exponentialRampToValueAtTime(180, now + 2.2);
+
+        const vol = 0.08 / (idx * 0.7 + 1);
+        chordGain.gain.setValueAtTime(0.0001, now);
+        chordGain.gain.exponentialRampToValueAtTime(vol, now + 0.12);
+        chordGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.3);
+
+        osc.connect(filter);
+        filter.connect(chordGain);
+        chordGain.connect(revealMaster);
+
+        osc.start(now);
+        osc.stop(now + 2.4);
+      });
+
+      // 3. Deep Velvet Sub Bass Pulse (Clean 52Hz -> 32Hz cinematic gravity lock)
+      const subOsc = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(52, now);
+      subOsc.frequency.exponentialRampToValueAtTime(32, now + 0.35);
+
+      subGain.gain.setValueAtTime(0.0001, now);
+      subGain.gain.exponentialRampToValueAtTime(0.13, now + 0.018);
+      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+      subOsc.connect(subGain);
+      subGain.connect(revealMaster);
+      subOsc.start(now);
+      subOsc.stop(now + 0.65);
+    } catch (e) {}
+  }
+
+  toggleAudio() {
+    this.isAudioMuted = !this.isAudioMuted;
+    const btn = document.getElementById('tva-intro-audio-btn');
+    if (btn) btn.innerHTML = this.isAudioMuted ? '<span>ğŸ”‡</span>' : '<span>ğŸ”Š</span>';
+    if (this.audioGain && this.audioCtx) {
+      this.audioGain.gain.setValueAtTime(this.isAudioMuted ? 0.0001 : 0.22, this.audioCtx.currentTime);
+    } else if (!this.isAudioMuted) {
+      this.initAudio();
+    }
+  }
+
+  /* ----------------------------------------------------------
+     5. MAIN CINEMATIC ANIMATION LOOP & SCENE PHASING
+  ---------------------------------------------------------- */
+  startSequence() {
+    this.isPlaying = true;
+    this.hasFinished = false;
+    this.startTime = performance.now();
+
+    // Prevent body scrolling during intro
+    document.documentElement.classList.add('tva-intro-active');
+    document.body.classList.add('tva-intro-active');
+
+    // Attempt subtle audio start
+    const startAudioOnce = () => {
+      this.initAudio();
+      window.removeEventListener('click', startAudioOnce);
+      window.removeEventListener('keydown', startAudioOnce);
+    };
+    window.addEventListener('click', startAudioOnce);
+    window.addEventListener('keydown', startAudioOnce);
+
+    this.tick(this.startTime);
+  }
+
+  tick(now) {
+    if (!this.isPlaying) return;
+
+    const elapsed = now - this.startTime;
+    const progress = Math.min(elapsed / this.duration, 1.0);
+
+    // Update Bottom Timeline UI
+    this.updateHUDProgress(progress, elapsed);
+
+    // Smooth Mouse / Gyro Parallax with silky inertia
+    this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.04;
+    this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.04;
+
+    // --- SCENE 1: Darkness & Temporal Activation (0 - 2.0s) ---
+    if (elapsed < 2000) {
+      const p1 = elapsed / 2000;
+      // Smooth cubic ease-out ignition of the core singularity
+      const ease1 = 1 - Math.pow(1 - p1, 3);
+      const s = 0.02 + ease1 * 0.98;
+      this.coreMesh.scale.set(s, s, s);
+      this.coronaMesh.scale.set(s * 0.85, s * 0.85, s * 0.85);
+      this.pointLight.intensity = ease1 * 3.2;
+
+      // Gentle continuous camera dolly
+      this.camera.position.x = this.mouse.x * 0.4;
+      this.camera.position.y = -this.mouse.y * 0.3;
+      this.camera.position.z = 16.5 - ease1 * 0.5;
+
+      this.setStatusText('DETECTING TEMPORAL ACTIVATION Â· QUANTUM ANOMALY ENGAGED');
+      this.setPhaseActive(0);
+    }
+    // --- SCENE 2: Portal Formation (2.0s - 4.6s) ---
+    else if (elapsed < 4600) {
+      const p2 = (elapsed - 2000) / 2600;
+      // Singularity reaches full plasma bloom with organic multi-frequency breathing
+      const pulse = 1.0 + Math.sin(elapsed * 0.005) * 0.08 + Math.cos(elapsed * 0.009) * 0.04;
+      this.coreMesh.scale.set(pulse, pulse, pulse);
+      this.coronaMesh.scale.set(pulse * 1.25, pulse * 1.25, pulse * 1.25);
+      this.pointLight.intensity = 3.2 + p2 * 4.5 + Math.sin(elapsed * 0.01) * 0.7;
+
+      // 3D Portal slowly tilts with gentle inertial parallax
+      this.portalGroup.rotation.x = this.mouse.y * 0.10 + Math.sin(elapsed * 0.001) * 0.05;
+      this.portalGroup.rotation.y = this.mouse.x * 0.15 + Math.cos(elapsed * 0.001) * 0.05;
+
+      const camZ2 = 16.0 - p2 * 1.2;
+      this.camera.position.x = this.mouse.x * 0.6;
+      this.camera.position.y = -this.mouse.y * 0.5;
+      this.camera.position.z = camZ2;
+
+      this.setStatusText('CONCENTRIC TIME PORTAL FORMED Â· FREQUENCY LOCKED');
+      this.setPhaseActive(1);
+    }
+    // --- SCENE 3: Camera Travel & Warp Fly-Through (4.6s - 6.4s) ---
+    else if (elapsed < 6400) {
+      const p3 = (elapsed - 4600) / 1800;
+      if (p3 < 0.04) this.triggerAudioWarp();
+
+      // Progressive exponential acceleration forward into the core singularity
+      const warpEase = Math.pow(p3, 2.4);
+      this.camera.position.z = 14.8 - warpEase * 14.2; // Smooth plunge right to z ~ 0.6
+      this.camera.position.x = (1 - p3) * (this.mouse.x * 0.6);
+      this.camera.position.y = (1 - p3) * (-this.mouse.y * 0.5);
+
+      // Optical acceleration flare wash: blooms as camera enters singularity throat
+      const flare = document.querySelector('.tva-intro-flare-overlay');
+      if (flare) {
+        const flareOp = p3 > 0.58 ? Math.min(1.0, (p3 - 0.58) / 0.38) : 0;
+        flare.style.opacity = flareOp.toString();
+      }
+
+      this.setStatusText('ENTERING SUB-QUANTUM TIMELINE STREAM...');
+      this.setPhaseActive(2);
+    }
+    // --- SCENE 4: OVERCLOCK 2027 Reveal (6.4s - 8.4s) ---
+    else if (elapsed < 8400) {
+      const p4 = (elapsed - 6400) / 2000;
+      if (p4 < 0.04) this.triggerAudioRevealBoom();
+
+      // Seamless optical flare dissolve: smoothly dissipates from 1.0 down to 0
+      const flare = document.querySelector('.tva-intro-flare-overlay');
+      if (flare) {
+        const flareDissolve = Math.max(0, 1.0 - p4 * 2.2);
+        flare.style.opacity = flareDissolve.toString();
+      }
+
+      // Continuous cinematic camera deceleration out of warp
+      const decelEase = 1 - Math.pow(1 - Math.min(p4, 1.0), 3);
+      const camZ4 = 13.0 - decelEase * 1.5; // Decelerates gracefully from 13.0 to 11.5
+      this.camera.position.set(this.mouse.x * 0.35, -this.mouse.y * 0.25, camZ4);
+      this.camera.lookAt(0, 0, 0);
+
+      // Portal rings aura stabilization
+      const aura = 1.0 + Math.sin(p4 * Math.PI) * 0.03;
+      this.portalGroup.scale.set(aura, aura, aura);
+
+      // Activate HTML/CSS Typography Reveal Card with optical focus rack
+      const revealCard = document.getElementById('tva-intro-reveal');
+      if (revealCard && !revealCard.classList.contains('reveal-active')) {
+        revealCard.classList.add('reveal-active');
+      }
+
+      this.setStatusText('OVERCLOCK 2027 TEMPORAL FACILITY DISCOVERED');
+      this.setPhaseActive(3);
+    }
+    // --- SCENE 5: Smooth Homepage Cross-Dissolve Transition (8.4s+) ---
+    else {
+      const p5 = Math.min((elapsed - 8400) / 1000, 1.0);
+      this.setPhaseActive(4);
+      this.setStatusText('INITIALIZING OVERCLOCK BUREAU SYSTEMS...');
+
+      // Gentle camera push forward into the Bureau sector
+      const forwardPush = p5 * p5;
+      this.camera.position.z = 11.5 - forwardPush * 2.6;
+      this.camera.position.x = this.mouse.x * 0.35 * (1 - p5);
+      this.camera.position.y = -this.mouse.y * 0.25 * (1 - p5);
+
+      if (!this.hasFinished) {
+        this.transitionToHomepage();
+      }
+    }
+
+    // --- CONTINUOUS ROTATION OF PORTAL RINGS & STRANDS ---
+    this.rings.forEach(r => {
+      r.mesh.rotation.z += r.rotSpeedZ || 0.005;
+      if (r.rotSpeedX) r.mesh.rotation.x += r.rotSpeedX;
+      if (r.rotSpeedY) r.mesh.rotation.y += r.rotSpeedY;
+    });
+
+    this.electricStrands.forEach(s => {
+      s.line.rotation.x += s.rotX;
+      s.line.rotation.y += s.rotY;
+      s.line.rotation.z += s.rotZ;
+    });
+
+    this.volumetricCones.forEach((vg, i) => {
+      vg.rotation.z += (i % 2 === 0 ? 0.004 : -0.004);
+    });
+
+    // --- PARTICLE VORTEX ANIMATION ---
+    this.updateParticles(elapsed);
+
+    // Render WebGL
+    this.renderer.render(this.scene, this.camera);
+
+    this.animFrameId = requestAnimationFrame((t) => this.tick(t));
+  }
+
+  updateParticles(elapsed) {
+    if (!this.particles) return;
+    const positions = this.particles.geometry.attributes.position.array;
+    
+    // Smooth particle warp acceleration and deceleration
+    let warpFactor = 1.0;
+    if (elapsed >= 4600 && elapsed < 6400) {
+      const wProg = (elapsed - 4600) / 1800;
+      warpFactor = 1.0 + Math.pow(wProg, 2) * 8.5;
+    } else if (elapsed >= 6400 && elapsed < 7400) {
+      const dProg = 1.0 - (elapsed - 6400) / 1000;
+      warpFactor = 1.0 + dProg * 4.0;
+    }
+
+    for (let i = 0; i < this.particleData.length; i++) {
+      const pd = this.particleData[i];
+
+      // Swirling angular velocity
+      pd.angle += pd.speed * (warpFactor > 1.5 ? 2.2 : 1.0);
+      positions[i * 3] = Math.cos(pd.angle) * pd.radius;
+      positions[i * 3 + 1] = Math.sin(pd.angle) * pd.radius;
+
+      // Z motion (vortex stream)
+      pd.z -= pd.zSpeed * warpFactor;
+      if (pd.z < -6.0) pd.z = 20.0;
+      positions[i * 3 + 2] = pd.z;
+    }
+
+    this.particles.geometry.attributes.position.needsUpdate = true;
+  }
+
+  updateHUDProgress(progress, elapsed) {
+    const fill = document.getElementById('tva-progress-fill');
+    if (fill) fill.style.width = `${Math.min(progress * 100, 100).toFixed(1)}%`;
+  }
+
+  setStatusText(text) {
+    const el = document.getElementById('tva-status-text');
+    if (el && el.textContent !== text) {
+      el.textContent = text;
+    }
+  }
+
+  setPhaseActive(index) {
+    const items = document.querySelectorAll('.tva-phase-item');
+    items.forEach((item, i) => {
+      if (i === index) item.classList.add('active');
+      else item.classList.remove('active');
+    });
+  }
+
+  /* ----------------------------------------------------------
+     6. HOMEPAGE HANDOVER & CLEANUP
+  ---------------------------------------------------------- */
+  skipIntro() {
+    if (this.hasFinished) return;
+    this.transitionToHomepage(true);
+  }
+
+  transitionToHomepage(isInstant = false) {
+    if (this.hasFinished) return;
+    this.hasFinished = true;
+
+    // Fade Audio smoothly
+    if (this.audioGain && this.audioCtx) {
+      try {
+        this.audioGain.gain.exponentialRampToValueAtTime(0.0001, this.audioCtx.currentTime + 0.8);
+      } catch (e) {}
+    }
+
+    // Save session flag so it only auto-plays once per visit
+    sessionStorage.setItem('oc2027_temporal_intro_played', 'true');
+
+    // Fade out 3D intro container
+    if (this.container) {
+      this.container.classList.add('fading-out');
+
+      // Seamless cross-dissolve: wake up homepage hero early so as the 3D veil fades,
+      // the analog clock and bureau elements are smoothly emerging into view
+      setTimeout(() => {
+        this.triggerMainAppLifecycle();
+      }, isInstant ? 50 : 250);
+
+      setTimeout(() => {
+        this.container.classList.add('intro-complete');
+        this.container.classList.remove('fading-out');
+
+        // Restore scrolling & pointer events
+        document.documentElement.classList.remove('tva-intro-active');
+        document.body.classList.remove('tva-intro-active');
+        this.resetScrollToTop();
+
+        // Stop render loop once intro is completely invisible
+        this.isPlaying = false;
+        if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
+        this.animFrameId = null;
+      }, isInstant ? 350 : 950);
+    } else {
+      this.resetScrollToTop();
+      this.triggerMainAppLifecycle();
+    }
+  }
+
+  triggerMainAppLifecycle() {
+    this.resetScrollToTop();
+    if (window.bureauApp && typeof window.bureauApp.triggerHeroAnimations === 'function') {
+      window.bureauApp.triggerHeroAnimations();
+    } else {
+      const heroSec = document.getElementById('hero');
+      if (heroSec) {
+        heroSec.classList.add('hero-anim-active');
+        heroSec.classList.add('stamped');
+      }
+    }
+    this.resetScrollToTop();
+  }
+
+  bypassIntroImmediate() {
+    this.resetScrollToTop();
+    if (this.container) {
+      this.container.classList.add('intro-complete');
+    }
+    document.documentElement.classList.remove('tva-intro-active');
+    document.body.classList.remove('tva-intro-active');
+    this.resetScrollToTop();
+    setTimeout(() => {
+      this.resetScrollToTop();
+      this.triggerMainAppLifecycle();
+    }, 50);
+  }
+
+  fastFallbackSequence() {
+    this.resetScrollToTop();
+    // If WebGL fails, fast CSS reveal
+    const revealCard = document.getElementById('tva-intro-reveal');
+    if (revealCard) revealCard.classList.add('reveal-active');
+    setTimeout(() => this.transitionToHomepage(), 3000);
+  }
+
+  async replay() {
+    this.resetScrollToTop();
+    sessionStorage.removeItem('oc2027_temporal_intro_played');
+
+    if (!this.container) {
+      this.container = document.getElementById('tva-temporal-intro');
+    }
+    if (!this.container) return;
+
+    this.container.classList.remove('intro-complete', 'fading-out');
+    const reveal = document.getElementById('tva-intro-reveal');
+    if (reveal) reveal.classList.remove('reveal-active');
+    const flare = document.querySelector('.tva-intro-flare-overlay');
+    if (flare) flare.style.opacity = '0';
+
+    // Prevent body scrolling during intro replay
+    document.documentElement.classList.add('tva-intro-active');
+    document.body.classList.add('tva-intro-active');
+
+    if (this.animFrameId) {
+      cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = null;
+    }
+
+    this.hasFinished = false;
+    this.isPlaying = false;
+    this.hasTriggeredWarpAudio = false;
+    this.hasTriggeredRevealAudio = false;
+
+    // Pause homepage clock ticking while 3D intro is replaying
+    if (window.bureauApp) {
+      window.bureauApp.isHomepageActive = false;
+    }
+
+    // Reset HUD
+    this.updateHUDProgress(0, 0);
+    this.setPhaseActive(0);
+    this.setStatusText('DETECTING TEMPORAL ACTIVATION Â· QUANTUM ANOMALY ENGAGED');
+
+    // Reset hero section animation classes so it will animate upon finish
+    const heroSec = document.getElementById('hero');
+    if (heroSec) {
+      heroSec.classList.remove('hero-anim-active', 'stamped', 'revealed');
+    }
+
+    // Ensure Three.js and 3D scene are built
+    if (!this.scene) {
+      const threeLoaded = await this.ensureThreeJS();
+      if (!threeLoaded) {
+        this.fastFallbackSequence();
+        return;
+      }
+      this.setupDOMControls();
+      this.build3DScene();
+      this.bindEvents();
+    } else {
+      this.setupDOMControls();
+    }
+
+    // Reset camera & 3D objects to Scene 1 initial positions
+    if (this.camera) {
+      this.camera.position.set(0, 0, 16.5);
+      this.camera.lookAt(0, 0, 0);
+    }
+    if (this.coreMesh) {
+      this.coreMesh.scale.set(0.05, 0.05, 0.05);
+    }
+    if (this.coronaMesh) {
+      this.coronaMesh.scale.set(0.04, 0.04, 0.04);
+    }
+    if (this.portalGroup) {
+      this.portalGroup.rotation.set(0, 0, 0);
+    }
+    if (this.pointLight) {
+      this.pointLight.intensity = 0.1;
+    }
+
+    // Immediate audio restart upon user click
+    if (!this.audioCtx) {
+      this.initAudio();
+    } else {
+      if (this.audioCtx.state === 'suspended') {
+        try { this.audioCtx.resume(); } catch (e) {}
+      }
+      if (this.audioGain && !this.isAudioMuted) {
+        try {
+          this.audioGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
+          this.audioGain.gain.setValueAtTime(0.001, this.audioCtx.currentTime);
+          this.audioGain.gain.exponentialRampToValueAtTime(0.16, this.audioCtx.currentTime + 1.8);
+        } catch (e) {}
+      }
+      if (this.audioFilter) {
+        try {
+          this.audioFilter.frequency.setValueAtTime(125, this.audioCtx.currentTime);
+        } catch (e) {}
+      }
+    }
+
+    this.startSequence();
+  }
+
+  onResize() {
+    if (!this.camera || !this.renderer) return;
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+}
+
+// Instantiate and expose globally
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => {
+    window.TVATemporalIntro = new TVATemporalIntroController();
+  });
+} else {
+  window.TVATemporalIntro = new TVATemporalIntroController();
+}
+Ó˜ÀÙµ  ³       ¼i°      TVATemporalIntroController     =¤¶	      container      %ó      canvas     Ö|:K      scene      ïñìÏ      camera     P:ĞÊ      renderer   å71      portalGroup    ‹f	      rings      ÅÍ[	      particles	      %Åÿw      particleData
+   £tÁW      coreMesh   ÆŒ9
+      coronaMesh     ÖØ2      electricStrands    ÆYõR      volumetricCones    ŞUåÎ
+      leftBanner     £—      rightBanner    exç
+      pointLight     =F¼Ê      keyLight   Y¬ND      ambientLight   N©&      animFrameId    	¤Œ	      startTime      8
+M      duration   *–	      isPlaying      ëdV      isAudioMuted   Şc^      audioCtx   cËó
+      audioDrone     nDßÈ	      audioGain      ;7>¼      hasBoundControls   JİiK      mouse      ¹'|      targetX    M{ID      targetY    X¾&      hasFinished     ÌcÉë      hasTriggeredWarpAudio!      ·»ŸÚ      hasTriggeredRevealAudio"    ˜’ÕÓ      bindGlobalReplayDelegate#   LlK      init$   úîë      document%   ñ{      addEventListener&   ¢ºf      click'      û®»Ü	      replayBtn(      	C–È      closest)    n>B      #btn-replay-intro, .btn-replay-intro, [data-action="replay-intro"]*     ØÄ~      preventDefault+     wså      stopPropagation,    ‚ûSú      replay-     ç–)¤      resetScrollToTop.   ^Å¾„      window/     ÕŞ'      scrollTo0   ™ã;è      top1    ¾9œ      left2   \|©      behavior3   ­<Îó      instant4    œ¦ã      documentElement5    ;EŸ	      scrollTop6      ÷"Æ      body7   )a²*      prefersReducedMotion8   -GBş
+      matchMedia9     AøTH       (prefers-reduced-motion: reduce):    zt*      matches;    aiÿR	      urlParams<      |Ú’í      URLSearchParams=    #Äê¡      location>   Bş…¤      forceReplay?    ™©-,      intro@      |Õ      noIntroA    ¶_(      nointroB    Ì0AD      nobootC     èÁéµ      alreadyPlayedD      ¹“÷      sessionStorageE     §’ı      getItemF    !ª      oc2027_temporal_intro_playedG   ó‰j€      getElementByIdH     2zÒ      tva-temporal-introI     X¡¢+      bypassIntroImmediateJ   Ç_†      hashK   ‘D}¹      gotoL   MÓxó      threeLoadedM    uŠö      ensureThreeJSN      9:Ïà      consoleO    7ç      warnP   ¿.ÄPC      [TVA Intro] Three.js not available; using fast fallback transition.Q    #v¤±      fastFallbackSequenceR   ¼Á ‘      setupDOMControlsS   S*¬È      build3DSceneT   zÍ.
+      bindEventsU     FY      startSequenceV      /íU—      THREEW      µ8J*      ./node_modules/three/build/three.module.jsX     {EFŞ      errY    1Q      createElementZ      7)+      src[    ÀsÚA      https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js\      œ'æ      onload]     d>è      onerror^    (pi      head_   @Oá      appendChild`    µ…@s      audioBtna   êB
+      tva-intro-audio-btnb    5æ*ë      toggleAudioc    ´rge      mouseHandlerd   >”ëÈ      clientXe    sxAV
+      innerWidthf     ÊR¸Ç      clientYg    `
+64      innerHeighth    Œ >	      mousemovei      ·Æ†™      passivej    ÕÂ*†      resizeHandlerk      İT»      onResizel   &      resizem     wH°Á	      touchmoven      ¶şË      toucheso    !q«·      tva-intro-canvasp   Zëo      Sceneq      jÒV      fogr    &Ì#€      FogExp2s    Tè^      aspectt     ÙŞ²      PerspectiveCamerau      Z£Lë      positionv   öµ¡D      lookAtw     t8      WebGLRendererx      wMù	      antialiasy      ­¯B´      alphaz      ‚      powerPreference{    ÅÏÉ      high-performance|   tÃse      setSize}    w]¬T      setPixelRatio~      –r¥      min    ë«ë‚      devicePixelRatio€   ïp°r      toneMapping    ÜÚ°à      ACESFilmicToneMapping‚      ğ+	      toneMappingExposureƒ    è7|      AmbientLight„   3†–î
+      PointLight…     …ñ      DirectionalLight†   nâÎ      rimLight‡   áAj      Groupˆ      ?—Ã      createPortalRings‰      w†4¦      createCoreSingularityŠ      —Úp      createElectricStrands‹      2¶:ú      createVolumetricRaysŒ   }†ˆ«      createTVABanners   öÛ6      createParticleVortex   ó'Ü      outerGeo   uyô      TorusGeometry      "øù      outerMat‘   3ğÆ•      MeshStandardMaterial’   bæ³™      color“      é¼¸	      metalness”      Ì]™	      roughness•       Ô«È      emissive–   ıO…{      emissiveIntensity—      Å¥o4	      outerRing˜      À>]Á      Mesh™   Êöµ      lugGeoš     sÔkˆ      BoxGeometry›    Ê%      lugMatœ     *ñëB      angle      ‹|ª=      lug    Ë/      cosŸ    iÍe*      sin     pyèµ      rotation¡   (!íç      push¢   'Àc}      mesh£   €¨ßĞ	      rotSpeedZ¤      ca Ä	      rotSpeedY¥      ë5Øÿ      midGeo1¦    ¶óKÉ      midMat1§    RœÓZ      midRing1¨   Ÿ&k	      markerGeo©      ,² 	      markerMatª      As1      MeshBasicMaterial«      š      marker¬     Ïèıû	      rotSpeedX­      wô¤ş      midGeo2®    :øÂş      midMat2¯    Rœá      midRing2°   OO]      innerGeo±   –Õöv      innerMat²   lY—	      innerRing³      œ±@M      bladeGeo´   #Åó      ConeGeometryµ   Ç—      bladeMat¶   ®ÿnX      blade·      ı¼V      rotSpeedZBase¸      YE+³      coreGeo¹    \–'      SphereGeometryº     >¤q|      coreMat»    ]rÎ      transparent¼    èâÎg      opacity½    2‡Oq      blending¾   ®Ücb      AdditiveBlending¿   òÃ÷      scaleÀ      Òà¨û	      coronaGeoÁ      /K–o	      coronaMatÂ      [ÎnÌ      shellGeoÃ   Ü      shellMatÄ   ƒÁ       sideÅ   S8Ç      BackSideÆ   Wˆ%·	      shellMeshÇ      5(e	      strandMatÈ      ÆĞR      LineBasicMaterialÉ      M^Z	      linewidthÊ      &ÖV      radiusXË    á ¹      radiusYÌ    ­¢M9      curveÍ      ifÊ      EllipseCurveÎ   „âÈ       pointsÏ     Cûí6	      getPointsĞ      –‰¼      geoÑ    ş©      BufferGeometryÒ     å×<      setFromPointsÓ      âE¢2      LineÔ   Œ‰‡y      randomÕ     Ûkl«      rotXÖ   Ûk%%      rotY×   Ûkú·      rotZØ   +Ÿ³I      rayMatÙ     ¢vF@
+      DoubleSideÚ     '®ù
+      depthWriteÛ     «íCû      coneGeoÜ    $
+²      coneİ   Å&j2      rayGroupŞ   åİ¿É      createBannerTextureß    ¯Òd      titleà      jZ:      subtitleá   “¸ÌF      tagâ    Sğí      widthã      œááŠ      heightä     @n‰z      ctxå    Ê]Ç…
+      getContextæ     J¾G*      gradç   Jƒ<õ      createLinearGradientè   ?HQ      addColorStopé   ^z      #26201Aê    ĞÙS2      #1C1813ë    ÓKŒÛ      #14110Dì    ïKWœ	      fillStyleí      0Zë      fillRectî   ÏâE.      strokeStyleï    6
+Ï      rgba(184, 146, 58, 0.4)ğ    ”˜-	      lineWidthñ      Ë&=Ö
+      strokeRectò     è¤§Ğ      #E8872Bó    \¼,      fontô   dm&£      bold 110px sans-serifõ      áïç	      textAlignö      ğJy      center÷     D½¡ƒ      fillTextø   ß4      TVAù    £ë›      #B8923Aú    ¸·¾	      beginPathû      )¸%ä      arcü    yAf§      strokeı      ÆéÎ      #EADFC4ş    Nˆ+      bold 36px sans-serifÿ   Ræı      letterSpacing      9×`"      6px   }Û­È      #B9AD92   ÄÖz      26px monospace    Çöe8      #3FB5A0   ¸g      bold 30px monospace   µÛ°¥      tex   Kù6      CanvasTexture     ˆÂ­U	      bannerGeo     „Ï^Á      PlaneGeometry	     :O      leftTex
+   Ü—9¸      FOR A BRIGHTER    ¹·T      TOMORROW  cÛs
+      BUILD · FIX · BRANCH  »6ëÈ      rightTex  ÿö$=
+      SAME IDEAS    L9;      DIFFERENT TIMELINES   5¼Ec      A BRIGHTER TOMORROW   í›Ù      bannerMatLeft     ÓÏğ      map   ø‘{»      bannerMatRight    66{½      particleCount     sG«      geometry  Cp$	      positions     ra      colors    .ŠP      cAmber    
+Æ[      Color     –<q      cOrange   £tƒ€      cGold     &Özj      cWhite    ¯‡/Ö      radius    1ˆ      pow   Påa      rColor     ºé&      speed!     X»Íf      zSpeed"    K\[(
+      baseRadius#    âí½Ï      setAttribute$  |Ş¤      BufferAttribute%   ĞÛ[:      material&  á@M       PointsMaterial'    ”‹}      vertexColors(  ÜÎÅ      Points)    ˜<Oû	      initAudio*     –¤      AudioCtxClass+     ÿ‚Ş      AudioContext,  „SŸ{      webkitAudioContext-    ÉL‘
+      createGain.    Év:ï      gain/  >¼ÏØ      setValueAtTime0    àODu      currentTime1   39ò'      connect2   "›ò„      destination3   –“¹†      createOscillator4  I ×Ñ      sine5  kx	      frequency6     ÌU<      audioDroneSub7     Ø³»      subGain8   üQË      audioFilter9   yÀÚ      createBiquadFilter:    óm§      lowpass;   
+³’      exponentialRampToValueAtTime<  ±‘Q      triggerAudioWarp=  )5+ê      now>   ·=È      triggerAudioRevealBoom?     Ì;…      revealMaster@  o5–      bellPartialsA  Í Ê      freqB  &Iö      volC   dc      decayD     ÊÅ©      partialE   $T{m      oscF   È¸O      stopG  ‚„h      chordFrequenciesH  _rE      idxI   ˜f$æ	      chordGainJ     Ì_2(      filterK    ×0      triangleL  ÓzFè      subOscM    >µ
+ı      btnN   §µ	      innerHTMLO     ù&      < s p a n > =Øİ< / s p a n > P    ê
+C      < s p a n > =Ø
+İ< / s p a n > Q    -sä      performanceR   Äcİ	      classListS     ÌP!"      tva-intro-activeT  æüÔr      startAudioOnceU    o‰{      removeEventListenerV   	ˆ›H      keydownW   pÇ—ä      tickX  ±æ„”      elapsedY   x„:`      progressZ  O"É˜      updateHUDProgress[     oóÇZ      ease1\     ëd,f	      intensity]     &)ş      setStatusText^     tG3Á7      DETECTING TEMPORAL ACTIVATION · QUANTUM ANOMALY ENGAGED_   Ì*‹      setPhaseActive`    #•«1      pulsea     Ü#{      camZ2b     P8ßF0      CONCENTRIC TIME PORTAL FORMED · FREQUENCY LOCKEDc  aõ¸      warpEased  §ò‘Ö      flaree     \ˆd'      querySelectorf     İœiÉ      .tva-intro-flare-overlayg  69ÀU      flareOph   Pq¡Ë'      ENTERING SUB-QUANTUM TIMELINE STREAM...i   +Ü      flareDissolvej     Ä›Ÿ0      maxk   À Å	      decelEasel     ã\b      camZ4m     @y_k      auran  ?ƒ*
+      revealCardo    şÿã€      tva-intro-revealp  kvT      containsq  …*"T      reveal-activer     ëT¤ë+      OVERCLOCK 2027 TEMPORAL FACILITY DISCOVEREDs   ÷¥(      INITIALIZING OVERCLOCK BUREAU SYSTEMS...t  ÂTş      forwardPushu   ™
+7c      transitionToHomepagev  xûi      updateParticlesw   ¥Ÿ#¨      renderx    Èb!      requestAnimationFramey     ¸BD9
+      attributesz    Õ‰9V      array{     Ï«K”
+      warpFactor|    ıò      wProg}     éâ’      dProg~     üRµ      needsUpdate   „t…      tva-progress-fill€     rVmµ      toFixed   ¨açÙ      tva-status-text‚   àñ       textContentƒ   ø&ŸA      items„     ß^êT      querySelectorAll…  ÿôµ²      .tva-phase-item†   $Yt      item‡  âV6       activeˆ    °”wy      remove‰    “RÂ	      skipIntroŠ     {sß	      isInstant‹     ™>˜á      setItemŒ   !cg
+      fading-out    güìZ
+      setTimeout    ÿ»ëT      triggerMainAppLifecycle   ’?      intro-complete    ÌW      cancelAnimationFrame‘  v‹ï	      bureauApp’     ĞØŸ      triggerHeroAnimations“     âi¨n      heroSec”   ãx…      hero•  $‘Ât      hero-anim-active–  -¾G"      stamped—   ¢dÄG
+      removeItem˜    ûŒ¥¨      reveal™    $©¨ó      isHomepageActiveš  ‚ş      revealed›  X}¾      stateœ     ¨&	      suspended     Œ‰ŸŞ      resume    ×î¼      cancelScheduledValuesŸ     cë¥Â      updateProjectionMatrix     ‰aæf
+      readyState¡    fÕâ      loading¢   8-j      DOMContentLoaded£  ˆ2£¹      TVATemporalIntro¤  M.‘l      bindGlobalReplayDelegate/<¥    ë6.g      ensureThreeJS/<¦   VÂ#É      ensureThreeJS/</script.onload§     òN´‘      ensureThreeJS/</script.onerror¨    •œÜ      setupDOMControls/<©    SÍˆm"      setupDOMControls/this.mouseHandlerª    íZ‡#      setupDOMControls/this.resizeHandler«   šİ*`      bindEvents/<­  ¦æq      triggerAudioRevealBoom/<¯  Û=ÛË      tick/<°    8õÃ      tick/this.animFrameId<±    Îü×÷      setPhaseActive/<²  +hÒ¡      transitionToHomepage/<³    Z´      bypassIntroImmediate/<´    Qõ±      fastFallbackSequence/<     6   è  t   6              ï%,‰                                                                                                                                                                                        
+                 
+                                                                              	                
+                                                                                                                                                                                                                                                                                               "                                 $                %                &                                 (                )                *                                ,                -                 .                                  0                1   
+             2                                 4                4                                 7                7                                 :               ;                 <                 ;                 >                 :                                 A                                C                D                                  F                 G                G                G                J                G                L                G                G           !      G           "      G           #      G           $                 %      S                T                T                T                W                           &      Y                            '      [                           (      ]                 ^           )                 *                +      a                a           ,      a           -                 .      e                          /      g           0                1      i                 j           2                3      l                m                m                m                m                           4                  5      ³OŒc                        P¨ `                              l                  l  `             e               '                              e                f  `l                7  ;  >  @  C  L                 f  `             %              X               † `                                                              l  `             `                               e                                 l  `             e                l                V  s  †              V  l                    —  ™  ›  ¥  ¦  §  ¨  ©  ­  ®  ¯  °  ±  ²  ³  µ              i               œ                i               œ  «              i               œ  ¶              V  l                ¸  º  À  Á  Â  Ã  Æ              V  l                Ç              i     	          Ê  Ë  Ì  Î  Ğ  ü               V  l                Ø              i               Û  Ü  İ              V  Pl                Ş   	                 ß  à  á               c  ä  æ               V  l   	   
+       	           %             i              ’   œ  z                 l                * 7             e                l                =             e                l                ä  P= P? P@ G L 7              D              E .              A H              E I J B             e                l                M                l  `              T P                             = l  `             X Y              A [ s               B ` a              C c d              g              D d k l m n    	          i              E t              r               s               Ğ i               t              X l               {               |              }             i               M              Y X              Š                ¹               •              Ò  `             ƒ              † i                l              Š l  `            e                                                l                “                l  `                               l  `             n                               f  `l                ˜ d “              L              e              e              e                l                   ¯Â0°Iô$KE®úš         x  y               0  1  2        i          i            x  y  z           ’  “  ”  •  –          ’  “  ”        ¢  £  ¤        ’  “  ”  •  –          ’          ¢  £  ¬        ’  “  ”  •  –          ¢  £  ¤        ’  “  ”  •  –          ’  “  ”        ¢  £  ·        ’  »  ¼  ½           ’  »  ¼  ½           ’  »  ¼  ½  Ä          ’  É  »  ¼  ½          ü   Õ  Ö  ×           ’  »  ¼  ½  Ä  Ú          “  ”  •  –  Ä          “  ”  •  –  Ä          œ    ! z  "        ¢  ' »  ¼  ½  Ú         A B C       A B C       A B C       A B C ‡&Õª!«!6   ´   Ï8H¤  ¯                K       ±²   â: o   çå@   ?   o   ?   o   ?   o	   ?
+   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?    o!   ?"   o#   ?$   o%   ?&   o'   ?(   o)   ?*   o+   ?,   o-   ?.   o/   ?0   o1   ?2   o3   ?4   o5   ?6   o7   ?8   o9   ?:   o;   ?<   o=   ?>   o?   ?@   â²   Ó´    â¼A   LB   C   š)   —D   ¼D   äLE   çF   oG   y â™#   —H   ¼D   Â    ‚æ  ƒ  OH   â—K   ¥0	™@6JAJK	Jm	J€  ‚J€  —J€  ¤J€  éJ€ BJ€ hJ€ …J€ J€ òJ€ 1J€ ^J€ mJ€ ÁJ€ ÏJ€ äJ€ wJ€ –J€ ›J€ ¢J€ ­J€ ²J€ ŞJ€ ìJ€ úJ€ 	J€ g—@€ p`š `‘ ,ÿÿÿÛP ` PP€€€´         K  ÿÿÿÿD  VmôD  ¨               ,       áÎ   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   j    O   â¿   O   â¿   j    O	   â¿   O
+   â¿   O   â¿   j    O   â¿   j    O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   `"O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   ;   >   >   >   >    O!   â¿   O"   â¿   O#   â¿   O$   â¿   äL%   çy  â¿   äL&   çy  â¥&`+`+`+`+`+`+`/`+`/`+`+`/`/`+`+`+`+`K`+`+`-`+`+`+`+`+`K`	,`+`+`K$`PD&`P$P€€€T   ÀØÔT   #                         áÏ    â¼   äL   ç   o   y â¥(`‘ #ÿÿÿæPD	P¼   ‰Çhû¬   d                 
+      ±²   â½  L   äL   ç   u ²   â¿   š7   —   ½  äL   çy  â½  äL   çy  âÂ    äL   çy  â—
+   Ó¥ &`” 	P(`.	`
+P$	`
+P$	`PJP€¼          c   ÿÿÿÿ  !Lpì   ˜                        $¬¼   äL   ç;   >   >      >   y â™+   —    ¤®±²   â²   â¼   äL   çy âÓ—
+   ¼	   L
+   O   â¼	   L   š   —   ¼	   L   O   â—   ¥!`	
+ÿÿÿäP‘ +`PJ`‘ 	`” `– P  ü      9      ÿÿÿÿ           0   ˆ  ÉÂëö4  [               C      9áÎ   âŠÏ    â¬±²  ²  ²  ²  ²  ²  â¼   äL   ç   u L   ²  â¼   ‚¼   L   L   æ  ƒ ²  â¿  äL	   ç
+   u    $   —   â¿  äL	   ç   u    —   ²  â¿  äL   ç   u    —   â¿  äL   ç   u —   ²  â¼   äL   ç   u    ²  â¿   ¼   äL   ç   u O   â¿   L   ›,   —    ¤±²  ²  ²  ²  ²  ²  âÓ™Ï  —   ¿  3   —    â¿  œ   —!   â¿  —"      —#   â¿  —#   š;   —$   ¿   äL   çy  â ¤±²  ²  ²  ²  ²  ²  âÓ™S  —&   ¼   L   L   œ   —+   â¿  äL   ç   u —.   š   —/   ¿   äL   çy  â—1   ¿   äL   çu  “”›+   —4   Â    Â    ’   Œ4   š   —5   §—5   ²  â¿  ›P   —6   ¼   äL   ç   y â¿   äL    çy  â ¤±²  ²  ²  ²  ²  ²  âÓ™c   —;   ¿   äL!   çy  â¿   äL"   çy  â¿   äL#   çy  â¿   äL$   çy  â±²  ²  ²  ²  ²  ²  âÓ ¤—C   £Â    ¤Â    ™   —C   ¯Â    ‘¤Â    —C   ¥š@"`‘ P-`“ ÿÿÿì(` 
+P¤ 'P“ ` 
+P P-`‘ PN`• P)	`“ `A ¦@	` ¨ `P$`A ¦@	`›  P“ `PI`Pº 	`.`‘ P$`P$`A ¦@`P$`P$`P$`PŸ ¶P€ˆ  x  8  Z          ÿÿÿÿ    W             Ó             Ã                    1  Ğ  ]ö˜l                 
+       9ŠÏ    â¬¼   L   š   —   ¤™¹   —   ¬±²   â    8“”›+   —   Â    Â    ’   Œ   š   —   §—   ²   â¼   ¿   O   â¤±²   âÓ™Q   ±²   âÓ™>   —    ¤®±²   â²   â¼   ‚o   æ  ƒ ¤±²   âÓ™   ±²   âÓ—
+    ¤—
+   £Â    ¤Â    ™   —
+   ¯Â    ‘¤Â    —
+   ¥)	`” `AK	'`¿ `/`A¡@K`	ÿÿÿôPCÏP€€€Ğ  °  p  U      *   i   ÿÿÿÿ    ‡                 1   ÿÿÿÿ    Å                 *   n           	   é   È   »¦áŠ¸   q   
+                   ¾  Ï    â±²   â¼   äL   ç   u ²   â¿      O   â¿   o   O   â¿   o	   O
+   â¼   L   äL   ç¿   y âÓ¥
+&`‘ 	P(	`/	`/	`/	`‘ ÿÿÿôP%P€È      
+   f   ÿÿÿÿH   ÕôúÛH                             Â     ¼   L   u ¢ ` ÿÿÿşP€8   Éš8                             Â     u ¢ `P€€€„  .  £d  í                      áÏ    â±²   âÂ    L   š   —    ¤Ó¥—   Â    O   â¼   äL   ç   u ²   â¿   š#   —   ¿   äL   ç   o   y â—
+   Â    o	   O
+   â¼   äL   ç   Â    L
+   ;   >   y âÂ    o   O   â¼   äL   ç   Â    L   y âÓ¥&	`• `AH`M`‘ 	P(	`.` #ÿÿÿæPI
+`‘@`‘ %ÿÿÿÍPD`‘ `‘ "ÿÿÿåP%P€„        ä   ÿÿÿÿ    &          <   I8
+Ú<                             Â    äL   çu  ¢ `P€€˜   R»®˜   c                         Â    L   ½  L   ¼   L   -
+      à?),O   âÂ    L   ½  L   ¼   L   -
+      à?),O   â¥ `“ " `“ " P€€€<   Icw€<                             Â    äL   çu  ¢ `P	€€l   !é%©l   4                         áÏ    âÂ    L   äL   ç   o   ;   >   y â¥H`— -EFPDP€€€Ü   Ğ?qÜ   ¢                         ½  L   œ   —   â½  L   M—   šz   —   Â    L   ½  L   ML   ¼   L   -
+      à?),O   âÂ    L   ½  L   ML   ¼   L   -
+      à?),O	   â—   ¥ `¬ 	`š - 	`š -£@P€€€¤  ¡Rù„                 t      áÎ   â±²  ²  ²  â¼   L   ²  â¿   ¼   äL   ç   u O   â¿   L   ›   —    ¤Ó¥—   ¿   ¿  L   ‚æ  ƒ  O	   â¿   L	   ¿  L
+   ‚	
+Ûù~j¼t£?æ  ƒ O   â¼   L   ¼   L   -²  â¿   ¿  L   ‚.¿  
+š™™™™™¹?dæ  ƒ O   â¿   L   L   äL   ç
+     €0@y â¿   L   äL   çy â¿   ¿  L   ‚;   ¿   L   >   >   >      >   æ  ƒ O   â¿   L   äL   ç¼   L   ¼   L   y â¿   L   äL   ç¼   äL   ç¼   L      —5   â—5   u y â¿   L   ¿  L   O    â¿   L   
+      ô?O!   â¿   ¿  L"   ‚	(
+      à?æ  ƒ O#   â¿   L	   äL$   ç¿   L#   y â¿   ¿  L%   ‚	 fÿ
+š™™™™™¹?#
+ÍÌÌÌÌÌü?æ  ƒ O&   â¿   L&   L   äL   çy â¿   L	   äL$   ç¿   L&   y â¿   ¿  L'   ‚	™×ÿ
+ÍÌÌÌÌÌü?æ  ƒ O(   â¿   L(   L   äL   ç	y â¿   L	   äL$   ç¿   L(   y â¿  L'   ‚ÿå
+š™™™™™á?æ  ƒ ²  â¿  L   äL   çøúüy â¿   L	   äL$   ç¿  y â¿   ¿  L)   ‚æ  ƒ  O*   â¿   L	   äL$   ç¿   L*   y â¿   äL+   ç¿  y â¿   äL,   ç¿  y â¿   äL-   ç¿  y â¿   äL.   ç¿  y â¿   äL/   ç¿  y â¿   äL0   ç¿  y âÓ¥.`/`• P)	`“ `ACH`’ P)`¤ PI
+`
+ ` .“ ÿÿÿàP)`  P$`“ PD`(%.&&NPI` 
+
+ÿÿÿåP$` 	 ÿÿÿüPÿÿÿíP$`˜ `˜@`Ÿ P)` 	ÿÿÿüPD `ª P)`˜ P$` 	ÿÿÿüPD%`Ÿ P)`› P$` 	ÿÿÿüPD*`¢ `– P$` ÿÿÿüPD/`’ P)` 	ÿÿÿüPD3`ÿÿÿîPD6`ÿÿÿêPD9`ÿÿÿêPD<`ÿÿÿëPD?`ÿÿÿïPDB`ÿÿÿëP%P€€¤          ÿÿÿÿ    W          p  !1FĞ
+  [               È      $áÎ   â±²  ²  ²  ²  ²  ²  ²  ²  ²	  ²
+  ²  ²  ²  ²  ²  ²  ²  ²  â½  L   ‚
+ÍÌÌÌÌÌ@
+)\Âõ(Ì?xæ  ƒ ²  â½  L   ‚;   	>   
+®Gázî?>   
+¤p=
+×£Ğ?>   	3>   
+š™™™™™É?>	   æ  ƒ ²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿   L   äL   ç¿  y â½  L   ‚
+
+×£p=
+Ç?
+ÍÌÌÌÌÌÜ?
+ffffffÖ?æ  ƒ ²  â½  L   ‚;   	2J>   
+ÍÌÌÌÌÌì?>   
+š™™™™™É?>   æ  ƒ ²  â±²  â²  â˜   ¿  šß   —   ±²  ²  â¿  -¼   L   ,,²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿  L   äL   ç¼   äL   ç¿  u 
+ÍÌÌÌÌÌ@,¼   äL   ç¿  u 
+ÍÌÌÌÌÌ@,y â¿  L   ¿  ¼   L   -(O   â¿  äL   ç¿  y âÓ¿  2*Î  â™ÿÿÿ—5   Ó¿   L   äL   ç;   ¿  >   
+ú~j¼t“h?>   
+ü©ñÒMbP?>   y â½  L   ‚
+{®GázÄ?`æ  ƒ ²  â½  L   ‚;   	
++>   
+q=
+×£pí?>   
+
+×£p=
+Ç?>   	+‰è>   
+      è?>	   æ  ƒ ²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿  L   
+{®Gáz´?O    â¿   L   äL   ç¿  y â½  L   ‚
+¸…ëQ¸¾?
+{®GázÔ?
+)\Âõ(Ì?æ  ƒ ²	  â½  L!   ‚;"   	3ªÿ>   æ  ƒ ²
+  â±²  â²  â˜S   ¿  šË   —U   ±²  ²  â¿  -¼   L   ,,²  â½  L
+   ‚¿	  ¿
+  æ  ƒ ²  â¿ Eyº† L   äL   ç¼   äL   ç¿  u ,¼   äL   ç¿  u ,
+š™™™™™©?y â¿  L   ¿  O   â¿  äL   ç¿  y âÓ¿  2*Î  â™-ÿÿÿ—m   Ó¿   L   äL   ç;%   ¿  >   
+ºI+‡v¿>   
+ú~j¼t“X?>&   y â½  L   ‚
+š™™™™™@
+)\Âõ(¼?Pæ  ƒ ²  â½  L   ‚;'   	 fÿ>   
+      à?>   
+š™™™™™¹?>   	 wÿ>   
+š™™™™™@>	   æ  ƒ ²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿  L   
+š™™™™™¹¿O(   â¿   L   äL   ç¿  y â¿   L   äL   ç;)   ¿  >   
+œÄ °rh?>   
+ü©ñÒMb`¿>   y â½  L   ‚
+ffffffş?
+{®Gáz´?@æ  ƒ ²  â½  L   ‚;*   	G³ÿ>   
+)\Âõ(ì?>   
+š™™™™™É?>   	 Dÿ>   
+      ø?>	   æ  ƒ ²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿   L   äL   ç¿  y â½  L+   ‚
+ìQ¸…ëÑ?
+ÍÌÌÌÌÌì?æ  ƒ ²  â½  L   ‚;,   	
+3>   
+333333ë?>   
+333333Ó?>   æ  ƒ ²  â±²  â²  â˜£   ¿  šß   —¥   ±²  ²  â¿  -¼   L   ,,²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿  L   äL   ç¼   äL   ç¿  u 
+š™™™™™ù?,¼   äL   ç¿  u 
+š™™™™™ù?,y â¿  L   ¿  ¼   L   -)O   â¿  äL   ç¿  y âÓ¿  2*Î  â™ÿÿÿ—Á   Ó¿   L   äL   ç;/   ¿  >   
+ú~j¼t“ˆ¿>   
+ú~j¼t“ˆ¿>0   y âÓ¥Ê@`« `	%)..)’@H
+`	
+ÿÿÿç(` ÿÿÿüPD`° `		’ ÿÿÿ¾(
+`f‘ *`
+“ `	ÿÿÿé(` 	ÿÿÿüP	ÿÿÿüPÿÿÿàP$`” `ÿÿÿüPE`–@` 	ÿÿÿÖPD`¤ `	%)..)’@H"`		ÿÿÿè(`˜ ` ÿÿÿüPD'`° `	ÿÿÿâ(
+`f‘ *`
+“ `	ÿÿÿæ(` 	ÿÿÿüP	ÿÿÿüPÿÿÿàP$`“ `ÿÿÿüPE)`–@0` 	ÿÿÿÕPD3`« `	%)..)’@4H;`		ÿÿÿè(`˜ ` ÿÿÿüP$` 	ÿÿÿÖPDA`« `	%)..)’@BHI`	
+ÿÿÿç(` ÿÿÿüPDM`© `		’ ÿÿÿ½(
+`f‘ *`
+“ `	
+ÿÿÿç(` 	ÿÿÿüP	ÿÿÿüPÿÿÿàP$`” `ÿÿÿüPEO`–@V` 	ÿÿÿÕP%P€p  @        T  ÿÿÿÿ   u  ş          ˜  Å      #   Ë  ê       $   î  ±      -     ş       .   @  Å               ì          ×  Ø          )  ì   \  ÉJ7L  €               ;     áÎ   â±²  ²  ²  ²  ²  ²  ²  â½  L   ‚
+
+×£p=
+ç?  æ  ƒ ²  â½  L   ‚;   	æúÿ>   >   
+\Âõ(\ï?>   ½  L   >	   æ  ƒ ²  â¿   ½  L
+   ‚¿  ¿  æ  ƒ O   â¿   L   L   äL   ç
+{®Gáz„?
+{®Gáz„?
+{®Gáz„?y â¿   L   äL   ç¿   L   y â½  L   ‚
+{®Gázô?  æ  ƒ ²  â½  L   ‚;   	 fÿ>   >   
+š™™™™™á?>   ½  L   >	   æ  ƒ ²  â¿   ½  L
+   ‚¿  ¿  æ  ƒ O   â¿   L   L   äL   ç
+{®Gáz„?
+{®Gáz„?
+{®Gáz„?y â¿   L   äL   ç¿   L   y â½  L   ‚
+š™™™™™ı?æ  ƒ ²  â½  L   ‚;   	 3Ì>   >   
+      Ğ?>   ½  L   >	   ½  L   >   æ  ƒ ²  â½  L
+   ‚¿  ¿  æ  ƒ ²  â¿   L   äL   ç¿  y âÓ¥@`¢ `	%)&.‘@H	`	ÿÿÿèP)`° P$` 	ÿÿÿüPD`¢ `	%)&.‘@H`!ÿÿÿæP)`° P$` 	ÿÿÿüPD`¢ `	%)&.-‘@H"`	
+ÿÿÿç(` ÿÿÿüP%P€€\        y  ÿÿÿÿH  ıÅë  ?     	          =      $áÎ   â±²  â½  L   ‚;   	3ªÿ>   >   >   
+333333ë?>   ½  L   >	   æ  ƒ ²  â±²  â²  â˜	   ¿  šÇ  —   ±²  ²  ²  ²  ²  ²  â
+ÍÌÌÌÌÌô?¿  
+ffffffÖ?,(²  â
+      è?¿  
+      Ğ?,(²  â½  L   ‚¿  ¿  ¼   L   ,æ	  ƒ ²  â¿  äL   ç2u ²  â½  L   ‚æ  ƒ  äL   ç¿  u ²  â½  L   ‚¿  ¿  æ  ƒ ²  â¿  L   ¼   äL   çu  ¼   L   ,O   â¿  L   ¼   äL   çu  ¼   L   ,O   â¿   L   äL   ç¿  y â¿   L   äL   ç;   ¿  >   
+{®Gáz”?¿  
+{®Gáz„?,(>   
+¸…ëQ¸?¿  
+¸…ëQ¸?,(>   
+¸…ëQ¸?>   y âÓ¿  2*Î  â™1şÿÿ—=   ÓÓ¥F`	%)'&.‘@H
+
+`f‘ š `	” `	” `	‘ ÿÿÿÊ(`P(`— )ÿÿÿòP(`	ÿÿÿì(`• P‘ `• P‘ ` ÿÿÿüP$` %	)		” 		” 	NPE
+`—@P€H  8        8  ÿÿÿÿ
+   W   æ         z   ­            c   Ô  |  ?ıA½<                 +      $áÎ   â±²  â½  L   ‚;   	"™ÿ>   >   
+¸…ëQ¸¾?>   ½  L   >   ½  L	   >
+   >   æ  ƒ ²  â±²  â²  â˜   ¿  š  —   ±²  ²  ²  â½  L   ‚
+333333ó?	æ  ƒ ²  â½  L   ‚¿  ¿  æ  ƒ ²  â¿  L   ¼   L   -O   â¿  L   
+      @O   â½  L   ‚æ  ƒ  ²  â¿  L   ¿  -¼   L   ,,O   â¿  äL   ç¿  y â¿   L   äL   ç¿  y â¿   L   äL   ç¿  y âÓ¿  2*Î  â™Şşÿÿ—+   ÓÓ¥F`	%)&.--JH
+`f‘ .`¤ `		ÿÿÿè(`œ `˜ `• `  ” `ÿÿÿüP$` ÿÿÿüP$` ÿÿÿûPE`—@P€€€|  l        —  ÿÿÿÿ   c   9         †                o   '  \  k#ïcL                 5     ¾  Ï    âáÎ   â±²  ²  ²  ²  ²  ²  âo   ²  âÂ    L   ‚
+ffffff@
+ffffff @æ  ƒ ²  â¿            u ²  â¿         	   u ²  âÂ    L
+   ‚;   ¿  >   
+333333ã?>   
+š™™™™™Ù?>   	 "D>   
+      Ğ?>   Â    L   >   æ  ƒ ²  âÂ    L
+   ‚;   ¿  >   
+333333ã?>   
+š™™™™™Ù?>   	 "D>   
+      Ğ?>   Â    L   >   æ  ƒ ²  â¿   Â    L   ‚¿  ¿  æ  ƒ O   â¿   L   L   äL   ç
+ffffff À
+š™™™™™É?
+ÍÌÌÌÌÌü¿y â¿   L   L   
+R¸…ëQØ?O   â¿   L   äL   ç¿   L   y â¿   Â    L   ‚¿  ¿  æ  ƒ O   â¿   L   L   äL   ç
+ffffff @
+š™™™™™É?
+ÍÌÌÌÌÌü¿y â¿   L   L   
+R¸…ëQØ¿O   â¿   L   äL   ç¿   L   y âÓ¥ š@!`J5`ª `” P(`” PH9`%)..).”@9HA`%)..).”@AHJ` !ÿÿÿæP)`° P$` ` 	ÿÿÿüPDO` "ÿÿÿæP)`° P$` ` 	ÿÿÿüP%P€\          ÿÿÿÿ¼  4Ù=œ  ª                7      ±²   ²  ²  ²  â¼   äL   ç   u ²   â¿    O   â¿    O   â¿   äL   ç   u ²  â¿  äL	   ç u ²  â¿  äL
+   ç   y â¿  äL
+   ç
+      à?   y â¿  äL
+   ç   y â¿  ¿  O   â¿  äL   ç  y â¿     O   â¿  O   â¿  äL   çØØy â¿  äL   ç  ÀÀy â¿     O   â¿     O   â¿     O   â¿  äL   ç    Ü y â¿     O   â¿  O   â¿  äL   çy  â¿  äL   ç J0¼   L   ,y â¿  äL    çy  â¿  !   O   â¿  "   O   â¿  #   O$   â¿  äL   ç½   ày â¿  %   O   â¿  &   O   â¿  äL   ç½  0y â¿  '   O   â¿  (   O   â¿  äL   ç½  äy âÂ    L)   ‚¿   æ  ƒ ²  â¿  ¤Ó¥Ó¥ ’ `‘ 	P(`-`-` PH`‘ P(`‘ P$`™ P$`‘ P$`.`“ PD`/`,`• P$`• PD`/`/`/`– PD`/`,`P$`” ÿÿÿëP$`PD"`/`/`/`	ÿÿÿ÷PD'`/`/`	ÿÿÿ÷PD+`/`/`	ÿÿÿ÷PD/`ÿÿÿè(`$T¼         ©  ÿÿÿÿ    §         $  ©†Æ€ä  „               z     $áÎ   â±²  ²  ²  ²  ²  ²  ²  ²  ²	  â@²  â½  L   ‚æ  ƒ  ²  â¼   ‚¿  ,æ  ƒ ²  â¼   ‚¿  ,æ  ƒ ²  â½  L   ‚	"ªÿæ  ƒ ²  â½  L   ‚	 Uÿæ  ƒ ²  â½  L   ‚	 ×ÿæ  ƒ ²  â½  L   ‚	ÿÿÿæ  ƒ ²  â¿   j    O   â±²
+  â²
+  â˜   ¿
+  ¿  š‹  —   ±²  ²  ²  ²  ²  â
+333333ã?¼   äL	   ç¼   äL
+   çu  
+š™™™™™ù?u 
+      @,(²  â¼   äL
+   çu  ¼   L   ,,²  âú¼   äL
+   çu  ,(²  â¿  ¿
+  ,¼   äL   ç¿  u ¿  ,Qâ¿  ¿
+  ,(¼   äL   ç¿  u ¿  ,Qâ¿  ¿
+  ,(¿  Qâ¼   äL
+   çu  ²  â ²  â¿  
+š™™™™™Ù?š   —=   ¿  Î  â™i   —=   ¿  
+ffffffæ?š   —?   ¿  Î  â™>   —?   ¿  
+ÍÌÌÌÌÌì?š   —A   ¿  Î  â™   —A   ¿  Î  â—A   ¿  ¿
+  ,¿  L   Qâ¿  ¿
+  ,(¿  L   Qâ¿  ¿
+  ,(¿  L   Qâ¿   L   äL   ç;   ¿  >   ¿  >   
+ü©ñÒMb€?¿  
+      à?(-
+{®Gáz”?,(>   
+{®Gáz”?¼   äL
+   çu  
+{®Gáz¤?,(>   ¿  >   ¿  >   y âÓ¿
+  2*Î
+  â™kıÿÿ—a   Ó¿  äL   ç   ½  L   ‚¿  æ  ƒ y â¿  äL   ç   ½  L   ‚¿  æ  ƒ y â½  L   ‚;   
+Ãõ(\Âµ?>   >    >!   
+)\Âõ(ì?>"   ½  L#   >$   >%   æ  ƒ ²	  â¿   ½  L&   ‚¿  ¿	  æ  ƒ O'   â¿   L(   äL)   ç¿   L'   y âÓ¥¦ `(`• `ÿÿÿï(`ÿÿÿïH`™ `™ `™ `™@`O
+`f– `		Pÿÿÿ÷P“ `P“ `PL`— ÿÿÿüP'`™  ÿÿÿüP'`”@`P&`˜ `“ `˜ `“ `˜ `“ `N`– `˜ `™@"` %	)	)		Ÿ 		P“ 	)	I"PE(`–@,` "	
+ÿÿÿæPÿÿÿçP$` 	
+ÿÿÿæPÿÿÿêPD/`	%.&&.-J/H8`"
+ÿÿÿåP)` 	ÿÿÿüP%P€$          }  ÿÿÿÿ   î   ¬           q            ú   š  à  ²¯ñì   v               h      $áÎ   â¿   L      —   â¿   L   —   š   —    ¢—   ¬±²  ²  â¼   L      —   â¼   L   —	   ²  â¿  ›   —
+    ¤Ó¥—
+   ¿   ¿  ‚æ  ƒ  O   â¿   ¿   L   äL   çu  O   â¿   L   L	   äL
+   ç
+ü©ñÒMbP?¿   L   L   y â¿   L   äL   ç¿   L   L   y â¿   ¿   L   äL   çu  O   â¿   L      O   â¿   L   L   äL
+   ç7¿   L   L   y â¿   ¿   L   äL   çu  O   â¿   L      O   â¿   L   L   äL
+   çn¿   L   L   y â¿   L   äL   çu  ²  â¿  L	   äL
+   ç
+)\Âõ(Ì?¿   L   L   y â¿   ¿   L   äL   çu  O   â¿   L      O   â¿   L   L   äL
+   ç}¿   L   L   y â¿   L   L   äL
+   ç
+ffffffö?¿   L   L   y â¿   L   äL   ç¿   L   y â¿   L   äL   ç¿  y â¿  äL   ç¿   L   y â¿   L   äL   ç¿   L   y â¿   L   äL   çy  â¿   L   äL   çy  â¿   L   L	   äL   ç
+{®GázÄ?¿   L   L   
+ÍÌÌÌÌÌü?(y âÓ™   —h    ¤®±²  â²  âÓ—h   ¥&	`¬ $`A+F	+`© ``A+H`PI`” P)` *ÿÿÿêP$` ÿÿÿøPD`”  P)`” `— -ÿÿÿíPD`” #P)`” `— 1ÿÿÿìPD` P(`™ "ÿÿÿëPD`” !P)`” `— /ÿÿÿìP$` 'ÿÿÿìPD` 	ÿÿÿøP$` ÿÿÿøP$`	ÿÿÿøP$` 	ÿÿÿøPD#` P$` PD'` 7˜ ÿÿÿİP’ ‘@+P€€€à  Ğ     :     ÿÿÿÿ    ~             d     ÿÿÿÿ        :   "  °  ’®sä€                       $áÎ   â¿   L   (   —   â¿   L      —   â¿   L   —   š   —    ¢—   ¿   O   â¬±²  â¿   L   L   ²  â¿   L   š4   —   ¿   L   L   äL   ç@¿  
+333333ó?(y â—   ¿   L	   š3   —   ¿   L	   L   äL   çN¿  
+333333ó?(y â—   Ó™   —    ¤®±²  â²  âÓ—   ¥&	`Á C`AF`+	'`“@`“ 	`˜ =ÿÿÿŞPI	`“ 	`— ;ÿÿÿßP—@‘ P€€€°        Z      ÿÿÿÿ
+        ÿÿÿÿ        Z   ¢   Ø  -ùdw¨  |        
+       J      $áÎ   â¿   L   (   —   â¿   L      —   â¿   L   —   š   —    ¢—   ¿   O   â¬Ñ   ±²  ²  ²  ²  â¿   L   ´    âÂ    L   ´    âÂ    äL   çu  ´    âÂ    L   äL   ç
+)\Âõ(Ì?Â    y âÂ    äL	   çÂ    L
+   y âj   ;   
+q=
+×£Z‚@>   
+¸…ëQ¸¾?>   >   k    ;   p>   
+)\Âõ(¬?>   
+ffffffö?>   k   ;   
+q=
+×£Z’@>   
+yé&1¬œ?>   
+š™™™™™é?>   k   ;   R>   
+yé&1¬Œ?>   
+ÍÌÌÌÌÌÜ?>   k   ²  â¿  äL   ço   y âj   
+Ãõ(\Zb@k    Ü k   
+®Gázšt@k   ²  â¿  äL   ço   y âÂ    äL   çu  ²  âÂ    äL   çu  ²  â¿     O   â¿  L   äL   ç4Â    y â¿  L   äL   ç Â    
+ffffffÖ?(y â¿  L   äL   ç
+-Cëâ6?Â    y â¿  L   äL   ç
+¤p=
+×£À?Â    
+;ßO—n’?(y â¿  L   äL   ç
+-Cëâ6?Â    
+333333ã?(y â¿  äL	   ç¿  y â¿  äL	   çÂ    y â¿  äL   çÂ    y â¿  äL   çÂ    
+ÍÌÌÌÌÌä?(y âÒ™   —J    ¤®±²  â²  âÓ—J   ¥F	`Á E`ARF`K	˜ ` `’@
+`P*`› 'ÿÿÿëP$`ÿÿÿøPD`%	,	“ 	“ 	˜@`ÿÿÿøPD' `® `ÿÿÿøPDC`P(`P(`/`’ $ÿÿÿíP$`’ 2 ÿÿÿßPDI`™ $ÿÿÿéP$`™ 0 ÿÿÿİP$`™ 2 ÿÿÿÛPDM`ÿÿÿøP$`ÿÿÿøP$`ÿÿÿúP$` ÿÿÿûP’ ‘ P€€Ø  È     _   ş  ÿÿÿÿ   j     ÿÿÿÿ        Z       îV§ü  Y                !      ±²   ²  âÂ    ¶    äL   çu  ²   âÂ    äL   çu  ²  â¿      O   â¿   L   äL   ç½  L   Â    ¶    y â¿  L	   äL   ç
+-Cëâ6?Â    y â¿  L	   äL
+   ç½  L   Â    
+ú~j¼t“ˆ?(y â¿  L	   äL
+   ç
+-Cëâ6?Â    ½  L   (y â¿   äL   ç¿  y â¿  äL   çÂ    ¶    y â¿   äL   çÂ    y â¿   äL   çÂ    ½  L   (
+š™™™™™©?(y âÓ¥ *`“ P(`P(	`/	` ÿÿÿãPD	`™ !ÿÿÿéP$	` ' ÿÿÿÖP$	`™ /	ÿÿÿÕPD
+	`ÿÿÿøP$	`ÿÿÿøP$	`
+ÿÿÿúP$	`	“ ÿÿÿõP%P€         X  ÿÿÿÿ  ]ßˆô           	       /      ±²   ²  ²  ²  âÂ    ¶    äL   çu  ²   âÂ    äL   çu  ²  âÂ    äL   çu  ²  â¿      O   â¿   L   äL   ç½  Â    ¶    y â¿  	   O   â¿  L   äL   çÂ    y â¿  L   äL
+   çàÂ    
+š™™™™™Ù?(y â¿  L   äL
+   ç´ Â    
+š™™™™™@(y â
+{®Gáz´?½ 
+ffffffæ?,(-²  â¿  L   äL   ç
+-Cëâ6?Â    y â¿  L   äL
+   ç¿  Â    
+¸…ëQ¸¾?(y â¿  L   äL
+   ç
+-Cëâ6?Â    
+ffffff@(y â¿   äL   ç¿  y â¿  äL   ç¿  y â¿  äL   çÂ    ¶    y â¿   äL   çÂ    y â¿   äL   çÂ    
+333333@(y âÓ¥ ’ `“ P(`P(`PH	`/	` ÿÿÿëPD	`/	`“ %ÿÿÿìP$	`“ 3 ÿÿÿŞP$	`“ 3 ÿÿÿŞPD`	• 	`™ &ÿÿÿéP$	` , ÿÿÿŞP$	`™ 4 ÿÿÿÛPD	`ÿÿÿøP$	`ÿÿÿøP$	`ÿÿÿøPD	`
+ÿÿÿúP$	`	 ÿÿÿûP%P€           ÿÿÿÿ¨  <*b?˜  <                     áÎ   â±²  â¿   ¿   L   O   â¼   äL   ç   u ²  â¿  š@   —   ¿  ¿   L   š   —	      ™   —	      —	   O   â—
+   ¿   L	   œ   —   â¿   L
+   —   šj   —   ¿   L	   L   äL   ç¿   L   š   —   
+-Cëâ6?™   —   
+)\Âõ(Ì?—   ¿   L
+   L   y â™,   —   ¿   L   ›   —   ¿   äL   çy  â—   Ó¥&` `‘ 	P(	``» 	`¬ `• #´ #ÿÿÿÎP.`“ `PJ	P¨        5  ÿÿÿÿ`  "j4P  à                       áÏ    âÑ   Â   O   âÂ   O   âÂ   ¼   äL   çu  O   â¼   L   L	   äL
+   ç   y â¼   L   L	   äL
+   ç   y âo   ´    â¼   äL   ç   Â    y â¼   äL   ç   Â    y âÂ   äL   çÂ   L   y âÒ¥%`-`-`’ PI`› #P$`› PD
+`L`‘ !ÿÿÿæP$`‘ #ÿÿÿäPD`
+ÿÿÿûP%P€`        Ò   ÿÿÿÿ   z”¦”   N                          Â   äL   çy  â¼   äL   ç   Â    ¶    y â¼   äL   ç   Â    y â¥ `P$`‘ $ÿÿÿãP$`‘ &ÿÿÿáP$Pˆ  cCø  Ô     	          X    áÏ    â±²   ²  âÂ    L   ›   —    ¤Ó¥—   ½  Â    L   )²   â¼   äL   ç¿   Â    L   -u ²  âÂ    äL   ç¿  ¿   y âÂ    L   äL	   Â    L   L
+   Â    L   L	   )
+{®Gáz¤?,(0O	   âÂ    L   äL   Â    L   L   Â    L   L   )
+{®Gáz¤?,(0O   â¿   Ğš¨  —!   ±²  ²  ²  â¿   Ğ-²  â¼   äL   ç¿  )u )²  â
+{®Gáz”?¿  
+\Âõ(\ï?,(²  âÂ    L   L   äL   ç¿  ¿  ¿  y âÂ    L   L   äL   ç¿  
+333333ë?,¿  
+333333ë?,¿  
+333333ë?,y âÂ    L   ¿  
+š™™™™™	@,O   âÂ    L   L   Â    L   L	   
+š™™™™™Ù?,O	   âÂ    L   L   Â    L   L   
+333333Ó?,O   âÂ    L   L   
+     €0@¿  
+      à?,)O   âÂ    äL   ç   y âÂ    äL   çy âÓ™l  —M   ¿   øš«  —O   ±²  ²  ²  â¿   Ğ)(
+-²  â¼   äL   ç¿   
+{®Gázt?,u 
+{®Gáz´?,(¼   äL   ç¿   
+;ßO—n‚?,u 
+{®Gáz¤?,(²  âÂ    L   L   äL   ç¿  ¿  ¿  y âÂ    L   L   äL   ç¿  
+      ô?,¿  
+      ô?,¿  
+      ô?,y âÂ    L   
+š™™™™™	@¿  
+      @,(¼   äL   ç¿   
+{®Gáz„?,u 
+ffffffæ?,(O   âÂ    L   L   Â    L   L   
+š™™™™™¹?,¼   äL   ç¿   
+ü©ñÒMbP?,u 
+š™™™™™©?,(O	   âÂ    L   L   Â    L   L	   
+333333Ã?,¼   äL   ç¿   
+ü©ñÒMbP?,u 
+š™™™™™©?,(O   â¿  
+333333ó?,)²  âÂ    L   L   Â    L   L	   
+333333ã?,O	   âÂ    L   L   Â    L   L   
+      à?,O   âÂ    L   L   ¿  O   âÂ    äL   ç    y âÂ    äL   çy âÓ™´  —    ¿    šé  —¢   ±²  ²  ²  â¿   ø)-²  â¿  
+{®Gáz¤?š   —¦   Â    äL"   çy  â—¨   ¼   äL   ç¿  
+333333@u ²  âÂ    L   L   
+š™™™™™-@¿  
+ffffff,@,)O   âÂ    L   L   ¿  )Â    L   L	   
+333333ã?,,O	   âÂ    L   L   ¿  )Â    L   L   
+      à?,,O   â¼#   äL$   ç%   u ²  â¿  šƒ   —Å   ±²  â¿  
+Âõ(\â? š7   —Ç   ¼   äL   ç¿  
+Âõ(\â?)
+R¸…ëQØ?-u ™   —Ì   —Ì   ²  â¿  L'   ¿  äL(   çu  O)   âÓ—Ğ   Â    äL   ç*   y âÂ    äL   çy âÓ™¾  —Ô   ¿   Ğ š|  —Ö   ±²  ²  ²  ²  ²  ²  â¿    )Ğ-²  â¿  
+{®Gáz¤?š   —Ú   Â    äL,   çy  â—Ü   ¼#   äL$   ç%   u ²  â¿  šS   —à   ±²  â¼   äL.   ç¿  
+š™™™™™@,)u ²  â¿  L'   ¿  äL(   çu  O)   âÓ—é   ¼   äL   ç¼   äL   ç¿  u )u )²  â¿  
+      ø?,)²  âÂ    L   L   äL   çÂ    L   L	   
+ffffffÖ?,Â    L   L   
+      Ğ?,¿  y âÂ    L   äL/   çy â¼   äL   ç¿  ¼   L0   ,u 
+¸…ëQ¸?,(²  âÂ    L   L   äL   ç¿  ¿  ¿  y â¼#   äL1   ç2   u ²  â¿  œ$   —  â¿  L3   äL4   ç5   u —  š#   —  ¿  L3   äL6   ç5   y â—  Â    äL   ç7   y âÂ    äL   çy âÓ™5  —  ±²  ²  â¼   äL   ç¿   Ğ )è-u ²  âÂ    äL   çy âÂ    äL   ç9   y â¿  ¿  ,²  âÂ    L   L   
+      '@¿  
+ÍÌÌÌÌÌ@,)O   âÂ    L   L   Â    L   L	   
+ffffffÖ?,¿  ),O	   âÂ    L   L   Â    L   L   
+      Ğ?,¿  ),O   âÂ    L:   ›   —?  Â    äL;   çy  â—A  Ó—A  Â    L<   äL=   ço>   y âÂ    L?   äL=   ço@   y âÂ    LA   äL=   çoB   y âÂ    äLC   ç¿   y âÂ    LD   äLE   çÂ    LF   Â    L   y âÂ    ¼G    oH   u OI   âÓ¥*	`• `A€  ‘H`‘ `	
+ÿÿÿòPH`
+ÿÿÿäPD
+`¡ &£ `¡ &£@	`’ .`M`	ÿÿÿøP)`	” `— ÿÿÿöP$`— 
+
+ÿÿÿèP$`Ÿ@`° ` ¡ `™  •@`’ P$`PO `’ .`‘@#`	ÿÿÿüP	ÿÿÿüP“ `— ÿÿÿîP$`— ÿÿÿàP$`” "	ÿÿÿüP”@)`ª 4	ÿÿÿüP” `ª 4	ÿÿÿüP”@,`” `° ` ¡ `š@1`’ P$`PO5`’ .`‘ `˜ `PI:`	ÿÿÿüP(`™  • `‘ ¡ `‘ ¢@@`‘ 	P(`&`¥ ˜ ÿÿÿöP˜ 	`” POF`’ P$`POJ`’ š `‘ `˜ `PIO`‘ 	P(`&`ÿÿÿóP(	`” $POV`		ÿÿÿüPÿÿÿóP)`” `— š › ÿÿÿÑP$`• PD\`	ÿÿÿ÷P“ `— ÿÿÿğPD``‘ 	P(`• P“ 	`• PIe`’ P$`POi
+*`
+ÿÿÿûP(`P$`’ PDo`*`™  • `ª 0,` › Lt`• 	`POz`’ ÿÿÿøPD€  €`’ ÿÿÿøPD€  †`’ ÿÿÿøPD€  ‹`ÿÿÿğP `’ ÿÿÿíP `)ÿÿÿêP*P€ˆ        Ë  ÿÿÿÿ    *               ™         Ñ  œ      !   ‰  Ú      &   »  y      +     m      -   ÿ  I      8   ö	  +      ì   ª1gì   ±                         ½  L   L   äL   ½  L      —   â
+{®Gázt?—   (0O   â½  L   š-   —	   ½  L   L   äL   ½  L   (0O   â—   ½  L   š-   —   ½  L   L   äL   ½  L   (0O   â—   ¥ `¼ `’ `¨ `’ `¨ P€€€œ   £äœ   j                         ½  L   L   äL   ½  L   (0O   â½  L   L   äL   ½  L   (0O   â½  L   L   äL   ½  L   (0O   â¥ `£ `£ `£ P€€t   Î„pt   K                         ½  L   äL   ½ . š   —   
+ü©ñÒMbp?™   —   
+ü©ñÒMbp¿—   (0O   â¥ `Ê P€D   €x—D                            Â    äL   ç½  u ¢ `
+ÿÿÿûP€€Ô  ù¨5Ed  ¤        
+       M      $áÎ   â±²  ²  â¿   L   ›   —    ¤Ó¥—   ¿   L   L   L   L   L   ²  â²  â½  ø"œ   —	   â½   —
+   šL   —   ±²  â½  ø)-²  â¼   äL	   ç¿  u 
+      !@,(Î  âÓ™Y   —   ½   "œ   —   â½  è—   š1   —   ±²  â½   )è-)²  â¿  ,(Î  âÓ—   ±²  â²  â˜   ¿  ¿   L   L   šA  —   ±²  â¿   L   ¿  M²  â¿  äL   ¿  L   ¿  
+      ø? š   —%   
+š™™™™™@™   —%   —%   ,(0O   â¿  ¿  ,¼   äL   ç¿  L   u ¿  L   ,Qâ¿  ¿  ,(¼   äL   ç¿  L   u ¿  L   ,Qâ¿  äL   ¿  L   ¿  ,)0O   â¿  L   úš   —A   ¿  O   â—B   ¿  ¿  ,(¿  L   QâÓ¿  2*Î  â™«şÿÿ—H   Ó¿   L   L   L   L   O   âÓ¥
+*	`“ `AH`¢@`&	`¨ #&` `	ÿÿÿüP `¨ #&`‘ `“@
+`f™ &`“@`“ º `— 	ÿÿÿüP,`™  	ÿÿÿüPL`“ -`– `‘ `š@3`–@`  P€€Ô  Ä          ÿÿÿÿ    &             |   =       
+   ë   '            l         F  '            #  Z  Ä   ÎH¯F´   l                       ±²   â¼   äL   ç   u ²   â¿   šB   —   ¿   L   ¼   äL   ç½  d,du äL   çu 3	   (O
+   â—   Ó¥ &`‘ 	P(	``		ÿÿÿüPP– P€€€Ä          k   ÿÿÿÿ¬   Ñs·œ   ^                       ±²   â¼   äL   ç   u ²   â¿   œ   —   â¿   L   ½  —   š   —   ¿   ½  O   â—   Ó¥ &`‘ 	P(	`˜ “ `“@P€¬          ]   ÿÿÿÿŒ   íÜ|   ?   
+                   ¾  Ï    â±²   â¼   äL   ç   u ²   â¿   äL   ço   y âÓ¥
+&`‘ 	P(`ÿÿÿøPEPŒ      
+   4   ÿÿÿÿŒ   .	ÉŒ   T                         ½ Â    š'   —   ½  L   äL   ç   y â™"   —   ½  L   äL   ç   y â—   ¥ `‘ `” P.`” P)Ph   b1mh   1                        áÎ   â¿   L   š   —    ¢—   ¿   äL   çy â¥&	`“ `AF`P$P€€x  h>umX  Å               $      $±²   âáÏ    â½  ä š   —   â—   ²   âÂ    L   š   —    ¢—   Â    O   âÂ    L   œ   —   âÂ    L   —   šb   —   ¬Â    L   L   äL   ç
+-Cëâ6?Â    L   L   
+š™™™™™é?(y â™   —    ¤®±²  â²  âÓ—   ¼   äL	   ç
+      y âÂ    L   š’   —   Â    L   L   äL   ç   y â¼    o   ¿   š   —   2™   —   ú —   y â¼    o   ¿   š   —   ^™   —   ¶—   y â™,   —    Â    äL   çy  âÂ    äL   çy  â—$   ¥« 	`• `A*F`M	`°!	`  9š ÿÿÿÛP‘ ‘@`– PD	`• `œ PD`E
+¢@PD`E%
+£@P>& `P$`PI*P€€x  h     Ğ      ÿÿÿÿ        …   C   <   ’}§<                             Â    äL   çy  â¥ 	`P$P8  I™8  Ù                         Â    L   L   äL   ç   y âÂ    L   L   äL   ç   y â¼   L   L   äL   ç	   y â¼   L
+   L   äL   ç	   y âÂ    äL   çy  âÂ    O   âÂ    L   š   —   ¼    Â    L   y â—   Â    O   â¥ 	`œ P$	`œ PD	`› #P$	`› P$	`PD
+	`-`• `ÿÿÿÿP)	`-P€€X  rJ×sH  è                       áÎ   â¿   äL   çy  â¼   L   œ!   —   â¼   L   L      —
+   š$   —   ¼   L   äL   çy  â™o   —   ±²  â¼   äL   ç	   u ²  â¿  š<   —   ¿  L
+   äL   ç   y â¿  L
+   äL   ç   y â—   Ó—   ¿   äL   çy  â¥&`P$	`• ¥ `‘ P.&`‘ 	P(`.	`• P$	`• PO`P$P€€€X     n   e   ÿÿÿÿ  ª½º  ´                         áÏ    âÂ    äL   çy  âÂ    L   š*   —   Â    L   L   äL   ç   y â—   ¼   L   L   äL   ç	   y â¼   L
+   L   äL   ç	   y âÂ    äL   çy  â¼    o   2y â¥(`P$	`• `œ PI`› #P$`› P$`P$`5BPDP€€T   NÒ·pT   #                          Â    äL   çy  âÂ    äL   çy  â¥ `P$`P$P€Ø   'ücoÈ   x                       áÏ    â±²   âÂ    äL   çy  â¼   äL   ç   u ²   â¿   š#   —   ¿   L   äL   ç   y â—	   ¼	    o
+   ¸y âÓ¥&`PD`‘ 	P(	``• P)`ÿÿÿÿP%P€€€Ø         o   ÿÿÿÿ<   I''o<                             Â    äL   çu  ¢ `P€€|	  ‚U|u¸  õ        
+       ¢      9áÎ   âŠÏ    â¬±²  ²  ²  â¿   äL   çy  â¼   äL   ç   y â¿   L   ›(   —   ¿   ¼   äL   ç	   u O   â—   ¿   L   ›    —    ¤±²  ²  ²  âÓ™%  —   ¿   L   L
+   äL   ç      y â¼   äL   ç   u ²  â¿  š#   —   ¿  L
+   äL   ç   y â—   ¼   äL   ç   u ²  â¿  š   —   ¿  L      O   â—   ¼   L   L
+   äL   ç   y â¼   L   L
+   äL   ç   y â¿   L   š(   —*   ¼    ¿   L   y â¿   O   â—.   ¿   O   â¿   O   â¿   O   â¿   O   â¼   L    š   —5   ¼   L    O!   â—8   ¿   äL"   çy â¿   äL#   çy â¿   äL$   ç%   y â¼   äL   ç&   u ²  â¿  š-   —B   ¿  L
+   äL   ç'   (   )   y â—E   ¿   L*   ›Í   —G   ±²  â¿   äL,   çu  “”›+   —J   Â    Â    ’   ŒJ   š   —K   §—K   ²  â¿  ›6   —L   ¿   äL-   çy  â ¤±²  âÓ±²  ²  ²  âÓ™’  —N   ¿   äL.   çy  â¿   äL/   çy  â¿   äL0   çy  â±²  âÓ™   —T   ¿   äL.   çy  â—V   ¿   L1   šE   —X   ¿   L1   L2   äL3   ç
+     €0@y â¿   L1   äL4   çy â—_   ¿   L5   š>   —a   ¿   L5   L6   äL3   ç
+š™™™™™©?
+š™™™™™©?
+š™™™™™©?y â—e   ¿   L7   š>   —g   ¿   L7   L6   äL3   ç
+{®Gáz¤?
+{®Gáz¤?
+{®Gáz¤?y â—k   ¿   L8   š&   —m   ¿   L8   L9   äL3   çy â—q   ¿   L:   š"   —s   ¿   L:   
+š™™™™™¹?O;   â—u   ¿   L<   ›   —w   ¿   äL=   çy  â™   —y   ¿   L<   L>   ?   š>   —}   ¬¿   L<   äL@   çy  â™   —€    ¤®±²  â²  â±²  âÓ—€   ¿   LB   œ   —‚   â¿   LC   —„   š»   —…   ¬¿   LB   LD   äLE   ç¿   L<   LF   y â¿   LB   LD   äLG   ç
+ü©ñÒMbP?¿   L<   LF   y â¿   LB   LD   äLH   ç
+{®GázÄ?¿   L<   LF   
+ÍÌÌÌÌÌü?(y â™   —˜    ¤®±²  â²  â±²  âÓ—˜   ¿   LJ   šS   —š   ¬¿   LJ   LK   äLG   ç}¿   L<   LF   y â™   —     ¤®±²  â²  â±²  âÓ—    ¿   äLM   çy  â±²  ²  ²  âÓ ¤—¢   £Â    ¤Â    ™   —¢   ¯Â    ‘¤Â    —¢   ¥.`P$`‘ PD	`“ `• PN	`“ `Acš@	`Ÿ P$`‘ 	P(	``• P)`‘ 	P(	``™@`› #P$`› PD	`“ `	ÿÿÿÿP$`@`+`+`+`K	`” `–@#`P$`P$` PD(`‘ 	P(	`.`Ÿ PI.	`“ &`Pº `.	`P$	`Ac¡@4`P$`P$`P• `PI<	`“ `  P$`“ PI@	`“ `° PIC	`“ `° PIF	`“ `˜ PII	`“ `@N	`“ `P ` a P‘ —@T`” ™!`• *ÿÿÿêP$` *ÿÿÿêP$` 7˜ ÿÿÿİP‘ —@[`“!`— /ÿÿÿìP‘ —@b`P“ ¶P€|	  <	  ¼  ß        ¯  ÿÿÿÿ    ›          +   ®  ¾                      .        A   E         I   (         L   ‰                 $             Š  –           S  .              Ë  ì   a¤qÌì   œ                        áÎ   â¿   L      —   â¿   L   —   š   —    ¢—   ¿   L   ¼   L   ¼   L   -O   â¿   L   äL   çy  â¿   L   äL   ç¼   L   ¼   L   y â¥&	`• ™ `AF`“ )‘ ` P$` 
+
+ÿÿÿåP$P€€L   @ÑĞ%L                              ¼   Â    ¶    ‚æ  ƒ  O   â¥ `– P)P€3õØ  `                	  
+                                       @x  y             !  "  #    `  `·  (  )  *  +  ,    `$  %  &    p  `.  /    @0  1  3  2    `$  4  5  6    `	  `.  8  9  :  <  =  |  £   ?  ,  1  ¿   A  B  D  E  F  Ô  $  G  H    I  J  K  -  M  N  O  P  Q  R  S  T  U    `.  V    `  `  `$  Y    [  Z    p\  	  p]  ^  _  
+  `.  V    `W    `W    p  `b    `  d  .  e    f  g      `k    `  `  $  G  a  %  &    p  pc  .  h    @i    pj  l    `n    d  .  e    f  g      `  %  m    p  @i    `  `.  V  $  G  o    p    r  q  e  g  t    u  —  v  w    @x  y  {  z    |  }    ~      €  ‚  ƒ       „    …    ‡    ˆ  ‰  Š  ‹  Œ      `  `  ‘    @’  “  ”  •  –  ˜       š    @  `  `  ì u  —    Ÿ     z    ¡    @¢  £  ¤    @x  ª  	  @  `  `
+  @¬    @y    @  @´    @   `!  `  @·  "  `#  `¹  ª    @’  »  ¼  ¾  ½  ˜  
+  ¿  —         @    @Å  Ä  $  `%  `È    @’  É  »  ¼  ¾  ½  &  `'  `Í    ì Ï  Ñ  Ò  Ó     Ô  x  y         ¡    @ü   Õ  Ö  ×  (  `)  `ª    @’  »  ¼  ¾  ½  Ù  Ä  Ú  *  `+  `´  ˜       ì x  u  z  ‡         ¡  .  `/  `$  Y    â  ã  å    ç  è  é  ê  ë  ì  í  ï  î  ğ  ñ  ò  ô  ó  ö  õ  ÷  ø  ù  ú  û    ì ü  ı  ş    ÿ       ,  `-  `  p 
+      ‘    @ “  ”  •  –  Ù  Ä    @˜    u  —     y         0  `1  `Ñ  9   	  2  `3  `   Ô  ì   Ÿ  r  g  b  ¡    @ œ    ! z  " # u  $ ’  &   @¢  ' »  ¼  ¾  ½  Ú  (        4  `    5  `.  + , -   . / 0 1 2 3   4 ×  5 6 9 8 : Q  ª  ; 6  `7  `       8  `0 8 5 ;   9  `<  `=  `3 - 4 ×  5 / A . ; B C 1 ª  F >  `?  `3 - 9 K ×  5 / : ; . 1 ª  F :  `    !  ;  `0 - . / 1 2   @A B C   @  @  @—     p  p3 4 ×  5 ; ª  F @  `A  `B  `  $  G  a  O P N     . / 0 ) E  `) .  U &  V C  `D  `    Q =   $  4  R    S 6    p.  %  &  V W O  `¢     z  £  ¬  x  ¤  y  P  `ü      x  Õ  y  Ö  z  ×  Q  `   z  R  `W F  `G  `      ~    Z   x    y    H  ` 
+  ¿  —      \   u  z  ] ^ _ I  `Ÿ         b J  `< $  e f K  `²  Ê  ¼  h L  `> M  `j v  ì G  o R p q    r N  `s   u   —   !  p  "  p  #  pv   w   x $  p  S  `T  `   y u  z U  `   V  `W  `	  ú   X  `œ       Ÿ  z  ! ~ Y  `Z  `$  G   ²    ~  € %  â  [  `\  `$  G   ‚ _  `R    ‡ ˆ ]  `^  `$  „ … —   )  p`  `  u c  ` d  `  R     ˆ Œ $  4  S 6  -       a  `      . ; 0 b  `D  ‹ F  Ô    R    Œ  ,  p-  p-   e  `-  .  ‘ ’   f  `$  G  ” R    • – h  `-   g  `-    R     $  4  ˆ S 6   0  pk  `u i  `j  `-  $  G  o R    q  2  pl  `m  `-  D  — F    $  G  H  R ˆ  Œ o q e f ²  0  ¼  4     S 6            !  .  ‘ ™ Z _ ] ^ ” • – š   n  `M  Q  R  S  T    u  —  v  
+  ¿           \   ) › œ  o  `    .  0 / ; p  `8 5 q  `U  r  `    .  e  g  s  Ÿ |  s  `.  £    `  `  pp  ;     p"    p-    p#    pM  
+  pR    pT    pS    pˆ    p‰    pŠ    p‹    pŒ    p    p)   p<   p>   pb    pU     pW %  pv &  pZ '  p] (  p_ *  p‰ +  pu .  p /  pI  1  pQ  3  p,  4  pk  $    ¡ .  %  ¢ 5  p£ ÿX„Ÿ  I                  '          # /      "      "  '      ¤     ! 4      -      "  A   %   #      "  w      M      "  j      ¥     ! f      ¦     ! i      §     ! Œ      R      "        ¨     !    	   ©     ! Š      ª     ! ¨      T      "     
+   «     ! ¯   1   S      "  à   1   ˆ      "       ‰      "  &      Š      "  F     ‹      "  ‹     Œ      "  a  *   Ş      !
+ ¨  *         "  Ò     )     "  í     <     "       >     "  ø     ­     !      ­     ! 4     b      "  I     U      "  C     T     !
+ s  J   W     "  \  	   ¯     ! e  	   ¯     ! n     ¯     ! q     °     ! ½     v     "  Ô     Z     "  ß     ]     "  ê     _     "  å     ±     ! ñ     ‰     "       u     "  ô     ²     ! ö     ²     !           "  +     I      "  (     ³     ! :     Q      "  8     ´     ! E  N   ,      "  “  	   k      "  œ             ! H©Ò      Qš      Qš                 Z  ®  *  >™                ‚ x  —  `  —  7                ¤  ‘  ¤  ‘  8   (            «  “  ›  “  B              C‚ ¡  .  —  .  L              G€ E    2    n              € ;  u  ;  u  v               õ    õ    y                -  A  -  A  z              ‚ ;  Ö  +  Ö  ƒ                  $    $  ‰   *             e     e                      –    –  ”              ‚ ä  E  Ú  E  ˜                H  ,  H  ,  š   2                ÷     ¥               5  ‘+  $  ‘+  ê              ª+  f0  •+  f0  C             0  ø3  j0  ø3  i             4  Ç6  ü3  Ç6  †            ‚ Û6  >A  Ë6  >A                C7  ò<  C7  ò<     !           VA  eH  BA  eH  ó             I  P  I  P  2              P  úQ  P  úQ  _              R  ¥^  şQ  ¥^  n               ÔU  ÜW  ÔU  ÜW  „              ’X  \  ’X  \  –              ´^  Z`  ©^  Z`  Â             ‚ !a  –c  a  –c  Ğ               fb  c  fb  c  Ú             ‚ c  ƒz  šc  ƒz  å              íw  œx  íw  œx  _              Áx  6y  Áx  6y  e  "            [y  ¤y  [y  ¤y  k  "            jz  }z  jz  }z  u  .           –z  ›~  ‡z  ›~  x              °~  Y  Ÿ~  Y  —              j  ı  ]  ı  œ            € €  æ€  €  æ€  £              k€  à€  k€  à€  ¥             —  æ    æ  ®             ‚ ş  ½‡  ê  ½‡  ³              Î„  …  Î„  …  Ç               0…  H‡  0…  H‡  Ë              Ø‡  j‰  Á‡  j‰  ß             ‚ ‚‰  ıŠ  n‰  ıŠ  í               ¡Š  óŠ  ¡Š  óŠ  õ             ‚ ‹  Œ  ‹  Œ  û               ğ‹  Œ  ğ‹  Œ                C‚ -Œ  K˜  !Œ  K˜                W˜  <™  O˜  <™  h               º™  š  º™  š  r  /           mÎı”                                5¡İ®bÏqÀm@Ug2      jæY§jæY§JC6jæZé   R    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/tva-temporal-intro.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Content-type: text/javascript
+Content-Length: 39505
+Last-Modified: Sat, 31 Oct 2026 20:18:19 GMT
+Date: Sat, 31 Oct 2026 21:12:07 GMT
+Server: SimpleHTTP/0.6 Python/3.14.4
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 20:38:55 GMT
+Content-type: text/javascript
+Content-Length: 39505
+Last-Modified: Sat, 31 Oct 2026 20:18:19 GMT
+ ctid 2 alt-data 1;39505,javascript/moz-module-bytecode-20261006030843-8l alt-data-from-child 1     ±

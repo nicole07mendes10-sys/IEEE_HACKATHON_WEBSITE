@@ -82,26 +82,27 @@ class BureauScrollSequenceEngine {
 
   initParticles() {
     this.particles = [];
-    const count = 90;
+    const isMobile = (this.width || window.innerWidth) <= 768;
+    const count = isMobile ? 36 : 90;
     const colors = [
-      '#f59e0b', // Amber primary
-      '#fbbf24', // Warm gold
-      '#ff8c00', // Deep orange
-      '#ffe082', // Bright highlight
-      '#38bdf8'  // Cyan tachyon spark
+      '#B8923A', // Brass primary
+      '#C8A348', // Warm brass
+      '#E8872B', // TVA orange accent
+      '#EADFC4', // Paper speckle
+      '#3FB5A0'  // CRT teal terminal spark
     ];
 
     for (let i = 0; i < count; i++) {
       this.particles.push({
         x: Math.random() * (this.width || 1280),
         y: Math.random() * (this.height || 720),
-        baseVx: (Math.random() - 0.5) * 0.45,
-        baseVy: (Math.random() - 0.5) * 0.45 - 0.15,
+        baseVx: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45),
+        baseVy: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45) - (isMobile ? 0.1 : 0.15),
         vx: 0,
         vy: 0,
-        size: Math.random() * 2.4 + 1.1,
+        size: isMobile ? (Math.random() * 1.5 + 0.8) : (Math.random() * 2.4 + 1.1),
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.65 + 0.25,
+        alpha: isMobile ? (Math.random() * 0.45 + 0.2) : (Math.random() * 0.65 + 0.25),
         pulseSpeed: Math.random() * 0.03 + 0.015,
         pulseOffset: Math.random() * Math.PI * 2
       });
@@ -141,7 +142,7 @@ class BureauScrollSequenceEngine {
   updateDimensions() {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    this.dpr = this.width <= 768 ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 2.0);
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
 
     const targetWidth = Math.round(this.width * this.dpr);
     const targetHeight = Math.round(this.height * this.dpr);
@@ -273,28 +274,19 @@ class BureauScrollSequenceEngine {
 
     let drawW, drawH, drawX, drawY;
 
-    if (canvasAspect >= 1.0) {
-      if (canvasAspect > imageAspect) {
-        drawW = canvasW;
-        drawH = canvasW / imageAspect;
-        drawX = 0;
-        drawY = (canvasH - drawH) / 2;
-      } else {
-        drawH = canvasH;
-        drawW = canvasH * imageAspect;
-        drawX = (canvasW - drawW) / 2;
-        drawY = 0;
-      }
+    if (canvasAspect >= imageAspect) {
+      // Landscape / Ultra-wide: fit width, center vertically
+      drawW = canvasW;
+      drawH = Math.round(canvasW / imageAspect);
+      drawX = 0;
+      drawY = Math.round((canvasH - drawH) / 2);
     } else {
-      const scale = 1.55;
-      drawH = Math.round(canvasH * scale);
-      drawW = Math.round(drawH * imageAspect);
-
-      const heroWeight = Math.max(0, 1 - (this.currentProgress / 0.20));
-      const easeWeight = heroWeight * heroWeight * (3 - 2 * heroWeight);
-
-      drawX = Math.round((canvasW - drawW) / 2 + (canvasW * 0.65 * easeWeight));
-      drawY = Math.round((canvasH - drawH) / 2 - (canvasH * 0.26 * easeWeight));
+      // Portrait / Narrow screens: match height, center horizontally
+      // Clean, sharp 1:1 aspect cover without artificial magnification or distortion
+      drawH = canvasH;
+      drawW = Math.round(canvasH * imageAspect);
+      drawX = Math.round((canvasW - drawW) / 2);
+      drawY = 0;
     }
 
     ctx.imageSmoothingEnabled = true;
@@ -396,7 +388,7 @@ class BureauScrollSequenceEngine {
         x2: p2.x,
         y2: p2.y,
         life: 1.0,
-        color: Math.random() > 0.4 ? '#ffaa33' : '#38bdf8'
+        color: Math.random() > 0.45 ? (Math.random() > 0.35 ? '#B8923A' : '#E8872B') : '#3FB5A0'
       });
     }
   }
@@ -450,9 +442,9 @@ class BureauScrollSequenceEngine {
 
     ctx.save();
     ctx.globalAlpha = Math.max(0, this.shockwaveAlpha);
-    ctx.strokeStyle = '#ff9900';
+    ctx.strokeStyle = '#E8872B';
     ctx.lineWidth = 3.5;
-    ctx.shadowColor = '#ff6600';
+    ctx.shadowColor = 'rgba(232, 135, 43, 0.45)';
     ctx.shadowBlur = 24;
 
     ctx.beginPath();
@@ -460,7 +452,7 @@ class BureauScrollSequenceEngine {
     ctx.stroke();
 
     // Inner chromatic resonance ring
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = '#3FB5A0';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, Math.max(0, this.shockwaveRadius - 14), 0, Math.PI * 2);
@@ -560,6 +552,7 @@ class BureauScrollSequenceEngine {
   }
 
   playRelayClick(freq = 1.0) {
+    if (window.overclockApp && !window.overclockApp.audioEnabled) return;
     try {
       if (!this.audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;

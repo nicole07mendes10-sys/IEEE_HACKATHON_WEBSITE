@@ -1,0 +1,618 @@
+/**
+ * OVERCLOCK 2027 ‚Äî ELEVATED CINEMATIC SCROLL-DRIVEN BACKGROUND ENGINE
+ * FCRIT √ó IEEE Student Branch
+ * 
+ * Features:
+ * - Scrub-smooth 50-frame temporal explosion footage (/images/ezgif-frame-001.jpg .. 050.jpg)
+ * - Sub-frame temporal crossfade between adjacent frames for zero-stutter cinematic playback
+ * - High-performance interactive tachyon particle spark system reacting to mouse & scroll
+ * - Reactive Overclock Surge states (1.0 GHz, 3.6 GHz, 5.2 GHz, 8.4 GHz)
+ * - Procedural electrical lightning arcs and chromatic shockwave ripples
+ * - Integrated tactile Web Audio relay click synthesizer
+ */
+
+class BureauScrollSequenceEngine {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) {
+      console.warn(`[ScrollSequenceEngine] Canvas #${canvasId} not found.`);
+      return;
+    }
+
+    this.ctx = this.canvas.getContext('2d', {
+      alpha: false,
+      desynchronized: true
+    });
+
+    this.frameCount = 50;
+    this.frames = new Array(this.frameCount).fill(null);
+    this.framesLoaded = new Array(this.frameCount).fill(false);
+    this.loadedCount = 0;
+    this.hasDrawnFirstFrame = false;
+
+    // Viewport & Scaling
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+
+    // Scroll mapping
+    this.scrollY = 0;
+    this.maxScroll = 1;
+    this.targetProgress = 0;
+    this.currentProgress = 0;
+    this.lastRenderedProgress = -1;
+    this.scrollVelocity = 0;
+    this.lastScrollY = 0;
+
+    // Animation physics
+    this.lerpFactor = 0.18;
+    this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (this.prefersReducedMotion) {
+      this.lerpFactor = 1.0;
+    }
+
+    // Interactive Overclock State (1.0 to 8.42 GHz)
+    this.clockFrequency = 1.0;
+    this.targetSpeedMult = 1.0;
+    this.currentSpeedMult = 1.0;
+    this.shockwaveActive = false;
+    this.shockwaveRadius = 0;
+    this.shockwaveAlpha = 0;
+    this.shockwaveOrigin = { x: 0, y: 0 };
+
+    // Mouse Tracking for Interactive Sparks
+    this.mouse = { x: this.width * 0.5, y: this.height * 0.5, isHovering: false, lastActive: 0 };
+
+    // Particle & Lightning System
+    this.particles = [];
+    this.lightningArcs = [];
+    this.lastLightningTime = 0;
+
+    // Audio Context
+    this.audioCtx = null;
+
+    this.initParticles();
+    this.init();
+  }
+
+  getFrameUrl(index) {
+    const frameNum = String(index + 1).padStart(3, '0');
+    return `images/ezgif-frame-${frameNum}.jpg`;
+  }
+
+  initParticles() {
+    this.particles = [];
+    const isMobile = (this.width || window.innerWidth) <= 768;
+    const count = isMobile ? 36 : 90;
+    const colors = [
+      '#f59e0b', // Amber primary
+      '#fbbf24', // Warm gold
+      '#ff8c00', // Deep orange
+      '#ffe082', // Bright highlight
+      '#38bdf8'  // Cyan tachyon spark
+    ];
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * (this.width || 1280),
+        y: Math.random() * (this.height || 720),
+        baseVx: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45),
+        baseVy: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45) - (isMobile ? 0.1 : 0.15),
+        vx: 0,
+        vy: 0,
+        size: isMobile ? (Math.random() * 1.5 + 0.8) : (Math.random() * 2.4 + 1.1),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: isMobile ? (Math.random() * 0.45 + 0.2) : (Math.random() * 0.65 + 0.25),
+        pulseSpeed: Math.random() * 0.03 + 0.015,
+        pulseOffset: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  init() {
+    this.updateDimensions();
+    this.calculateScrollProgress();
+
+    // Event listeners
+    window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+    window.addEventListener('resize', () => this.onResize(), { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.onResize(), 100);
+    }, { passive: true });
+
+    // Interactive Mouse Tracking
+    window.addEventListener('mousemove', (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+      this.mouse.isHovering = true;
+      this.mouse.lastActive = performance.now();
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      this.mouse.isHovering = false;
+    });
+
+    // Begin preload pipeline
+    this.preloadFrames();
+
+    // Start render loop
+    this.startLoop();
+  }
+
+  updateDimensions() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+
+    const targetWidth = Math.round(this.width * this.dpr);
+    const targetHeight = Math.round(this.height * this.dpr);
+
+    if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
+      this.canvas.width = targetWidth;
+      this.canvas.height = targetHeight;
+      this.lastRenderedProgress = -1;
+    }
+
+    this.canvas.style.width = `${this.width}px`;
+    this.canvas.style.height = `${this.height}px`;
+
+    // Maximum scroll calculation
+    const docHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    this.maxScroll = Math.max(docHeight - this.height, 1);
+  }
+
+  onResize() {
+    this.updateDimensions();
+    this.calculateScrollProgress();
+    this.lastRenderedProgress = -1;
+    this.renderFrame();
+    this.requestTick();
+  }
+
+  onScroll() {
+    this.calculateScrollProgress();
+    this.requestTick();
+  }
+
+  calculateScrollProgress() {
+    this.scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const progress = this.scrollY / this.maxScroll;
+    this.targetProgress = Math.min(Math.max(progress, 0), 1);
+
+    // Track scroll velocity for particle streaking
+    this.scrollVelocity = Math.abs(this.scrollY - this.lastScrollY);
+    this.lastScrollY = this.scrollY;
+  }
+
+  preloadFrames() {
+    // 1. High-priority load for Frame 1 (Index 0) to ensure immediate visual render
+    const initialImg = new Image();
+    initialImg.src = this.getFrameUrl(0);
+
+    const onInitialReady = () => {
+      this.frames[0] = initialImg;
+      this.framesLoaded[0] = true;
+      this.loadedCount++;
+      this.lastRenderedProgress = -1;
+      this.renderFrame();
+      this.hasDrawnFirstFrame = true;
+    };
+
+    if (initialImg.complete && initialImg.naturalWidth > 0) {
+      onInitialReady();
+    } else if ('decode' in initialImg) {
+      initialImg.decode().then(onInitialReady).catch(() => {
+        initialImg.onload = onInitialReady;
+      });
+    } else {
+      initialImg.onload = onInitialReady;
+    }
+
+    // 2. Concurrently load all remaining frames in the background
+    for (let i = 1; i < this.frameCount; i++) {
+      const idx = i;
+      const img = new Image();
+      img.src = this.getFrameUrl(idx);
+
+      const onFrameReady = () => {
+        this.frames[idx] = img;
+        this.framesLoaded[idx] = true;
+        this.loadedCount++;
+        const rawIndex = this.currentProgress * (this.frameCount - 1);
+        if (Math.abs(rawIndex - idx) <= 1.5) {
+          this.requestTick();
+        }
+      };
+
+      if ('decode' in img) {
+        img.decode().then(onFrameReady).catch(() => {
+          img.onload = onFrameReady;
+        });
+      } else {
+        img.onload = onFrameReady;
+      }
+    }
+  }
+
+  getReadyFrame(idealIndex) {
+    idealIndex = Math.min(Math.max(idealIndex, 0), this.frameCount - 1);
+    if (this.framesLoaded[idealIndex] && this.frames[idealIndex]) {
+      return this.frames[idealIndex];
+    }
+
+    // Nearest-neighbor fallback search
+    for (let offset = 1; offset < this.frameCount; offset++) {
+      const left = idealIndex - offset;
+      if (left >= 0 && this.framesLoaded[left] && this.frames[left]) {
+        return this.frames[left];
+      }
+      const right = idealIndex + offset;
+      if (right < this.frameCount && this.framesLoaded[right] && this.frames[right]) {
+        return this.frames[right];
+      }
+    }
+
+    return null;
+  }
+
+  drawCover(img, alpha = 1.0) {
+    if (!img) return;
+
+    const ctx = this.ctx;
+    const canvasW = this.canvas.width;
+    const canvasH = this.canvas.height;
+    const naturalW = img.naturalWidth || 1280;
+    const naturalH = img.naturalHeight || 720;
+
+    const imageAspect = naturalW / naturalH;
+    const canvasAspect = canvasW / canvasH;
+
+    let drawW, drawH, drawX, drawY;
+
+    if (canvasAspect >= imageAspect) {
+      // Landscape / Ultra-wide: fit width, center vertically
+      drawW = canvasW;
+      drawH = Math.round(canvasW / imageAspect);
+      drawX = 0;
+      drawY = Math.round((canvasH - drawH) / 2);
+    } else {
+      // Portrait / Narrow screens: match height, center horizontally
+      // Clean, sharp 1:1 aspect cover without artificial magnification or distortion
+      drawH = canvasH;
+      drawW = Math.round(canvasH * imageAspect);
+      drawX = Math.round((canvasW - drawW) / 2);
+      drawY = 0;
+    }
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    ctx.save();
+    ctx.globalAlpha = Math.min(Math.max(alpha, 0), 1);
+    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    ctx.restore();
+  }
+
+  drawParticleLayer(time) {
+    const ctx = this.ctx;
+    const dpr = this.dpr;
+    const speed = this.currentSpeedMult;
+    const mouseX = this.mouse.x;
+    const mouseY = this.mouse.y;
+    const hasMouse = this.mouse.isHovering;
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+
+    const now = performance.now();
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
+
+      // Update position with speed factor and turbulence
+      const wobble = Math.sin(time * 0.002 + p.pulseOffset) * 0.2;
+      p.vx = (p.baseVx + wobble) * speed;
+      p.vy = (p.baseVy) * speed;
+
+      // Mouse repulsion physics
+      if (hasMouse) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distSq = dx * dx + dy * dy;
+        const maxDist = 180;
+        if (distSq < maxDist * maxDist && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const force = (1 - dist / maxDist) * 3.5 * speed;
+          p.x += (dx / dist) * force;
+          p.y += (dy / dist) * force;
+        }
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Screen boundary wrap
+      if (p.x < -20) p.x = this.width + 20;
+      if (p.x > this.width + 20) p.x = -20;
+      if (p.y < -20) p.y = this.height + 20;
+      if (p.y > this.height + 20) p.y = -20;
+
+      // Pulse alpha
+      const currentAlpha = p.alpha * (0.7 + 0.3 * Math.sin(time * p.pulseSpeed + p.pulseOffset));
+
+      // Draw particle with soft halo
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.8);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(0.4, p.color);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+      ctx.globalAlpha = Math.min(Math.max(currentAlpha, 0), 1);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Occasional procedural electrical micro-arcs when overclocked
+    if (this.clockFrequency >= 5.0 && now - this.lastLightningTime > (this.clockFrequency >= 8.0 ? 300 : 900)) {
+      if (Math.random() < 0.65) {
+        this.spawnLightningArc();
+        this.lastLightningTime = now;
+      }
+    }
+
+    this.drawLightningArcs();
+    this.drawShockwave();
+
+    ctx.restore();
+  }
+
+  spawnLightningArc() {
+    if (this.particles.length < 2) return;
+    const p1 = this.particles[Math.floor(Math.random() * this.particles.length)];
+    const p2 = this.particles[Math.floor(Math.random() * this.particles.length)];
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 50 && dist < 320) {
+      this.lightningArcs.push({
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+        life: 1.0,
+        color: Math.random() > 0.4 ? '#ffaa33' : '#38bdf8'
+      });
+    }
+  }
+
+  drawLightningArcs() {
+    const ctx = this.ctx;
+    for (let i = this.lightningArcs.length - 1; i >= 0; i--) {
+      const arc = this.lightningArcs[i];
+      arc.life -= 0.16;
+
+      if (arc.life <= 0) {
+        this.lightningArcs.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = arc.life * 0.9;
+      ctx.strokeStyle = arc.color;
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = arc.color;
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(arc.x1, arc.y1);
+
+      // Jagged zig-zag interpolation
+      const segments = 5;
+      for (let s = 1; s < segments; s++) {
+        const t = s / segments;
+        const mx = arc.x1 + (arc.x2 - arc.x1) * t + (Math.random() - 0.5) * 16;
+        const my = arc.y1 + (arc.y2 - arc.y1) * t + (Math.random() - 0.5) * 16;
+        ctx.lineTo(mx, my);
+      }
+      ctx.lineTo(arc.x2, arc.y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  drawShockwave() {
+    if (!this.shockwaveActive) return;
+
+    const ctx = this.ctx;
+    this.shockwaveRadius += 16 * this.currentSpeedMult;
+    this.shockwaveAlpha -= 0.024;
+
+    if (this.shockwaveAlpha <= 0) {
+      this.shockwaveActive = false;
+      return;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.shockwaveAlpha);
+    ctx.strokeStyle = '#ff9900';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = '#ff6600';
+    ctx.shadowBlur = 24;
+
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, this.shockwaveRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner chromatic resonance ring
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, Math.max(0, this.shockwaveRadius - 14), 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  triggerShockwave(originX, originY) {
+    this.shockwaveActive = true;
+    this.shockwaveRadius = 10;
+    this.shockwaveAlpha = 0.85;
+    this.shockwaveOrigin = {
+      x: originX !== undefined ? originX : this.width * 0.5,
+      y: originY !== undefined ? originY : this.height * 0.4
+    };
+  }
+
+  renderFrame(time = 0) {
+    const rawIndex = this.currentProgress * (this.frameCount - 1);
+    const baseIndex = Math.floor(rawIndex);
+    const nextIndex = Math.min(baseIndex + 1, this.frameCount - 1);
+    const subFrame = rawIndex - baseIndex;
+
+    const baseFrame = this.getReadyFrame(baseIndex);
+    const nextFrame = this.getReadyFrame(nextIndex);
+
+    if (!baseFrame && !nextFrame) return;
+
+    // 1. Draw base frame
+    if (baseFrame) {
+      this.drawCover(baseFrame, 1.0);
+    } else if (nextFrame) {
+      this.drawCover(nextFrame, 1.0);
+    }
+
+    // 2. Sub-frame temporal crossfade between adjacent frames
+    if (nextFrame && nextFrame !== baseFrame && subFrame > 0.005) {
+      this.drawCover(nextFrame, subFrame);
+    }
+
+    // 3. Draw elevated Tachyon particle and energy spark layer on top of video
+    this.drawParticleLayer(time);
+
+    this.lastRenderedProgress = this.currentProgress;
+    this.hasDrawnFirstFrame = true;
+  }
+
+  startLoop() {
+    const tick = (now) => {
+      // Smoothly interpolate overclock speed multiplier
+      this.currentSpeedMult += (this.targetSpeedMult - this.currentSpeedMult) * 0.08;
+
+      const delta = this.targetProgress - this.currentProgress;
+
+      if (Math.abs(delta) > 0.0001) {
+        this.currentProgress += delta * this.lerpFactor;
+      } else {
+        this.currentProgress = this.targetProgress;
+      }
+
+      // Always render so particles and energy effects animate continuously
+      this.renderFrame(now);
+
+      // Check if docHeight changed dynamically
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
+      const expectedMaxScroll = Math.max(docHeight - this.height, 1);
+      if (Math.abs(this.maxScroll - expectedMaxScroll) > 10) {
+        this.maxScroll = expectedMaxScroll;
+        this.calculateScrollProgress();
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }
+
+  requestTick() {
+    this.calculateScrollProgress();
+  }
+
+  // Reactive Overclock API (Called by HUD Telemetry Console)
+  setClockFrequency(freq) {
+    this.clockFrequency = parseFloat(freq) || 1.0;
+    this.targetSpeedMult = Math.min(Math.max(this.clockFrequency / 1.0, 1.0), 3.5);
+
+    // If supercharged or breach, trigger shockwave
+    if (this.clockFrequency >= 8.0) {
+      this.triggerShockwave();
+    }
+
+    this.playRelayClick(this.clockFrequency);
+  }
+
+  playRelayClick(freq = 1.0) {
+    if (window.overclockApp && !window.overclockApp.audioEnabled) return;
+    try {
+      if (!this.audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) this.audioCtx = new AudioContext();
+      }
+      if (!this.audioCtx) return;
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      const pitch = 220 * (0.8 + (freq / 4.0));
+      osc.type = freq >= 8.0 ? 'sawtooth' : 'sine';
+      osc.frequency.setValueAtTime(pitch, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(pitch * 0.4, this.audioCtx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.08);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (_) {
+      // Audio autoplay policy fallback
+    }
+  }
+
+  showRegistrationNotice(message) {
+    if (window.bureauApp && typeof window.bureauApp.showRegistrationNotice === 'function') {
+      window.bureauApp.showRegistrationNotice(message);
+    } else {
+      alert(message);
+    }
+  }
+}
+
+// Global initialization
+window.addEventListener('DOMContentLoaded', () => {
+  window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
+});
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (!window.bureauEngine) {
+    window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
+  }
+}
+∆sDgkî      jÊ7ÒjÊ7ÚJ—5jÊ93   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/bureau-engine.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 18:48:18 GMT
+Content-type: text/javascript
+Content-Length: 18319
+Last-Modified: Sat, 31 Oct 2026 17:54:38 GMT
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 18:48:18 GMT
+Content-type: text/javascript
+Content-Length: 18319
+Last-Modified: Sat, 31 Oct 2026 17:54:38 GMT
+ ctid 2 net-response-time-onstart 245 net-response-time-onstop 245      Gè

@@ -1,0 +1,3322 @@
+/**
+ * OVERCLOCK 2027 â€” CRT OSCILLOSCOPE & SIGNAL TELEMETRY ENGINE
+ * FCRIT Ã— IEEE Student Branch
+ *
+ * Implements 6 mathematically authentic, domain-specific hardware waveforms
+ * rendered onto vintage 1970s TVA-style phosphor CRT monitors with:
+ *  - Tektronix-style graticule grid with center graduation tick marks
+ *  - Phosphor persistence decay trails & electron beam luminous sweep heads
+ *  - Domain 1 (Amber): Multi-Harmonic Synthesizer Waveform
+ *  - Domain 2 (Cyan): Tactical Radar Chirp & Sonar Encrypted Pulse
+ *  - Domain 3 (Emerald): Clinical Biometric ECG Heartbeat Monitor
+ *  - Domain 4 (Violet): Digital Logic Analyzer & PWM Telemetry Bus
+ *  - Domain 5 (Copper): Vibration Telemetry & Tachometer Sawtooth FFT
+ *  - Domain 6 (Ruby): Resonant 3-Phase High-Voltage AC Power Wave
+ *  - Interactive Signal Probe: Mouse/touch tracking modulates frequency and
+ *    displays real-time fluctuating telemetry in the channel tag.
+ *  - Performance-optimized: single RAF loop with IntersectionObserver sleep.
+ */
+
+(function () {
+  'use strict';
+
+  /* ==========================================================
+     DOMAIN WAVE ACOUSTIC & HAPTIC VIBRATION SYNTHESIZER
+     Generates authentic, mathematically tuned domain wave audio
+     and physical haptic vibration for all 6 domain slots.
+  ========================================================== */
+  class DomainWaveAcousticEngine {
+    constructor() {
+      this.audioCtx = null;
+      this.masterGain = null;
+      this.activeVoice = null;
+      this.activeSlot = null;
+      this.pulseTimer = null;
+      this.muted = false;
+      this.bindUnlockGesture();
+    }
+
+    bindUnlockGesture() {
+      const unlock = () => {
+        this.ensureContext();
+        window.removeEventListener('pointerdown', unlock);
+        window.removeEventListener('keydown', unlock);
+        window.removeEventListener('touchstart', unlock);
+      };
+      window.addEventListener('pointerdown', unlock, { passive: true });
+      window.addEventListener('keydown', unlock, { passive: true });
+      window.addEventListener('touchstart', unlock, { passive: true });
+    }
+
+    ensureContext() {
+      if (!this.audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.audioCtx = new AudioCtx();
+          this.masterGain = this.audioCtx.createGain();
+          this.masterGain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+          this.masterGain.connect(this.audioCtx.destination);
+        }
+      }
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+      return this.audioCtx;
+    }
+
+    triggerHaptic(slotNum) {
+      if (typeof navigator === 'undefined' || !navigator.vibrate) return;
+      try {
+        const patterns = {
+          1: [70],                      // Warm analog hum
+          2: [35, 45, 35],              // Tactical sonar/radar chirp
+          3: [50, 75, 40],              // Cardiac lub-dub pulse
+          4: [15, 20, 15, 20, 25],      // High-speed digital packet chatter
+          5: [120, 40, 80],             // Heavy rotating machinery
+          6: [180]                      // High-voltage 50Hz AC buzz
+        };
+        const pat = patterns[slotNum] || [50];
+        navigator.vibrate(pat);
+      } catch (_) {}
+    }
+
+    startWaveVoice(slotNum, probeX = 0.5, probeY = 0.5) {
+      if (this.muted || (window.overclockApp && !window.overclockApp.audioEnabled)) return;
+      const ctx = this.ensureContext();
+      if (!ctx) return;
+
+      this.triggerHaptic(slotNum);
+
+      if (this.activeSlot === slotNum && this.activeVoice) {
+        this.modulateVoice(probeX, probeY);
+        return;
+      }
+
+      this.stopWaveVoice();
+
+      this.activeSlot = slotNum;
+      const now = ctx.currentTime;
+
+      switch (slotNum) {
+        case 1:
+          this.activeVoice = this.createHarmonicSynthVoice(ctx, now, probeX);
+          break;
+        case 2:
+          this.activeVoice = this.createRadarSonarVoice(ctx, now, probeX);
+          break;
+        case 3:
+          this.activeVoice = this.createECGHeartbeatVoice(ctx, now, probeX);
+          break;
+        case 4:
+          this.activeVoice = this.createDigitalLogicVoice(ctx, now, probeX);
+          break;
+        case 5:
+          this.activeVoice = this.createIndustrialVibrationVoice(ctx, now, probeX);
+          break;
+        case 6:
+          this.activeVoice = this.createHighVoltageACVoice(ctx, now, probeX);
+          break;
+      }
+    }
+
+    modulateVoice(probeX, probeY) {
+      if (this.activeVoice && typeof this.activeVoice.modulate === 'function') {
+        this.activeVoice.modulate(probeX, probeY);
+      }
+    }
+
+    triggerAcousticBurst(slotNum, probeX = 0.5) {
+      this.startWaveVoice(slotNum, probeX, 0.5);
+      setTimeout(() => {
+        if (this.activeSlot === slotNum) {
+          this.stopWaveVoice();
+        }
+      }, 1200);
+    }
+
+    stopWaveVoice() {
+      if (this.pulseTimer) {
+        clearInterval(this.pulseTimer);
+        clearTimeout(this.pulseTimer);
+        this.pulseTimer = null;
+      }
+      if (this.activeVoice) {
+        try {
+          this.activeVoice.stop();
+        } catch (_) {}
+        this.activeVoice = null;
+      }
+      this.activeSlot = null;
+    }
+
+    // 1. Slot 1: Multi-Harmonic Synthesizer (Amber)
+    createHarmonicSynthVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.75, now + 0.08);
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(196, now); // G3
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(293.66, now); // D4
+      osc2.detune.setValueAtTime(8, now);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.8, now);
+      filter.frequency.setValueAtTime(350 + probeX * 850, now);
+
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(4.5, now);
+      lfoGain.gain.setValueAtTime(3.5, now);
+      lfo.connect(osc1.frequency);
+
+      const oscMix = ctx.createGain();
+      oscMix.gain.setValueAtTime(0.45, now);
+      osc1.connect(filter);
+      osc2.connect(oscMix);
+      oscMix.connect(filter);
+
+      filter.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      lfo.start(now);
+
+      return {
+        modulate: (px) => {
+          const targetFreq = 196 + px * 60;
+          const targetCutoff = 350 + px * 1100;
+          osc1.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.04);
+          osc2.frequency.setTargetAtTime(targetFreq * 1.5, ctx.currentTime, 0.04);
+          filter.frequency.setTargetAtTime(targetCutoff, ctx.currentTime, 0.04);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.14);
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              lfo.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 160);
+        }
+      };
+    }
+
+    // 2. Slot 2: Tactical Radar & Sonar Ping (Cyan)
+    createRadarSonarVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      let currentProbeX = probeX;
+
+      const triggerPing = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+
+        // Sonar Ping (Resonant tone with slow decay)
+        const pingOsc = ctx.createOscillator();
+        const pingGain = ctx.createGain();
+        pingOsc.type = 'sine';
+        pingOsc.frequency.setValueAtTime(920 + currentProbeX * 280, t);
+        pingOsc.frequency.exponentialRampToValueAtTime(800, t + 0.45);
+
+        pingGain.gain.setValueAtTime(0.001, t);
+        pingGain.gain.linearRampToValueAtTime(0.8, t + 0.015);
+        pingGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+
+        pingOsc.connect(pingGain);
+        pingGain.connect(voiceGain);
+        pingOsc.start(t);
+        pingOsc.stop(t + 0.55);
+
+        // Tactical Chirp Burst (Fast frequency radar sweep)
+        const chirpOsc = ctx.createOscillator();
+        const chirpGain = ctx.createGain();
+        chirpOsc.type = 'sine';
+        chirpOsc.frequency.setValueAtTime(1100, t);
+        chirpOsc.frequency.exponentialRampToValueAtTime(2200, t + 0.065);
+
+        chirpGain.gain.setValueAtTime(0.001, t);
+        chirpGain.gain.linearRampToValueAtTime(0.35, t + 0.008);
+        chirpGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
+
+        chirpOsc.connect(chirpGain);
+        chirpGain.connect(voiceGain);
+        chirpOsc.start(t);
+        chirpOsc.stop(t + 0.08);
+
+        this.triggerHaptic(2);
+      };
+
+      triggerPing();
+      this.pulseTimer = setInterval(triggerPing, 700);
+
+      return {
+        modulate: (px) => {
+          currentProbeX = px;
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.08);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 150);
+        }
+      };
+    }
+
+    // 3. Slot 3: Clinical Biometric ECG Heartbeat Monitor (Emerald)
+    createECGHeartbeatVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      const triggerECGCycle = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+
+        // Cardiac Lub (Low damped tone)
+        const lubOsc = ctx.createOscillator();
+        const lubGain = ctx.createGain();
+        lubOsc.type = 'sine';
+        lubOsc.frequency.setValueAtTime(82, t);
+        lubOsc.frequency.exponentialRampToValueAtTime(42, t + 0.07);
+
+        lubGain.gain.setValueAtTime(0.001, t);
+        lubGain.gain.linearRampToValueAtTime(0.72, t + 0.015);
+        lubGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+
+        lubOsc.connect(lubGain);
+        lubGain.connect(voiceGain);
+        lubOsc.start(t);
+        lubOsc.stop(t + 0.09);
+
+        // Cardiac Dub (Second pulse)
+        const dubTime = t + 0.11;
+        const dubOsc = ctx.createOscillator();
+        const dubGain = ctx.createGain();
+        dubOsc.type = 'sine';
+        dubOsc.frequency.setValueAtTime(68, dubTime);
+        dubOsc.frequency.exponentialRampToValueAtTime(36, dubTime + 0.06);
+
+        dubGain.gain.setValueAtTime(0.001, dubTime);
+        dubGain.gain.linearRampToValueAtTime(0.6, dubTime + 0.012);
+        dubGain.gain.exponentialRampToValueAtTime(0.0001, dubTime + 0.07);
+
+        dubOsc.connect(dubGain);
+        dubGain.connect(voiceGain);
+        dubOsc.start(dubTime);
+        dubOsc.stop(dubTime + 0.08);
+
+        // Clinical Vitals Telemetry Monitor Blip (QRS)
+        const beepTime = t + 0.22;
+        const beepOsc = ctx.createOscillator();
+        const beepGain = ctx.createGain();
+        beepOsc.type = 'sine';
+        beepOsc.frequency.setValueAtTime(987.77, beepTime);
+
+        beepGain.gain.setValueAtTime(0.001, beepTime);
+        beepGain.gain.linearRampToValueAtTime(0.4, beepTime + 0.008);
+        beepGain.gain.exponentialRampToValueAtTime(0.0001, beepTime + 0.075);
+
+        beepOsc.connect(beepGain);
+        beepGain.connect(voiceGain);
+        beepOsc.start(beepTime);
+        beepOsc.stop(beepTime + 0.085);
+
+        this.triggerHaptic(3);
+      };
+
+      triggerECGCycle();
+      this.pulseTimer = setInterval(triggerECGCycle, 800);
+
+      return {
+        modulate: (px) => {
+          const interval = 880 - px * 220;
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          this.pulseTimer = setInterval(triggerECGCycle, interval);
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.08);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 150);
+        }
+      };
+    }
+
+    // 4. Slot 4: Digital Logic & PWM Telemetry Bus (Violet)
+    createDigitalLogicVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      let currentProbeX = probeX;
+
+      const triggerDataPacket = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+        const freqs = [587.33, 739.99, 880.00, 1174.66, 1479.98];
+        const stepDur = 0.024;
+
+        freqs.forEach((freq, idx) => {
+          const stepTime = t + idx * stepDur;
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq * (0.9 + currentProbeX * 0.3), stepTime);
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1600, stepTime);
+
+          g.gain.setValueAtTime(0.001, stepTime);
+          g.gain.linearRampToValueAtTime(0.26, stepTime + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0001, stepTime + stepDur - 0.002);
+
+          osc.connect(filter);
+          filter.connect(g);
+          g.connect(voiceGain);
+
+          osc.start(stepTime);
+          osc.stop(stepTime + stepDur);
+        });
+
+        this.triggerHaptic(4);
+      };
+
+      triggerDataPacket();
+      this.pulseTimer = setInterval(triggerDataPacket, 460);
+
+      return {
+        modulate: (px) => {
+          currentProbeX = px;
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.06);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 120);
+        }
+      };
+    }
+
+    // 5. Slot 5: Industrial Automation Motor Vibration & Tachometer (Copper)
+    createIndustrialVibrationVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.85, now + 0.09);
+
+      const baseFreq = 75 + probeX * 55;
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(baseFreq, now);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(baseFreq + 1.8, now);
+
+      const subOsc = ctx.createOscillator();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(baseFreq * 0.5, now);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.6, now);
+      filter.frequency.setValueAtTime(260 + probeX * 240, now);
+
+      const mix1 = ctx.createGain();
+      mix1.gain.setValueAtTime(0.42, now);
+      const mix2 = ctx.createGain();
+      mix2.gain.setValueAtTime(0.32, now);
+      const mixSub = ctx.createGain();
+      mixSub.gain.setValueAtTime(0.38, now);
+
+      osc1.connect(mix1);
+      osc2.connect(mix2);
+      subOsc.connect(mixSub);
+
+      mix1.connect(filter);
+      mix2.connect(filter);
+      mixSub.connect(filter);
+
+      filter.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      subOsc.start(now);
+
+      return {
+        modulate: (px) => {
+          const f = 75 + px * 60;
+          osc1.frequency.setTargetAtTime(f, ctx.currentTime, 0.05);
+          osc2.frequency.setTargetAtTime(f + 1.8, ctx.currentTime, 0.05);
+          subOsc.frequency.setTargetAtTime(f * 0.5, ctx.currentTime, 0.05);
+          filter.frequency.setTargetAtTime(260 + px * 300, ctx.currentTime, 0.05);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.16);
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              subOsc.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 190);
+        }
+      };
+    }
+
+    // 6. Slot 6: High-Voltage 3-Phase AC Power Grid (Ruby)
+    createHighVoltageACVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.85, now + 0.08);
+
+      const osc50 = ctx.createOscillator();
+      osc50.type = 'sine';
+      osc50.frequency.setValueAtTime(50.0, now);
+
+      const osc100 = ctx.createOscillator();
+      osc100.type = 'sine';
+      osc100.frequency.setValueAtTime(100.0, now);
+
+      const osc150 = ctx.createOscillator();
+      osc150.type = 'triangle';
+      osc150.frequency.setValueAtTime(150.0, now);
+
+      const gain50 = ctx.createGain();
+      gain50.gain.setValueAtTime(0.65, now);
+      const gain100 = ctx.createGain();
+      gain100.gain.setValueAtTime(0.35, now);
+      const gain150 = ctx.createGain();
+      gain150.gain.setValueAtTime(0.2, now);
+
+      osc50.connect(gain50);
+      osc100.connect(gain100);
+      osc150.connect(gain150);
+
+      const gridMix = ctx.createGain();
+      gain50.connect(gridMix);
+      gain100.connect(gridMix);
+      gain150.connect(gridMix);
+
+      gridMix.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc50.start(now);
+      osc100.start(now);
+      osc150.start(now);
+
+      return {
+        modulate: (px) => {
+          const gridFreq = 50.0 + (px - 0.5) * 1.5;
+          osc50.frequency.setTargetAtTime(gridFreq, ctx.currentTime, 0.08);
+          osc100.frequency.setTargetAtTime(gridFreq * 2, ctx.currentTime, 0.08);
+          osc150.frequency.setTargetAtTime(gridFreq * 3, ctx.currentTime, 0.08);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.16);
+          setTimeout(() => {
+            try {
+              osc50.stop();
+              osc100.stop();
+              osc150.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 190);
+        }
+      };
+    }
+  }
+
+  class DomainOscilloscopeEngine {
+    constructor() {
+      this.gridContainer = document.querySelector('.domain-slots-grid');
+      if (!this.gridContainer) return;
+
+      this.cards = Array.from(document.querySelectorAll('.domain-slot-card'));
+      if (this.cards.length === 0) return;
+
+      this.isVisible = false;
+      this.rafId = null;
+      this.lastTime = performance.now();
+      this.globalTime = 0;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      this.acousticEngine = new DomainWaveAcousticEngine();
+      this.scopes = [];
+      this.initScopes();
+      this.setupObserver();
+      this.bindWindowEvents();
+    }
+
+    initScopes() {
+      const DOMAIN_CONFIGS = [
+        // Slot 1: General Innovation & Open Innovation (Amber)
+        {
+          slot: 1,
+          color: '#FF9D3B',
+          glowColor: 'rgba(255, 157, 59, 0.75)',
+          beamColor: '#FFF1D0',
+          baseFreq: 433.92,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // AMBER TRACE',
+          hoverPrefix: 'SIGNAL LOCKED // 433.92 MHz Â· 3.42 Vpp Â· THD 1.2%',
+          draw: this.drawHarmonicSynthesizer.bind(this)
+        },
+        // Slot 2: Defence & National Security (Cyan)
+        {
+          slot: 2,
+          color: '#00E5FF',
+          glowColor: 'rgba(0, 229, 255, 0.75)',
+          beamColor: '#E0FFFF',
+          baseFreq: 868.30,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // CYAN TRACE',
+          hoverPrefix: 'TACTICAL ACQUIRED // 868.30 MHz Â· RADAR LOCK 99.4%',
+          draw: this.drawRadarChirp.bind(this)
+        },
+        // Slot 3: Healthcare & Assistive Technology (Emerald)
+        {
+          slot: 3,
+          color: '#00E676',
+          glowColor: 'rgba(0, 230, 118, 0.8)',
+          beamColor: '#E8F5E9',
+          baseFreq: 2.412,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // EMERALD TRACE',
+          hoverPrefix: 'VITALS ACTIVE // 78 BPM Â· SpO2 99% Â· 2.412 GHz',
+          draw: this.drawBiometricECG.bind(this)
+        },
+        // Slot 4: Smart Home & Consumer Electronics (Violet)
+        {
+          slot: 4,
+          color: '#BB86FC',
+          glowColor: 'rgba(187, 134, 252, 0.75)',
+          beamColor: '#F3E5F5',
+          baseFreq: 915.00,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // VIOLET TRACE',
+          hoverPrefix: 'BUS SYNCED // 915.00 MHz Â· I2C 400kHz Â· PWM 64%',
+          draw: this.drawDigitalLogicPWM.bind(this)
+        },
+        // Slot 5: Industrial Automation & Monitoring (Copper)
+        {
+          slot: 5,
+          color: '#FF8C42',
+          glowColor: 'rgba(255, 140, 66, 0.75)',
+          beamColor: '#FFE0B2',
+          baseFreq: 5.80,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // COPPER TRACE',
+          hoverPrefix: 'VIBE SENSOR // 5.80 GHz Â· 3600 RPM Â· 0.42 mm/s RMS',
+          draw: this.drawVibrationSawtooth.bind(this)
+        },
+        // Slot 6: Energy, Power & Sustainability (Ruby)
+        {
+          slot: 6,
+          color: '#FF4B6E',
+          glowColor: 'rgba(255, 75, 110, 0.8)',
+          beamColor: '#FFCDD2',
+          baseFreq: 10.50,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // RUBY TRACE',
+          hoverPrefix: 'GRID SYNCHRONIZED // 10.50 GHz Â· 50.02 Hz Â· 415 VAC',
+          draw: this.drawThreePhaseAC.bind(this)
+        }
+      ];
+
+      this.cards.forEach((card, index) => {
+        const slotNum = parseInt(card.dataset.slot || (index + 1), 10);
+        const config = DOMAIN_CONFIGS.find(c => c.slot === slotNum) || DOMAIN_CONFIGS[index % DOMAIN_CONFIGS.length];
+        const screen = card.querySelector('.domain-screen-display');
+        const container = card.querySelector('.screen-waveform-container');
+        const channelTag = card.querySelector('.slot-channel-tag');
+
+        if (!screen || !container) return;
+
+        // Ensure reticle grid and CRT glow elements exist
+        if (!screen.querySelector('.screen-reticle-grid')) {
+          const reticle = document.createElement('div');
+          reticle.className = 'screen-reticle-grid';
+          reticle.setAttribute('aria-hidden', 'true');
+          screen.insertBefore(reticle, screen.firstChild);
+        }
+
+        if (!screen.querySelector('.screen-crt-glow')) {
+          const glow = document.createElement('div');
+          glow.className = 'screen-crt-glow';
+          glow.setAttribute('aria-hidden', 'true');
+          screen.appendChild(glow);
+        }
+
+        // Hide fallback static SVG once canvas is active
+        const fallbackSvg = container.querySelector('.waveform-svg');
+        if (fallbackSvg) {
+          fallbackSvg.classList.add('fallback-wave');
+        }
+
+        // Create or bind canvas
+        let canvas = container.querySelector('.domain-scope-canvas');
+        if (!canvas) {
+          canvas = document.createElement('canvas');
+          canvas.className = 'domain-scope-canvas';
+          canvas.setAttribute('aria-hidden', 'true');
+          container.appendChild(canvas);
+        }
+
+        const ctx = canvas.getContext('2d', { alpha: true });
+
+        const scope = {
+          slotNum,
+          card,
+          screen,
+          container,
+          canvas,
+          ctx,
+          config,
+          channelTag,
+          width: 0,
+          height: 0,
+          isHovered: false,
+          hoverProgress: 0,
+          probeX: 0.5,
+          probeY: 0.5,
+          jitterCounter: 0,
+          ecgPhase: Math.random() * 10
+        };
+
+        this.bindScopeInteractions(scope);
+        this.resizeScope(scope);
+        this.scopes.push(scope);
+      });
+    }
+
+    bindScopeInteractions(scope) {
+      const updateProbe = (clientX, clientY) => {
+        const rect = scope.screen.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          scope.probeX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          scope.probeY = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+        }
+      };
+
+      scope.card.addEventListener('mouseenter', (e) => {
+        scope.isHovered = true;
+        updateProbe(e.clientX, e.clientY);
+        scope.card.classList.add('scope-probed');
+      });
+
+      scope.card.addEventListener('mousemove', (e) => {
+        updateProbe(e.clientX, e.clientY);
+      });
+
+      scope.card.addEventListener('mouseleave', () => {
+        scope.isHovered = false;
+        scope.card.classList.remove('scope-probed');
+        if (scope.channelTag) {
+          scope.channelTag.textContent = scope.config.idleTag;
+          scope.channelTag.classList.remove('telemetry-active');
+        }
+      });
+
+      // Mobile Touch Handling
+      scope.card.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          scope.isHovered = true;
+          updateProbe(e.touches[0].clientX, e.touches[0].clientY);
+          scope.card.classList.add('scope-probed');
+        }
+      }, { passive: true });
+
+      scope.card.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+          updateProbe(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      scope.card.addEventListener('touchend', () => {
+        setTimeout(() => {
+          scope.isHovered = false;
+          scope.card.classList.remove('scope-probed');
+          if (scope.channelTag) {
+            scope.channelTag.textContent = scope.config.idleTag;
+            scope.channelTag.classList.remove('telemetry-active');
+          }
+        }, 1000);
+      }, { passive: true });
+    }
+
+    resizeScope(scope) {
+      const rect = scope.container.getBoundingClientRect();
+      const cssWidth = Math.max(rect.width, 240);
+      const cssHeight = Math.max(rect.height, 46);
+
+      scope.width = cssWidth;
+      scope.height = cssHeight;
+      scope.canvas.width = Math.floor(cssWidth * this.dpr);
+      scope.canvas.height = Math.floor(cssHeight * this.dpr);
+
+      scope.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      scope.ctx.scale(this.dpr, this.dpr);
+    }
+
+    resizeAll() {
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+      this.scopes.forEach(scope => this.resizeScope(scope));
+    }
+
+    setupObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          this.isVisible = entry.isIntersecting;
+          if (this.isVisible) {
+            this.lastTime = performance.now();
+            this.startLoop();
+          } else {
+            this.stopLoop();
+          }
+        });
+      }, { threshold: 0.05 });
+
+      observer.observe(this.gridContainer);
+    }
+
+    bindWindowEvents() {
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => this.resizeAll(), 150);
+      }, { passive: true });
+    }
+
+    startLoop() {
+      if (this.rafId) return;
+      const step = (now) => {
+        const delta = Math.min((now - this.lastTime) / 1000, 0.1);
+        this.lastTime = now;
+        this.globalTime += delta;
+
+        this.renderAll(delta, this.globalTime);
+
+        if (this.isVisible) {
+          this.rafId = requestAnimationFrame(step);
+        } else {
+          this.rafId = null;
+        }
+      };
+      this.rafId = requestAnimationFrame(step);
+    }
+
+    stopLoop() {
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+
+    renderAll(delta, t) {
+      this.scopes.forEach(scope => {
+        // Smooth hover transition
+        const targetHover = scope.isHovered ? 1.0 : 0.0;
+        scope.hoverProgress += (targetHover - scope.hoverProgress) * Math.min(delta * 8.0, 1.0);
+
+        // Update live fluctuating telemetry on hover
+        if (scope.isHovered && scope.channelTag) {
+          scope.jitterCounter += delta;
+          if (scope.jitterCounter > 0.08) {
+            scope.jitterCounter = 0;
+            this.updateLiveTelemetry(scope);
+          }
+        }
+
+        // Clear canvas
+        const ctx = scope.ctx;
+        const w = scope.width;
+        const h = scope.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw Reticle Center Line on Canvas
+        this.drawScopeGraticule(ctx, w, h);
+
+        // Render domain-specific mathematical waveform
+        scope.config.draw(scope, delta, t);
+      });
+    }
+
+    updateLiveTelemetry(scope) {
+      const tag = scope.channelTag;
+      if (!tag) return;
+      tag.classList.add('telemetry-active');
+
+      const jitterFreq = (scope.config.baseFreq + (Math.random() * 0.08 - 0.04)).toFixed(2);
+      const vpp = (3.2 + Math.random() * 0.35 + scope.hoverProgress * 0.5).toFixed(2);
+
+      switch (scope.slotNum) {
+        case 1:
+          tag.textContent = `SIGNAL LOCKED // ${jitterFreq} MHz Â· ${vpp} Vpp Â· THD 1.1%`;
+          break;
+        case 2:
+          const radarLock = (99.1 + Math.random() * 0.8).toFixed(1);
+          tag.textContent = `TACTICAL ACQUIRED // ${jitterFreq} MHz Â· LOCK ${radarLock}%`;
+          break;
+        case 3:
+          const bpm = Math.floor(74 + scope.hoverProgress * 18 + (Math.random() * 4 - 2));
+          tag.textContent = `VITALS ACTIVE // ${bpm} BPM Â· SpO2 99% Â· ${jitterFreq} GHz`;
+          break;
+        case 4:
+          const pwm = Math.floor(58 + scope.probeX * 28 + (Math.random() * 3));
+          tag.textContent = `BUS SYNCED // ${jitterFreq} MHz Â· I2C 400kHz Â· PWM ${pwm}%`;
+          break;
+        case 5:
+          const rpm = Math.floor(3580 + (Math.random() * 40 - 20) + scope.hoverProgress * 400);
+          tag.textContent = `VIBE SENSOR // ${jitterFreq} GHz Â· ${rpm} RPM Â· RMS 0.42mm/s`;
+          break;
+        case 6:
+          const gridHz = (50.00 + (Math.random() * 0.04 - 0.02)).toFixed(2);
+          const vac = Math.floor(414 + Math.random() * 3);
+          tag.textContent = `GRID SYNCED // ${jitterFreq} GHz Â· ${gridHz} Hz Â· ${vac} VAC`;
+          break;
+        default:
+          tag.textContent = scope.config.hoverPrefix;
+      }
+    }
+
+    drawScopeGraticule(ctx, w, h) {
+      ctx.save();
+      const midY = h * 0.5;
+
+      // Center horizontal axis
+      ctx.beginPath();
+      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = 'rgba(217, 169, 58, 0.18)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(0, midY);
+      ctx.lineTo(w, midY);
+      ctx.stroke();
+
+      // Tick marks on center horizontal axis
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(217, 169, 58, 0.28)';
+      const step = w / 10;
+      for (let i = 1; i < 10; i++) {
+        const x = i * step;
+        ctx.beginPath();
+        ctx.moveTo(x, midY - 3);
+        ctx.lineTo(x, midY + 3);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 1: General Innovation & Open Innovation (Amber)
+     * Rich Multi-Harmonic Synthesizer Wave with Phosphor Glow & Cursor Modulation
+     */
+    drawHarmonicSynthesizer(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress, probeX } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.0 : 3.5) + hoverProgress * 3.0;
+      const fHarmonic = 3.0 + hoverProgress * (probeX * 3.0 + 1.0);
+
+      const amp1 = h * 0.32;
+      const amp2 = h * (0.12 + hoverProgress * 0.08);
+      const amp3 = h * (0.05 + hoverProgress * 0.04);
+
+      // Phosphor Glow Layer
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.5 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 140);
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+        const y = midY +
+          Math.sin(u * Math.PI * 4 - t * speed) * amp1 +
+          Math.sin(u * Math.PI * fHarmonic * 2 - t * speed * 1.6 + 0.8) * amp2 +
+          Math.sin(u * Math.PI * 12 + t * speed * 0.8) * amp3;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Electron Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Leading Electron Sweep Head
+      const sweepU = (t * 0.35 * speed) % 1.0;
+      const sweepIdx = Math.floor(sweepU * (points.length - 1));
+      const head = points[sweepIdx] || points[0];
+
+      const grad = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 16);
+      grad.addColorStop(0, '#FFFFFF');
+      grad.addColorStop(0.25, config.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 2: Defence & National Security (Cyan)
+     * Tactical Radar Sweep & Encrypted Chirp Pulse Packet with Stepped Military Jitter
+     */
+    drawRadarChirp(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 0.8 : 2.4) + hoverProgress * 2.0;
+
+      // Advancing Chirp Wave Packet Center
+      const packetCenter = (t * speed * 0.45) % 1.25 - 0.12;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 150);
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Gaussian Envelope centered around packetCenter
+        const dist = Math.abs(u - packetCenter);
+        const envelope = Math.exp(-(dist * dist) / 0.018);
+
+        // High-frequency chirp within envelope + base carrier
+        const chirpCarrier = Math.sin((u * 14 + (dist < 0.15 ? Math.pow(u - packetCenter, 2) * 280 : 0)) * Math.PI * 2 - t * 6.0);
+        const baseNoise = Math.sin(u * Math.PI * 6 - t * speed * 1.2) * (h * 0.06);
+
+        // Stepped military encryption jitter
+        const digitalStep = (Math.floor(u * 28) % 3 === 0 ? 1 : -1) * (1.2 + hoverProgress * 1.8);
+
+        const y = midY + (chirpCarrier * (h * 0.38) * envelope) + baseNoise + digitalStep;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Sweeping Tactical Sonar Vertical Radar Beam
+      const radarX = Math.max(0, Math.min(w, packetCenter * w));
+      const beamGrad = ctx.createLinearGradient(radarX - 18, 0, radarX + 4, 0);
+      beamGrad.addColorStop(0, 'transparent');
+      beamGrad.addColorStop(0.7, 'rgba(0, 229, 255, 0.08)');
+      beamGrad.addColorStop(1, 'rgba(0, 229, 255, 0.38)');
+      ctx.fillStyle = beamGrad;
+      ctx.fillRect(radarX - 18, 0, 22, h);
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 3: Healthcare & Assistive Technology (Emerald)
+     * Clinical Biometric ECG (P-Q-R-S-T) Heartbeat Monitor with Phosphor Persistence Sweep
+     */
+    drawBiometricECG(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.52;
+      const heartRate = (this.prefersReducedMotion ? 0.9 : 1.35) + hoverProgress * 0.8;
+      scope.ecgPhase += delta * heartRate;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 14 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 1.8), 160);
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Cardiac cycle progress (0.0 to 1.0)
+        let tau = (u * 2.2 - scope.ecgPhase) % 1.0;
+        if (tau < 0) tau += 1.0;
+
+        let ecgY = 0;
+        // P-Wave (Atrial Depolarization)
+        if (tau >= 0.15 && tau < 0.25) {
+          const pt = (tau - 0.15) / 0.10;
+          ecgY = -Math.sin(pt * Math.PI) * (h * 0.14);
+        }
+        // Q-Dip
+        else if (tau >= 0.27 && tau < 0.30) {
+          const qt = (tau - 0.27) / 0.03;
+          ecgY = Math.sin(qt * Math.PI) * (h * 0.10);
+        }
+        // R-Spike (Ventricular Depolarization) - Massive sharp spike!
+        else if (tau >= 0.30 && tau < 0.35) {
+          const rt = (tau - 0.30) / 0.05;
+          ecgY = -Math.sin(rt * Math.PI) * (h * 0.44 + hoverProgress * (h * 0.08));
+        }
+        // S-Dip (Deep negative deflection)
+        else if (tau >= 0.35 && tau < 0.39) {
+          const st = (tau - 0.35) / 0.04;
+          ecgY = Math.sin(st * Math.PI) * (h * 0.16);
+        }
+        // T-Wave (Ventricular Repolarization)
+        else if (tau >= 0.48 && tau < 0.62) {
+          const tt = (tau - 0.48) / 0.14;
+          ecgY = -Math.sin(tt * Math.PI) * (h * 0.20);
+        }
+        // Isoelectric Baseline + subtle electronic 50Hz hum
+        else {
+          ecgY = Math.sin(u * Math.PI * 40 + t * 8) * 0.7;
+        }
+
+        const y = midY + ecgY;
+        points.push({ x, y, tau });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Electron Beam Sweep Wash
+      const sweepX = ((scope.ecgPhase * 0.45) % 1.0) * w;
+      const sweepFade = ctx.createLinearGradient(sweepX - 25, 0, sweepX + 2, 0);
+      sweepFade.addColorStop(0, 'transparent');
+      sweepFade.addColorStop(1, 'rgba(0, 230, 118, 0.28)');
+      ctx.fillStyle = sweepFade;
+      ctx.fillRect(sweepX - 25, 0, 27, h);
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 4: Smart Home & Consumer Electronics (Violet)
+     * Digital Logic Analyzer Bus with Clock Pulses, PWM Bursts & Slew S-Curves
+     */
+    drawDigitalLogicPWM(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress, probeX } = scope;
+      const highY = h * 0.22;
+      const lowY = h * 0.78;
+      const speed = (this.prefersReducedMotion ? 1.0 : 2.8) + hoverProgress * 3.5;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 160);
+
+      // Packet byte sequence
+      const bitStream = [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1];
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Shift bit stream horizontally
+        const streamPos = (u * 12 + t * speed) % bitStream.length;
+        const bitIdx = Math.floor(streamPos);
+        const bitFrac = streamPos - bitIdx;
+
+        const currentBit = bitStream[bitIdx];
+        const nextBit = bitStream[(bitIdx + 1) % bitStream.length];
+
+        let targetY = currentBit === 1 ? highY : lowY;
+
+        // Slew rate rounding on transitions
+        if (currentBit !== nextBit && bitFrac > 0.82) {
+          const transitionProgress = (bitFrac - 0.82) / 0.18;
+          const nextY = nextBit === 1 ? highY : lowY;
+          // Smooth tanh transition
+          targetY = targetY + (nextY - targetY) * (0.5 + 0.5 * Math.sin((transitionProgress - 0.5) * Math.PI));
+        }
+
+        // Add PWM high-speed ripple on high states
+        if (currentBit === 1) {
+          const pwmFreq = 30 + hoverProgress * 20;
+          targetY += Math.sin(u * Math.PI * pwmFreq + t * 14) * (1.2 + hoverProgress * 1.4);
+        }
+
+        points.push({ x, y: targetY });
+        if (i === 0) ctx.moveTo(x, targetY);
+        else ctx.lineTo(x, targetY);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Clock tick pulses along bottom baseline
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(187, 134, 252, 0.45)';
+      ctx.lineWidth = 1;
+      const clockStep = w / 16;
+      for (let c = 0; c <= 16; c++) {
+        const cx = (c * clockStep + (t * speed * 8)) % w;
+        ctx.moveTo(cx, lowY + 5);
+        ctx.lineTo(cx, lowY + 9);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 5: Industrial Automation & Monitoring (Copper)
+     * Vibration Telemetry & Machine Tachometer Sawtooth FFT Harmonic Wave
+     */
+    drawVibrationSawtooth(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.0 : 3.0) + hoverProgress * 3.0;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 150);
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Sawtooth ramp (RPM rotation cycle)
+        let ramp = (u * 4.5 - t * speed) % 1.0;
+        if (ramp < 0) ramp += 1.0;
+        const sawY = (ramp - 0.5) * (h * 0.46);
+
+        // High-frequency bearing resonance near ramp discharge
+        const bearingDecay = Math.exp(-Math.pow(ramp - 0.85, 2) / 0.035);
+        const bearingRing = Math.sin(u * Math.PI * 48 - t * 20) * (h * 0.15) * bearingDecay;
+
+        // Heavy industrial low-frequency vibration
+        const mechVibe = Math.sin(u * Math.PI * 8 + t * 4) * (h * 0.08);
+
+        const y = midY + sawY * 0.65 + bearingRing + mechVibe;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 6: Energy, Power & Sustainability (Ruby)
+     * Resonant 3-Phase High-Voltage AC Power Transmission & Corona Plasma Wave
+     */
+    drawThreePhaseAC(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.2 : 3.6) + hoverProgress * 2.8;
+
+      ctx.save();
+      const steps = Math.min(Math.floor(w / 2), 150);
+
+      // Phase 1: Primary 50Hz Transmission Line
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 14 + hoverProgress * 8;
+
+      const p1 = [];
+      const p2 = [];
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Phase 1 Sinusoid
+        const y1 = midY + Math.sin(u * Math.PI * 5 - t * speed) * (h * 0.38) +
+          Math.sin(u * Math.PI * 15 + t * 6) * (1.2 + hoverProgress * 2.0);
+
+        // Phase 2 (120-degree phase shift)
+        const y2 = midY + Math.sin(u * Math.PI * 5 - t * speed + (2 * Math.PI / 3)) * (h * 0.32) +
+          Math.cos(u * Math.PI * 15 + t * 6) * (1.0 + hoverProgress * 1.8);
+
+        p1.push({ x, y: y1 });
+        p2.push({ x, y: y2 });
+
+        if (i === 0) ctx.moveTo(x, y1);
+        else ctx.lineTo(x, y1);
+      }
+      ctx.stroke();
+
+      // Phase 2 Secondary Interlaced Trace
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 75, 110, 0.45)';
+      ctx.lineWidth = 2.0;
+      p2.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Sharp Core Electron Beam on Phase 1
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      p1.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Plasma corona spark nodes at wave intersection points
+      if (hoverProgress > 0.15) {
+        ctx.fillStyle = '#FFFFFF';
+        p1.forEach((pt, i) => {
+          if (i % 24 === 0 && Math.abs(pt.y - p2[i].y) < 12) {
+            ctx.beginPath();
+            ctx.arc(pt.x, (pt.y + p2[i].y) * 0.5, 2.5 * hoverProgress, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
+
+      ctx.restore();
+    }
+  }
+
+  // Initialize on DOMContentLoaded or immediately if already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new DomainOscilloscopeEngine());
+  } else {
+    new DomainOscilloscopeEngine();
+  }
+})();
+        Ç x ÿÿ     20261006030843-8lïÆ ¾4,   http://localhost:3000/domain-oscilloscope.js      €·  /**
+ * OVERCLOCK 2027 â€” CRT OSCILLOSCOPE & SIGNAL TELEMETRY ENGINE
+ * FCRIT Ã— IEEE Student Branch
+ *
+ * Implements 6 mathematically authentic, domain-specific hardware waveforms
+ * rendered onto vintage 1970s TVA-style phosphor CRT monitors with:
+ *  - Tektronix-style graticule grid with center graduation tick marks
+ *  - Phosphor persistence decay trails & electron beam luminous sweep heads
+ *  - Domain 1 (Amber): Multi-Harmonic Synthesizer Waveform
+ *  - Domain 2 (Cyan): Tactical Radar Chirp & Sonar Encrypted Pulse
+ *  - Domain 3 (Emerald): Clinical Biometric ECG Heartbeat Monitor
+ *  - Domain 4 (Violet): Digital Logic Analyzer & PWM Telemetry Bus
+ *  - Domain 5 (Copper): Vibration Telemetry & Tachometer Sawtooth FFT
+ *  - Domain 6 (Ruby): Resonant 3-Phase High-Voltage AC Power Wave
+ *  - Interactive Signal Probe: Mouse/touch tracking modulates frequency and
+ *    displays real-time fluctuating telemetry in the channel tag.
+ *  - Performance-optimized: single RAF loop with IntersectionObserver sleep.
+ */
+
+(function () {
+  'use strict';
+
+  /* ==========================================================
+     DOMAIN WAVE ACOUSTIC & HAPTIC VIBRATION SYNTHESIZER
+     Generates authentic, mathematically tuned domain wave audio
+     and physical haptic vibration for all 6 domain slots.
+  ========================================================== */
+  class DomainWaveAcousticEngine {
+    constructor() {
+      this.audioCtx = null;
+      this.masterGain = null;
+      this.activeVoice = null;
+      this.activeSlot = null;
+      this.pulseTimer = null;
+      this.muted = false;
+      this.bindUnlockGesture();
+    }
+
+    bindUnlockGesture() {
+      const unlock = () => {
+        this.ensureContext();
+        window.removeEventListener('pointerdown', unlock);
+        window.removeEventListener('keydown', unlock);
+        window.removeEventListener('touchstart', unlock);
+      };
+      window.addEventListener('pointerdown', unlock, { passive: true });
+      window.addEventListener('keydown', unlock, { passive: true });
+      window.addEventListener('touchstart', unlock, { passive: true });
+    }
+
+    ensureContext() {
+      if (!this.audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.audioCtx = new AudioCtx();
+          this.masterGain = this.audioCtx.createGain();
+          this.masterGain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+          this.masterGain.connect(this.audioCtx.destination);
+        }
+      }
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+      return this.audioCtx;
+    }
+
+    triggerHaptic(slotNum) {
+      if (typeof navigator === 'undefined' || !navigator.vibrate) return;
+      try {
+        const patterns = {
+          1: [70],                      // Warm analog hum
+          2: [35, 45, 35],              // Tactical sonar/radar chirp
+          3: [50, 75, 40],              // Cardiac lub-dub pulse
+          4: [15, 20, 15, 20, 25],      // High-speed digital packet chatter
+          5: [120, 40, 80],             // Heavy rotating machinery
+          6: [180]                      // High-voltage 50Hz AC buzz
+        };
+        const pat = patterns[slotNum] || [50];
+        navigator.vibrate(pat);
+      } catch (_) {}
+    }
+
+    startWaveVoice(slotNum, probeX = 0.5, probeY = 0.5) {
+      if (this.muted || (window.overclockApp && !window.overclockApp.audioEnabled)) return;
+      const ctx = this.ensureContext();
+      if (!ctx) return;
+
+      this.triggerHaptic(slotNum);
+
+      if (this.activeSlot === slotNum && this.activeVoice) {
+        this.modulateVoice(probeX, probeY);
+        return;
+      }
+
+      this.stopWaveVoice();
+
+      this.activeSlot = slotNum;
+      const now = ctx.currentTime;
+
+      switch (slotNum) {
+        case 1:
+          this.activeVoice = this.createHarmonicSynthVoice(ctx, now, probeX);
+          break;
+        case 2:
+          this.activeVoice = this.createRadarSonarVoice(ctx, now, probeX);
+          break;
+        case 3:
+          this.activeVoice = this.createECGHeartbeatVoice(ctx, now, probeX);
+          break;
+        case 4:
+          this.activeVoice = this.createDigitalLogicVoice(ctx, now, probeX);
+          break;
+        case 5:
+          this.activeVoice = this.createIndustrialVibrationVoice(ctx, now, probeX);
+          break;
+        case 6:
+          this.activeVoice = this.createHighVoltageACVoice(ctx, now, probeX);
+          break;
+      }
+    }
+
+    modulateVoice(probeX, probeY) {
+      if (this.activeVoice && typeof this.activeVoice.modulate === 'function') {
+        this.activeVoice.modulate(probeX, probeY);
+      }
+    }
+
+    triggerAcousticBurst(slotNum, probeX = 0.5) {
+      this.startWaveVoice(slotNum, probeX, 0.5);
+      setTimeout(() => {
+        if (this.activeSlot === slotNum) {
+          this.stopWaveVoice();
+        }
+      }, 1200);
+    }
+
+    stopWaveVoice() {
+      if (this.pulseTimer) {
+        clearInterval(this.pulseTimer);
+        clearTimeout(this.pulseTimer);
+        this.pulseTimer = null;
+      }
+      if (this.activeVoice) {
+        try {
+          this.activeVoice.stop();
+        } catch (_) {}
+        this.activeVoice = null;
+      }
+      this.activeSlot = null;
+    }
+
+    // 1. Slot 1: Multi-Harmonic Synthesizer (Amber)
+    createHarmonicSynthVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.75, now + 0.08);
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(196, now); // G3
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(293.66, now); // D4
+      osc2.detune.setValueAtTime(8, now);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.8, now);
+      filter.frequency.setValueAtTime(350 + probeX * 850, now);
+
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(4.5, now);
+      lfoGain.gain.setValueAtTime(3.5, now);
+      lfo.connect(osc1.frequency);
+
+      const oscMix = ctx.createGain();
+      oscMix.gain.setValueAtTime(0.45, now);
+      osc1.connect(filter);
+      osc2.connect(oscMix);
+      oscMix.connect(filter);
+
+      filter.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      lfo.start(now);
+
+      return {
+        modulate: (px) => {
+          const targetFreq = 196 + px * 60;
+          const targetCutoff = 350 + px * 1100;
+          osc1.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.04);
+          osc2.frequency.setTargetAtTime(targetFreq * 1.5, ctx.currentTime, 0.04);
+          filter.frequency.setTargetAtTime(targetCutoff, ctx.currentTime, 0.04);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.14);
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              lfo.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 160);
+        }
+      };
+    }
+
+    // 2. Slot 2: Tactical Radar & Sonar Ping (Cyan)
+    createRadarSonarVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      let currentProbeX = probeX;
+
+      const triggerPing = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+
+        // Sonar Ping (Resonant tone with slow decay)
+        const pingOsc = ctx.createOscillator();
+        const pingGain = ctx.createGain();
+        pingOsc.type = 'sine';
+        pingOsc.frequency.setValueAtTime(920 + currentProbeX * 280, t);
+        pingOsc.frequency.exponentialRampToValueAtTime(800, t + 0.45);
+
+        pingGain.gain.setValueAtTime(0.001, t);
+        pingGain.gain.linearRampToValueAtTime(0.8, t + 0.015);
+        pingGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+
+        pingOsc.connect(pingGain);
+        pingGain.connect(voiceGain);
+        pingOsc.start(t);
+        pingOsc.stop(t + 0.55);
+
+        // Tactical Chirp Burst (Fast frequency radar sweep)
+        const chirpOsc = ctx.createOscillator();
+        const chirpGain = ctx.createGain();
+        chirpOsc.type = 'sine';
+        chirpOsc.frequency.setValueAtTime(1100, t);
+        chirpOsc.frequency.exponentialRampToValueAtTime(2200, t + 0.065);
+
+        chirpGain.gain.setValueAtTime(0.001, t);
+        chirpGain.gain.linearRampToValueAtTime(0.35, t + 0.008);
+        chirpGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
+
+        chirpOsc.connect(chirpGain);
+        chirpGain.connect(voiceGain);
+        chirpOsc.start(t);
+        chirpOsc.stop(t + 0.08);
+
+        this.triggerHaptic(2);
+      };
+
+      triggerPing();
+      this.pulseTimer = setInterval(triggerPing, 700);
+
+      return {
+        modulate: (px) => {
+          currentProbeX = px;
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.08);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 150);
+        }
+      };
+    }
+
+    // 3. Slot 3: Clinical Biometric ECG Heartbeat Monitor (Emerald)
+    createECGHeartbeatVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      const triggerECGCycle = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+
+        // Cardiac Lub (Low damped tone)
+        const lubOsc = ctx.createOscillator();
+        const lubGain = ctx.createGain();
+        lubOsc.type = 'sine';
+        lubOsc.frequency.setValueAtTime(82, t);
+        lubOsc.frequency.exponentialRampToValueAtTime(42, t + 0.07);
+
+        lubGain.gain.setValueAtTime(0.001, t);
+        lubGain.gain.linearRampToValueAtTime(0.72, t + 0.015);
+        lubGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+
+        lubOsc.connect(lubGain);
+        lubGain.connect(voiceGain);
+        lubOsc.start(t);
+        lubOsc.stop(t + 0.09);
+
+        // Cardiac Dub (Second pulse)
+        const dubTime = t + 0.11;
+        const dubOsc = ctx.createOscillator();
+        const dubGain = ctx.createGain();
+        dubOsc.type = 'sine';
+        dubOsc.frequency.setValueAtTime(68, dubTime);
+        dubOsc.frequency.exponentialRampToValueAtTime(36, dubTime + 0.06);
+
+        dubGain.gain.setValueAtTime(0.001, dubTime);
+        dubGain.gain.linearRampToValueAtTime(0.6, dubTime + 0.012);
+        dubGain.gain.exponentialRampToValueAtTime(0.0001, dubTime + 0.07);
+
+        dubOsc.connect(dubGain);
+        dubGain.connect(voiceGain);
+        dubOsc.start(dubTime);
+        dubOsc.stop(dubTime + 0.08);
+
+        // Clinical Vitals Telemetry Monitor Blip (QRS)
+        const beepTime = t + 0.22;
+        const beepOsc = ctx.createOscillator();
+        const beepGain = ctx.createGain();
+        beepOsc.type = 'sine';
+        beepOsc.frequency.setValueAtTime(987.77, beepTime);
+
+        beepGain.gain.setValueAtTime(0.001, beepTime);
+        beepGain.gain.linearRampToValueAtTime(0.4, beepTime + 0.008);
+        beepGain.gain.exponentialRampToValueAtTime(0.0001, beepTime + 0.075);
+
+        beepOsc.connect(beepGain);
+        beepGain.connect(voiceGain);
+        beepOsc.start(beepTime);
+        beepOsc.stop(beepTime + 0.085);
+
+        this.triggerHaptic(3);
+      };
+
+      triggerECGCycle();
+      this.pulseTimer = setInterval(triggerECGCycle, 800);
+
+      return {
+        modulate: (px) => {
+          const interval = 880 - px * 220;
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          this.pulseTimer = setInterval(triggerECGCycle, interval);
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.08);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 150);
+        }
+      };
+    }
+
+    // 4. Slot 4: Digital Logic & PWM Telemetry Bus (Violet)
+    createDigitalLogicVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      let currentProbeX = probeX;
+
+      const triggerDataPacket = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+        const freqs = [587.33, 739.99, 880.00, 1174.66, 1479.98];
+        const stepDur = 0.024;
+
+        freqs.forEach((freq, idx) => {
+          const stepTime = t + idx * stepDur;
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq * (0.9 + currentProbeX * 0.3), stepTime);
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1600, stepTime);
+
+          g.gain.setValueAtTime(0.001, stepTime);
+          g.gain.linearRampToValueAtTime(0.26, stepTime + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0001, stepTime + stepDur - 0.002);
+
+          osc.connect(filter);
+          filter.connect(g);
+          g.connect(voiceGain);
+
+          osc.start(stepTime);
+          osc.stop(stepTime + stepDur);
+        });
+
+        this.triggerHaptic(4);
+      };
+
+      triggerDataPacket();
+      this.pulseTimer = setInterval(triggerDataPacket, 460);
+
+      return {
+        modulate: (px) => {
+          currentProbeX = px;
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.06);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 120);
+        }
+      };
+    }
+
+    // 5. Slot 5: Industrial Automation Motor Vibration & Tachometer (Copper)
+    createIndustrialVibrationVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.85, now + 0.09);
+
+      const baseFreq = 75 + probeX * 55;
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(baseFreq, now);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(baseFreq + 1.8, now);
+
+      const subOsc = ctx.createOscillator();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(baseFreq * 0.5, now);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.6, now);
+      filter.frequency.setValueAtTime(260 + probeX * 240, now);
+
+      const mix1 = ctx.createGain();
+      mix1.gain.setValueAtTime(0.42, now);
+      const mix2 = ctx.createGain();
+      mix2.gain.setValueAtTime(0.32, now);
+      const mixSub = ctx.createGain();
+      mixSub.gain.setValueAtTime(0.38, now);
+
+      osc1.connect(mix1);
+      osc2.connect(mix2);
+      subOsc.connect(mixSub);
+
+      mix1.connect(filter);
+      mix2.connect(filter);
+      mixSub.connect(filter);
+
+      filter.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      subOsc.start(now);
+
+      return {
+        modulate: (px) => {
+          const f = 75 + px * 60;
+          osc1.frequency.setTargetAtTime(f, ctx.currentTime, 0.05);
+          osc2.frequency.setTargetAtTime(f + 1.8, ctx.currentTime, 0.05);
+          subOsc.frequency.setTargetAtTime(f * 0.5, ctx.currentTime, 0.05);
+          filter.frequency.setTargetAtTime(260 + px * 300, ctx.currentTime, 0.05);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.16);
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              subOsc.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 190);
+        }
+      };
+    }
+
+    // 6. Slot 6: High-Voltage 3-Phase AC Power Grid (Ruby)
+    createHighVoltageACVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.85, now + 0.08);
+
+      const osc50 = ctx.createOscillator();
+      osc50.type = 'sine';
+      osc50.frequency.setValueAtTime(50.0, now);
+
+      const osc100 = ctx.createOscillator();
+      osc100.type = 'sine';
+      osc100.frequency.setValueAtTime(100.0, now);
+
+      const osc150 = ctx.createOscillator();
+      osc150.type = 'triangle';
+      osc150.frequency.setValueAtTime(150.0, now);
+
+      const gain50 = ctx.createGain();
+      gain50.gain.setValueAtTime(0.65, now);
+      const gain100 = ctx.createGain();
+      gain100.gain.setValueAtTime(0.35, now);
+      const gain150 = ctx.createGain();
+      gain150.gain.setValueAtTime(0.2, now);
+
+      osc50.connect(gain50);
+      osc100.connect(gain100);
+      osc150.connect(gain150);
+
+      const gridMix = ctx.createGain();
+      gain50.connect(gridMix);
+      gain100.connect(gridMix);
+      gain150.connect(gridMix);
+
+      gridMix.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc50.start(now);
+      osc100.start(now);
+      osc150.start(now);
+
+      return {
+        modulate: (px) => {
+          const gridFreq = 50.0 + (px - 0.5) * 1.5;
+          osc50.frequency.setTargetAtTime(gridFreq, ctx.currentTime, 0.08);
+          osc100.frequency.setTargetAtTime(gridFreq * 2, ctx.currentTime, 0.08);
+          osc150.frequency.setTargetAtTime(gridFreq * 3, ctx.currentTime, 0.08);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.16);
+          setTimeout(() => {
+            try {
+              osc50.stop();
+              osc100.stop();
+              osc150.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 190);
+        }
+      };
+    }
+  }
+
+  class DomainOscilloscopeEngine {
+    constructor() {
+      this.gridContainer = document.querySelector('.domain-slots-grid');
+      if (!this.gridContainer) return;
+
+      this.cards = Array.from(document.querySelectorAll('.domain-slot-card'));
+      if (this.cards.length === 0) return;
+
+      this.isVisible = false;
+      this.rafId = null;
+      this.lastTime = performance.now();
+      this.globalTime = 0;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      this.acousticEngine = new DomainWaveAcousticEngine();
+      this.scopes = [];
+      this.initScopes();
+      this.setupObserver();
+      this.bindWindowEvents();
+    }
+
+    initScopes() {
+      const DOMAIN_CONFIGS = [
+        // Slot 1: General Innovation & Open Innovation (Amber)
+        {
+          slot: 1,
+          color: '#FF9D3B',
+          glowColor: 'rgba(255, 157, 59, 0.75)',
+          beamColor: '#FFF1D0',
+          baseFreq: 433.92,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // AMBER TRACE',
+          hoverPrefix: 'SIGNAL LOCKED // 433.92 MHz Â· 3.42 Vpp Â· THD 1.2%',
+          draw: this.drawHarmonicSynthesizer.bind(this)
+        },
+        // Slot 2: Defence & National Security (Cyan)
+        {
+          slot: 2,
+          color: '#00E5FF',
+          glowColor: 'rgba(0, 229, 255, 0.75)',
+          beamColor: '#E0FFFF',
+          baseFreq: 868.30,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // CYAN TRACE',
+          hoverPrefix: 'TACTICAL ACQUIRED // 868.30 MHz Â· RADAR LOCK 99.4%',
+          draw: this.drawRadarChirp.bind(this)
+        },
+        // Slot 3: Healthcare & Assistive Technology (Emerald)
+        {
+          slot: 3,
+          color: '#00E676',
+          glowColor: 'rgba(0, 230, 118, 0.8)',
+          beamColor: '#E8F5E9',
+          baseFreq: 2.412,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // EMERALD TRACE',
+          hoverPrefix: 'VITALS ACTIVE // 78 BPM Â· SpO2 99% Â· 2.412 GHz',
+          draw: this.drawBiometricECG.bind(this)
+        },
+        // Slot 4: Smart Home & Consumer Electronics (Violet)
+        {
+          slot: 4,
+          color: '#BB86FC',
+          glowColor: 'rgba(187, 134, 252, 0.75)',
+          beamColor: '#F3E5F5',
+          baseFreq: 915.00,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // VIOLET TRACE',
+          hoverPrefix: 'BUS SYNCED // 915.00 MHz Â· I2C 400kHz Â· PWM 64%',
+          draw: this.drawDigitalLogicPWM.bind(this)
+        },
+        // Slot 5: Industrial Automation & Monitoring (Copper)
+        {
+          slot: 5,
+          color: '#FF8C42',
+          glowColor: 'rgba(255, 140, 66, 0.75)',
+          beamColor: '#FFE0B2',
+          baseFreq: 5.80,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // COPPER TRACE',
+          hoverPrefix: 'VIBE SENSOR // 5.80 GHz Â· 3600 RPM Â· 0.42 mm/s RMS',
+          draw: this.drawVibrationSawtooth.bind(this)
+        },
+        // Slot 6: Energy, Power & Sustainability (Ruby)
+        {
+          slot: 6,
+          color: '#FF4B6E',
+          glowColor: 'rgba(255, 75, 110, 0.8)',
+          beamColor: '#FFCDD2',
+          baseFreq: 10.50,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // RUBY TRACE',
+          hoverPrefix: 'GRID SYNCHRONIZED // 10.50 GHz Â· 50.02 Hz Â· 415 VAC',
+          draw: this.drawThreePhaseAC.bind(this)
+        }
+      ];
+
+      this.cards.forEach((card, index) => {
+        const slotNum = parseInt(card.dataset.slot || (index + 1), 10);
+        const config = DOMAIN_CONFIGS.find(c => c.slot === slotNum) || DOMAIN_CONFIGS[index % DOMAIN_CONFIGS.length];
+        const screen = card.querySelector('.domain-screen-display');
+        const container = card.querySelector('.screen-waveform-container');
+        const channelTag = card.querySelector('.slot-channel-tag');
+
+        if (!screen || !container) return;
+
+        // Ensure reticle grid and CRT glow elements exist
+        if (!screen.querySelector('.screen-reticle-grid')) {
+          const reticle = document.createElement('div');
+          reticle.className = 'screen-reticle-grid';
+          reticle.setAttribute('aria-hidden', 'true');
+          screen.insertBefore(reticle, screen.firstChild);
+        }
+
+        if (!screen.querySelector('.screen-crt-glow')) {
+          const glow = document.createElement('div');
+          glow.className = 'screen-crt-glow';
+          glow.setAttribute('aria-hidden', 'true');
+          screen.appendChild(glow);
+        }
+
+        // Hide fallback static SVG once canvas is active
+        const fallbackSvg = container.querySelector('.waveform-svg');
+        if (fallbackSvg) {
+          fallbackSvg.classList.add('fallback-wave');
+        }
+
+        // Create or bind canvas
+        let canvas = container.querySelector('.domain-scope-canvas');
+        if (!canvas) {
+          canvas = document.createElement('canvas');
+          canvas.className = 'domain-scope-canvas';
+          canvas.setAttribute('aria-hidden', 'true');
+          container.appendChild(canvas);
+        }
+
+        const ctx = canvas.getContext('2d', { alpha: true });
+
+        const scope = {
+          slotNum,
+          card,
+          screen,
+          container,
+          canvas,
+          ctx,
+          config,
+          channelTag,
+          width: 0,
+          height: 0,
+          isHovered: false,
+          hoverProgress: 0,
+          probeX: 0.5,
+          probeY: 0.5,
+          jitterCounter: 0,
+          ecgPhase: Math.random() * 10
+        };
+
+        this.bindScopeInteractions(scope);
+        this.resizeScope(scope);
+        this.scopes.push(scope);
+      });
+    }
+
+    bindScopeInteractions(scope) {
+      const updateProbe = (clientX, clientY) => {
+        const rect = scope.screen.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          scope.probeX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          scope.probeY = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+        }
+      };
+
+      scope.card.addEventListener('mouseenter', (e) => {
+        scope.isHovered = true;
+        updateProbe(e.clientX, e.clientY);
+        scope.card.classList.add('scope-probed');
+      });
+
+      scope.card.addEventListener('mousemove', (e) => {
+        updateProbe(e.clientX, e.clientY);
+      });
+
+      scope.card.addEventListener('mouseleave', () => {
+        scope.isHovered = false;
+        scope.card.classList.remove('scope-probed');
+        if (scope.channelTag) {
+          scope.channelTag.textContent = scope.config.idleTag;
+          scope.channelTag.classList.remove('telemetry-active');
+        }
+      });
+
+      // Mobile Touch Handling
+      scope.card.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          scope.isHovered = true;
+          updateProbe(e.touches[0].clientX, e.touches[0].clientY);
+          scope.card.classList.add('scope-probed');
+        }
+      }, { passive: true });
+
+      scope.card.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+          updateProbe(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      scope.card.addEventListener('touchend', () => {
+        setTimeout(() => {
+          scope.isHovered = false;
+          scope.card.classList.remove('scope-probed');
+          if (scope.channelTag) {
+            scope.channelTag.textContent = scope.config.idleTag;
+            scope.channelTag.classList.remove('telemetry-active');
+          }
+        }, 1000);
+      }, { passive: true });
+    }
+
+    resizeScope(scope) {
+      const rect = scope.container.getBoundingClientRect();
+      const cssWidth = Math.max(rect.width, 240);
+      const cssHeight = Math.max(rect.height, 46);
+
+      scope.width = cssWidth;
+      scope.height = cssHeight;
+      scope.canvas.width = Math.floor(cssWidth * this.dpr);
+      scope.canvas.height = Math.floor(cssHeight * this.dpr);
+
+      scope.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      scope.ctx.scale(this.dpr, this.dpr);
+    }
+
+    resizeAll() {
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+      this.scopes.forEach(scope => this.resizeScope(scope));
+    }
+
+    setupObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          this.isVisible = entry.isIntersecting;
+          if (this.isVisible) {
+            this.lastTime = performance.now();
+            this.startLoop();
+          } else {
+            this.stopLoop();
+          }
+        });
+      }, { threshold: 0.05 });
+
+      observer.observe(this.gridContainer);
+    }
+
+    bindWindowEvents() {
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => this.resizeAll(), 150);
+      }, { passive: true });
+    }
+
+    startLoop() {
+      if (this.rafId) return;
+      const step = (now) => {
+        const delta = Math.min((now - this.lastTime) / 1000, 0.1);
+        this.lastTime = now;
+        this.globalTime += delta;
+
+        this.renderAll(delta, this.globalTime);
+
+        if (this.isVisible) {
+          this.rafId = requestAnimationFrame(step);
+        } else {
+          this.rafId = null;
+        }
+      };
+      this.rafId = requestAnimationFrame(step);
+    }
+
+    stopLoop() {
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+
+    renderAll(delta, t) {
+      this.scopes.forEach(scope => {
+        // Smooth hover transition
+        const targetHover = scope.isHovered ? 1.0 : 0.0;
+        scope.hoverProgress += (targetHover - scope.hoverProgress) * Math.min(delta * 8.0, 1.0);
+
+        // Update live fluctuating telemetry on hover
+        if (scope.isHovered && scope.channelTag) {
+          scope.jitterCounter += delta;
+          if (scope.jitterCounter > 0.08) {
+            scope.jitterCounter = 0;
+            this.updateLiveTelemetry(scope);
+          }
+        }
+
+        // Clear canvas
+        const ctx = scope.ctx;
+        const w = scope.width;
+        const h = scope.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw Reticle Center Line on Canvas
+        this.drawScopeGraticule(ctx, w, h);
+
+        // Render domain-specific mathematical waveform
+        scope.config.draw(scope, delta, t);
+      });
+    }
+
+    updateLiveTelemetry(scope) {
+      const tag = scope.channelTag;
+      if (!tag) return;
+      tag.classList.add('telemetry-active');
+
+      const jitterFreq = (scope.config.baseFreq + (Math.random() * 0.08 - 0.04)).toFixed(2);
+      const vpp = (3.2 + Math.random() * 0.35 + scope.hoverProgress * 0.5).toFixed(2);
+
+      switch (scope.slotNum) {
+        case 1:
+          tag.textContent = `SIGNAL LOCKED // ${jitterFreq} MHz Â· ${vpp} Vpp Â· THD 1.1%`;
+          break;
+        case 2:
+          const radarLock = (99.1 + Math.random() * 0.8).toFixed(1);
+          tag.textContent = `TACTICAL ACQUIRED // ${jitterFreq} MHz Â· LOCK ${radarLock}%`;
+          break;
+        case 3:
+          const bpm = Math.floor(74 + scope.hoverProgress * 18 + (Math.random() * 4 - 2));
+          tag.textContent = `VITALS ACTIVE // ${bpm} BPM Â· SpO2 99% Â· ${jitterFreq} GHz`;
+          break;
+        case 4:
+          const pwm = Math.floor(58 + scope.probeX * 28 + (Math.random() * 3));
+          tag.textContent = `BUS SYNCED // ${jitterFreq} MHz Â· I2C 400kHz Â· PWM ${pwm}%`;
+          break;
+        case 5:
+          const rpm = Math.floor(3580 + (Math.random() * 40 - 20) + scope.hoverProgress * 400);
+          tag.textContent = `VIBE SENSOR // ${jitterFreq} GHz Â· ${rpm} RPM Â· RMS 0.42mm/s`;
+          break;
+        case 6:
+          const gridHz = (50.00 + (Math.random() * 0.04 - 0.02)).toFixed(2);
+          const vac = Math.floor(414 + Math.random() * 3);
+          tag.textContent = `GRID SYNCED // ${jitterFreq} GHz Â· ${gridHz} Hz Â· ${vac} VAC`;
+          break;
+        default:
+          tag.textContent = scope.config.hoverPrefix;
+      }
+    }
+
+    drawScopeGraticule(ctx, w, h) {
+      ctx.save();
+      const midY = h * 0.5;
+
+      // Center horizontal axis
+      ctx.beginPath();
+      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = 'rgba(217, 169, 58, 0.18)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(0, midY);
+      ctx.lineTo(w, midY);
+      ctx.stroke();
+
+      // Tick marks on center horizontal axis
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(217, 169, 58, 0.28)';
+      const step = w / 10;
+      for (let i = 1; i < 10; i++) {
+        const x = i * step;
+        ctx.beginPath();
+        ctx.moveTo(x, midY - 3);
+        ctx.lineTo(x, midY + 3);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 1: General Innovation & Open Innovation (Amber)
+     * Rich Multi-Harmonic Synthesizer Wave with Phosphor Glow & Cursor Modulation
+     */
+    drawHarmonicSynthesizer(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress, probeX } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.0 : 3.5) + hoverProgress * 3.0;
+      const fHarmonic = 3.0 + hoverProgress * (probeX * 3.0 + 1.0);
+
+      const amp1 = h * 0.32;
+      const amp2 = h * (0.12 + hoverProgress * 0.08);
+      const amp3 = h * (0.05 + hoverProgress * 0.04);
+
+      // Phosphor Glow Layer
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.5 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 140);
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+        const y = midY +
+          Math.sin(u * Math.PI * 4 - t * speed) * amp1 +
+          Math.sin(u * Math.PI * fHarmonic * 2 - t * speed * 1.6 + 0.8) * amp2 +
+          Math.sin(u * Math.PI * 12 + t * speed * 0.8) * amp3;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Electron Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Leading Electron Sweep Head
+      const sweepU = (t * 0.35 * speed) % 1.0;
+      const sweepIdx = Math.floor(sweepU * (points.length - 1));
+      const head = points[sweepIdx] || points[0];
+
+      const grad = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 16);
+      grad.addColorStop(0, '#FFFFFF');
+      grad.addColorStop(0.25, config.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 2: Defence & National Security (Cyan)
+     * Tactical Radar Sweep & Encrypted Chirp Pulse Packet with Stepped Military Jitter
+     */
+    drawRadarChirp(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 0.8 : 2.4) + hoverProgress * 2.0;
+
+      // Advancing Chirp Wave Packet Center
+      const packetCenter = (t * speed * 0.45) % 1.25 - 0.12;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 150);
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Gaussian Envelope centered around packetCenter
+        const dist = Math.abs(u - packetCenter);
+        const envelope = Math.exp(-(dist * dist) / 0.018);
+
+        // High-frequency chirp within envelope + base carrier
+        const chirpCarrier = Math.sin((u * 14 + (dist < 0.15 ? Math.pow(u - packetCenter, 2) * 280 : 0)) * Math.PI * 2 - t * 6.0);
+        const baseNoise = Math.sin(u * Math.PI * 6 - t * speed * 1.2) * (h * 0.06);
+
+        // Stepped military encryption jitter
+        const digitalStep = (Math.floor(u * 28) % 3 === 0 ? 1 : -1) * (1.2 + hoverProgress * 1.8);
+
+        const y = midY + (chirpCarrier * (h * 0.38) * envelope) + baseNoise + digitalStep;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Sweeping Tactical Sonar Vertical Radar Beam
+      const radarX = Math.max(0, Math.min(w, packetCenter * w));
+      const beamGrad = ctx.createLinearGradient(radarX - 18, 0, radarX + 4, 0);
+      beamGrad.addColorStop(0, 'transparent');
+      beamGrad.addColorStop(0.7, 'rgba(0, 229, 255, 0.08)');
+      beamGrad.addColorStop(1, 'rgba(0, 229, 255, 0.38)');
+      ctx.fillStyle = beamGrad;
+      ctx.fillRect(radarX - 18, 0, 22, h);
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 3: Healthcare & Assistive Technology (Emerald)
+     * Clinical Biometric ECG (P-Q-R-S-T) Heartbeat Monitor with Phosphor Persistence Sweep
+     */
+    drawBiometricECG(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.52;
+      const heartRate = (this.prefersReducedMotion ? 0.9 : 1.35) + hoverProgress * 0.8;
+      scope.ecgPhase += delta * heartRate;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 14 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 1.8), 160);
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Cardiac cycle progress (0.0 to 1.0)
+        let tau = (u * 2.2 - scope.ecgPhase) % 1.0;
+        if (tau < 0) tau += 1.0;
+
+        let ecgY = 0;
+        // P-Wave (Atrial Depolarization)
+        if (tau >= 0.15 && tau < 0.25) {
+          const pt = (tau - 0.15) / 0.10;
+          ecgY = -Math.sin(pt * Math.PI) * (h * 0.14);
+        }
+        // Q-Dip
+        else if (tau >= 0.27 && tau < 0.30) {
+          const qt = (tau - 0.27) / 0.03;
+          ecgY = Math.sin(qt * Math.PI) * (h * 0.10);
+        }
+        // R-Spike (Ventricular Depolarization) - Massive sharp spike!
+        else if (tau >= 0.30 && tau < 0.35) {
+          const rt = (tau - 0.30) / 0.05;
+          ecgY = -Math.sin(rt * Math.PI) * (h * 0.44 + hoverProgress * (h * 0.08));
+        }
+        // S-Dip (Deep negative deflection)
+        else if (tau >= 0.35 && tau < 0.39) {
+          const st = (tau - 0.35) / 0.04;
+          ecgY = Math.sin(st * Math.PI) * (h * 0.16);
+        }
+        // T-Wave (Ventricular Repolarization)
+        else if (tau >= 0.48 && tau < 0.62) {
+          const tt = (tau - 0.48) / 0.14;
+          ecgY = -Math.sin(tt * Math.PI) * (h * 0.20);
+        }
+        // Isoelectric Baseline + subtle electronic 50Hz hum
+        else {
+          ecgY = Math.sin(u * Math.PI * 40 + t * 8) * 0.7;
+        }
+
+        const y = midY + ecgY;
+        points.push({ x, y, tau });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Electron Beam Sweep Wash
+      const sweepX = ((scope.ecgPhase * 0.45) % 1.0) * w;
+      const sweepFade = ctx.createLinearGradient(sweepX - 25, 0, sweepX + 2, 0);
+      sweepFade.addColorStop(0, 'transparent');
+      sweepFade.addColorStop(1, 'rgba(0, 230, 118, 0.28)');
+      ctx.fillStyle = sweepFade;
+      ctx.fillRect(sweepX - 25, 0, 27, h);
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 4: Smart Home & Consumer Electronics (Violet)
+     * Digital Logic Analyzer Bus with Clock Pulses, PWM Bursts & Slew S-Curves
+     */
+    drawDigitalLogicPWM(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress, probeX } = scope;
+      const highY = h * 0.22;
+      const lowY = h * 0.78;
+      const speed = (this.prefersReducedMotion ? 1.0 : 2.8) + hoverProgress * 3.5;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 160);
+
+      // Packet byte sequence
+      const bitStream = [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1];
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Shift bit stream horizontally
+        const streamPos = (u * 12 + t * speed) % bitStream.length;
+        const bitIdx = Math.floor(streamPos);
+        const bitFrac = streamPos - bitIdx;
+
+        const currentBit = bitStream[bitIdx];
+        const nextBit = bitStream[(bitIdx + 1) % bitStream.length];
+
+        let targetY = currentBit === 1 ? highY : lowY;
+
+        // Slew rate rounding on transitions
+        if (currentBit !== nextBit && bitFrac > 0.82) {
+          const transitionProgress = (bitFrac - 0.82) / 0.18;
+          const nextY = nextBit === 1 ? highY : lowY;
+          // Smooth tanh transition
+          targetY = targetY + (nextY - targetY) * (0.5 + 0.5 * Math.sin((transitionProgress - 0.5) * Math.PI));
+        }
+
+        // Add PWM high-speed ripple on high states
+        if (currentBit === 1) {
+          const pwmFreq = 30 + hoverProgress * 20;
+          targetY += Math.sin(u * Math.PI * pwmFreq + t * 14) * (1.2 + hoverProgress * 1.4);
+        }
+
+        points.push({ x, y: targetY });
+        if (i === 0) ctx.moveTo(x, targetY);
+        else ctx.lineTo(x, targetY);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Clock tick pulses along bottom baseline
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(187, 134, 252, 0.45)';
+      ctx.lineWidth = 1;
+      const clockStep = w / 16;
+      for (let c = 0; c <= 16; c++) {
+        const cx = (c * clockStep + (t * speed * 8)) % w;
+        ctx.moveTo(cx, lowY + 5);
+        ctx.lineTo(cx, lowY + 9);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 5: Industrial Automation & Monitoring (Copper)
+     * Vibration Telemetry & Machine Tachometer Sawtooth FFT Harmonic Wave
+     */
+    drawVibrationSawtooth(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.0 : 3.0) + hoverProgress * 3.0;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 150);
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Sawtooth ramp (RPM rotation cycle)
+        let ramp = (u * 4.5 - t * speed) % 1.0;
+        if (ramp < 0) ramp += 1.0;
+        const sawY = (ramp - 0.5) * (h * 0.46);
+
+        // High-frequency bearing resonance near ramp discharge
+        const bearingDecay = Math.exp(-Math.pow(ramp - 0.85, 2) / 0.035);
+        const bearingRing = Math.sin(u * Math.PI * 48 - t * 20) * (h * 0.15) * bearingDecay;
+
+        // Heavy industrial low-frequency vibration
+        const mechVibe = Math.sin(u * Math.PI * 8 + t * 4) * (h * 0.08);
+
+        const y = midY + sawY * 0.65 + bearingRing + mechVibe;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 6: Energy, Power & Sustainability (Ruby)
+     * Resonant 3-Phase High-Voltage AC Power Transmission & Corona Plasma Wave
+     */
+    drawThreePhaseAC(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.2 : 3.6) + hoverProgress * 2.8;
+
+      ctx.save();
+      const steps = Math.min(Math.floor(w / 2), 150);
+
+      // Phase 1: Primary 50Hz Transmission Line
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 14 + hoverProgress * 8;
+
+      const p1 = [];
+      const p2 = [];
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Phase 1 Sinusoid
+        const y1 = midY + Math.sin(u * Math.PI * 5 - t * speed) * (h * 0.38) +
+          Math.sin(u * Math.PI * 15 + t * 6) * (1.2 + hoverProgress * 2.0);
+
+        // Phase 2 (120-degree phase shift)
+        const y2 = midY + Math.sin(u * Math.PI * 5 - t * speed + (2 * Math.PI / 3)) * (h * 0.32) +
+          Math.cos(u * Math.PI * 15 + t * 6) * (1.0 + hoverProgress * 1.8);
+
+        p1.push({ x, y: y1 });
+        p2.push({ x, y: y2 });
+
+        if (i === 0) ctx.moveTo(x, y1);
+        else ctx.lineTo(x, y1);
+      }
+      ctx.stroke();
+
+      // Phase 2 Secondary Interlaced Trace
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 75, 110, 0.45)';
+      ctx.lineWidth = 2.0;
+      p2.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Sharp Core Electron Beam on Phase 1
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      p1.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Plasma corona spark nodes at wave intersection points
+      if (hoverProgress > 0.15) {
+        ctx.fillStyle = '#FFFFFF';
+        p1.forEach((pt, i) => {
+          if (i % 24 === 0 && Math.abs(pt.y - p2[i].y) < 12) {
+            ctx.beginPath();
+            ctx.arc(pt.x, (pt.y + p2[i].y) * 0.5, 2.5 * hoverProgress, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
+
+      ctx.restore();
+    }
+  }
+
+  // Initialize on DOMContentLoaded or immediately if already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new DomainOscilloscopeEngine());
+  } else {
+    new DomainOscilloscopeEngine();
+  }
+})();
+Ó˜ÀÙ§  •       )ß†%      DomainWaveAcousticEngine   Şc^      audioCtx   t-V
+      masterGain     Î%]p      activeVoice    Ê{b
+      activeSlot     ¸h¹
+
+      pulseTimer     ˜wwç      muted      ›²Ä¡      bindUnlockGesture      .${      unlock	     ¤‘®ò      ensureContext
+      ^Å¾„      window     o‰{      removeEventListener    çk?m      pointerdown    	ˆ›H      keydown    y1
+      touchstart     ñ{      addEventListener   ·Æ†™      passive    sYÈa      AudioCtx   ÿ‚Ş      AudioContext   „SŸ{      webkitAudioContext     ÉL‘
+      createGain     Év:ï      gain   >¼ÏØ      setValueAtTime     àODu      currentTime    39ò'      connect    "›ò„      destination    X}¾      state      ¨&	      suspended      Œ‰ŸŞ      resume     ‡ÆE      triggerHaptic      q´§      slotNum    ~K›ë	      navigator       Fz;å      vibrate!    ¿q¼      patterns"   A+¬L      pat#    ¿ˆGŒ      startWaveVoice$     iÖÕ      probeX%     iÖ
+      probeY&     iA‰ú      overclockApp'   ·Gµ      audioEnabled(   @n‰z      ctx)    Ÿá°}      modulateVoice*      SÚ¨      stopWaveVoice+      )5+ê      now,    3=|Î      createHarmonicSynthVoice-   Ë.pÿ      createRadarSonarVoice.      ™Ê—Ó      createECGHeartbeatVoice/    »Xl5      createDigitalLogicVoice0    û´S      createIndustrialVibrationVoice1     [x@u      createHighVoltageACVoice2   b€<      modulate3   ö¸<      triggerAcousticBurst4   güìZ
+      setTimeout5     †4Ê      clearInterval6      l&u•      clearTimeout7   È¸O      stop8   »É	      voiceGain9      
+³’      exponentialRampToValueAtTime:   ºÓä<      osc1;   –“¹†      createOscillator<   ×0      triangle=   kx	      frequency>      ºÓ¶      osc2?   «_      sawtooth@   #q­’      detuneA     Ì_2(      filterB     yÀÚ      createBiquadFilterC     óm§      lowpassD    Ê‰?•      lfoE    óMs      lfoGainF    Ìêïy      oscMixG     ?·èÅ
+      targetFreqH     »‡I      targetCutoffI   <xLB      setTargetAtTimeJ    C—’      stopTimeK   ×î¼      cancelScheduledValuesL      “çé™
+      disconnectM     ì‡¡·      currentProbeXN      ùn      triggerPingO    µ:¨      pingOscP    ã=u•      pingGainQ   I ×Ñ      sineR   ëu÷Ó      linearRampToValueAtTimeS    ”‘€      chirpOscT   Sü¨£	      chirpGainU      tN*í      setIntervalV    ¼"à      triggerECGCycleW    ¢IM”      lubOscX     òàÄ+      lubGainY    ;HJ      dubTimeZ    ºãĞâ      dubOsc[     ²©@ê      dubGain\    î7GÛ      beepTime]   R|n      beepOsc^    …Hü"      beepGain_   ¡Óüÿ      interval`   ¹‹­^      triggerDataPacketa      ´#ÖH      freqsb      [8q      stepDurc    Í Ê      freqd   _rE      idxe    ¼%!ò      stepTimef   $T{m      oscg    8øáÑ      squareh     ènz      baseFreqi   ÓzFè      subOscj     	É      mix1k   	á[      mix2l   –~Â      mixSubm     ®{Î      osc50n      ÿ“8æ      osc100o     b3#Ï      osc150p     È÷Ï      gain50q     ÙöYå      gain100r    7)-»      gain150s    šGï      gridMixt    O™{      gridFrequ   cş      DomainOscilloscopeEnginev   ğ(¼™      gridContainerw      úîë      documentx   \ˆd'      querySelectory      Yà6      .domain-slots-gridz     µ¡kT      cards{      ß^êT      querySelectorAll|   Éş‰      .domain-slot-card}      ÍVÎ‘	      isVisible~      ö¦      rafId      ß¦ê      lastTime€   -sä      performance    Iì§
+      globalTime‚     ãvHê      dprƒ    –r¥      min„    ë«ë‚      devicePixelRatio…   )a²*      prefersReducedMotion†   -GBş
+      matchMedia‡     AøTH       (prefers-reduced-motion: reduce)ˆ    zt*      matches‰    µ‹l      acousticEngineŠ     e|G;      scopes‹     °eÕI
+      initScopesŒ     õ‚_`      setupObserver      U¥:…      bindWindowEvents   	',      DOMAIN_CONFIGS     rŞ_      slot   bæ³™      color‘      »HS      #FF9D3B’    jfÕÿ	      glowColor“      tmÛ      rgba(255, 157, 59, 0.75)”   2F	      beamColor•      ,½X      #FFF1D0–    eF4Á      MHz—    ı¡'©      idleTag˜    ‡9q      CARRIER ACTIVE // AMBER TRACE™      ì¦dä      hoverPrefixš    ¬Ùc·1      SIGNAL LOCKED // 433.92 MHz · 3.42 Vpp · THD 1.2%›      ™C‚¥      drawœ   ^(©      drawHarmonicSynthesizer    Ùzâ,      bind   €„?      #00E5FFŸ    Yô@³      rgba(0, 229, 255, 0.75)     p¯©      #E0FFFF¡    1 6À      CARRIER ACTIVE // CYAN TRACE¢   û^2      TACTICAL ACQUIRED // 868.30 MHz · RADAR LOCK 99.4%£     ¿«      drawRadarChirp¤     ñÚÉ      #00E676¥    yà,ä      rgba(0, 230, 118, 0.8)¦     ğmİ=      #E8F5E9§    /2n      GHz¨    íEØ0      CARRIER ACTIVE // EMERALD TRACE©    T ˆˆ.      VITALS ACTIVE // 78 BPM · SpO2 99% · 2.412 GHzª     ¡ás      drawBiometricECG«   1—}      #BB86FC¬    ™ìÏ      rgba(187, 134, 252, 0.75)­      Hkª·      #F3E5F5®    ¼*`@      CARRIER ACTIVE // VIOLET TRACE¯     P{/      BUS SYNCED // 915.00 MHz · I2C 400kHz · PWM 64%°    »Í"      drawDigitalLogicPWM±    Ô¯¶}      #FF8C42²    ”­½Û      rgba(255, 140, 66, 0.75)³   ×ïA      #FFE0B2´    3Ïóœ      CARRIER ACTIVE // COPPER TRACEµ     “Ìî{2      VIBE SENSOR // 5.80 GHz · 3600 RPM · 0.42 mm/s RMS¶     ïŠŠ      drawVibrationSawtooth·      um1b      #FF4B6E¸    Ä\      rgba(255, 75, 110, 0.8)¹    ™§ğ      #FFCDD2º    Ûõ/      CARRIER ACTIVE // RUBY TRACE»   Q9ÈÃ3      GRID SYNCHRONIZED // 10.50 GHz · 50.02 Hz · 415 VAC¼    &?ÊÍ      drawThreePhaseAC½   ƒ_sk      card¾   y„£      dataset¿    ¡ã      configÀ     ~      screenÁ     ÿcñw      .domain-screen-displayÂ     =¤¶	      containerÃ      	·      .screen-waveform-containerÄ     M*•+
+      channelTagÅ     -H&Ô      .slot-channel-tagÆ      ¶Èã»      .screen-reticle-gridÇ   @¢è      reticleÈ    1Q      createElementÉ       R*      divÊ    l¥Ì‹	      classNameË      ë¶Y<      screen-reticle-gridÌ    âí½Ï      setAttributeÍ   Ö¡!B      aria-hiddenÎ    9Œ      insertBeforeÏ   F ¢Ì
+      firstChildĞ     ğX-u      .screen-crt-glowÑ   Wƒêl      glowÒ   ‘Aæ«      screen-crt-glowÓ    @Oá      appendChildÔ    Ø4ê      fallbackSvgÕ    ©Èì      .waveform-svgÖ      Äcİ	      classList×      ;˜      fallback-waveØ      %ó      canvasÙ     [v0–      .domain-scope-canvasÚ   ƒt•È      domain-scope-canvasÛ    Ê]Ç…
+      getContextÜ     ­¯B´      alphaİ      jœ6      scopeŞ      Sğí      widthß      œááŠ      heightà     *0	      isHoveredá      Ò™îí      hoverProgressâ      {m      jitterCounterã      gyã      ecgPhaseä   Œ‰‡y      randomå     ¸	‹      bindScopeInteractionsæ      `ö=      resizeScopeç    (!íç      pushè   íøv      updateProbeé    >”ëÈ      clientXê    ÊR¸Ç      clientYë    Ì\«      rectì   N7      getBoundingClientRectí      Ä›Ÿ0      maxî    ¾9œ      leftï   ™ã;è      topğ    Ö|ä
+      mouseenterñ     Ê8p‘      scope-probedò   Œ >	      mousemoveó      ¼ò
+È
+      mouseleaveô     °”wy      removeõ     àñ       textContentö    ±ÁwÀ      telemetry-active÷   ¶şË      touchesø    wH°Á	      touchmoveù      ¦¯      touchendú   Úº^      cssWidthû   _ë	      cssHeightü      
+iİ~      floorı      šQø†      setTransformş   òÃ÷      scaleÿ      ÏrTê	      resizeAll      ©WÎ      observer  •^Ş      IntersectionObserver  aSO>      entry     hO"`      isIntersecting    šPq	      startLoop     —ÏÆê      stopLoop  zkB	      threshold     ê`A·      observe   ÷@—è      resizeTimer	   &      resize
+    rŞCš      step  áıÂÔ      delta     jÇ÷€	      renderAll     Èb!      requestAnimationFrame     ÌW      cancelAnimationFrame  Æ/9L      targetHover   şÊ®?      updateLiveTelemetry   Ã‡`Q	      clearRect     âwü      drawScopeGraticule    “¸ÌF      tag   22Nß
+      jitterFreq    rVmµ      toFixed   ¢“-      vpp   ï´äP      SIGNAL LOCKED //      
+¿ù­       MHz ·    -óèÖ       Vpp · THD 1.1%   ™»€	      radarLock     6Œ³      TACTICAL ACQUIRED //      Eœb¢       MHz · LOCK   ŒÕY      bpm   ¥
+Í      VITALS ACTIVE //      .¸ı       BPM · SpO2 99% ·      Qü       GHz!  Hs      pwm"   x}s      BUS SYNCED // #    6ÌĞt       MHz · I2C 400kHz · PWM $  B´      rpm%   µ${      VIBE SENSOR // &    —F¸       GHz · '   #ÿ‘“       RPM · RMS 0.42mm/s(   ×±¿ì      gridHz)    ¥îáR      vac*   ‚"'      GRID SYNCED // +   ÓĞí       Hz · ,    ´´       VAC-  †Ÿ‚      save.  %1FK      midY/  ¸·¾	      beginPath0      å‹      setLineDash1   ÏâE.      strokeStyle2   Úÿ˜      rgba(217, 169, 58, 0.18)3  ”˜-	      lineWidth4     Ÿgf      moveTo5    êuñ      lineTo6    yAf§      stroke7    ¯’      rgba(217, 169, 58, 0.28)8  	0       restore9   ºé&      speed:     ƒº6	      fHarmonic;     Gëµ      amp1<  G2<      amp2=  GyÂ      amp3>  îñJ¿      lineCap?   tw|µ      round@     xu+V      lineJoinA  ¦ÇT      shadowColorB   ††¢[
+      shadowBlurC    „âÈ       pointsD    õMU•      stepsE     iÍe*      sinF   5¹;O      sweepUG    _°ÿ£      sweepIdxH  (pi      headI  J¾G*      gradJ  ¼K?­      createRadialGradientK  ?HQ      addColorStopL  yÃˆM      #FFFFFFM   ]rÎ      transparentN   ïKWœ	      fillStyleO     )¸%ä      arcP   f™V8      packetCenterQ  Ä°Í      distR  ²ÇäC      absS   G£¹      envelopeT  ª¢Î      expU   ÆÕ      chirpCarrierV  1ˆ      powW   û®#	      baseNoiseX     #ÍbQ      digitalStepY   ÚôXÖ      radarXZ    †:Ö¦      beamGrad[  Jƒ<õ      createLinearGradient\  JX÷í      rgba(0, 229, 255, 0.08)]   ×şò      rgba(0, 229, 255, 0.38)^   0Zë      fillRect_   4¨	      heartRate`     Æ}ù-      taua   ˆ¹ã      ecgYb  5¹f¼      sweepXc    (Œq	      sweepFaded     „®îÛ      rgba(0, 230, 118, 0.28)e   J’l      highYf     ïÎxÀ      lowYg  a„?¼	      bitStreamh     \˜ùÒ	      streamPosi     X½)Ö      bitIdxj    bõ      bitFrack   å 2
+      currentBitl    *ÇIò      nextBitm   M{ID      targetYn   µîkY      transitionProgresso    ìj\      nextYp     Ú¥      pwmFreqq   ²F\ô      rgba(187, 134, 252, 0.45)r     u¢À	      clockSteps     ‡ Şw      rampt  I Ó      sawYu  ñÄK_      bearingDecayv  w­Ç      bearingRingw   ŞÁ      mechVibex  Ë/      cosy   (OCİ      rgba(255, 75, 110, 0.45)z  ‰aæf
+      readyState{    fÕâ      loading|   8-j      DOMContentLoaded~  ¨ıÜ      triggerAcousticBurst/<    ÒÀ2      createHarmonicSynthVoice/stop/<…    5¤ó      createRadarSonarVoice/stop/<‰  çm      createECGHeartbeatVoice/stop/<‹    ÒA{+      createDigitalLogicVoice/triggerDataPacket/<   rÒÈS      createDigitalLogicVoice/stop/<‘    ø«¬%      createIndustrialVibrationVoice/stop/<”     ;V•      createHighVoltageACVoice/stop/<•   v—ÕN      initScopes/<–  -jâ+      initScopes/</config<˜  ©^      bindScopeInteractions/<™   Ó*;      bindScopeInteractions/</<š     , ö      resizeAll/<›   n      setupObserver/observer<œ   )©      setupObserver/observer</<     çsq=      bindWindowEvents/<    {©8°      bindWindowEvents/</resizeTimer<    „k      renderAll/<¡   S¼œå      drawHarmonicSynthesizer/<¢     ~Xøb      drawRadarChirp/<£  ù2‚+      drawBiometricECG/<¤    5-¤¶      drawDigitalLogicPWM/<¥     !Pn      drawVibrationSawtooth/<¦   Æ»š      drawThreePhaseAC/<     T   g  £   T              ï%,‰                                                                                                                                                                                          
+                 
+                                                                             	                 
+                                                             	                                                                                                                                                                                                                   !                 "                 #                                 %                &                 '                 &                 )                 &                 +                 ,                 -                                 /                0                 1                2                 3                 0                 0                 6                 7                 8                                  :      	         ;           !      <                 ;           "      >                 ?           #      @                           $      B               C           %      D                 C           &      F                 G           '      H                                  J           (      J          )      L                M           *      N                O           +      O                O                J          ,      S                T           -      U                 T           .      T           /      T           0      T           1      T           2      T           3      \           4      J           5      ^                J          6      `           7      J          8      b                 c           9      d           :      J          ;      f                g           <      h           =      J          >      j                k           ?      l                 J           @      J          A      o           B      p                 J           C      r                 s                J           D      u                 v                w                J           E      y               z                {                z           F      J           G      ~                               €                           H      J           I      ƒ               „                …                †                †                †                †                †                „           J      J           K                                                                                                L                      ”                J           M      –               —   	             ˜   
+             —           N      J           O      ›               œ                   	             œ           P      œ           Q      œ           R                 S      ³OŒc                                            Pu  P                              l                  l  `                P                              l                                              !  "              _               $  %  l                (  +              $  %  l                P$  l  `                              l               _              (  P+  $  l                8  P:  P>  PA  PD  PE  F               a              G  H                               J                              _               (  P+  $  l  `            M  P8  PN                               t  O  P  S  T               a                              J                              _               (  P+  $  l  `              8  PV  P                	   	       	   t  W  X  Y  Z  [  \  ]  ^               a              _                               J                              _               (  P+  $  l  `            M  P8  P`                               t `a  b  P             c  d               e  f  g  A               a                              J                              _              (  P+  $  l   	          	   8  Ph  :  P>  Pi  PA  Pj  k  l               a              f                               J                              _              (  P+  $  l                8  Pm  Pn  Po  Pp  q  r  s               a              t                               J                              _               u                l                  l  `                P             ½  Ò   	         	   Ø    P¿  À  Â  Ä  Ô  (  İ               c     	          Ç     	          Ñ               İ  P              è  P             é  ê               ë               e               e                               e               e                                              İ  l                ë  ú  û                 l  `             İ                 l  `                            v                                l  `              P                                               l  `              
+ P             +                              l                 Pt `l  `             İ                (  w  h               İ                     	            ! $ ( )              (  w  h               . 
+             i               x              İ   t  l                (  Pw  h  ¿  á  $  . 9 : ; < = C D F G H I             i               u  x  y               ] i              İ   t  l                (  Pw  h  ¿  á  . 9 P C D Y Z             i               u  x  Q S U W X y               ] i              İ   t  l                (  Pw  h  ¿  á  . _ C D b c             i              ` a u  x  y               ]                            İ          Çò8                  ]              ] i              İ   t  l                (  Pw  h  ¿  á  $  e f 9 C D g r             i              m u  x  h i j k l              n o              p              ] i              c               !             İ   t  l   	   	       	   (  Pw  h  ¿  á  . 9 C D    
+         i              s u  x  t u v w y               ] i              İ   t  l   
+          
+   (  Pw  h  ¿  á  P. 9 D A B`   	         i               u  x   ‚              ] i               ] i               ] i                  ¯Â0°Iô$KE®úš                                          
+    2  7     
+    2  7     
+    2  7     
+    2  7     
+    2  7     
+    2  7  	   -        ’  ”  h  Ş  —  ™  ›  	   -         ’  ”  h  Ş  —  ™  ›  	   -         ’  ”  h  Ş  —  ™  ›  	   -         ’  ”  h  Ş  —  ™  ›  	   -         ’  ”  h  Ş  —  ™  ›  	   -         ’  ”  h  Ş  —  ™  ›          Ü     P       ½  À  Â  Ø  (  ¿  Ä  Ş  ß  à  á  $  %  â  ã                                                       
+     x  y     
+    x  y         x  y  `    
+   x  y     
+    x  y     
+    x  y     
+    x  y  ‡&Õª!«!T   <     “™â­<                             o    y  â¥@`F€ rPP€€€ğ  Õ?À  Ñ                M       Ñ   ±²   â: o   çå@   ?   o   ?   o   ?	   o
+   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   â²   Ó´    â±²   â: o!   çå@   ?   o"   ?#   o$   ?%   o&   ?'   o(   ?)   o*   ?+   o,   ?-   o.   ?/   o0   ?1   o2   ?3   o4   ?5   o6   ?7   o8   ?9   o:   ?;   o<   ?=   o>   ??   o@   ?A   oB   ?C   â²   Ó´    â¼D   LE   F   š)   —H   ¼D   äLG   çH   oI   y â™   —L   Â    ‚æ  ƒ  â—M   Ò¥ 0™@JJ/J?JfJlJuJ€  …J€  ÅJ€ J€ XJ€ ’J€ Ù—0€ ™@€ 0J€ ¾J€ õJ€ J€ J€ J€  J€ 2J€ 9J€ VJ€ |J€ œJ€ ßJ€ #J€ }J€ ÒJ€ —@€ Z`š `‘ .ÿÿÿÛP `•P€ğ        Ë  ÿÿÿÿ      ¡           ­   É       ”   ¡vLM”   X                       áÎ   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   O   â¿   äL   çy  â¥&`+`+`+`+`+`+`P$Pü   ÛÇì                           áÏ    âÑ   o   ´    â¼   äL   ç   Â    ;   >   y â¼   äL   ç   Â    ;	   >   y â¼   äL   ç
+   Â    ;   >   y âÒ¥%`L`‘ 'ÿÿÿÖP$`‘ #ÿÿÿÚP$`‘ &ÿÿÿ×P%P€ü            ÿÿÿÿ¸   äô±¸   i                          Â   äL   çy  â¼   äL   ç   Â    ¶    y â¼   äL   ç   Â    y â¼   äL   ç   Â    y â¥ 	`P$	`‘ *ÿÿÿİP$	`‘ &ÿÿÿáP$	`‘ )ÿÿÿŞP$P€¼  SF…ä¬  A               #      áÎ   â¿   L   ›Ò   —   ±²  â¼   L      —   â¼   L   —   ²  â¿  š   —   ¿   ¿  ‚æ  ƒ  O   â¿   ¿   L   äL   çu  O   â¿   L   L   äL	   ç
+¸…ëQ¸¾?¿   L   L
+   y â¿   L   äL   ç¿   L   L   y â—   Ó—   ¿   L   œ   —   â¿   L   L      —   š   —   ¿   L   äL   çy  â—"   ¿   L   ¢¥&`“ &`© `.`P)`”  P)` *ÿÿÿëP$` ÿÿÿøPO
+`· 	` PI`)Q€¼        È   ÿÿÿÿÜ  {½@¬  E                      $¼       —   â¼   L   —   š   —    ¢—   ¬±²   ²  â;   j   Fk    Aj   #k    -k   #k   Aj   2k    Kk   (k   Aj   k    k   k   k   k   Aj   xk    (k   Pk   Aj   ´ k    A²   â¿   ½  M   —   âj   2k    —   ²  â¼   äL   ç¿  y âÓ™   —    ¤®±²   â²   âÓ—   ¥ `’ $š `AF+`%.  «  •@`© 	`ÿÿÿøP’ ‘ P€€€Ü  Ì     4   ò   ÿÿÿÿ   3     ÿÿÿÿ        4   ÷   ü  ]A4¤  ©               .     )±²   ²  ²  âáÎ  â½  ²   â½ ä š   —   â
+      à?—   ²  â½ ä š   —   â
+      à?—   ²  â±²  ²  â¿  L   0   —   â¼   L   œ   —   â¼   L   L   —   š   —    ¤Ó¥—   ¿  äL   çu  ²  â¿  ›   —    ¤Ó¥—   ¿  äL   ç¿   y â¿  L   ¿   œ   —   â¿  L	   —   š%   —   ¿  äL
+   ç¿  ¿  y â ¤Ó¥—   ¿  äL   çy  â¿  ¿   O   â¿  L   ²  â¿   ¡$           —   ¿  ¿  äL   ç¿  ¿  ¿  u O	   â™ë   —   ¿  ¿  äL   ç¿  ¿  ¿  u O	   â™½   —"   ¿  ¿  äL   ç¿  ¿  ¿  u O	   â™   —%   ¿  ¿  äL   ç¿  ¿  ¿  u O	   â™a   —(   ¿  ¿  äL   ç¿  ¿  ¿  u O	   â™3   —+   ¿  ¿  äL   ç¿  ¿  ¿  u O	   â™   —.   Ó¥æ &*`© &Ÿ $`A%H`P(``A%H`ÿÿÿòPD`	¨ 	`ÿÿÿêP$	`A%H`PD`.`N`™ `1ÿÿÿİP)` `.ÿÿÿàP)` `0ÿÿÿŞP)` `0ÿÿÿŞP)` `7ÿÿÿ×P)` `1ÿÿÿİP)`K%P€€€ü  ¼    ¼  ê    F  t     f   B  ÿÿÿÿ    »              å              I         ˜   0k´Ñ˜   ^                
+       áÎ   â¿   L   œ    —   â¿   L   L      —   š$   —   ¿   L   äL   ç½  ½ y â—
+   ¥&`” ¤ 	` ÿÿÿïPIP¼   hî»®¼   |                       ±²   â±´    âáÏ    â½  ´    â½ ä š   —   â
+      à?—   ²   âÂ    äL   çÂ    ¿   
+      à?y â¼    o   °y â¥Å `	ÿÿÿèP$`5CPDP€€l   îÙ;¹l   9                          Â    L   Â    ¶    š   —   Â    äL   çy  â—   ¥ `— `PIP€€4  €–.   ±                      $áÎ   â¿   L   š;   —   ¼    ¿   L   y â¼    ¿   L   y â¿   O   â—	   ¿   L   šH   —   ¬¿   L   äL   çy  â™   —    ¤®±²  â²  âÓ—   ¿   O   â—   ¿   O   â¥&`“ 	`	ÿÿÿÿP$	`	ÿÿÿÿP$	`@`“!` P‘ ‘ 	`@`+P4  $     „      ÿÿÿÿ        c      ˜  ıÍ¸x  &               K      ¾  Ï    âáÎ   âÑ   ±²  ²  âÂ   äL   çu  ´    âÂ    L   äL   ç
+ü©ñÒMbP?½ y âÂ    L   äL   ç
+      è?½ 
+{®Gáz´?(y âÂ   äL   çu  ´    âÂ       O   âÂ    L	   äL   çÄ ½ y âÂ   äL   çu  ´    âÂ    
+   O   âÂ    L	   äL   ç
+Ãõ(\Zr@½ y âÂ    L   äL   ç½ y âÂ   äL   çu  ´    âÂ       O   âÂ    L   äL   ç
+ffffff@½ y âÂ    L	   äL   ç^½ R,(½ y âÂ   äL   çu  ´    âÂ   äL   çu  ²  âÂ    L	   äL   ç
+      @½ y â¿  L   äL   ç
+      @½ y âÂ    äL   çÂ    L	   y âÂ   äL   çu  ²  â¿  L   äL   ç
+ÍÌÌÌÌÌÜ?½ y âÂ    äL   çÂ    y âÂ    äL   ç¿  y â¿  äL   çÂ    y âÂ    äL   çÂ    y âÂ    äL   ç¿   L   y âÂ    äL   ç½ y âÂ    äL   ç½ y âÂ    äL   ç½ y â;   o   >   o   >   ¤Ò¥Ò¥ /`P*`› %ÿÿÿêP$`› 2ÿÿÿİPD`P*`‘ `• #ÿÿÿìPD	`P*`‘ `› &ÿÿÿéP$`” ÿÿÿîPD`P*`‘ `› ÿÿÿìP$`’  ÿÿÿİPD`P*`P(`› "ÿÿÿìP$`™ !ÿÿÿìP$`ÿÿÿøPD`P(`™ !ÿÿÿëP$`ÿÿÿøP$`ÿÿÿøP$`ÿÿÿøPD`ÿÿÿøP$`	ÿÿÿøPD"`ÿÿÿúP$`ÿÿÿúP$`
+ÿÿÿúPD&`%	J.	J=T€˜          ÿÿÿÿ    #         D  
+#B&4  Ñ                       ±²   ²  âÄ ½  <,(²   â^½  L,(²  âÂ    ¶    L   äL   ç¿   Â   L   
+{®Gáz¤?y âÂ    ¶    L   äL   ç¿   
+      ø?,Â   L   
+{®Gáz¤?y âÂ    ¶    L   äL   ç¿  Â   L   
+{®Gáz¤?y âÓ¥ *`, `-`˜ ” ÿÿÿäP$`˜ ” ÿÿÿŞP$`˜ !” ÿÿÿâP%	P€€D         Ğ   ÿÿÿÿ  ³Â–  ¡                        ±²   âÂ   L   ²   âÂ    ¶    L   äL   ç¿   y âÂ    L   äL   çÂ    L   L   ¿   y âÂ    L   äL   ç
+-Cëâ6?¿   
+ìQ¸…ëÁ?(y â¼    o	     y âÓ¥ &` `˜ %ÿÿÿêP$`’  ÿÿÿÛP$`› 4ÿÿÿÛP$`5CPE	P€€             ÿÿÿÿì   zëÌ   |                        $¬Â    ¶    äL   çy  âÂ    ¶    äL   çy  âÂ    ¶    äL   çy  âÂ    ¶    äL   çy  â™   —    ¤®±²   â²   âÓ—   ¥!`“ P$`“ P$`“ P$`“ 
+P‘ ‘ P€€€ì   Ü      j      ÿÿÿÿ           a   L  ¯¦6,  Á                     ¾  Ï    âáÏ    âÑ   ±²   âÂ   äL   çu  ´    âÂ    L   äL   ç½ y âÂ    äL   çÂ   L   y â½ ´    âo   ²   â¿    y  âÂ   ¼    ¿   ¼u O	   â;
+   o   >   o   >   ¤Ò¥Ò¥’ +`P*`“ #ÿÿÿìP$`ÿÿÿøPD`J`J.`)`ÿÿÿôPI1`%	J5	J>T€€L        ©   ÿÿÿÿ    ¾          \  fÊL;<            
+       G       ±²   ²  ²  ²  ²  âÂ   L   ›   —    ¤Ó¥—   Â   L   ²   âÂ   äL   çu  ²  âÂ   äL   çu  ²  â¿     O   â¿  L   äL	   ç˜Â    ¶    ,(¿   y â¿  L   äL
+   ç ¿   
+ÍÌÌÌÌÌÜ?(y â¿  L   äL	   ç
+ü©ñÒMbP?¿   y â¿  L   äL   ç
+š™™™™™é?¿   
+¸…ëQ¸?(y â¿  L   äL
+   ç
+-Cëâ6?¿   
+      à?(y â¿  äL   ç¿  y â¿  äL   çÂ    ¶    y â¿  äL   ç¿   y â¿  äL   ç¿   
+š™™™™™á?(y âÂ   äL   çu  ²  âÂ   äL   çu  ²  â¿     O   â¿  L   äL	   çL¿   y â¿  L   äL
+   ç˜¿   
+¤p=
+×£°?(y â¿  L   äL	   ç
+ü©ñÒMbP?¿   y â¿  L   äL   ç
+ffffffÖ?¿   
+ü©ñÒMb€?(y â¿  L   äL
+   ç
+-Cëâ6?¿   
+333333³?(y â¿  äL   ç¿  y â¿  äL   çÂ    y â¿  äL   ç¿   y â¿  äL   ç¿   
+{®Gáz´?(y âÂ   äL   çy âÓ¥ – `• `A%H`@`P(`P(	`/	` !‘ ÿÿÿÖP$	`“ 4ÿÿÿŞPD	`™ $ÿÿÿêP$	`™ +ÿÿÿãP$	`™ 3ÿÿÿÛPD	`ÿÿÿøP$	`ÿÿÿøP$	`ÿÿÿúP$	`ÿÿÿûPD`P(`P(	`/	`“ (ÿÿÿëP$	`“ 6ÿÿÿİPD	`™ %ÿÿÿêP$	`™ -ÿÿÿâP$	`™ 4ÿÿÿÛPD	`ÿÿÿøP$	`ÿÿÿøP$	`ÿÿÿúP$	`ÿÿÿûPD$	`P%P€€\         ÿ  ÿÿÿÿ    .          @   6i“,@                             ½  Â    ¶    âÏ    â¥ `— 	Pğ   ÉÀ¡tà   ‹                        ±²   âÂ   L   š   —   ¼    Â   L   y â—   Â   L   ²   âÂ    ¶    L   äL   ç
+-Cëâ6?¿   
+{®Gáz´?y â¼    o   – y âÓ¥ &`• `ÿÿÿÿP)` `¡ 'ÿÿÿèP$`5CPE	Pğ          Š   ÿÿÿÿ   Np   7                        $¬Â    ¶    äL   çy  â™   —    ¤®±²   â²   âÓ—   ¥ a“ 
+P‘ ‘ P€€   €      %      ÿÿÿÿ              <  ºü—ã  ·                      ¾  Ï    âáÏ    âÑ   Â   äL   çu  ´    âÂ    L   äL   ç½ y âÂ    äL   çÂ   L   y âo   ´    âÂ     y  âÂ   ¼    Â     u O	   â;
+   o   >   o   >   ¤Ò¥Ò¥’ %`P*`“ #ÿÿÿìP$`ÿÿÿøPD`L=`+`	ÿÿÿôPI@`%	JF	JOT<        Ÿ   ÿÿÿÿ    ´            <ê[rø  J      	          c       ±²   ²  ²  ²  ²  ²  ²  ²  ²  âÂ   L   ›   —    ¤Ó¥—   Â   L   ²   âÂ   äL   çu  ²  âÂ   äL   çu  ²  â¿     O   â¿  L   äL	   çR¿   y â¿  L   äL
+   ç*¿   
+ìQ¸…ë±?(y â¿  L   äL	   ç
+ü©ñÒMbP?¿   y â¿  L   äL   ç
+
+×£p=
+ç?¿   
+¸…ëQ¸?(y â¿  L   äL
+   ç
+-Cëâ6?¿   
+{®Gáz´?(y â¿  äL   ç¿  y â¿  äL   çÂ    ¶    y â¿  äL   ç¿   y â¿  äL   ç¿   
+
+×£p=
+·?(y â¿   
+)\Âõ(¼?(²  âÂ   äL   çu  ²  âÂ   äL   çu  ²  â¿     O   â¿  L   äL	   çD¿  y â¿  L   äL
+   ç$¿  
+¸…ëQ¸®?(y â¿  L   äL	   ç
+ü©ñÒMbP?¿  y â¿  L   äL   ç
+333333ã?¿  
+ú~j¼t“ˆ?(y â¿  L   äL
+   ç
+-Cëâ6?¿  
+ìQ¸…ë±?(y â¿  äL   ç¿  y â¿  äL   çÂ    y â¿  äL   ç¿  y â¿  äL   ç¿  
+{®Gáz´?(y â¿   
+)\Âõ(Ì?(²  âÂ   äL   çu  ²  âÂ   äL   çu  ²  â¿     O   â¿  L   äL	   ç
+\Âõ(Ş@¿  y â¿  L   äL	   ç
+ü©ñÒMbP?¿  y â¿  L   äL   ç
+š™™™™™Ù?¿  
+ü©ñÒMb€?(y â¿  L   äL
+   ç
+-Cëâ6?¿  
+333333³?(y â¿  äL   ç¿  y â¿  äL   çÂ    y â¿  äL   ç¿  y â¿  äL   ç¿  
+Ãõ(\Âµ?(y âÂ   äL   çy âÓ¥ ¦ `• `A6H`@`P(`P(	`/	`’ $ÿÿÿíP$	`’ 2ÿÿÿßPD	`™ #ÿÿÿêP$	`™ +ÿÿÿâP$	`™ 2ÿÿÿÛPD	`ÿÿÿøP$	`ÿÿÿøP$	`ÿÿÿúP$	`ÿÿÿûPD`“ `P(`P(	`/	`’ $ÿÿÿíP$	`’ 2ÿÿÿßPD	`™ #ÿÿÿêP$	`™ *ÿÿÿãP$	`™ 2ÿÿÿÛPD 	`ÿÿÿøP$	`ÿÿÿøP$	`ÿÿÿúP$	`ÿÿÿûPD&`“ `P(`P(	`/	`™ )ÿÿÿéPD,	`™ $ÿÿÿêP$	`™ +ÿÿÿãP$	`™ 3ÿÿÿÛPD0	`ÿÿÿøP$	`ÿÿÿøP$	`ÿÿÿúP$	`ÿÿÿûPD5	`P%P€€€         I  ÿÿÿÿ    >          È   úïgƒ¸   l                 
+     ±²   âp½  Ü ,)²   âÂ   L   š   —   ¼    Â   L   y â—   Â   ¼    Â    ¶    ¿   u O   âÓ¥ &`-`• `ÿÿÿÿP)`ÿÿÿãP*	P€È          k   ÿÿÿÿğ   “7Ä©à   ‹                        ±²   âÂ   L   š   —   ¼    Â   L   y â—   Â   L   ²   âÂ    ¶    L   äL   ç
+-Cëâ6?¿   
+{®Gáz´?y â¼    o   – y âÓ¥ &`• `ÿÿÿÿP)` `¡ 'ÿÿÿèP$`5CPE	Pğ          Š   ÿÿÿÿ   «í¯Õp   7                        $¬Â    ¶    äL   çy  â™   —    ¤®±²   â²   âÓ—   ¥ a“ 
+P‘ ‘ P€€   €      %      ÿÿÿÿ              L  ¬J²,  Á                     ¾  Ï    âáÏ    âÑ   ±²   âÂ   äL   çu  ´    âÂ    L   äL   ç½ y âÂ    äL   çÂ   L   y â½ ´    âo   ²   â¿    y  âÂ   ¼    ¿   Ìu O	   â;
+   o   >   o   >   ¤Ò¥Ò¥’ +`P*`“ #ÿÿÿìP$`ÿÿÿøPD`J!`J'`)`ÿÿÿôPI*`%	J.	J7T€€L        ©   ÿÿÿÿ    ¾          4  ?I£  ¾                 	       Ñ   ±²   âÂ   L   ›   —    ¤Ò¥—   Â   L   ´    âj   
+q=
+×£Z‚@k    
+R¸…ë‡@k   pk   
+q=
+×£Z’@k   
+R¸…ë—@k   ²   â
+ú~j¼t“˜?´    â¿   äL   ço   y âÂ   äL   çy âÒ¥ +`• `AH`’ `Ê `@	`ÿÿÿøPD	`P%P€€4        ¸   ÿÿÿÿ    #          ´  hÑÒ<¤  Ö         
+       *      ±²   ²  ²  ²  âÂ    ¶    ½ Â    ¶    ,(²   âÂ   äL   çu  ²  âÂ   äL   çu  ²  â¿     O   â¿  L   äL   ç½  
+ÍÌÌÌÌÌì?Â   ¶   
+333333Ó?,(,¿   y âÂ   äL   çu  ²  â¿  	   O   â¿  L   äL   ç@¿   y â¿  L
+   äL   ç
+ü©ñÒMbP?¿   y â¿  L
+   äL   ç
+¤p=
+×£Ğ?¿   
+ü©ñÒMbp?(y â¿  L
+   äL   ç
+-Cëâ6?¿   Â    (
+ü©ñÒMb`?)y â¿  äL   ç¿  y â¿  äL   ç¿  y â¿  äL   çÂ   ¶   y â¿  äL   ç¿   y â¿  äL   ç¿   Â    (y âÓ¥ ’ `“ `P(`P(`/` 	˜ ÿÿÿÍPD`P(`/`“ &ÿÿÿëPD`™ ÿÿÿêP$`™ %ÿÿÿâP$`™ ,‘ ÿÿÿĞPD`ÿÿÿøP$`ÿÿÿøP$`
+ÿÿÿøPD`
+ÿÿÿúP$`	ÿÿÿğP%	P´         Õ  ÿÿÿÿ@   6i“,@                             ½  Â    ¶    âÏ    â¥ `— 	Pğ   ¹BIà   Š                        ±²   âÂ   L   š   —   ¼    Â   L   y â—   Â   L   ²   âÂ    ¶    L   äL   ç
+-Cëâ6?¿   
+¸…ëQ¸®?y â¼    o   xy âÓ¥ &`• `ÿÿÿÿP)` `¡ 'ÿÿÿèP$`5BPE	P€ğ          ‰   ÿÿÿÿ   Np   7                        $¬Â    ¶    äL   çy  â™   —    ¤®±²   â²   âÓ—   ¥ a“ 
+P‘ ‘ P€€   €      %      ÿÿÿÿ              4  P[×  “        
+       U      ¾  Ï    âáÎ   âÑ   ±²  ²  ²  ²  âÂ   äL   çu  ´    âÂ    L   äL   ç
+ü©ñÒMbP?½ y âÂ    L   äL   ç
+333333ë?½ 
+
+×£p=
+·?(y âK½ 7,(²  âÂ   äL   çu  ´    âÂ       O   âÂ    L	   äL   ç¿  ½ y âÂ   äL   çu  ´    âÂ       O   âÂ    L	   äL   ç¿  
+ÍÌÌÌÌÌü?(½ y âÂ   äL   çu  ´    âÂ    
+   O   âÂ    L	   äL   ç¿  
+      à?,½ y âÂ   äL   çu  ´    âÂ       O   âÂ    L   äL   ç
+ÍÌÌÌÌÌ@½ y âÂ    L	   äL   ç½ ğ ,(½ y âÂ   äL   çu  ²  â¿  L   äL   ç
+áz®GáÚ?½ y âÂ   äL   çu  ²  â¿  L   äL   ç
+{®GázÔ?½ y âÂ   äL   çu  ²  â¿  L   äL   ç
+R¸…ëQØ?½ y âÂ    äL   ç¿  y âÂ    äL   ç¿  y âÂ    äL   ç¿  y â¿  äL   çÂ    y â¿  äL   çÂ    y â¿  äL   çÂ    y âÂ    äL   çÂ    y âÂ    äL   ç¿   L   y âÂ    äL   ç½ y âÂ    äL   ç½ y âÂ    äL   ç½ y â;   o   >   o   >   ¤Ò¥Ò¥ — `P*`› %ÿÿÿêP$`› 2ÿÿÿİPD`,`P*`‘ `’ 
+ÿÿÿçPD
+`P*`‘ `’ ÿÿÿáPD`P*`‘ `’  ÿÿÿáPD`P*`‘ `› ÿÿÿìP$`’  ÿÿÿİPD`P(`™ ÿÿÿëP$`P(`™ ÿÿÿëP$`P(`™ !ÿÿÿëPD`ÿÿÿøP$`ÿÿÿøP$`ÿÿÿøPD"`ÿÿÿøP$`ÿÿÿøP$`ÿÿÿøPD&`ÿÿÿøP$`	ÿÿÿøPD)`ÿÿÿúP$`ÿÿÿúP$`ÿÿÿúPD-`%	J5	JDT€€4        }  ÿÿÿÿ             €  r,p                        ±²   âK½  <,(²   âÂ    ¶    L   äL   ç¿   Â   L   
+š™™™™™©?y âÂ    ¶    L   äL   ç¿   
+ÍÌÌÌÌÌü?(Â   L   
+š™™™™™©?y âÂ    ¶    L   äL   ç¿   
+      à?,Â   L   
+š™™™™™©?y âÂ    ¶    L   äL   ç½  ,,(Â   L   
+š™™™™™©?y âÓ¥ &`,`˜ ” ÿÿÿíP$`˜ 	” ÿÿÿçP$`˜ !	” ÿÿÿçP$`˜ !
+” ÿÿÿàP%	P€€€            ÿÿÿÿ  ¨ILÄ  ¡                        ±²   âÂ   L   ²   âÂ    ¶    L   äL   ç¿   y âÂ    L   äL   çÂ    L   L   ¿   y âÂ    L   äL   ç
+-Cëâ6?¿   
+{®GázÄ?(y â¼    o	   ¾ y âÓ¥ &` `˜ %ÿÿÿêP$`’  ÿÿÿÛP$`› 4ÿÿÿÛP$`5CPE	P€€             ÿÿÿÿì   eøªÌ   |                        $¬Â    ¶    äL   çy  âÂ    ¶    äL   çy  âÂ    ¶    äL   çy  âÂ    ¶    äL   çy  â™   —    ¤®±²   â²   âÓ—   ¥!`“ P$`“ P$`“ P$`“ 
+P‘ ‘ P€€€ì   Ü      j      ÿÿÿÿ           a   €  "æv`          
+       H      ¾  Ï    âáÎ   âÑ   ±²  ²  ²  ²  âÂ   äL   çu  ´    âÂ    L   äL   ç
+ü©ñÒMbP?½ y âÂ    L   äL   ç
+333333ë?½ 
+{®Gáz´?(y âÂ   äL   çu  ´    âÂ       O   âÂ    L	   äL   ç2½ y âÂ   äL   çu  ´    âÂ       O   âÂ    L	   äL   çd½ y âÂ   äL   çu  ´    âÂ    
+   O   âÂ    L	   äL   ç– ½ y âÂ   äL   çu  ²  â¿  L   äL   ç
+ÍÌÌÌÌÌä?½ y âÂ   äL   çu  ²  â¿  L   äL   ç
+ffffffÖ?½ y âÂ   äL   çu  ²  â¿  L   äL   ç
+š™™™™™É?½ y âÂ    äL   ç¿  y âÂ    äL   ç¿  y âÂ    äL   ç¿  y âÂ   äL   çu  ²  â¿  äL   ç¿  y â¿  äL   ç¿  y â¿  äL   ç¿  y â¿  äL   çÂ    y âÂ    äL   ç¿   L   y âÂ    äL   ç½ y âÂ    äL   ç½ y âÂ    äL   ç½ y â;   o   >   o   >   ¤Ò¥Ò¥ — `P*`› %ÿÿÿêP$`› 2ÿÿÿİPD`P*`‘ `” %ÿÿÿëPD	`P*`‘ `” 'ÿÿÿêPD`P*`‘ `• 'ÿÿÿêPD`P(`™ !ÿÿÿëP$`P(`™ "ÿÿÿëP$`P(`™ !ÿÿÿìPD`ÿÿÿøP$`ÿÿÿøP$`ÿÿÿøPD`P(`ÿÿÿøP$`ÿÿÿøP$`ÿÿÿøPD!`ÿÿÿøP$`	ÿÿÿøPD$`ÿÿÿúP$`ÿÿÿúP$`ÿÿÿúPD(`%	J/	J>T€€€        õ  ÿÿÿÿ             8  }CDÅ(  É                       ±²   â2½  
+      à?)
+      ø?,(²   âÂ    ¶    L   äL   ç¿   Â   L   
+{®Gáz´?y âÂ    ¶    L   äL   ç¿   ,Â   L   
+{®Gáz´?y âÂ    ¶    L   äL   ç¿   ,Â   L   
+{®Gáz´?y âÓ¥ &` `˜  
+” ÿÿÿæP$`˜ !” ÿÿÿâP$`˜ !” ÿÿÿâP%	P€€8         È   ÿÿÿÿ  ¨ILÄ  ¡                        ±²   âÂ   L   ²   âÂ    ¶    L   äL   ç¿   y âÂ    L   äL   çÂ    L   L   ¿   y âÂ    L   äL   ç
+-Cëâ6?¿   
+{®GázÄ?(y â¼    o	   ¾ y âÓ¥ &` `˜ %ÿÿÿêP$`’  ÿÿÿÛP$`› 4ÿÿÿÛP$`5CPE	P€€             ÿÿÿÿì   ÍˆÌ   |                        $¬Â    ¶    äL   çy  âÂ    ¶    äL   çy  âÂ    ¶    äL   çy  âÂ    ¶    äL   çy  â™   —    ¤®±²   â²   âÓ—   ¥!`“ P$`“ P$`“ P$`“ 
+P‘ ‘ P€€€ì   Ü      j      ÿÿÿÿ           a     ğ—Šæ  {               -     
+  áÎ   â¿   ¼   äL   ç   u O   â¿   L   ›   —    ¢—   ¿   ¼   äL   ç¼   äL   ç   u u O	   â¿   L	   L
+    š   —    ¢—   ¿   O   â¿   O   â¿   ¼   äL   çu  O   â¿   O   â¿   ¼   äL   ç¼   L      —   â—   u O   â¿   ¼   äL   ç   u L   O   â¿   Â    ¶    ‚æ  ƒ  O   â¿   j    O   â¿   äL   çy  â¿   äL   çy  â¿   äL   çy  â¥&`• P)`“ `AF` ‘ 	PÿÿÿòP)`› `AF`+`+` P)`+`  ÿÿÿüP)`• #PN`• P)`/`P$`P$`P$P€€€  L’	                  S       áÏ    âÑ   j   ;   >      >      >      >	   
+…ëQ¸{@>
+      >      >      >   Â   L   äL   çÂ   u >   k    ;   >      >      >      >	   
+fffff"‹@>
+      >      >      >   Â   L   äL   çÂ   u >   k   ;   >      >      >      >	   
+²ï§ÆK@>
+      >       >   !   >   Â   L"   äL   çÂ   u >   k   ;#   >   $   >   %   >   &   >	   “>
+      >   '   >   (   >   Â   L)   äL   çÂ   u >   k   ;*   >   +   >   ,   >   -   >	   
+333333@>
+      >   .   >   /   >   Â   L0   äL   çÂ   u >   k   ;1   >   2   >   3   >   4   >	   
+      %@>
+      >   5   >   6   >   Â   L7   äL   çÂ   u >   k   ´    âÂ   L8   äL9   ço:   y âÒ¥%`E	%&***.***’ (ÿÿÿûPM	%'***.***’ ÿÿÿûPM	%'***.***’ !ÿÿÿûPM'	%'***(***’ $ÿÿÿûPM3	%'***.***’ &ÿÿÿûPM?	%'***.***’ !ÿÿÿûP”@L`’ ÿÿÿøPE€  ŒP          ÿÿÿÿp  ÅÎ7æ0  æ      	          _      Ñ   ±²   ²  ²  ²  ²  ²  ²  ²  â¼    ½  L   L      —   â½ (—   
+u ´    âÂ   ¶   äL   ço   u !   —
+   âÂ   ½ Â   L   .M—   ²  â½  äL   ç	   u ²  â½  äL   ç
+   u ²  â½  äL   ç   u ²  â¿     —   â¿  —   š   —    ¤Ò¥—   ¿  äL   ç   u ›n   —   ±²  â¼   äL   ç   u ²  â¿     O   â¿  äL   ç      y â¿  äL   ç¿  ¿  L   y âÓ—#   ¿  äL   ç   u ›e   —&   ±²  â¼   äL   ç   u ²  â¿     O   â¿  äL   ç      y â¿  äL   ç¿  y âÓ—.   ¿  äL   ç   u ²  â¿  š#   —1   ¿  L   äL   ç   y â—4   ¿  äL   ç    u ²   â¿   ›^   —7   ¼   äL   ç!   u Î   â¿   "   O   â¿   äL   ç      y â¿  äL   ç¿   y â—?   ¿   äL#   ç$   ;%   >&   u ²  â;'   Â    >(   ½  >)   ¿  >*   ¿  >+   ¿   >!   ¿  >,   ¿  >-   ¿  >.   >/   >0   >1   >2   
+      à?>3   
+      à?>4   >5   ¼6   äL7   çu  
+,>8   ²  âÂ   äL9   ç¿  y âÂ   äL:   ç¿  y âÂ   L;   äL<   ç¿  y âÒ¥ § `	¤ ÿÿÿÿP*`“ ÿÿÿûP— 8— `P(`P(`PH` ” `A?H
+` P'&`‘ 	P(`/`• P$`		ÿÿÿêPJ` P#&`‘ 	P(`/`• P$`ÿÿÿôPJ` 
+P(`.`• PI` 
+P(`.`‘ P(`/`• P$`ÿÿÿôPI'` ÿÿÿíPH)`%+())))))&&&&..&P@<	`ÿÿÿêP$	`ÿÿÿôP$	`’ ÿÿÿûP%P€€p        à  ÿÿÿÿ                0  d          ¶  [       <   äòô,<                            ½  L   Â    ¶    ¢ `”  HcÒû„  ş   
+                    ¾  Ï    âÑ   o   ´    âÂ   L   äL   ç   o   y âÂ   L   äL   ç   o   y âÂ   L   äL   ç	   o
+   y âÂ   L   äL   ç   o   ;   >   y âÂ   L   äL   ç   o   ;   >   y âÂ   L   äL   ç   o   ;   >   y âÒ¥
+%`L	`— *ÿÿÿáPD`— )ÿÿÿâPD`— *ÿÿÿáPD`— *E#
+FPD%`— )E)
+F%PD+`— (E4
+F+PE5P€”        î   ÿÿÿÿT  ñ¶D  İ          
+             ±²   âÂ   L   äL   çu  ²   â¿   L    œ   —   â¿   L    —   š   —	   Â   ¼   äL   ç¼   äL   ç½  ¿   L	   )¿   L   -u u O
+   âÂ   ¼   äL   ç¼   äL   ç½ ¿   L   )¿   L   -u u O   â—   Ó¥ &`’ P(`° `“ 
+
+
+ÿÿÿáPÿÿÿôP)`“ 
+
+
+ÿÿÿâPÿÿÿôPOP€T         Ü   ÿÿÿÿŒ   °ş9ÛŒ   O                         Â   O   âÂ    ¶     ½  L   ½  L   y âÂ   L   L   äL   ç   y â¥ 	`-	`ÿÿÿôP$	`œ P$P€€T   ¬å$T   "                         Â    ¶     ½  L   ½  L   y â¥ 	`ÿÿÿôP$P€È   ¾èCxÈ   ‰                          Â   O   âÂ   L   L   äL   ç   y âÂ   L   šK   —   Â   L   Â   L   L   O	   âÂ   L   L   äL   ç
+   y â—   ¥ 	`-	`œ P$`• `¡ `œ PIP€Ğ   ×½X$Ğ                            ½  L   œ   —   â½  L   M—   šf   —   Â   O   âÂ    ¶     ½  L   ML   ½  L   ML   y âÂ   L   L   äL   ç   y â—   ¥ `¬ `-`ÿÿÿéP$`œ PIP€€˜   2ğ…-˜   a                         ½  L   œ   —   â½  L   M—   š9   —   Â    ¶     ½  L   ML   ½  L   ML   y â—   ¥ `¬ `ÿÿÿéPIP€D   Ìå,¶D                             ¼    o   èy â¥ 	`5CPD	P€È   N‘®AÈ   ‰                          Â   O   âÂ   L   L   äL   ç   y âÂ   L   šK   —   Â   L   Â   L   L   O	   âÂ   L   L   äL   ç
+   y â—   ¥ `-`œ P$`• `¡ `œ PI	P€¨  ş	˜                 #      áÎ   â±²  ²  ²  â½  L   äL   çu  ²  â¼   äL   ç¿  L   ğ u ²  â¼   äL   ç¿  L   .u ²  â½  ¿  O   â½  ¿  O   â½  L   ¼   äL	   ç¿  ¿   L
+   ,u O   â½  L   ¼   äL	   ç¿  ¿   L
+   ,u O   â½  L   äL   çy â½  L   äL   ç¿   L
+   ¿   L
+   y âÓ¥.`P(`	ÿÿÿüP(`	ÿÿÿüPH`-`-`”  
+ÿÿÿïP)`” !
+ÿÿÿîPI
+`• 
+P$`	
+	ÿÿÿğP%P¨          ÿÿÿÿœ   ö E®œ   \                        áÏ    âÂ    ¼   äL   ç¼   L      —   â—   u O   âÂ    L   äL   ço   y â¥(`’  ÿÿÿüP)`’ ÿÿÿøP$P€€€D   3x7mD                            Â    äL   ç½  u ¢ 	`ÿÿÿôP€€¨   ó9ëŸ˜   T                       áÏ    â±²   â¼   ‚o   ;   
+š™™™™™©?>   æ  ƒ ²   â¿   äL   çÂ    L   y âÓ¥&`E
+’@H`ÿÿÿøP%P¨         K   ÿÿÿÿD   eñŞ£D                            ½  äL   ço   y â¥ 	`
+ÿÿÿøPD
+P¸   çN›&¸   v                        Â    ½  L   O   âÂ    L   š;   —   Â    ¼   äL   çu  O   âÂ    äL   çy  â™   —
+   Â    äL   çy  â—   ¥ `” `• `’ P)`P `PI	P€Œ   ŒôZ‰|   <                        áÏ    âÑ   ´    â¼   äL   ç   o   ;   >   y âÒ¥%`(`‘ "E
+FPEP€€€Œ         .   ÿÿÿÿl   6¸ål   /                          ¼    Â    ¶    y â¼    o   – u Ï    â¥ 	`ÿÿÿÿP$	`ÿÿÿõP*P€€€<   ş¬1„<                             Â   äL   çu  ¢ `P
+€€¸   ıo÷˜   T                       áÏ    âÑ   Â   L   š   —    ¤Ò¥—   o   ´    âÂ   ¼    Â    u O   âÒ¥%`• `AH`L`#ÿÿÿêP*P¸         F   ÿÿÿÿ    %          H  T`t8  Ñ                      ±²   â¼   äL   ç½  Â   L   )è-
+š™™™™™¹?u ²   âÂ   ½  O   âÂ   äL   ¿   (0O   âÂ   äL   ç¿   Â   L   y âÂ   L   š0   —   Â   ¼    Â    ¶    u O	   â™   —   Â   O	   â—   Ó¥ 	&`
+™ ÿÿÿõP(	`/	`˜@	`ÿÿÿïPD`• `#ÿÿÿêP“ `“@P€€€H         Ğ   ÿÿÿÿx   á=Ìx   =                       áÎ   â¿   L   š(   —   ¼    ¿   L   y â¿   O   â—   ¥&`“ 	`	ÿÿÿÿP$	`@P€€€l    œ¿àl   8                        ¾  Ï    â¾ Ï    âáÏ    âÂ    L   äL   ço   y â¥œ `’ ÿÿÿøPDP€€  j0Ï  s                #      ±²   ²  ²  ²  â½  L   š   —   ™   —   —   ²   â½  äL   ¿   ½  L   )¼   äL   çÂ    ,u ,(0O   â½  L   œ   —   â½  L   —   š[   —   ½  äL   Â    (0O   â½  L   
+{®Gáz´? š(   —   ½  O   âÂ    äL   ç½  y â—   ½  L	   ²  â½  L
+   ²  â½  L   ²  â¿  äL   ç¿  ¿  y âÂ    äL   ç¿  ¿  ¿  y â½  L   äL   ç½  Â    Â    y âÓ¥ 	’@`¨ 	`&		
+ÿÿÿüPL`ª `— `œ `*`ÿÿÿìPI`-`-`-	`ÿÿÿíPD	`ÿÿÿåPD	`ÿÿÿíP%P         r  ÿÿÿÿğ  ¿T¨  —      	          w      )±²   ²  ²  â½  L   ²   â¿   ›   —    ¤Ó¥—   ¿   L   äL   ç   y â½  L   L   ¼   äL	   çu  
+{®Gáz´?,
+{®Gáz¤?)(äL
+   çu ²  â
+š™™™™™	@¼   äL	   çu  
+ffffffÖ?,(½  L   
+      à?,(äL
+   çu ²  â½  L   ±²  ²  ²  ²  ²  ²  â¡}           —   ¿      ¿  3(   (¿  3(   (O   â™]  —   
+fffffÆX@¼   äL	   çu  
+š™™™™™é?,(äL
+   çu ²  â¿      ¿  3(   (¿  3(   (O   â™ù  —+   ¼   äL   çJ½  L   ,(¼   äL	   çu  ,)(u ²  â¿      ¿  3(   (¿  3(   (O   â™  —<   ¼   äL   ç:½  L   ,(¼   äL	   çu  ,(u ²  â¿      ¿  3(   (¿  3(   (O   â™*  —L   ¼   äL   çü¼   äL	   çu  (,)(½  L   ,(u ²  â¿      ¿  3(   (¿  3(   (O   â™¿   —]   2¼   äL	   çu  
+{®Gáz¤?,
+{®Gáz”?)(äL
+   çu ²  â¼   äL   ç¼   äL	   çu  ,(u ²  â¿      ¿  3(   (¿  3(    (¿  3(!   (O   â™!   —t   ¿   ½  L   L"   O   â—w   ÓÓ¥ .`-``A$H`• PD`P¡ P(`	Pœ PH`· `	&’ ` `	P– P(`	*’ ` `P
+ÿÿÿÔP(`	&’ ` `PÿÿÿÛP(`	#%’ ` `P
+ÿÿÿ×P(`	$’ ` `	P¡ P(`PÿÿÿïP(`	$’ ` `@$P€ğ  À    7  ›    j  Õ         –  ÿÿÿÿ    ,             Ü   ¹      „  İªD           	       &      $±²   ²  â½  äL   çy  â½ 
+      à?,²   â½  äL   çy  â½  äL   çj   k    k   y â½     O   â½  O   â½  äL   ç¿   y â½  äL	   ç½ ¿   y â½  äL
+   çy  â½  äL   çj    y â½     O   â½ 
+-²  â±²  â²  â˜   ¿  
+š}   —   ±²  â¿  ¿  ,²  â½  äL   çy  â½  äL   ç¿  ¿   )y â½  äL	   ç¿  ¿   (y â½  äL
+   çy  âÓ¿  2*Î  â™{ÿÿÿ—$   Ó½  äL   çy  âÓ¥ *`
+P$`’@`
+P$`
+“ ÿÿÿôP$`.`*`ÿÿÿöP$`
+ÿÿÿöP$`
+PD`
+ÿÿÿôP$`.`+`f‘ &`*	`
+P$	`
+ÿÿÿöP$	`
+ÿÿÿöP$	`
+PE`–@`
+P%P€€„  t         ~  ÿÿÿÿ   Ó   œ          ö   c             ß   Š   œ  Ñ Ğ×\  ª               —      $áÎ   âÑ   ±²  ²  ²  ²  ²  ²  ²  ²  ²	  ²
+  ²  ²  ²  ²  ²  ²  ²  â½  gäL   ´    âäL   ²  âäL   ²  âäL   ²  âäL   ²  âäL   ²  ââ¿  
+      à?,²  â¿   L   š   —	   ™   —	   
+      @—	   ¿  ,(²  â¿  ¿  ,(,(²  â¿  
+{®GázÔ?,²	  â¿  
+¸…ëQ¸¾?¿  
+{®Gáz´?,(,²
+  â¿  
+š™™™™™©?¿  
+{®Gáz¤?,(,²  âÂ    äL	   çy  âÂ    äL
+   çy  âÂ    ¿  L   O   âÂ    
+      @¿  
+      ø?,(O   âÂ       O   âÂ       O   âÂ    ¿  L   O   âÂ    ¿  ,(O   âj    ²  â¼   äL   ç¼   äL   ç¿  -u Œ u ²  â±²  â²  â˜.   ¿  ¿  !šy  —0   ±²  ²  ²  â¿  ¿  -²  â¿  ¿  ,²  â¿  ¼   äL   ç¿  ¼   L   ,,½ ¿  ,)u ¿	  ,(¼   äL   ç¿  ¼   L   ,¿  ,,½ ¿  ,
+š™™™™™ù?,)
+š™™™™™é?(u ¿
+  ,(¼   äL   ç¿  ¼   L   ,,½ ¿  ,
+š™™™™™é?,(u ¿  ,(²  â¿  äL   ç;   ¿  >   ¿  >   y â¿   š(   —]   Â    äL   ç¿  ¿  y â™#   —_   Â    äL    ç¿  ¿  y â—a   Ó¿  2*Î  â™}şÿÿ—c   ÓÂ    äL!   çy  âÂ    äL
+   çy  âÂ    ¿  L"   O   âÂ    
+š™™™™™ù?O   âÂ    O   â¿  äL#   ço$   y âÂ    äL!   çy  â½ 
+ffffffÖ?,¿  ,.²  â¼   äL   ç¿  ¿  L%   ),u ²  â¿  ¿  M   —{   â¿  M—|   ²  âÂ    äL&   ç¿  L   ¿  L   ¿  L   ¿  L   u ²  â¿  äL'   ç(   y â¿  äL'   ç
+      Ğ?¿  L   y â¿  äL'   ç)   y âÂ    ¿  O*   âÂ    äL
+   çy  âÂ    äL+   ç¿  L   ¿  L   ¼   L   ,y âÂ    äL,   çy  âÂ    äL-   çy  âÒ¥Ë K`É `“ `¬ )-`@`“ `	• `	•@`P$`P$`• `• `‘ `‘ `• `N`*`	ÿÿÿúPÿÿÿ÷P(`f.`*`*`$	ÿÿÿæP#&	
+š ÿÿÿÚP;&	 ÿÿÿåP*+	`		ÿÿÿöP$`‘ 	`ÿÿÿöP.`ÿÿÿöPJ#`–@!`PD$`P$`• `• `-`ÿÿÿøPD,`PD/`,`
+ÿÿÿğP(`¤@3`	
+	ÿÿÿĞP(`‘ P$`” 	ÿÿÿíP$`‘ P$` `P$`	ÿÿÿåP$`PD<`P%Pœ  Œ          ÿÿÿÿ   2  š         W  _            >  ˆ  ´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€¤  ¾;fd  ª               ‘      $áÎ   âÑ   ±²  ²  ²  ²  ²  ²  ²  ²  ²	  ²
+  ²  â½  gäL   ´    âäL   ²  âäL   ²  âäL   ²  âäL   ²  ââ¿  
+      à?,²  â¿   L   š   —   
+š™™™™™é?™   —   
+333333@—   ¿  ,(²  â½ ¿  ,
+ÍÌÌÌÌÌÜ?,
+      ô?.
+¸…ëQ¸¾?)²  âÂ    äL   çy  âÂ    äL	   çy  âÂ    ¿  L
+   O   âÂ    
+š™™™™™	@¿  
+      ø?,(O   âÂ       O   âÂ       O   âÂ    ¿  L   O   âÂ    ¿  ,(O   âj    ²  â¼   äL   ç¼   äL   ç¿  -u – u ²	  â±²  â²  â˜&   ¿  ¿	  !šW  —(   ±²  ²  ²  ²  ²  ²  ²  ²  â¿  ¿	  -²  â¿  ¿  ,²  â¼   äL   ç¿  ¿  )u ²  â¼   äL   ç¿  ¿  ,
+;ßO—n’?-u ²  â¼   äL   ç¿  ,¿  
+333333Ã?š-   —9   ¼   äL   ç¿  ¿  )u ,™   —>   —>   (¼   L   ,,½ ,)u ²  â¼   äL   ç¿  ¼   L   ,,½ ¿  ,
+333333ó?,)u ¿  
+¸…ëQ¸®?,,²  â¼   äL   ç¿  ,u . š   —X   ™   —X   ÿ—X   
+333333ó?¿  
+ÍÌÌÌÌÌü?,(,²  â¿  ¿  ¿  
+R¸…ëQØ?,,¿  ,(¿  (¿  (²  â¿  äL   ç;   ¿  >   ¿  >    y â¿   š(   —g   Â    äL!   ç¿  ¿  y â™#   —i   Â    äL"   ç¿  ¿  y â—k   Ó¿  2*Î  â™Ÿıÿÿ—m   ÓÂ    äL#   çy  âÂ    äL	   çy  âÂ    ¿  L$   O   âÂ    
+š™™™™™ù?O   âÂ    O   â¿  äL%   ço&   y âÂ    äL#   çy  â¼   äL'   ç¼   äL   ç¿  ¿  ¿  ,u u ²
+  âÂ    äL(   ç¿
+  )¿
+  (u ²  â¿  äL)   ç*   y â¿  äL)   ç
+ffffffæ?+   y â¿  äL)   ç,   y âÂ    ¿  O-   âÂ    äL.   ç¿
+  )¿  y âÂ    äL/   çy  âÒ¥³ C`¾ `“ `´ )M`¨@`P$`P$`• `• `‘ `‘ `• `N`*`	ÿÿÿúPÿÿÿ÷P(`f¢ `*`J`	ÿÿÿøP(`		 ÿÿÿóPH`
+
+¤ ÿÿÿøP˜ 'ÿÿÿ©P(`	 ÿÿÿæP*”@ `ÿÿÿúP¥ %	•@"`*	`		ÿÿÿöP$`‘ 	`ÿÿÿöP.`ÿÿÿöPJ#`–@'`PD*`P$`• `• `-`ÿÿÿøPD2`PD5`	ÿÿÿêPÿÿÿôP(`ÿÿÿÛP(`‘ 	P$`™ 	P$`‘ 	P$` `
+ÿÿÿãPD=`P%P€€¤  ”          ÿÿÿÿ   Õ  x         ú  =            á  f  ´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€ü	  üõ0§l	  }               ´      $áÎ   âÑ   ±²  ²  ²  ²  ²  ²  ²  ²  ²	  ²
+  â½  gäL   ´    âäL   ²  âäL   ²  âäL   ²  âäL   ²  ââ¿  
+¤p=
+×£à?,²  â¿   L   š   —   
+ÍÌÌÌÌÌì?™   —   
+š™™™™™õ?—   ¿  
+š™™™™™é?,(²  â½  äL   ½ ¿  ,(0O   âÂ    äL	   çy  âÂ    äL
+   çy  âÂ    ¿  L   O   âÂ    
+š™™™™™	@¿  
+ffffffö?,(O   âÂ       O   âÂ       O   âÂ    ¿  L   O   âÂ    ¿  ,(O   âj    ²  â¼   äL   ç¼   äL   ç¿  
+ÍÌÌÌÌÌü?-u   u ²  â±²  â²  â˜&   ¿  ¿  !šb  —(   ±²  ²  ²  ²  ²  â¿  ¿  -²  â¿  ¿  ,²  â¿  
+š™™™™™@,½  L   ).²  â¿  š   —0   ¿  (0Î  â—1   ²  â¿  
+333333Ã?"œ   —3   â¿  
+      Ğ?—4   šf   —5   ±²  â¿  
+333333Ã?)
+š™™™™™¹?-²  â¼   äL   ç¿  ¼   L   ,u ¿  
+ìQ¸…ëÁ?,,Î  âÓ™¯  —@   ¿  
+Ház®GÑ?"œ   —B   â¿  
+333333Ó?—C   še   —D   ±²  â¿  
+Ház®GÑ?)
+¸…ëQ¸?-²  â¼   äL   ç¿  ¼   L   ,u ¿  
+š™™™™™¹?,,Î  âÓ™  —N   ¿  
+333333Ó?"œ   —P   â¿  
+ffffffÖ?—Q   šz   —R   ±²  â¿  
+333333Ó?)
+š™™™™™©?-²  â¼   äL   ç¿  ¼   L   ,u ¿  
+)\Âõ(Ü?,¿  ¿  
+{®Gáz´?,,(,Î  âÓ™n  —`   ¿  
+ffffffÖ?"œ   —b   â¿  
+ö(\ÂõØ?—c   še   —d   ±²  â¿  
+ffffffÖ?)
+{®Gáz¤?-²  â¼   äL   ç¿  ¼   L   ,u ¿  
+{®GázÄ?,,Î  âÓ™Ø   —n   ¿  
+¸…ëQ¸Ş?"œ   —p   â¿  
+×£p=
+×ã?—q   šf   —r   ±²  â¿  
+¸…ëQ¸Ş?)
+ìQ¸…ëÁ?-²  â¼   äL   ç¿  ¼   L   ,u ¿  
+š™™™™™É?,,Î  âÓ™A   —}   ¼   äL   ç¿  ¼   L   ,(,½ ,(u 
+ffffffæ?,Î  â—‡   ¿  ¿  (²  â¿  äL    ç;!   ¿  >"   ¿  >#   ¿  >$   y â¿   š(   —   Â    äL%   ç¿  ¿  y â™#   —‘   Â    äL&   ç¿  ¿  y â—“   Ó¿  2*Î  â™”ûÿÿ—•   ÓÂ    äL'   çy  âÂ    äL
+   çy  âÂ    ¿  L(   O   âÂ    
+š™™™™™ù?O   âÂ    O   â¿  äL)   ço*   y âÂ    äL'   çy  â½  L   
+ÍÌÌÌÌÌÜ?,.¿  ,²	  âÂ    äL+   ç¿	  )¿	  (u ²
+  â¿
+  äL,   ç-   y â¿
+  äL,   ç.   y âÂ    ¿
+  O/   âÂ    äL0   ç¿	  )¿  y âÂ    äL1   çy  âÒ¥¯ C`¾ `“ `´ *” `M`P$`P$`• `• `‘ `‘ `• `N`*`	ÿÿÿúPÿÿÿ÷PH`f– `*`J`
+ ` 	`‘@`F`¶ &` ` 
+ÿÿÿ÷PŸ@!`¶ &` `ÿÿÿ÷PŸ@&`¶ &` ` 
+ÿÿÿ÷P¡@+`¶ &` `ÿÿÿ÷PŸ@0`¶ &` ` 
+ÿÿÿ÷PŸ05 `ÿÿÿéP—@9`*	`			ÿÿÿóP$`‘ 	`ÿÿÿöP.`ÿÿÿöPJ#`–@>`PDA`P$`• `• `-`ÿÿÿøPDI`PDL`”  *`ÿÿÿÛP(`‘ 
+P$`‘ 
+P$` `
+ÿÿÿãPDS`P%Pü	  ì	        q  ÿÿÿÿ   Í  ƒ         ò  H        Ÿ  W         6  V         Ì  k         w  V           W             Ù  q  ´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€à  Zq"ØP  Š                Œ      $áÎ   âÑ   ±²  ²  ²  ²  ²  ²  ²  ²  ²	  ²
+  ²  ²  â½  gäL   ´    âäL   ²  âäL   ²  âäL   ²  âäL   ²  âäL   ²  ââ¿  
+)\Âõ(Ì?,²  â¿  
+ö(\Âõè?,²  â¿   L   š   —
+   ™   —
+   
+ffffff@—
+   ¿  
+      @,(²  âÂ    äL	   çy  âÂ    äL
+   çy  âÂ    ¿  L   O   âÂ    
+š™™™™™	@¿  
+      ø?,(O   âÂ       O   âÂ       O   âÂ    ¿  L   O   âÂ    ¿  ,(O   âj    ²	  â¼   äL   ç¼   äL   ç¿  -u   u ²
+  âj   k    k   k   k   k   k   k   k   k   k	   k
+   k   k   k   k   k   ²  â±²  â²  â˜%   ¿  ¿
+  !šÀ  —'   ±²  ²  ²  ²  ²  ²  ²  ²  â¿  ¿
+  -²  â¿  ¿  ,²  â¿  ,½ ¿  ,(¿  L   .²  â¼   äL   ç¿  u ²  â¿  ¿  )²  â¿  ¿  M²  â¿  ¿  (¿  L   .M²  â¿  š   —8   ¿  ™   —8   ¿  —8   ²  â¿  ¿  œ   —:   â¿  
+=
+×£p=ê? —;   š¯   —<   ±²  ²  â¿  
+=
+×£p=ê?)
+
+×£p=
+Ç?-²  â¿  š   —?   ¿  ™   —?   ¿  —?   ²  â¿  ¿  ¿  )
+      à?
+      à?¼   äL   ç¿  
+      à?)¼   L   ,u ,(,(Î  âÓ—K   ¿  šn   —L   ±²  â¿  ,(²  â¿  ¼   äL   ç¿  ¼   L   ,¿  ,½ ,(u 
+333333ó?¿  
+ffffffö?,(,(0Î  âÓ—[   ¿	  äL   ç;   ¿  >    ¿  >!   y â¿   š(   —a   Â    äL"   ç¿  ¿  y â™#   —c   Â    äL#   ç¿  ¿  y â—e   Ó¿  2*Î  â™6ıÿÿ—g   ÓÂ    äL$   çy  âÂ    äL
+   çy  âÂ    ¿  L%   O   âÂ    
+š™™™™™ù?O   âÂ    O   â¿	  äL&   ço'   y âÂ    äL$   çy  âÂ    äL
+   çy  âÂ    (   O   âÂ    O   â¿  -²  â±²  â²  â˜y   ¿  !šx   —{   ±²  â¿  ¿  ,½ ¿  ,,(¿  .²  âÂ    äL"   ç¿  ¿  (y âÂ    äL#   ç¿  ¿  	(y âÓ¿  2*Î  â™€ÿÿÿ—ˆ   ÓÂ    äL$   çy  âÂ    äL+   çy  âÒ¥· K`É `“ `“ `¬ )”@`P$`P$`• `• `‘ `‘ `• `N`*`	ÿÿÿúPÿÿÿ÷PH`ê@`f¢ `*`J`		/`ÿÿÿúP(`J`.`
+@!`­@$`­ *'` `­@(`		
+ÿÿÿßP’@,`‘ &`-` 
+
+ÿÿÿäP'	@1	`		ÿÿÿöP$`‘ 	`ÿÿÿöP.`ÿÿÿöPJ#`–@5`PD8`P$`• `• `-`ÿÿÿøPD@`PDC`P$`‘ `-`,`f‘ &`	*	`ÿÿÿõP$	`ÿÿÿõPEG `–@L`PDN`P%Pà  À        ~  ÿÿÿÿ   5  á         Z  ¦        c  ¥           d      )   Ï  —       *   ò  ^             A  Ï         Û  …   ´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€ä  Í‹¤  P               o      $áÎ   âÑ   ±²  ²  ²  ²  ²  ²  ²  ²  â½  gäL   ´    âäL   ²  âäL   ²  âäL   ²  âäL   ²  ââ¿  
+      à?,²  â¿   L   š   —   ™   —   —   ¿  ,(²  âÂ    äL   çy  âÂ    äL	   çy  âÂ    ¿  L
+   O   âÂ    
+š™™™™™	@¿  
+      ø?,(O   âÂ       O   âÂ       O   âÂ    ¿  L   O   âÂ    ¿  ,(O   âj    ²  â¼   äL   ç¼   äL   ç¿  -u – u ²  â±²	  â²	  â˜"   ¿	  ¿  !š  —$   ±²
+  ²  ²  ²  ²  ²  ²  ²  â¿	  ¿  -²  â¿  ¿  ,²  â¿  
+      @,½ ¿  ,).²
+  â¿
+  š   —,   ¿
+  (0Î
+  â—-   ¿
+  
+      à?)¿  
+q=
+×£pİ?,,²  â¼   äL   ç¼   äL   ç¿
+  
+333333ë?)u 
+ìQ¸…ë¡?-u ²  â¼   äL   ç¿  ¼   L   ,0,½ ,)u ¿  
+333333Ã?,,¿  ,²  â¼   äL   ç¿  ¼   L   ,,½ ,(u ¿  
+{®Gáz´?,,²  â¿  ¿  
+ÍÌÌÌÌÌä?,(¿  (¿  (²  â¿  äL   ç;   ¿  >   ¿  >   y â¿	   š(   —Z   Â    äL    ç¿  ¿  y â™#   —\   Â    äL!   ç¿  ¿  y â—^   Ó¿	  2*Î	  â™çıÿÿ—`   ÓÂ    äL"   çy  âÂ    äL	   çy  âÂ    ¿  L#   O   âÂ    
+š™™™™™ù?O   âÂ    O   â¿  äL$   ço%   y âÂ    äL"   çy  âÂ    äL&   çy  âÒ¥§ C`¾ `“ `¥ )M`P$`P$`• `• `‘ `‘ `• `N`*`	ÿÿÿúPÿÿÿ÷PH`f¢ `*`J`
+-` 
+`‘ `”@`	
+ ÿÿÿüPÿÿÿöP(`	ÿÿÿéP"J`	ÿÿÿêP ”@!`*	`		ÿÿÿöP$`‘ 	`ÿÿÿöP.`ÿÿÿöPJ#`–@&`PD)`P$`• `• `-`ÿÿÿøPD1`PD3`P%P€ä  Ô        D  ÿÿÿÿ     0         ´  õ            ›    ´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€Ø  1J¯Å˜  û                     $áÎ   âÑ   ±²  ²  ²  ²  ²  ²  ²  â½  gäL   ´    âäL   ²  âäL   ²  âäL   ²  âäL   ´    ââ¿  
+      à?,²  â¿   L   š   —   
+333333ó?™   —   
+ÍÌÌÌÌÌ@—   Â    
+ffffff@,(²  âÂ    äL   çy  â¼	   äL
+   ç¼	   äL   ç¿  -u – u ²  âÂ    äL   çy  âÂ    ¿  L   O   âÂ    
+š™™™™™	@Â    
+      ø?,(O   âÂ       O   âÂ       O   âÂ    ¿  L   O   âÂ    Â    ,(O   âj    ²  âj    ´    â±²  â²  â˜#   ¿  ¿  !šù  —%   ±²	  ²
+  ²  ²  â¿  ¿  -²	  â¿	  ¿  ,²
+  â¿  ¼	   äL   ç¿	  ¼	   L   ,,½ ¿  ,)u ¿  
+R¸…ëQØ?,,(¼	   äL   ç¿	  ¼	   L   ,,½ ,(u 
+333333ó?Â    ,(,(²  â¿  ¼	   äL   ç¿	  ¼	   L   ,,½ ¿  ,)¼	   L   ,-(u ¿  
+{®GázÔ?,,(¼	   äL   ç¿	  ¼	   L   ,,½ ,(u Â    
+ÍÌÌÌÌÌü?,(,(²  â¿  äL   ç;   ¿
+  >   ¿  >   y âÂ    äL   ç;   ¿
+  >   ¿  >   y â¿   š(   —i   Â    äL    ç¿
+  ¿  y â™#   —k   Â    äL!   ç¿
+  ¿  y â—m   Ó¿  2*Î  â™ııÿÿ—o   ÓÂ    äL"   çy  âÂ    äL   çy  âÂ    #   O   âÂ    O   âÂ    äL$   ço%   y âÂ    äL"   çy  âÂ    äL   çy  âÂ    ¿  L&   O   âÂ    
+š™™™™™ù?O   âÂ    O   â¿  äL$   ço'   y âÂ    äL"   çy  âÂ    
+333333Ã? š/   —‡   Â    (   O)   â¿  äL$   ço*   y â—‹   Â    äL+   çy  âÒ¥£ C`À `“ `´ )–@`P$`	ÿÿÿúPÿÿÿ÷PH	`P$`• `— `‘ `‘ `• `@`*`L`f’ `*`J`	ÿÿÿæP$ 	ÿÿÿéP!	‘@`		ÿÿÿÙP8 	ÿÿÿéP!˜@ 	`		ÿÿÿöP$	`		ÿÿÿöPD#`‘ 	`ÿÿÿöP.`ÿÿÿöPJ#`–@&`PD)`P$`‘ `.`ÿÿÿøPD0`PD3`P$`• `• `-`ÿÿÿøPD;`PD>`š 	`‘ 	`ÿÿÿøPII`P%P€€Ø  È        ï  ÿÿÿÿ   µ           Ú  ß            Á    ´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€´   ìÄÁù´   n                  	       ½  š6   —   Â    ¶    äL   ç½  L   ½  L   y â™1   —   Â    ¶    äL   ç½  L   ½  L   y â—	   ¥ ` 	`“ ÿÿÿóP.`“ ÿÿÿóP)P€€@  ßŒ²š@  æ                         ½ . œ;   —   â¼   äL   ç½  L   Â    ¶    ½ ML   )u —
+   š—   —   Â    ¶    äL   çy  âÂ    äL   ç½  L   ½  L   Â    ¶    ½ ML   (
+      à?,
+      @Â    ¶    ,¼   L   ,y âÂ    äL   çy  â—   ¥ `  – ÿÿÿõP• `“ P$`  	ÿÿÿÆP$`PI	P€€<   Óªcş<                             Â    ¶    ‚æ  ƒ  ¢ `” 3õØ  `                `	  
+            `  `  p
+         @      @    @  `  	  `
+                          
+  `       `  @  `  `  `  
+  &  '  	        )  *    ,  -  .  /  0  1    `  2      `  *    `#  4  
+  p  `  5  6    7    `    `  `=  I      `7  L    `  `  `    K    í  9  4    p  `  `      9  ;  <  ×  =  ?  @  B  C  Q      ª    @  p2    p7    `  `    ;    Q  ×  =    9    R    ª  7       `#  `L  $  `!  `"  `  5      I  4    p  `  `            pU      @  p2    p7  '  `(  `    ;    Q  ×  =    9    R    ª  7    )  `*  `  5  U  -  `L  .  `+  `,  `  5      I  4    p%  `&  `            pU      @  p2    p7  3  `4  `;    g  ×  =    B  C    R  9    ª  7  1  `2  `    —     p  5  `8  `L  9  `6  `7  `  5      I  4    p/  `0  `            pU      @  p2    p7  <  `=  `=  I    @  `7  L  A  `>  `?  `    K    í  9  4  #  p:  `;  `      9  ;  ?  ×  =  Q  B  C  Q      ª    @!  p2  "  p7  D  `E  `=  I    H  `7  L  I  `F  `G  `    K    í  9  4  '  pB  `C  `      9  ;  Q  ×  =  <      ª  	  @%  p2  &  p7  K  `w  x  y  v       {  |  z  ú   }  ~  €  +        ƒ  
+  „  ‚  †  ‡  ˆ  …  ‰  Š  ‹  Œ    P  `  N  `O  `c  ¾    Œ   +  pú   x  Á  Ã  Å  Æ  Q  `w  È  É  Ë  Ê  Ì  Í  Ô  Î  Ï  Ğ  R  `Ò  Ó  Õ  Ö     ×  Ù  Ø  Ú  Û      @Ü    @  ½  À  Â  (  ¿  Ä  Ş  ß  à  á  $  %  â    ä  ã  å  æ  Š  ç  L  `M  `
+  @  ‘    “  ’  •  ”  h  –  Ş  ˜  —  š  ™  œ    ›    @  Ÿ     ¡  ¢  £    @¤  ¥  ¦  §  ¨  ©  ª    @«  ¬  ­  ®  ¯  °    @±  ²  ³  ´  µ  ¶    @·  ¸  ¹  º  »  ¼  z  —   *  pU  `V  `À  ì  Ş  ß    í  ƒ  î  $  ï  %  W  `à  é  ê  ½  Ö     ñ  X  `é  ê  Y  `à  ½  Ö  ô  ñ  Ä  ¿  —  õ  ö  Z  `÷  à  é  ê  ½  Ö     ñ  [  `÷  é  ê  ]  `à  ½  Ö  ô  ñ  Ä  ¿  —  õ  ö  \  `4  4  pS  `T  `-  p½    ğ  .  pò  /  pó  0  p  1  p  @  ø  2  p  @ù  3  p  @^  `_  `Â  ì    í  Ş  ß  Ø  ü  ‚  (  ı  ş  a  `æ  `  `  ƒ  
+  „  ‚  Š  —   7  pe  ` }  €  +      d  `—   :  pb  `c  ` 9  p  @  v  i  `ÿ  h  `6  4  =  pf  `g  `
+    	 <  p  @  l  `m  `  ƒ       }   ~  j  `k  `~  ?  p n  `~   p  `q  `à  á    ƒ  Ä  â   (  Ş  ß    ¿  ›  o  `Š  —   B  pr  `s  `Ä  Ö     ö  ¿  h    ä   á    t  `   õ    %  ü      $  " # % & ' * + , ™  u  `v  `- / 0 2 1 3 4 5 6 7 w  `x  `8 }  `4 x  y  5 y  `z  `(  Ş  ß  ¿  á  $  …  - / ’  1 3 ? > @   A B   ƒ  ü  {  `|  `E ì ç    @x  y  4 5 6 ”  —   F  pú   J K L M N O Š   8 ‚  `4 x  y  5 ~  `  `(  Ş  ß  ¿  á  …  - / ’  1 3 ? > @   A B   ƒ  ü  €  `  `R T E V ì ç    @x  y  4 5 6 ”  —   H  pí  [ K M \ ] N ^ 8 Œ  `4 x  y  5 ƒ  `„  `(  Ş  ß  ¿  á  …  ã  - / ’  1 3 ? > @   A B   ƒ  ü  …  `†  `‡  `E ì ˆ  `‰  `Š  `‹  `ç    @x  y  ` 4 5 6 ”  —   J  p[ K M d N ^ 8 “  `4 x  y  5   `  `(  Ş  ß  ¿  á  $  …  - / ’  1 3 ? > @   A B   ƒ  ü    `  `ú   ‘  `E ì ’  `ç    @x  y  4 5 6 ”  —   L  pq ”  `•  `8 š  `4 x  y  5 –  `—  `(  Ş  ß  ¿  á  …  - / ’  1 3 ? > @   A B   ƒ  ü  ˜  `™  `T V E ì ç    @x  y  4 5 6 ”  —   N  p8 Ÿ  `4 x  y  5    `4 x  y  5 ¡  `  R y  / O x  ì Š   ›  `œ  `(  Ş  ß  ¿  á  …  -   ƒ  ü  / ’  1 3 ? > @   A B   `  `E ì x ç    @x  y    @4 5 6 y —   P  p”  Q  pL N R  p8 ¢  `  `  `  `  pp  ;     p    p	    p    p#    p)  	  p3    p*    p,    p-    p.    p/     p0  $  p1  J  `(  p)  p‹  ,  på  5  pæ  6  pÿ  8  pŒ  ;  p  >  p @  p A  p C  p D  p E  pœ  G  p£  I  pª  K  p°  M  p¶  O  p¼  w  z {   | S  p   `  pÿX„e                  J                           #             "              !
+       	      "  +            "  1      #      "  D      )      "  K      3      "  H      ~     ! O      *      "  j      ,      "  W      2      !
+ `   
+   7      !
+ \           ! Ÿ      -      "        N      !
+ ’      2      !
+ –   	   7      !
+ “      …     ! Ğ      .      "  ®      V      !
+ ¿      2      !
+ Ç   	   7      !
+ Ä      ‰     !      /      "  ï      `      !
+ ß      ‹     ! ö      2      !
+ ú   	   7      !
+ ÷           ! %     0      "       2      !
+   
+   7      !
+      ‘     ! N     1      "  ;     2      !
+ D  
+   7      !
+ @     ”     ! a     u      # ¿  ;   ‹      "  ‚  =   •     ! €     –     ! 8     å      "  ú     è      !
+      ˜     !      ˜     !      ˜     !   	   ˜     ! &     ˜     ! 5     ˜     ! *     ™     ! M     æ      "  ]  	   ÿ      "  [     š     ! q     Œ      "  n     ›     ! f     œ     !            "  {          ! y          ! ‘          "  ‡  
+   
+     !
+ –          "  ©          "  ™           ! ­  #        "  Ğ          "  ä  .   œ      "  ß     ¡     !   0   £      "       ¢     ! L  2   ª      "  G     £     ! ƒ  ,   °      "  ~     ¤     ! ´  '   ¶      "  ¯     ¥     ! î  ,   ¼      "  Û     ¦     ! à     ¦     ! å  	   ¦     !              ! H©À      €·      €·                    {·    {·                 ‰  b  Y  ØI                ‚ y  I  h  I  '                “  l  “  l  (               \  m
+  O  m
+  3                €
+  	  s
+  	  C                «    «  S              ¾  b  ±  b  z             ‚ |  J  h  J  €               Ø  <  Ø  <  ‚               ]  ¨  P  ¨  ‰              ‚ û  $  ã  $  ™               Â  "  Â  "  À               2    2    Ç                N    N    Ì              ‚ t  Ÿ%  _  Ÿ%  Ù               J  ·#  J  ·#  à                ($  Y$  ($  Y$                i$  %  i$  %                 3%  %  3%  %               ‚ &  ù0  ê%  ù0                ¸&  y.  ¸&  y.                 ò.  ³/  ò.  ³/  [              Ã/  ê0  Ã/  ê0  `               0  Ù0  0  Ù0  d             ‚ S1  '8  <1  '8  l              /2  36  /2  36  s  !             ù2  	6  ù2  	6  y              °6  á6  °6  á6  —              ñ6  8  ñ6  8  š               »7  8  »7  8               ‚ ™8  sA  {8  sA  ¦  #            >  n?  >  n?  Ô              ~?  dA  ~?  dA  Û               š@  SA  š@  SA  à             ‚ ÍA  ÔI  µA  ÔI  í              —F  ÌG  —F  ÌG                ÜG  ÅI  ÜG  ÅI                 øH  ´I  øH  ´I  !              J  ÅL  ÜI  |¶  /             ‚ ÕL  `  ËL  `  D               nW  `  nW  `                ôW  X  ôW  X  ’  ,          € 0`  «g  `  «g  Ò              T`  —a  T`  —a  Ó              Êa  Wb  Êa  Wb  Û  1            Šb  Åb  Šb  Åb  á  0            ùb  d  ùb  d  å  1             [d  7e  [d  7e  ï  1            }e  f  }e  f  ÷  0            Hf  g  Hf  g  ı  /             cf  €g  cf  €g  ş              ¼g  i  ±g  i  	            ‚ i  j  ‡i  j                 íi  j  íi  j              ‚ (j  Æk  j  Æk                 ]j  |k  ]j  |k    1            „j  rk  „j  rk              ‚ Ük  ³l  Ìk  ³l  ,               'l  ˜l  'l  ˜l  .  )             sl  ‰l  sl  ‰l  0  "           ‚ Âl  n  ¹l  n  4               øl  Hn  øl  Hn  6             n  ün  …n  ün  F             ‚ o  ‰r  o  ‰r  M              2o  r  2o  r  N              ¢r  y  r  y  j               y  ¸{  y  ¸{               v|  ¶„  _|  ¶„  °              
+‚  p‚  
+‚  p‚  Ø             f…  ƒ  X…  ƒ  ó              2Œ  ˜Œ  2Œ  ˜Œ  !             B  lš  2  lš  7              n˜  Ô˜  n˜  Ô˜  |             !›  f¥  ›  f¥  ‘              W£  ½£  W£  ½£  Í             ¦  À¬  ¦  À¬  æ              (¬  ¬  (¬  ¬               m­  x¶  ]­  x¶                 ³  ƒ³  ³  ƒ³  L              O´  µ´  O´  µ´  W              dµ  R¶  dµ  R¶  `               ·  D·   ·  D·  o  3           5¡İ%*áªĞ ƒ£      jæFàjæFàJk‹jæGC   S    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/domain-oscilloscope.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Content-type: text/javascript
+Content-Length: 46976
+Last-Modified: Sat, 31 Oct 2026 19:35:27 GMT
+Date: Sat, 31 Oct 2026 19:52:00 GMT
+Server: SimpleHTTP/0.6 Python/3.14.4
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 19:43:47 GMT
+Content-type: text/javascript
+Content-Length: 46976
+Last-Modified: Sat, 31 Oct 2026 19:35:27 GMT
+ ctid 2 net-response-time-onstart 84 net-response-time-onstop 84 alt-data 1;46976,javascript/moz-script-bytecode-20261006030843-8l alt-data-from-child 1     ~¨

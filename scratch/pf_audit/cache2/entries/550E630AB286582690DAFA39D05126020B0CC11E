@@ -1,0 +1,1392 @@
+/**
+ * OVERCLOCK 2027 ‚Äî ELEVATED CINEMATIC SCROLL-DRIVEN BACKGROUND ENGINE
+ * FCRIT √ó IEEE Student Branch
+ * 
+ * Features:
+ * - Scrub-smooth 50-frame temporal explosion footage (/images/ezgif-frame-001.jpg .. 050.jpg)
+ * - Sub-frame temporal crossfade between adjacent frames for zero-stutter cinematic playback
+ * - High-performance interactive tachyon particle spark system reacting to mouse & scroll
+ * - Reactive Overclock Surge states (1.0 GHz, 3.6 GHz, 5.2 GHz, 8.4 GHz)
+ * - Procedural electrical lightning arcs and chromatic shockwave ripples
+ * - Integrated tactile Web Audio relay click synthesizer
+ */
+
+class BureauScrollSequenceEngine {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) {
+      console.warn(`[ScrollSequenceEngine] Canvas #${canvasId} not found.`);
+      return;
+    }
+
+    this.ctx = this.canvas.getContext('2d', {
+      alpha: false,
+      desynchronized: true
+    });
+
+    this.frameCount = 50;
+    this.frames = new Array(this.frameCount).fill(null);
+    this.framesLoaded = new Array(this.frameCount).fill(false);
+    this.loadedCount = 0;
+    this.hasDrawnFirstFrame = false;
+
+    // Viewport & Scaling
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+
+    // Scroll mapping
+    this.scrollY = 0;
+    this.maxScroll = 1;
+    this.targetProgress = 0;
+    this.currentProgress = 0;
+    this.lastRenderedProgress = -1;
+    this.scrollVelocity = 0;
+    this.lastScrollY = 0;
+
+    // Animation physics
+    this.lerpFactor = 0.18;
+    this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (this.prefersReducedMotion) {
+      this.lerpFactor = 1.0;
+    }
+
+    // Interactive Overclock State (1.0 to 8.42 GHz)
+    this.clockFrequency = 1.0;
+    this.targetSpeedMult = 1.0;
+    this.currentSpeedMult = 1.0;
+    this.shockwaveActive = false;
+    this.shockwaveRadius = 0;
+    this.shockwaveAlpha = 0;
+    this.shockwaveOrigin = { x: 0, y: 0 };
+
+    // Mouse Tracking for Interactive Sparks
+    this.mouse = { x: this.width * 0.5, y: this.height * 0.5, isHovering: false, lastActive: 0 };
+
+    // Particle & Lightning System
+    this.particles = [];
+    this.lightningArcs = [];
+    this.lastLightningTime = 0;
+
+    // Audio Context
+    this.audioCtx = null;
+
+    this.initParticles();
+    this.init();
+  }
+
+  getFrameUrl(index) {
+    const frameNum = String(index + 1).padStart(3, '0');
+    return `images/ezgif-frame-${frameNum}.jpg`;
+  }
+
+  initParticles() {
+    this.particles = [];
+    const isMobile = (this.width || window.innerWidth) <= 768;
+    const count = isMobile ? 36 : 90;
+    const colors = [
+      '#B8923A', // Brass primary
+      '#C8A348', // Warm brass
+      '#E8872B', // TVA orange accent
+      '#EADFC4', // Paper speckle
+      '#3FB5A0'  // CRT teal terminal spark
+    ];
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * (this.width || 1280),
+        y: Math.random() * (this.height || 720),
+        baseVx: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45),
+        baseVy: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45) - (isMobile ? 0.1 : 0.15),
+        vx: 0,
+        vy: 0,
+        size: isMobile ? (Math.random() * 1.5 + 0.8) : (Math.random() * 2.4 + 1.1),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: isMobile ? (Math.random() * 0.45 + 0.2) : (Math.random() * 0.65 + 0.25),
+        pulseSpeed: Math.random() * 0.03 + 0.015,
+        pulseOffset: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  init() {
+    this.updateDimensions();
+    this.calculateScrollProgress();
+
+    // Event listeners
+    window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+    window.addEventListener('resize', () => this.onResize(), { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.onResize(), 100);
+    }, { passive: true });
+
+    // Interactive Mouse Tracking
+    window.addEventListener('mousemove', (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+      this.mouse.isHovering = true;
+      this.mouse.lastActive = performance.now();
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      this.mouse.isHovering = false;
+    });
+
+    // Begin preload pipeline
+    this.preloadFrames();
+
+    // Start render loop
+    this.startLoop();
+  }
+
+  updateDimensions() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+
+    const targetWidth = Math.round(this.width * this.dpr);
+    const targetHeight = Math.round(this.height * this.dpr);
+
+    if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
+      this.canvas.width = targetWidth;
+      this.canvas.height = targetHeight;
+      this.lastRenderedProgress = -1;
+    }
+
+    this.canvas.style.width = `${this.width}px`;
+    this.canvas.style.height = `${this.height}px`;
+
+    // Maximum scroll calculation
+    const docHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    this.maxScroll = Math.max(docHeight - this.height, 1);
+  }
+
+  onResize() {
+    this.updateDimensions();
+    this.calculateScrollProgress();
+    this.lastRenderedProgress = -1;
+    this.renderFrame();
+    this.requestTick();
+  }
+
+  onScroll() {
+    this.calculateScrollProgress();
+    this.requestTick();
+  }
+
+  calculateScrollProgress() {
+    this.scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const progress = this.scrollY / this.maxScroll;
+    this.targetProgress = Math.min(Math.max(progress, 0), 1);
+
+    // Track scroll velocity for particle streaking
+    this.scrollVelocity = Math.abs(this.scrollY - this.lastScrollY);
+    this.lastScrollY = this.scrollY;
+  }
+
+  preloadFrames() {
+    // 1. High-priority load for Frame 1 (Index 0) to ensure immediate visual render
+    const initialImg = new Image();
+    initialImg.src = this.getFrameUrl(0);
+
+    const onInitialReady = () => {
+      this.frames[0] = initialImg;
+      this.framesLoaded[0] = true;
+      this.loadedCount++;
+      this.lastRenderedProgress = -1;
+      this.renderFrame();
+      this.hasDrawnFirstFrame = true;
+    };
+
+    if (initialImg.complete && initialImg.naturalWidth > 0) {
+      onInitialReady();
+    } else if ('decode' in initialImg) {
+      initialImg.decode().then(onInitialReady).catch(() => {
+        initialImg.onload = onInitialReady;
+      });
+    } else {
+      initialImg.onload = onInitialReady;
+    }
+
+    // 2. Concurrently load all remaining frames in the background
+    for (let i = 1; i < this.frameCount; i++) {
+      const idx = i;
+      const img = new Image();
+      img.src = this.getFrameUrl(idx);
+
+      const onFrameReady = () => {
+        this.frames[idx] = img;
+        this.framesLoaded[idx] = true;
+        this.loadedCount++;
+        const rawIndex = this.currentProgress * (this.frameCount - 1);
+        if (Math.abs(rawIndex - idx) <= 1.5) {
+          this.requestTick();
+        }
+      };
+
+      if ('decode' in img) {
+        img.decode().then(onFrameReady).catch(() => {
+          img.onload = onFrameReady;
+        });
+      } else {
+        img.onload = onFrameReady;
+      }
+    }
+  }
+
+  getReadyFrame(idealIndex) {
+    idealIndex = Math.min(Math.max(idealIndex, 0), this.frameCount - 1);
+    if (this.framesLoaded[idealIndex] && this.frames[idealIndex]) {
+      return this.frames[idealIndex];
+    }
+
+    // Nearest-neighbor fallback search
+    for (let offset = 1; offset < this.frameCount; offset++) {
+      const left = idealIndex - offset;
+      if (left >= 0 && this.framesLoaded[left] && this.frames[left]) {
+        return this.frames[left];
+      }
+      const right = idealIndex + offset;
+      if (right < this.frameCount && this.framesLoaded[right] && this.frames[right]) {
+        return this.frames[right];
+      }
+    }
+
+    return null;
+  }
+
+  drawCover(img, alpha = 1.0) {
+    if (!img) return;
+
+    const ctx = this.ctx;
+    const canvasW = this.canvas.width;
+    const canvasH = this.canvas.height;
+    const naturalW = img.naturalWidth || 1280;
+    const naturalH = img.naturalHeight || 720;
+
+    const imageAspect = naturalW / naturalH;
+    const canvasAspect = canvasW / canvasH;
+
+    let drawW, drawH, drawX, drawY;
+
+    if (canvasAspect >= imageAspect) {
+      // Landscape / Ultra-wide: fit width, center vertically
+      drawW = canvasW;
+      drawH = Math.round(canvasW / imageAspect);
+      drawX = 0;
+      drawY = Math.round((canvasH - drawH) / 2);
+    } else {
+      // Portrait / Narrow screens: match height, center horizontally
+      // Clean, sharp 1:1 aspect cover without artificial magnification or distortion
+      drawH = canvasH;
+      drawW = Math.round(canvasH * imageAspect);
+      drawX = Math.round((canvasW - drawW) / 2);
+      drawY = 0;
+    }
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    ctx.save();
+    ctx.globalAlpha = Math.min(Math.max(alpha, 0), 1);
+    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    ctx.restore();
+  }
+
+  drawParticleLayer(time) {
+    const ctx = this.ctx;
+    const dpr = this.dpr;
+    const speed = this.currentSpeedMult;
+    const mouseX = this.mouse.x;
+    const mouseY = this.mouse.y;
+    const hasMouse = this.mouse.isHovering;
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+
+    const now = performance.now();
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
+
+      // Update position with speed factor and turbulence
+      const wobble = Math.sin(time * 0.002 + p.pulseOffset) * 0.2;
+      p.vx = (p.baseVx + wobble) * speed;
+      p.vy = (p.baseVy) * speed;
+
+      // Mouse repulsion physics
+      if (hasMouse) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distSq = dx * dx + dy * dy;
+        const maxDist = 180;
+        if (distSq < maxDist * maxDist && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const force = (1 - dist / maxDist) * 3.5 * speed;
+          p.x += (dx / dist) * force;
+          p.y += (dy / dist) * force;
+        }
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Screen boundary wrap
+      if (p.x < -20) p.x = this.width + 20;
+      if (p.x > this.width + 20) p.x = -20;
+      if (p.y < -20) p.y = this.height + 20;
+      if (p.y > this.height + 20) p.y = -20;
+
+      // Pulse alpha
+      const currentAlpha = p.alpha * (0.7 + 0.3 * Math.sin(time * p.pulseSpeed + p.pulseOffset));
+
+      // Draw particle with soft halo
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.8);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(0.4, p.color);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+      ctx.globalAlpha = Math.min(Math.max(currentAlpha, 0), 1);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Occasional procedural electrical micro-arcs when overclocked
+    if (this.clockFrequency >= 5.0 && now - this.lastLightningTime > (this.clockFrequency >= 8.0 ? 300 : 900)) {
+      if (Math.random() < 0.65) {
+        this.spawnLightningArc();
+        this.lastLightningTime = now;
+      }
+    }
+
+    this.drawLightningArcs();
+    this.drawShockwave();
+
+    ctx.restore();
+  }
+
+  spawnLightningArc() {
+    if (this.particles.length < 2) return;
+    const p1 = this.particles[Math.floor(Math.random() * this.particles.length)];
+    const p2 = this.particles[Math.floor(Math.random() * this.particles.length)];
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 50 && dist < 320) {
+      this.lightningArcs.push({
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+        life: 1.0,
+        color: Math.random() > 0.45 ? (Math.random() > 0.35 ? '#B8923A' : '#E8872B') : '#3FB5A0'
+      });
+    }
+  }
+
+  drawLightningArcs() {
+    const ctx = this.ctx;
+    for (let i = this.lightningArcs.length - 1; i >= 0; i--) {
+      const arc = this.lightningArcs[i];
+      arc.life -= 0.16;
+
+      if (arc.life <= 0) {
+        this.lightningArcs.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = arc.life * 0.9;
+      ctx.strokeStyle = arc.color;
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = arc.color;
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(arc.x1, arc.y1);
+
+      // Jagged zig-zag interpolation
+      const segments = 5;
+      for (let s = 1; s < segments; s++) {
+        const t = s / segments;
+        const mx = arc.x1 + (arc.x2 - arc.x1) * t + (Math.random() - 0.5) * 16;
+        const my = arc.y1 + (arc.y2 - arc.y1) * t + (Math.random() - 0.5) * 16;
+        ctx.lineTo(mx, my);
+      }
+      ctx.lineTo(arc.x2, arc.y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  drawShockwave() {
+    if (!this.shockwaveActive) return;
+
+    const ctx = this.ctx;
+    this.shockwaveRadius += 16 * this.currentSpeedMult;
+    this.shockwaveAlpha -= 0.024;
+
+    if (this.shockwaveAlpha <= 0) {
+      this.shockwaveActive = false;
+      return;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.shockwaveAlpha);
+    ctx.strokeStyle = '#E8872B';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = 'rgba(232, 135, 43, 0.45)';
+    ctx.shadowBlur = 24;
+
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, this.shockwaveRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner chromatic resonance ring
+    ctx.strokeStyle = '#3FB5A0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, Math.max(0, this.shockwaveRadius - 14), 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  triggerShockwave(originX, originY) {
+    this.shockwaveActive = true;
+    this.shockwaveRadius = 10;
+    this.shockwaveAlpha = 0.85;
+    this.shockwaveOrigin = {
+      x: originX !== undefined ? originX : this.width * 0.5,
+      y: originY !== undefined ? originY : this.height * 0.4
+    };
+  }
+
+  renderFrame(time = 0) {
+    const rawIndex = this.currentProgress * (this.frameCount - 1);
+    const baseIndex = Math.floor(rawIndex);
+    const nextIndex = Math.min(baseIndex + 1, this.frameCount - 1);
+    const subFrame = rawIndex - baseIndex;
+
+    const baseFrame = this.getReadyFrame(baseIndex);
+    const nextFrame = this.getReadyFrame(nextIndex);
+
+    if (!baseFrame && !nextFrame) return;
+
+    // 1. Draw base frame
+    if (baseFrame) {
+      this.drawCover(baseFrame, 1.0);
+    } else if (nextFrame) {
+      this.drawCover(nextFrame, 1.0);
+    }
+
+    // 2. Sub-frame temporal crossfade between adjacent frames
+    if (nextFrame && nextFrame !== baseFrame && subFrame > 0.005) {
+      this.drawCover(nextFrame, subFrame);
+    }
+
+    // 3. Draw elevated Tachyon particle and energy spark layer on top of video
+    this.drawParticleLayer(time);
+
+    this.lastRenderedProgress = this.currentProgress;
+    this.hasDrawnFirstFrame = true;
+  }
+
+  startLoop() {
+    const tick = (now) => {
+      // Smoothly interpolate overclock speed multiplier
+      this.currentSpeedMult += (this.targetSpeedMult - this.currentSpeedMult) * 0.08;
+
+      const delta = this.targetProgress - this.currentProgress;
+
+      if (Math.abs(delta) > 0.0001) {
+        this.currentProgress += delta * this.lerpFactor;
+      } else {
+        this.currentProgress = this.targetProgress;
+      }
+
+      // Always render so particles and energy effects animate continuously
+      this.renderFrame(now);
+
+      // Check if docHeight changed dynamically
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
+      const expectedMaxScroll = Math.max(docHeight - this.height, 1);
+      if (Math.abs(this.maxScroll - expectedMaxScroll) > 10) {
+        this.maxScroll = expectedMaxScroll;
+        this.calculateScrollProgress();
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }
+
+  requestTick() {
+    this.calculateScrollProgress();
+  }
+
+  // Reactive Overclock API (Called by HUD Telemetry Console)
+  setClockFrequency(freq) {
+    this.clockFrequency = parseFloat(freq) || 1.0;
+    this.targetSpeedMult = Math.min(Math.max(this.clockFrequency / 1.0, 1.0), 3.5);
+
+    // If supercharged or breach, trigger shockwave
+    if (this.clockFrequency >= 8.0) {
+      this.triggerShockwave();
+    }
+
+    this.playRelayClick(this.clockFrequency);
+  }
+
+  playRelayClick(freq = 1.0) {
+    if (window.overclockApp && !window.overclockApp.audioEnabled) return;
+    try {
+      if (!this.audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) this.audioCtx = new AudioContext();
+      }
+      if (!this.audioCtx) return;
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      const pitch = 220 * (0.8 + (freq / 4.0));
+      osc.type = freq >= 8.0 ? 'sawtooth' : 'sine';
+      osc.frequency.setValueAtTime(pitch, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(pitch * 0.4, this.audioCtx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.08);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (_) {
+      // Audio autoplay policy fallback
+    }
+  }
+
+  showRegistrationNotice(message) {
+    if (window.bureauApp && typeof window.bureauApp.showRegistrationNotice === 'function') {
+      window.bureauApp.showRegistrationNotice(message);
+    } else {
+      alert(message);
+    }
+  }
+}
+
+// Global initialization
+window.addEventListener('DOMContentLoaded', () => {
+  window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
+});
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (!window.bureauEngine) {
+    window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
+  }
+}
+        |ª  x|ªÉD   20261006030843-8l_ª  r¥&   http://localhost:3000/bureau-engine.js      œG  /**
+ * OVERCLOCK 2027 ‚Äî ELEVATED CINEMATIC SCROLL-DRIVEN BACKGROUND ENGINE
+ * FCRIT √ó IEEE Student Branch
+ * 
+ * Features:
+ * - Scrub-smooth 50-frame temporal explosion footage (/images/ezgif-frame-001.jpg .. 050.jpg)
+ * - Sub-frame temporal crossfade between adjacent frames for zero-stutter cinematic playback
+ * - High-performance interactive tachyon particle spark system reacting to mouse & scroll
+ * - Reactive Overclock Surge states (1.0 GHz, 3.6 GHz, 5.2 GHz, 8.4 GHz)
+ * - Procedural electrical lightning arcs and chromatic shockwave ripples
+ * - Integrated tactile Web Audio relay click synthesizer
+ */
+
+class BureauScrollSequenceEngine {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) {
+      console.warn(`[ScrollSequenceEngine] Canvas #${canvasId} not found.`);
+      return;
+    }
+
+    this.ctx = this.canvas.getContext('2d', {
+      alpha: false,
+      desynchronized: true
+    });
+
+    this.frameCount = 50;
+    this.frames = new Array(this.frameCount).fill(null);
+    this.framesLoaded = new Array(this.frameCount).fill(false);
+    this.loadedCount = 0;
+    this.hasDrawnFirstFrame = false;
+
+    // Viewport & Scaling
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+
+    // Scroll mapping
+    this.scrollY = 0;
+    this.maxScroll = 1;
+    this.targetProgress = 0;
+    this.currentProgress = 0;
+    this.lastRenderedProgress = -1;
+    this.scrollVelocity = 0;
+    this.lastScrollY = 0;
+
+    // Animation physics
+    this.lerpFactor = 0.18;
+    this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (this.prefersReducedMotion) {
+      this.lerpFactor = 1.0;
+    }
+
+    // Interactive Overclock State (1.0 to 8.42 GHz)
+    this.clockFrequency = 1.0;
+    this.targetSpeedMult = 1.0;
+    this.currentSpeedMult = 1.0;
+    this.shockwaveActive = false;
+    this.shockwaveRadius = 0;
+    this.shockwaveAlpha = 0;
+    this.shockwaveOrigin = { x: 0, y: 0 };
+
+    // Mouse Tracking for Interactive Sparks
+    this.mouse = { x: this.width * 0.5, y: this.height * 0.5, isHovering: false, lastActive: 0 };
+
+    // Particle & Lightning System
+    this.particles = [];
+    this.lightningArcs = [];
+    this.lastLightningTime = 0;
+
+    // Audio Context
+    this.audioCtx = null;
+
+    this.initParticles();
+    this.init();
+  }
+
+  getFrameUrl(index) {
+    const frameNum = String(index + 1).padStart(3, '0');
+    return `images/ezgif-frame-${frameNum}.jpg`;
+  }
+
+  initParticles() {
+    this.particles = [];
+    const isMobile = (this.width || window.innerWidth) <= 768;
+    const count = isMobile ? 36 : 90;
+    const colors = [
+      '#B8923A', // Brass primary
+      '#C8A348', // Warm brass
+      '#E8872B', // TVA orange accent
+      '#EADFC4', // Paper speckle
+      '#3FB5A0'  // CRT teal terminal spark
+    ];
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * (this.width || 1280),
+        y: Math.random() * (this.height || 720),
+        baseVx: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45),
+        baseVy: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.45) - (isMobile ? 0.1 : 0.15),
+        vx: 0,
+        vy: 0,
+        size: isMobile ? (Math.random() * 1.5 + 0.8) : (Math.random() * 2.4 + 1.1),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: isMobile ? (Math.random() * 0.45 + 0.2) : (Math.random() * 0.65 + 0.25),
+        pulseSpeed: Math.random() * 0.03 + 0.015,
+        pulseOffset: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  init() {
+    this.updateDimensions();
+    this.calculateScrollProgress();
+
+    // Event listeners
+    window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+    window.addEventListener('resize', () => this.onResize(), { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.onResize(), 100);
+    }, { passive: true });
+
+    // Interactive Mouse Tracking
+    window.addEventListener('mousemove', (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+      this.mouse.isHovering = true;
+      this.mouse.lastActive = performance.now();
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      this.mouse.isHovering = false;
+    });
+
+    // Begin preload pipeline
+    this.preloadFrames();
+
+    // Start render loop
+    this.startLoop();
+  }
+
+  updateDimensions() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+
+    const targetWidth = Math.round(this.width * this.dpr);
+    const targetHeight = Math.round(this.height * this.dpr);
+
+    if (this.canvas.width !== targetWidth || this.canvas.height !== targetHeight) {
+      this.canvas.width = targetWidth;
+      this.canvas.height = targetHeight;
+      this.lastRenderedProgress = -1;
+    }
+
+    this.canvas.style.width = `${this.width}px`;
+    this.canvas.style.height = `${this.height}px`;
+
+    // Maximum scroll calculation
+    const docHeight = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    this.maxScroll = Math.max(docHeight - this.height, 1);
+  }
+
+  onResize() {
+    this.updateDimensions();
+    this.calculateScrollProgress();
+    this.lastRenderedProgress = -1;
+    this.renderFrame();
+    this.requestTick();
+  }
+
+  onScroll() {
+    this.calculateScrollProgress();
+    this.requestTick();
+  }
+
+  calculateScrollProgress() {
+    this.scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const progress = this.scrollY / this.maxScroll;
+    this.targetProgress = Math.min(Math.max(progress, 0), 1);
+
+    // Track scroll velocity for particle streaking
+    this.scrollVelocity = Math.abs(this.scrollY - this.lastScrollY);
+    this.lastScrollY = this.scrollY;
+  }
+
+  preloadFrames() {
+    // 1. High-priority load for Frame 1 (Index 0) to ensure immediate visual render
+    const initialImg = new Image();
+    initialImg.src = this.getFrameUrl(0);
+
+    const onInitialReady = () => {
+      this.frames[0] = initialImg;
+      this.framesLoaded[0] = true;
+      this.loadedCount++;
+      this.lastRenderedProgress = -1;
+      this.renderFrame();
+      this.hasDrawnFirstFrame = true;
+    };
+
+    if (initialImg.complete && initialImg.naturalWidth > 0) {
+      onInitialReady();
+    } else if ('decode' in initialImg) {
+      initialImg.decode().then(onInitialReady).catch(() => {
+        initialImg.onload = onInitialReady;
+      });
+    } else {
+      initialImg.onload = onInitialReady;
+    }
+
+    // 2. Concurrently load all remaining frames in the background
+    for (let i = 1; i < this.frameCount; i++) {
+      const idx = i;
+      const img = new Image();
+      img.src = this.getFrameUrl(idx);
+
+      const onFrameReady = () => {
+        this.frames[idx] = img;
+        this.framesLoaded[idx] = true;
+        this.loadedCount++;
+        const rawIndex = this.currentProgress * (this.frameCount - 1);
+        if (Math.abs(rawIndex - idx) <= 1.5) {
+          this.requestTick();
+        }
+      };
+
+      if ('decode' in img) {
+        img.decode().then(onFrameReady).catch(() => {
+          img.onload = onFrameReady;
+        });
+      } else {
+        img.onload = onFrameReady;
+      }
+    }
+  }
+
+  getReadyFrame(idealIndex) {
+    idealIndex = Math.min(Math.max(idealIndex, 0), this.frameCount - 1);
+    if (this.framesLoaded[idealIndex] && this.frames[idealIndex]) {
+      return this.frames[idealIndex];
+    }
+
+    // Nearest-neighbor fallback search
+    for (let offset = 1; offset < this.frameCount; offset++) {
+      const left = idealIndex - offset;
+      if (left >= 0 && this.framesLoaded[left] && this.frames[left]) {
+        return this.frames[left];
+      }
+      const right = idealIndex + offset;
+      if (right < this.frameCount && this.framesLoaded[right] && this.frames[right]) {
+        return this.frames[right];
+      }
+    }
+
+    return null;
+  }
+
+  drawCover(img, alpha = 1.0) {
+    if (!img) return;
+
+    const ctx = this.ctx;
+    const canvasW = this.canvas.width;
+    const canvasH = this.canvas.height;
+    const naturalW = img.naturalWidth || 1280;
+    const naturalH = img.naturalHeight || 720;
+
+    const imageAspect = naturalW / naturalH;
+    const canvasAspect = canvasW / canvasH;
+
+    let drawW, drawH, drawX, drawY;
+
+    if (canvasAspect >= imageAspect) {
+      // Landscape / Ultra-wide: fit width, center vertically
+      drawW = canvasW;
+      drawH = Math.round(canvasW / imageAspect);
+      drawX = 0;
+      drawY = Math.round((canvasH - drawH) / 2);
+    } else {
+      // Portrait / Narrow screens: match height, center horizontally
+      // Clean, sharp 1:1 aspect cover without artificial magnification or distortion
+      drawH = canvasH;
+      drawW = Math.round(canvasH * imageAspect);
+      drawX = Math.round((canvasW - drawW) / 2);
+      drawY = 0;
+    }
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    ctx.save();
+    ctx.globalAlpha = Math.min(Math.max(alpha, 0), 1);
+    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    ctx.restore();
+  }
+
+  drawParticleLayer(time) {
+    const ctx = this.ctx;
+    const dpr = this.dpr;
+    const speed = this.currentSpeedMult;
+    const mouseX = this.mouse.x;
+    const mouseY = this.mouse.y;
+    const hasMouse = this.mouse.isHovering;
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+
+    const now = performance.now();
+
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
+
+      // Update position with speed factor and turbulence
+      const wobble = Math.sin(time * 0.002 + p.pulseOffset) * 0.2;
+      p.vx = (p.baseVx + wobble) * speed;
+      p.vy = (p.baseVy) * speed;
+
+      // Mouse repulsion physics
+      if (hasMouse) {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distSq = dx * dx + dy * dy;
+        const maxDist = 180;
+        if (distSq < maxDist * maxDist && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const force = (1 - dist / maxDist) * 3.5 * speed;
+          p.x += (dx / dist) * force;
+          p.y += (dy / dist) * force;
+        }
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Screen boundary wrap
+      if (p.x < -20) p.x = this.width + 20;
+      if (p.x > this.width + 20) p.x = -20;
+      if (p.y < -20) p.y = this.height + 20;
+      if (p.y > this.height + 20) p.y = -20;
+
+      // Pulse alpha
+      const currentAlpha = p.alpha * (0.7 + 0.3 * Math.sin(time * p.pulseSpeed + p.pulseOffset));
+
+      // Draw particle with soft halo
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.8);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(0.4, p.color);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+      ctx.globalAlpha = Math.min(Math.max(currentAlpha, 0), 1);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Occasional procedural electrical micro-arcs when overclocked
+    if (this.clockFrequency >= 5.0 && now - this.lastLightningTime > (this.clockFrequency >= 8.0 ? 300 : 900)) {
+      if (Math.random() < 0.65) {
+        this.spawnLightningArc();
+        this.lastLightningTime = now;
+      }
+    }
+
+    this.drawLightningArcs();
+    this.drawShockwave();
+
+    ctx.restore();
+  }
+
+  spawnLightningArc() {
+    if (this.particles.length < 2) return;
+    const p1 = this.particles[Math.floor(Math.random() * this.particles.length)];
+    const p2 = this.particles[Math.floor(Math.random() * this.particles.length)];
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 50 && dist < 320) {
+      this.lightningArcs.push({
+        x1: p1.x,
+        y1: p1.y,
+        x2: p2.x,
+        y2: p2.y,
+        life: 1.0,
+        color: Math.random() > 0.45 ? (Math.random() > 0.35 ? '#B8923A' : '#E8872B') : '#3FB5A0'
+      });
+    }
+  }
+
+  drawLightningArcs() {
+    const ctx = this.ctx;
+    for (let i = this.lightningArcs.length - 1; i >= 0; i--) {
+      const arc = this.lightningArcs[i];
+      arc.life -= 0.16;
+
+      if (arc.life <= 0) {
+        this.lightningArcs.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = arc.life * 0.9;
+      ctx.strokeStyle = arc.color;
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = arc.color;
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.moveTo(arc.x1, arc.y1);
+
+      // Jagged zig-zag interpolation
+      const segments = 5;
+      for (let s = 1; s < segments; s++) {
+        const t = s / segments;
+        const mx = arc.x1 + (arc.x2 - arc.x1) * t + (Math.random() - 0.5) * 16;
+        const my = arc.y1 + (arc.y2 - arc.y1) * t + (Math.random() - 0.5) * 16;
+        ctx.lineTo(mx, my);
+      }
+      ctx.lineTo(arc.x2, arc.y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  drawShockwave() {
+    if (!this.shockwaveActive) return;
+
+    const ctx = this.ctx;
+    this.shockwaveRadius += 16 * this.currentSpeedMult;
+    this.shockwaveAlpha -= 0.024;
+
+    if (this.shockwaveAlpha <= 0) {
+      this.shockwaveActive = false;
+      return;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.shockwaveAlpha);
+    ctx.strokeStyle = '#E8872B';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = 'rgba(232, 135, 43, 0.45)';
+    ctx.shadowBlur = 24;
+
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, this.shockwaveRadius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner chromatic resonance ring
+    ctx.strokeStyle = '#3FB5A0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, Math.max(0, this.shockwaveRadius - 14), 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  triggerShockwave(originX, originY) {
+    this.shockwaveActive = true;
+    this.shockwaveRadius = 10;
+    this.shockwaveAlpha = 0.85;
+    this.shockwaveOrigin = {
+      x: originX !== undefined ? originX : this.width * 0.5,
+      y: originY !== undefined ? originY : this.height * 0.4
+    };
+  }
+
+  renderFrame(time = 0) {
+    const rawIndex = this.currentProgress * (this.frameCount - 1);
+    const baseIndex = Math.floor(rawIndex);
+    const nextIndex = Math.min(baseIndex + 1, this.frameCount - 1);
+    const subFrame = rawIndex - baseIndex;
+
+    const baseFrame = this.getReadyFrame(baseIndex);
+    const nextFrame = this.getReadyFrame(nextIndex);
+
+    if (!baseFrame && !nextFrame) return;
+
+    // 1. Draw base frame
+    if (baseFrame) {
+      this.drawCover(baseFrame, 1.0);
+    } else if (nextFrame) {
+      this.drawCover(nextFrame, 1.0);
+    }
+
+    // 2. Sub-frame temporal crossfade between adjacent frames
+    if (nextFrame && nextFrame !== baseFrame && subFrame > 0.005) {
+      this.drawCover(nextFrame, subFrame);
+    }
+
+    // 3. Draw elevated Tachyon particle and energy spark layer on top of video
+    this.drawParticleLayer(time);
+
+    this.lastRenderedProgress = this.currentProgress;
+    this.hasDrawnFirstFrame = true;
+  }
+
+  startLoop() {
+    const tick = (now) => {
+      // Smoothly interpolate overclock speed multiplier
+      this.currentSpeedMult += (this.targetSpeedMult - this.currentSpeedMult) * 0.08;
+
+      const delta = this.targetProgress - this.currentProgress;
+
+      if (Math.abs(delta) > 0.0001) {
+        this.currentProgress += delta * this.lerpFactor;
+      } else {
+        this.currentProgress = this.targetProgress;
+      }
+
+      // Always render so particles and energy effects animate continuously
+      this.renderFrame(now);
+
+      // Check if docHeight changed dynamically
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
+      const expectedMaxScroll = Math.max(docHeight - this.height, 1);
+      if (Math.abs(this.maxScroll - expectedMaxScroll) > 10) {
+        this.maxScroll = expectedMaxScroll;
+        this.calculateScrollProgress();
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }
+
+  requestTick() {
+    this.calculateScrollProgress();
+  }
+
+  // Reactive Overclock API (Called by HUD Telemetry Console)
+  setClockFrequency(freq) {
+    this.clockFrequency = parseFloat(freq) || 1.0;
+    this.targetSpeedMult = Math.min(Math.max(this.clockFrequency / 1.0, 1.0), 3.5);
+
+    // If supercharged or breach, trigger shockwave
+    if (this.clockFrequency >= 8.0) {
+      this.triggerShockwave();
+    }
+
+    this.playRelayClick(this.clockFrequency);
+  }
+
+  playRelayClick(freq = 1.0) {
+    if (window.overclockApp && !window.overclockApp.audioEnabled) return;
+    try {
+      if (!this.audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) this.audioCtx = new AudioContext();
+      }
+      if (!this.audioCtx) return;
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      const pitch = 220 * (0.8 + (freq / 4.0));
+      osc.type = freq >= 8.0 ? 'sawtooth' : 'sine';
+      osc.frequency.setValueAtTime(pitch, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(pitch * 0.4, this.audioCtx.currentTime + 0.08);
+
+      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.08);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (_) {
+      // Audio autoplay policy fallback
+    }
+  }
+
+  showRegistrationNotice(message) {
+    if (window.bureauApp && typeof window.bureauApp.showRegistrationNotice === 'function') {
+      window.bureauApp.showRegistrationNotice(message);
+    } else {
+      alert(message);
+    }
+  }
+}
+
+// Global initialization
+window.addEventListener('DOMContentLoaded', () => {
+  window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
+});
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (!window.bureauEngine) {
+    window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
+  }
+}
+”ò¿Ÿ‰   ·       ˜»ó*      BureauScrollSequenceEngine     ?Œ»ò      canvasId   %Û      canvas     ˙ÓÎ      document   ÛâjÄ      getElementById     9:œ‡      console    è7Á      warn   t†Cs      [ScrollSequenceEngine] Canvas #    Ë-a°       not found.	    @nâz      ctx
+     ]«Ö
+      getContext     ≠ØB¥      alpha      0À      desynchronized     Ât≤Ô
+      frameCount     #¯+†      frames     sﬁíß      framesLoaded   +}D“      loadedCount    Â|
+      hasDrawnFirstFrame     SÌ      width      ^≈æÑ      window     sxAV
+      innerWidth     ú··ä      height     `
+64      innerHeight    „vHÍ      dpr    éñr•      min    Î´ÎÇ      devicePixelRatio   π7÷F      scrollY    ∞L≤æ	      maxScroll      ∞æ ú      targetProgress     JE˜z      currentProgress    Ær‡      lastRenderedProgress   ˙2áh      scrollVelocity      5Ï}      lastScrollY!    K:YΩ
+      lerpFactor"     )a≤*      prefersReducedMotion#   -GB˛
+      matchMedia$     A¯TH       (prefers-reduced-motion: reduce)%   †zt*      matches&    o“|      clockFrequency'     ˙¡ q      targetSpeedMult(    ÅsÜé      currentSpeedMult)   ˇJ¡      shockwaveActive*    —ãî      shockwaveRadius+    \Ωtó      shockwaveAlpha,     b“O      shockwaveOrigin-    J›iK      mouse.      ¨òI
+      isHovering/     ˙¢oã
+      lastActive0     ≈Õ[	      particles1      ¡4      lightningArcs2      °dµ{      lastLightningTime3      ﬁc^      audioCtx4   ›´ÙF      initParticles5      LlK      init6   '>.Ë      getFrameUrl7    É∫b®      frameNum8   ’]ﬂì      padStart9   ?W@Ú      images/ezgif-frame-:    ⁄√(`      .jpg;   z`'„      isMobile<   ra      colors=     £Îõ      #B8923A>    b%it      #C8A348?    Ë§ß–      #E8872B@     ∆ÈŒ      #EADFC4A    «ˆe8      #3FB5A0B    (!ÌÁ      pushC   åâáy      randomD     Ò#é      baseVxE     Ò#…      baseVyF     bÊ≥ô      colorG      
+i›~      floorH      >h˘o
+      pulseSpeedI     =.2P      pulseOffsetJ     ’Ò      updateDimensionsK   ˛Ïád      calculateScrollProgressL    Ò{      addEventListenerM   ~mL      scrollN     C]z‡      onScrollO   ∑∆Üô      passiveP    é&      resizeQ     ›Tª      onResizeR   e‰t      orientationchangeS      g¸ÏZ
+      setTimeoutT     å >	      mousemoveU      >îÎ»      clientXV     R∏«      clientYW    -s‰      performanceX    )5+Í      nowY    ºÚ
+»
+      mouseleaveZ     >Ã$w      preloadFrames[      ùöPq	      startLoop\      :ä‚◊      targetWidth]    tw|µ      round^      ¢€∆¿      targetHeight_   ¯ÿñS	      docHeight`      ƒõü0      maxa    ˜"∆ç      bodyb   £Üı]      scrollHeightc   ú¶„û      documentElementd    ´æ$      offsetHeighte   0      renderFramef    ®ÂÏ      requestTickg    'ÜC)      pageYOffseth    ;Eü	      scrollTopi      xÑ:`      progressj   ≤«‰C      absk    ´ŒF-
+      initialImgl     £o_≈      Imagem      7)+      srcn    ˚¡⁄      onInitialReadyo     } ‰8      completep   3Ëz≤      naturalWidthq   ÓﬂŒ®      decoder     ú'Ê      onloads     _rE      idxt    -f5F      imgu    ΩÂ˚      onFrameReadyv   ÚÄu9      rawIndexw   ı      getReadyFramex      ∑
+
+      idealIndexy     éæ9ú      leftz   3√      right{      	fÅO	      drawCover|      ŸTºŸ      canvasW}    Î«ìè      canvasH~    #gD      naturalW   #gÂG      naturalHÄ   \í%Î      naturalHeightÅ      ÔQV      imageAspectÇ    ‘⁄Å      canvasAspectÉ   )Kﬂ      drawWÑ      ÁTè´      drawHÖ      Ú(w      drawXÜ      Ü°ô       drawYá      
+Pú      imageSmoothingEnabledà      ˚ ˛      imageSmoothingQualityâ      Å¨      highä   êÜüÇ      saveã   â;õê      globalAlphaå    ë^±ó	      drawImageç      	0       restoreé    iö      drawParticleLayerè      ∫È&      speedê      $πœ      mouseXë     $ V      mouseYí     e›nß      hasMouseì   Ú√˜      scaleî      («Ø      wobbleï     iÕe*      sinñ    ˙cæ$      distSqó     ìO(¡      maxDistò    ƒ∞èÕ      distô   Û%≥´      sqrtö   £Æ´      forceõ      YÍy$      currentAlphaú   JæG*      gradù   ºK?≠      createRadialGradientû   ?HQ      addColorStopü   ≠pˇ      rgba(0,0,0,0)†      ÔKWú	      fillStyle°      ∏∑æ	      beginPath¢      )∏%‰      arc£    ±˝ZS      spawnLightningArc§      Ωs
+      drawLightningArcs•      iﬁ      drawShockwave¶      Ò•í       hypotß      õÉì      life®   ˆ«"Ê      splice©     œ‚E.      strokeStyle™    îò-	      lineWidth´      ¶«T      shadowColor¨    ÜÜ¢[
+      shadowBlur≠     ügf      moveToÆ     /G.+      segmentsØ   ÍuÒ      lineTo∞     yAfß      stroke±     zV∆-      rgba(232, 135, 43, 0.45)≤   Ú      triggerShockwave≥   )v       originX¥    µ4‰˛      originYµ    •GI	      baseIndex∂      —ÏK!	      nextIndex∑      …YW©      subFrame∏   ïE¢“	      baseFrameπ      Â©ˇÈ	      nextFrame∫      p«ó‰      tickª   ·˝¬‘      deltaº      Û˜•s      expectedMaxScrollΩ      »b!      requestAnimationFrameæ      KyL      setClockFrequencyø      Õ†       freq¿   €¥Å      playRelayClick¡     iAâ˙      overclockApp¬   ∑Gµ      audioEnabled√   ˇÇﬁ      AudioContextƒ   ÑSü{      webkitAudioContext≈     X}æ      state∆      ®&	      suspended«      åâüﬁ      resume»     $T{m      osc…    ñìπÜ      createOscillator    …v:Ô      gainÀ   …Lë
+      createGainÃ     £Î…Ó      pitchÕ      ç´_      sawtoothŒ   I ◊—      sineœ   kxÅ	      frequency–      >ºœÿ      setValueAtTime—     ‡ODu      currentTime“    
+≥í      exponentialRampToValueAtTime”   39Ú'      connect‘    "õÚÑ      destination’    »∏êO      stop÷   W;k‚      showRegistrationNotice◊     vãÔ	      bureauAppÿ      XK      alertŸ      8-j      DOMContentLoaded⁄   f√a       bureauEngine€   w¬ä*      circuit-canvas‹     âaÊf
+      readyState›     Üc3      interactiveﬁ    Ö_      init/<ﬂ     ƒ∫s      init/</<·   ûD¿      preloadFrames/<     #     B   #           
+   Ô%,â                                                                                                                                                                                                                                           	                 
+                                                                                                                                                                                                                                                                                                                                 !                                 #                $                %   	             &                '                                 )                                 +                ,                -                .                /                                 1                                                  4                                6                7                 8                                                                     <                =                <                           !                  "      ≥Oåc                                           l                “                7                l                ;  @   <              i                 l  `                                                                             e                                l                \  ^  _                l                 l                 l                i                 l  `              k  Pn  P                                            i               s  Pt  Pu  P                             v                              x  l               W               y  z             t    l               É  Ñ  Ö  Ü  	  |  }  ~    Å  Ç              Ω  l                	    è  ê  ë  í  X     	         i               p  î  õ  ú               a b ñ  ó               ò  ö                l                A B a b ò                l                	              i               ¢  Æ              s     	          t  ° ¢               l                	              ≥  ¥  l              Ω  l                v  µ  ∂  ∑  ∏  π                 l  `              ∫  P             X               ª  _  º                l               ø  l              ø  l                »     Ã               √              _                                 Ø¬0∞IÙ$KEÆ˙ö   
+             
+    x  y         x  y  .  /     7      x  y  D  E  · ‚ ¢  F    H  I        O          O          O          O          A Å B Ç ß  F     
+    x  y  á&’™ç!´!#   \    4≥ÃL  á               B       ›    ±≤   ‚: o   ÁÂ@   ?   o   ?   o   ?   o	   ?
+   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?   o   ?    o!   ?"   o#   ?$   o%   ?&   o'   ?(   o)   ?*   o+   ?,   o-   ?.   ‚≤   ”≥/   ‚º0   ‰L1   Á2   o3   y ‚º4   L5   6   ù   ó7   ‚º4   L5   7   ó:   ö;   ó;   º0   L8   õ'   ó>   º0   º/   Ç9   Ê  É N8   ‚óB   •5ô@MJRJoJÄ  çJÄ  ®JÄ  ∞JÄ  µJÄ  øJÄ  ÒJÄ JÄ ,JÄ vJÄ ãJÄ ÆJÄ œJÄ ŸJÄ ˜JÄ JÄ JÄ )JÄ Kñ0Ä U`ë ,ˇˇˇ€P `∫ `î `î PPÄÄ\        Ò   ˇˇˇˇ  KAr£                 \       ·Œ   ‚ø   º   ‰L   ÁΩ  u O   ‚ø   L   õ,   ó   º   ‰L   Á   Ω  3(   (y ‚ ¢ó   ø   ø   L   ‰L   Á	   ;
+   >   >   u O   ‚ø   2O   ‚ø   º   Çø   L   Ê  É ‰L   Áu O   ‚ø   º   Çø   L   Ê  É ‰L   Áu O   ‚ø   O   ‚ø   O   ‚ø   º   L   O   ‚ø   º   L   O   ‚ø   º   ‰L   Áº   L   ù   ó,   ‚ó,   u O   ‚ø   O   ‚ø   O   ‚ø   O    ‚ø   O!   ‚ø   ˇO"   ‚ø   O#   ‚ø   O$   ‚ø   
+
+◊£p=
+«?O%   ‚ø   º   ‰L&   Á'   u L(   O)   ‚ø   L)   ö   ó=   ø   O%   ‚ó>   ø   O*   ‚ø   O+   ‚ø   O,   ‚ø   O-   ‚ø   O.   ‚ø   O/   ‚ø   ;0   >1   >2   O3   ‚ø   ;4   ø   L   
+      ‡?,>1   ø   L   
+      ‡?,>2   >5   >6   O7   ‚ø   j    O8   ‚ø   j    O9   ‚ø   O:   ‚ø   O;   ‚ø   ‰L<   Áy  ‚ø   ‰L=   Áy  ‚•&`ê &ˇˇˇÒP)	`ì `"ˇˇˇŸP$`A=F`ô (%&FPI`,`
+ˇˇˇˆPP)`
+ˇˇˇˆPP)`+`K`î `î `ê ù ˇˇˇ¸PI`+`+`+`+`,`+`K!`ì `ï #P.	`ì `ê@(`+`+`+`+`+`+`	L1`	ò ò L4`/`/`K9`K;`P$`P$PÄÄ†   Ò˝¢Ä   @                       ±≤   ‚º    Ω  (u ‰L   Á   u ≤   ‚   ø   3(   (§”•”• &`ˇˇˇˇPë P(`,TÄÄ†          ?   ˇˇˇˇ    =          t  ‰Ü.D  ç               a      $·Œ   ‚±≤  ≤  ≤  ‚ø   j    O   ‚ø   L   ù   ó   ‚º   L   ó    !≤  ‚ø  ö   ó   $ô   ó   Zó   ≤  ‚j      k       k      k   	   k   
+   k   ≤  ‚±≤  ‚≤  ‚ò	   ø  ø  öπ  ó   ø   L   ‰L   Á;   º   ‰L   Áu  ø   L   ù   ó   ‚ ó   ,>   º   ‰L   Áu  ø   L   ù   ó   ‚–ó   ,>   º   ‰L   Áu  
+      ‡?)ø  ö   ó!   
+333333”?ô   ó!   
+ÕÃÃÃÃÃ‹?ó!   ,>   º   ‰L   Áu  
+      ‡?)ø  ö   ó(   
+333333”?ô   ó(   
+ÕÃÃÃÃÃ‹?ó(   ,ø  ö   ó*   
+öôôôôôπ?ô   ó*   
+333333√?ó*   )>   >   >   ø  ö2   ó/   º   ‰L   Áu  
+      ¯?,
+öôôôôôÈ?(ô-   ó4   º   ‰L   Áu  
+333333@,
+öôôôôôÒ?(ó9   >   ø  º   ‰L   Áº   ‰L   Áu  ø  L   ,u M>   ø  ö2   óE   º   ‰L   Áu  
+ÕÃÃÃÃÃ‹?,
+öôôôôô…?(ô-   óJ   º   ‰L   Áu  
+ÕÃÃÃÃÃ‰?,
+      –?(óO   >   º   ‰L   Áu  
+∏ÖÎQ∏û?,
+∏ÖÎQ∏é?(>   º   ‰L   Áu  º   L   ,,>   y ‚ø  2*Œ  ‚ô=˝ˇˇóa   ””•.`/`¨ `¶ `O
+`f/`ê %	P¢ 	P¢ 	Pµ 	P∞ µ 	&	&	ö P≠ P° 	ê P
+ˇˇˇÍP)	ö P≠ P° 	Pú 	Pì@PD `ó@Pt  d        Ü  ˇˇˇˇ   ±   ⁄             Ω   »  à  X)àüà  ˚                 $        ·œ    ‚¬    ‰L   Áy  ‚¬    ‰L   Áy  ‚º   ‰L   Á   o   ;   >   y ‚º   ‰L   Á	   o
+   ;   >   y ‚º   ‰L   Á   o   ;   >   y ‚º   ‰L   Á   o   ;   >   y ‚º   ‰L   Á   o   y ‚¬    ‰L   Áy  ‚¬    ‰L   Áy  ‚•(`P$`PD`ë "ˇˇˇÃP$`ë "ˇˇˇÃP$`ë -E	FPD`ë %EFPD`ë &ˇˇˇ·PD`PD`P$PÄÄ<   IcwÄ<                             ¬    ‰L   Áu  ¢ `P	ÄÄ<   IcwÄ<                             ¬    ‰L   Áu  ¢ `P	ÄÄD   wwãD                             º    o   dy ‚• `ˇˇˇˇP$PÄÄÄ<   IcwÄ<                             ¬    ‰L   Áu  ¢ `P	ÄÄú   ]≈ìAú   e                         ¬    L   Ω  L   O   ‚¬    L   Ω  L   O   ‚¬    L   O   ‚¬    L   º   ‰L   Áu  O	   ‚• `ô `ô `í `ó $P)P<   ”î3l<                             ¬    L   O   ‚• `í PÄ®  mhDò  ˘        
+       E      ·Œ   ‚±≤  ≤  ≤  ‚ø   º   L   O   ‚ø   º   L   O   ‚ø   º   ‰L   Áº   L	   ù   ó   ‚ó   u O
+   ‚º   ‰L   Áø   L   ø   L
+   ,u ≤  ‚º   ‰L   Áø   L   ø   L
+   ,u ≤  ‚ø   L   L   ø  ù   ó   ‚ø   L   L   ø  ó    ö<   ó!   ø   L   ø  O   ‚ø   L   ø  O   ‚ø   ˇO   ‚ó&   ø   L   L   ø   L   3   (O   ‚ø   L   L   ø   L   3   (O   ‚º   ‰L   Áº   L   L   º   L   L   º   L   L   º   L   L   u ≤  ‚ø   º   ‰L   Áø  ø   L   )u O   ‚”•.`î `î `ê ù ˇˇˇ¸PI`	
+ˇˇˇÌP(`	
+ˇˇˇÏPH	`û &î `ì `ì `ë@`ñ `ñ@`,///OPH`ê ˇˇˇP*PÄÄÄ®        Ú  ˇˇˇˇê   ∂w ê   O                	       ·Œ   ‚ø   ‰L   Áy  ‚ø   ‰L   Áy  ‚ø   ˇO   ‚ø   ‰L   Áy  ‚ø   ‰L   Áy  ‚•&`P$`P$`,`P$`P$PÄÄX   ÉÒÍX   %                        ·Œ   ‚ø   ‰L   Áy  ‚ø   ‰L   Áy  ‚•&`P$`P$PÄÄÄ<  È∞¨#,  “         	             ·Œ   ‚±≤  ‚ø   º   L   ù&   ó   ‚º   L   L   ù   ó   ‚ó   O   ‚ø   L   ø   L   -≤  ‚ø   º	   ‰L
+   Áº	   ‰L   Áø  u u O   ‚ø   º	   ‰L   Áø   L   ø   L   )u O   ‚ø   ø   L   O   ‚”•&`ø `	/`ê 	ˇˇˇ¸Pˇˇˇ˜PI`ê 	
+ˇˇˇÌP)`î P<        À   ˇˇˇˇ  „&⁄∞  ˆ               +       $·œ    ‚—   º   ÇÊ  É  ¥    ‚¬    ¬   ‰L   Áu O   ‚o   ¥    ‚¬    L   ú   ó   ‚¬    L    ó
+   ö   ó   ¬     y  ‚ôl   ó      ¬    $ö?   ó   ¬    ‰L   Áu  ‰L	   Á¬    u ‰L
+   Áo   y ‚ô   ó   ¬    ¬    O   ‚ó   ±≤   ‚≤   ‚ò   ø   ¬   L   ö‘   ó   —   ø   ¥    ‚º   ÇÊ  É  ¥    ‚¬    ¬   ‰L   Á¬    u O   ‚o   ¥    ‚   ¬    $ö?   ó!   ¬    ‰L   Áu  ‰L	   Á¬    u ‰L
+   Áo   y ‚ô   ó(   ¬    ¬    O   ‚ó)   “ø   2*Œ   ‚ôˇˇˇó+   ”“•E`î `î PI`L	`≤ `ï `ë `P
+ˇˇˇ˚P
+ˇˇˇ˙P> `ó@
+`fñ %`+`î `ì ˇˇˇÙPI`L(`ë 	`P
+ˇˇˇ˚P
+ˇˇˇ˙P>, 	`ò@*`ó@0PÄÄÄ  ‡        Ë  ˇˇˇˇ   ¯   ¸          )  µ               Í   ®   )^+⁄®   j                         ¬   L   ¬    ∂    Q‚¬   L   Q‚¬   ‰L   2*O   ‚¬   ˇO   ‚¬   ‰L   Áy  ‚¬   O   ‚• `ö `/`î `.`P$`-PÄÄÄH   4“oÅH                             ¬    ∂    ¬    ∂    O   ‚• 	`û PÄ  ‡†ú3  ∑                        ±≤   ‚¬   L   ¬    ∂    ¬    ∂    Q‚¬   L   ¬    Q‚¬   ‰L   2*O   ‚¬   L   ¬   L   ),≤   ‚º   ‰L   Áø   ¬    )u 
+      ¯?!ö   ó   ¬   ‰L	   Áy  ‚ó   ”• &	`• 	`î 	`î `ì `	ˇˇˇÒPó `PJP         ∂   ˇˇˇˇH   –ÍiH                             ¬    ∂    ¬    ∂    O   ‚• `û 	PÄ†  s¶ΩŒ0  ™        
+       ,      $·Œ   ‚º   ‰L   Áº   ‰L   ÁΩ  u ø   L   )u Õ  ‚ø   L   Ω  Mú   ó   ‚ø   L   Ω  Mó   ö   ó   ø   L   Ω  M¢ó   ±≤  ‚≤  ‚ò   ø  ø   L   ö  ó   ±≤  ≤  ‚Ω  ø  )≤  ‚ø  "ú2   ó   ‚ø   L   ø  Mú   ó   ‚ø   L   ø  Mó   ö   ó   ø   L   ø  M§””•ó   Ω  ø  (≤  ‚ø  ø   L   ú2   ó"   ‚ø   L   ø  Mú   ó%   ‚ø   L   ø  Mó'   ö   ó(   ø   L   ø  M§””•ó*   ”ø  2*Œ  ‚ôÓ˛ˇˇó,   ”¢•&`	ˇˇˇ¸Pˇˇˇ„P'	`¥ `MF
+`f	î *`*`« 	`NI`*`À 	`NJ4`ñ@`!QÄÄÄ†  ê     ~   )  ˇˇˇˇ   ®   È                                 â            ä               ä     h  Õ}ïH  i  
+             0      ±≤   ≤  ‚·Œ  ‚Ω  ≤   ‚Ω ‰ ö   ó   ‚ó   ≤  ‚±≤  ≤  ≤  ≤  ≤  ≤  ≤	  ≤
+  ≤  ≤  ≤  ‚ø   õ   ó    §”•ó   ø  L   ≤  ‚ø  L   L   ≤  ‚ø  L   L   ≤	  ‚ø   L   ù   ó	   ‚ ó	   ≤
+  ‚ø   L   ù   ó   ‚–ó   ≤  ‚ø
+  ø  -≤  ‚ø  ø	  -≤  ‚ ≤  ‚ ≤  ‚ ≤  ‚ ≤  ‚ø  ø  "ö[   ó   ø  Œ  ‚º   ‰L	   Áø  ø  -u Œ  ‚Œ  ‚º   ‰L	   Áø	  ø  )-u Œ  ‚ôV   ó   ø	  Œ  ‚º   ‰L	   Áø	  ø  ,u Œ  ‚º   ‰L	   Áø  ø  )-u Œ  ‚Œ  ‚ó!   ø  O
+   ‚ø     O   ‚ø  ‰L   Áy  ‚ø  º   ‰L   Áº   ‰L   Áø  u u O   ‚ø  ‰L   Áø   ø  ø  ø  ø  y ‚ø  ‰L   Áy  ‚”•µ Æ 	``A$H`.`ì `ì `° `°@	`*`
+:ò@	`O`)`
+ˇˇˇP(`&`
+ˇˇˇÔPí@`)`
+ˇˇˇP(`
+ˇˇˇÔP(`K`+`O `P$`ê 	ˇˇˇ¸Pˇˇˇ˜P)`ˇˇˇ‹P$`P%PÄÄÄh     5   3  ˇˇˇˇ    t             CvpK¿                 ¨     $·Œ   ‚±≤  ≤  ≤  ≤  ≤  ≤  ≤  ‚ø   L   ≤  ‚ø   L   ≤  ‚ø   L   ≤  ‚ø   L   L   ≤  ‚ø   L   L   ≤  ‚ø   L   L   ≤  ‚ø  ‰L	   Áy  ‚ø  ‰L
+   Áø  ø  y ‚º   ‰L   Áu  ≤  ‚±≤  ‚≤  ‚ò   ø  ø   L   L   öD  ó   ±≤	  ≤
+  ≤  ≤  ‚ø   L   ø  M≤	  ‚º   ‰L   ÁΩ  
+¸©Ò“Mb`?,ø	  L   (u 
+öôôôôô…?,≤
+  ‚ø	  ø	  L   ø
+  (ø  ,O   ‚ø	  ø	  L   ø  ,O   ‚ø  ö  ó%   ±≤  ≤  ≤  ≤  ‚ø	  L   ø  )≤  ‚ø	  L   ø  )≤  ‚ø  ø  ,ø  ø  ,(≤  ‚¥ ≤  ‚ø  ø  ø  ,ú   ó/   ‚ø   ó0   öå   ó1   ±≤  ≤  ‚º   ‰L   Áø  u ≤  ‚ø  ø  -)
+      @,ø  ,≤  ‚ø	  ‰L   ø  ø  -ø  ,(0O   ‚ø	  ‰L   ø  ø  -ø  ,(0O   ‚”óB   ”óB   ø	  ‰L   ø	  L   (0O   ‚ø	  ‰L   ø	  L   (0O   ‚ø	  L   Ïö    óM   ø	  ø   L   (O   ‚óP   ø	  L   ø   L   ( ö   óU   ø	  ÏO   ‚óV   ø	  L   Ïö    óY   ø	  ø   L   (O   ‚ó\   ø	  L   ø   L   ( ö   óa   ø	  ÏO   ‚ób   ø	  L   
+ffffffÊ?
+333333”?º   ‰L   ÁΩ  ø	  L   ,ø	  L   (u ,(,≤  ‚ø  ‰L   Áø	  L   ø	  L   ø	  L   ø	  L   ø	  L    
+ffffff@,u ≤  ‚ø  ‰L!   Áø	  L"   y ‚ø  ‰L!   Á
+öôôôôôŸ?ø	  L"   y ‚ø  ‰L!   Á#   y ‚ø  º   ‰L$   Áº   ‰L%   Áø  u u O&   ‚ø  ø  O'   ‚ø  ‰L(   Áy  ‚ø  ‰L)   Áø	  L   ø	  L   ø	  L    
+ffffff@,º   L*   ,y ‚ø  ‰L+   Áy  ‚”ø  2*Œ  ‚ô®˚ˇˇóî   ”ø   L,   "úE   óó   ‚ø  ø   L-   )ø   L,   "ö   óú   ,ô   óú   Ñóú    óù   öJ   óû   º   ‰L.   Áu  
+ÕÃÃÃÃÃ‰?ö'   ó£   ø   ‰L/   Áy  ‚ø   ø  O-   ‚ó¶   ø   ‰L0   Áy  ‚ø   ‰L1   Áy  ‚ø  ‰L2   Áy  ‚”•û `.`.`.`ì `ì `ì@`P$`
+ˇˇˇıPD`PH
+`fô í `ì@`	
+ˇˇˇÌPí `
++`K`
+í `	*`	*`+`(`	
+¶ *`
+ˇˇˇ˚P(`ê *`-`ô@#`õ `õ@'`ñ `õ `	ó `ë `ñ `õ `	ó `ë@-`				
+
+ˇˇˇÊPK0`	
+		ì ˇˇˇ‘P(`	ˇˇˇP$`î 	ˇˇˇÓP$`ë PD5`ê 	ˇˇˇ¸Pˇˇˇ˜P)`.`P$`		î ˇˇˇ·P$`PE0`ñ@=	`õ $
+ª `Pó 	`P$	`ì@D`P$`PDG`P%PÄÄÄ           ˝  ˇˇˇˇ   ¡   o            *        ç            Ç             Õ   ]  ∏  ÇÏ2mò                 ?       ·Œ   ‚±≤  ≤  ≤  ≤  ≤  ‚ø   L   L   ö   ó    §”•ó   ø   L   º   ‰L   Áº   ‰L   Áu  ø   L   L   ,u M≤  ‚ø   L   º   ‰L   Áº   ‰L   Áu  ø   L   L   ,u M≤  ‚ø  L   ø  L   )≤  ‚ø  L   ø  L   )≤  ‚º   ‰L	   Áø  ø  u ≤  ‚ø  2 ú   ó%   ‚ø  @ó&   öŸ   ó'   ø   L
+   ‰L   Á;   ø  L   >   ø  L   >   ø  L   >   ø  L   >   >   º   ‰L   Áu  
+ÕÃÃÃÃÃ‹? öK   ó8   º   ‰L   Áu  
+ffffff÷? ö   ó=      ô   ó=      ó=   ô   ó=      ó=   >   y ‚ó?   ”•ñ 	`õ `AH`ï PˇˇˇÍP)`ï PˇˇˇÍPI`	/`	/`ˇˇˇˆPH		`© `ê %	.	.	.	.	&	P£ P…@
+PJPÄ∏        ¸  ˇˇˇˇ    :          $  ¨À›≥§  ∏     	          K       $·Œ   ‚±≤  ‚ø   L   ≤  ‚±≤  ‚ø   L   L   )≤  ‚ò   ø  "öo  ó   ±≤  ≤  ‚ø   L   ø  M≤  ‚ø  ‰L   
+{ÆG·zƒ?)0O   ‚ø  L   !ö)   ó   ø   L   ‰L   Áø  y ‚”ôÈ  ó   ø  ‰L	   Áy  ‚ø  ø  L   
+ÕÃÃÃÃÃÏ?,O
+   ‚ø  ø  L   O   ‚ø  
+ffffffˆ?O   ‚ø  ø  L   O   ‚ø  
+O   ‚ø  ‰L   Áy  ‚ø  ‰L   Áø  L   ø  L   y ‚≤  ‚±≤  ‚≤  ‚ò"   ø  ø  ö÷   ó$   ±≤  ≤  ≤  ‚ø  ø  -≤  ‚ø  L   ø  L   ø  L   )ø  ,(º   ‰L   Áu  
+      ‡?),(≤  ‚ø  L   ø  L   ø  L   )ø  ,(º   ‰L   Áu  
+      ‡?),(≤  ‚ø  ‰L   Áø  ø  y ‚”ø  2*Œ  ‚ô ˇˇˇóA   ”ø  ‰L   Áø  L   ø  L   y ‚ø  ‰L   Áy  ‚ø  ‰L   Áy  ‚”óI   ø  2+Œ  ‚ôä˝ˇˇóK   ””•&`.
+`ï fê *`ì `õ@`ï 	`ê ˇˇˇ˘P$	`K`P$`ù `ì `ì `ì `L`P$`		ˇˇˇÒPD`'`f.`*`	
+		
+
+Pñ `	
+		
+
+Pñ 	`ˇˇˇıPE%`ñ@`		ˇˇˇÒP$`P$`PJ9`ó@!P$          ±  ˇˇˇˇ      ú         K   P        ≤            d  ˜         â  º             p  Â          5   {     ƒ©8Ì–                 >      ·Œ   ‚±≤  ‚ø   L   õ   ó    §”•ó   ø   L   ≤  ‚ø   ‰L   ø   L   ,(0O   ‚ø   ‰L   
+˙~jºtìò?)0O   ‚ø   L   !ö   ó   ø   O   ‚ §”•ó   ø  ‰L   Áy  ‚ø  º   ‰L	   Áø   L   u O
+   ‚ø     O   ‚ø  
+      @O   ‚ø     O   ‚ø  O   ‚ø  ‰L   Áy  ‚ø  ‰L   Áø   L   L   ø   L   L   ø   L   º   L   ,y ‚ø  ‰L   Áy  ‚ø     O   ‚ø  
+      ¯?O   ‚ø  ‰L   Áy  ‚ø  ‰L   Áø   L   L   ø   L   L   º   ‰L	   Áø   L   )u º   L   ,y ‚ø  ‰L   Áy  ‚ø  ‰L   Áy  ‚”•&	`ì `AH`.`í `õ@	`ï `+`AH`P$`ë 	ˇˇˇ˘P)`/`ì `/`L`P$`
+ˇˇˇ≥P$`PD`/`ì `P$`ˇˇˇ˘P&ˇˇˇ°P$`PD`P%PÄ           ˇˇˇˇ    "              í          Ï   ‘6ÆÏ   ¥                      ·Œ   ‚ø   O   ‚ø   
+O   ‚ø   
+333333Î?O   ‚ø   ;   Ω   ö   ó   Ω  ô   ó   ø   L   
+      ‡?,ó   >   Ω  ö   ó	   Ω ô   ó	   ø   L   
+öôôôôôŸ?,ó   >   O	   ‚•&`+`,`ì `)∫ ¿@P¿  ∂‡ül†  Â               )      ±≤   ‚·Œ  ‚Ω  ‰ ö   ó   ‚ó   ≤   ‚±≤  ≤  ≤  ≤  ≤  ≤  ‚ø  L   ø  L   ),≤  ‚º   ‰L   Áø  u ≤  ‚º   ‰L   Áø  (ø  L   )u ≤  ‚ø  ø  )≤  ‚ø  ‰L   Áø  u ≤  ‚ø  ‰L   Áø  u ≤  ‚ø  ú   ó   ‚ø  ó   ö   ó    §”•ó   ø  ö#   ó   ø  ‰L   Áø  y ‚ô,   ó   ø  ö   ó   ø  ‰L   Áø  y ‚ó   ø  ú-   ó   ‚ø  ø  ú   ó    ‚ø  
+{ÆG·zt? ó!   ö!   ó"   ø  ‰L   Áø  ø  y ‚ó$   ø  ‰L	   Áø   y ‚ø  ø  L   O
+   ‚ø  O   ‚”•© ö `	ë `ˇˇˇ˙P(`	ˇˇˇÌP(`J`ˇˇˇÚP(`ˇˇˇÚPH		`ê î `AH	`.`ˇˇˇˆP.`.`ˇˇˇˆPI	`ì ≠ `ˇˇˇÎPI`ˇˇˇÓPD`ì `,PÄ¿     )   ª  ˇˇˇˇ    ˝          t   Ü«∑d   +                        ·œ    ‚—   o   ¥    ‚º    ¬    y ‚“•%`L`ˇˇˇˇP%Pt            ˇˇˇˇT  -ôMtD  •                2     ±≤   ≤  ≤  ‚¬   ‰L   ¬   L   ¬   L   )
+{ÆG·z¥?,(0O   ‚¬   L   ¬   L   )≤   ‚º   ‰L   Áø   u 
+-CÎ‚6? ö3   ó   ¬   ‰L   ø   ¬   L   ,(0O   ‚ô!   ó   ¬   ¬   L   O   ‚ó   ¬   ‰L	   ÁΩ  y ‚º   ‰L
+   Áº   L   L   º   L   L   u ≤  ‚º   ‰L
+   Áø  ¬   L   )u ≤  ‚º   ‰L   Á¬   L   ø  )u 
+ ö+   ó-   ¬   ø  O   ‚¬   ‰L   Áy  ‚ó0   º    ¬    ∂    y ‚”• 	N`ó 1û@`ë@`	ˇˇˇ¸Pó 	`ê  û 	`ú@`ˇˇˇÙPD`,	/	OPH!`	ˇˇˇP(`	ˇˇˇÎPê 	`ê 	`PI`ˇˇˇˇP%PÄÄÄT         §  ˇˇˇˇ@   ÚAùg@                           ·Œ   ‚ø   ‰L   Áy  ‚•&`P$P  —('«  ≠                      ·Œ   ‚ø   º    Ω  u ù   ó   ‚ó   O   ‚ø   º   ‰L   Áº   ‰L   Áø   L   -u 
+      @u O   ‚ø   L   "ö   ó   ø   ‰L   Áy  ‚ó   ø   ‰L   Áø   L   y ‚•&`
+!ˇˇˇıPö `ê  	ˇˇˇ¸Pˇˇˇ˜PI	`ñ `PI	`	ˇˇˇÒP$P4  üo·‰  ˚               L      $±≤   ‚·Œ  ‚Ω  ‰ ö   ó   ‚ó   ≤   ‚º   L   ú   ó   ‚º   L   L   ó   ö   ó	    ¢ó	   ¨±≤  ≤  ≤  ‚ø  L   õc   ó   ±≤  ‚º   L   ù   ó   ‚º   L   ó   ≤  ‚ø  ö    ó   ø  ø  ÇÊ  É  O   ‚ó   ”ó   ø  L   õ   ó    §”•ó   ø  L   L	   
+   ö   ó   ø  L   ‰L   Áy  ‚ó   ø  L   ‰L   Áu  ≤  ‚ø  L   ‰L   Áu  ≤  ‚‹ 
+öôôôôôÈ?ø   -(,≤  ‚ø  ø   "ö   ó'      ô   ó'      ó'   O   ‚ø  L   ‰L   Áø  ø  L   L   y ‚ø  L   ‰L   Áø  
+öôôôôôŸ?,ø  L   L   
+{ÆG·z¥?(y ‚ø  L   ‰L   Á
+∏ÖÎQ∏æ?ø  L   L   y ‚ø  L   ‰L   Á
+¸©Ò“MbP?ø  L   L   
+{ÆG·z¥?(y ‚ø  ‰L   Áø  y ‚ø  ‰L   Áø  L   L   y ‚ø  ‰L   Áy  ‚ø  ‰L   Áø  L   L   
+{ÆG·z¥?(y ‚”ô   óL    §Æ±≤  ‚≤  ‚”óL   •© 	`ï ü #`A F	/`ì &`© ``Pî@`ì `A H	`û 	`ê PI`ê P(`ê PH`	.`¥ `ê ˇˇˇÍP$`ê +ò ˇˇˇ÷PD`ô ˇˇˇÎP$`ô .ò ˇˇˇ‹PD`ˇˇˇ¯P$`ˇˇˇ¯PD`P$`	ò ˇˇˇ˚Pí ë@ P4  $     e   w  ˇˇˇˇ   Ü   Y           ˙             È     ˇˇˇˇ        e   |  ¥   U´qU¥   o                         º   L   ú!   ó   ‚º   L   L      ó   ö'   ó	   º   L   ‰L   ÁΩ  y ‚ô   ó   º    Ω  y ‚ó   • 	`ï • `ë (ˇˇˇÈP `ˇˇˇˇPIPÄH   ‹ï7$H                             º   º   Ç   Ê  É N   ‚• `î PP3ıÿ  `              
+  ç     @    	      ä                                            !  #  $  %  "  &  '  (  )  *  +    @x  y  ,    @.  /  -  0  1  2  3  4  5    `  `!  8  0  9  :    `  `0        =  >  ?  @  A    `B    @  C  x    y  D  E  · ‚ ¢  G  ˙   F    H  Ï I  	  `N  
+  `Q    `Q    `S    p  `-  U  x  V  y  .  W  X  /    `-  .    `J  K    L  M    p  @O  P    p  @R    p  @T  	  p  @Y  
+  pZ  [    `  `                  ]      ≤  a `    a  b  c  d      `J  K    e  f    `K  f    `  `  g    c  h          `    j         `        e      `r    `  `            j  f    `r    `  `l  6  m    po  p  q  ∫  *     pr    `    `  p  p  `    `          `   `!  `"  `	        p  Ä    ]  á  â  à  ä    `  ã  å  ç  #  `$  `	    (  -  x  y  .  ä  ì  W  X  %  `0  ˙   &  `  ï  I  D  · E  ‚ '  `(  `ô        H  ù  ¢  û  F  ü    `  ã  †  °  ¢  Ï ä   &  2  C  £  §  •  ç  )  `*  `0  ˙     G  C  x  y  ¶  1  B    @A Å B Ç ß  =  ?  A  F  +  `,  `	  -  `1  ˙   .  `ß  ®  ä  ã  F  ©  ™  ´  ¨  °  ≠  A Å /  `0  `B   C  Ç Ø  ∞  ç  1  `2  `)  	  *  (  +  ä    `  ã  ?  ©  ™  ±  ´  ¨  °  ¢  ,  x  y  Ï ∞  A  ç  3  `)  *  +  	  @  x    y  ,  4  `5  `      G    w  {  é      8  `9  `(  '        j  !  e  `    a  b  c      K  Ω  6  `7  `  pΩ  :  `K  ;  `b  &      `  '  ≤  ¿  <  `  ¡  ¬  =  `3  >  `√  ƒ  ≈  ∆  «  …  À  Õ  Œ  ◊  œ  –  —  “     ”  ‘  ™  ’  ?  `@  `  ◊  ÷    ÿ  A  `     €  ⁄     `  `  pp  ;     p6    p4    p5    pJ    pQ    pN    pK    pZ    pw    p{    pé    p£    p§    p•    p≤    pe    p[    pf    pæ     p¿  !  p÷       L  Ÿ  "  p  ‹  o  ›  ⁄  €  ˇXÑ·  :                  >          # >      6      "  E      4      "  z      5      "  d      ﬁ      ! f      ﬁ      ! j      ﬁ      ! h      ﬂ      ! m   
+   ﬁ      ! w      ﬁ      ! ê      J      "  ß      Q      "  ≠      N      "  ∞      K      "  ’      Z      "  ¿      n      !
+ «      ·      ! …   
+   u      !
+ ”      ·      ! Á   	   w      "        {      "    3   é      "  6     £      "  L     §      "  i     •      "  É  
+   ≤      "  ç     e      "  ¨     [      "  ô     ∫      !
+ ∞     f      "  ≤  	   æ      "  ª     ¿      "  ÷     ÷      "  ‹             ! ùH©¿      œG      œG                 ô  m	  i  nF                 |	  Û	  q	  Û	  N              
+    ˜	    S              Ç #  v    v  p                ß  º  ß  º  u   '             ¯    ¯    v   '             T  è  T  è  w   2             m  Ç  m  Ç  x                Ò  î  Ò  î  |   *            ’    ’    É   +            ä  È  z  È  é               ı  í  Ì  í  ©               û  ‚  ñ  ‚  ±               ˝  h  Ê  h  ∂              Ç y    l    ¿                =    =    ≈                «    «    —   6             -  =  -  =  ﬁ                ã  ¡  ã  ¡  È   /              ß    ß  Ú              ¥  0$  ´  0$               E$  Í,  4$  Í,  -             ˇ,  D/  Ó,  D/  w              Y/  Ï2  H/  Ï2  å              ˝2  h6  2  h6  Ø              |6  í7  l6  í7  –             °7  F;  ñ7  F;  ⁄            Ç S;  8?  J;  8?  ¯               i;  ?  i;  ?  ˘             G?  s?  <?  s?                ∆?  A  µ?  A               A  ÖE  A  ÖE  *              üE  lF  âE  lF  L              µF  G  µF  G  V  -           5°›l LÇÌ„sS~H      
+jÊYßjÊYßJ#jÊZÒ   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/bureau-engine.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Content-type: text/javascript
+Content-Length: 18383
+Last-Modified: Sat, 31 Oct 2026 20:17:02 GMT
+Date: Sat, 31 Oct 2026 21:12:07 GMT
+Server: SimpleHTTP/0.6 Python/3.14.4
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 20:27:51 GMT
+Content-type: text/javascript
+Content-Length: 18383
+Last-Modified: Sat, 31 Oct 2026 20:17:02 GMT
+ ctid 2 alt-data 1;18383,javascript/moz-script-bytecode-20261006030843-8l alt-data-from-child 1     b

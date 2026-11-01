@@ -1,0 +1,1455 @@
+/**
+ * OVERCLOCK 2027 — CRT OSCILLOSCOPE & SIGNAL TELEMETRY ENGINE
+ * FCRIT × IEEE Student Branch
+ *
+ * Implements 6 mathematically authentic, domain-specific hardware waveforms
+ * rendered onto vintage 1970s TVA-style phosphor CRT monitors with:
+ *  - Tektronix-style graticule grid with center graduation tick marks
+ *  - Phosphor persistence decay trails & electron beam luminous sweep heads
+ *  - Domain 1 (Amber): Multi-Harmonic Synthesizer Waveform
+ *  - Domain 2 (Cyan): Tactical Radar Chirp & Sonar Encrypted Pulse
+ *  - Domain 3 (Emerald): Clinical Biometric ECG Heartbeat Monitor
+ *  - Domain 4 (Violet): Digital Logic Analyzer & PWM Telemetry Bus
+ *  - Domain 5 (Copper): Vibration Telemetry & Tachometer Sawtooth FFT
+ *  - Domain 6 (Ruby): Resonant 3-Phase High-Voltage AC Power Wave
+ *  - Interactive Signal Probe: Mouse/touch tracking modulates frequency and
+ *    displays real-time fluctuating telemetry in the channel tag.
+ *  - Performance-optimized: single RAF loop with IntersectionObserver sleep.
+ */
+
+(function () {
+  'use strict';
+
+  /* ==========================================================
+     DOMAIN WAVE ACOUSTIC & HAPTIC VIBRATION SYNTHESIZER
+     Generates authentic, mathematically tuned domain wave audio
+     and physical haptic vibration for all 6 domain slots.
+  ========================================================== */
+  class DomainWaveAcousticEngine {
+    constructor() {
+      this.audioCtx = null;
+      this.masterGain = null;
+      this.activeVoice = null;
+      this.activeSlot = null;
+      this.pulseTimer = null;
+      this.muted = false;
+      this.bindUnlockGesture();
+    }
+
+    bindUnlockGesture() {
+      const unlock = () => {
+        this.ensureContext();
+        window.removeEventListener('pointerdown', unlock);
+        window.removeEventListener('keydown', unlock);
+        window.removeEventListener('touchstart', unlock);
+      };
+      window.addEventListener('pointerdown', unlock, { passive: true });
+      window.addEventListener('keydown', unlock, { passive: true });
+      window.addEventListener('touchstart', unlock, { passive: true });
+    }
+
+    ensureContext() {
+      if (!this.audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          this.audioCtx = new AudioCtx();
+          this.masterGain = this.audioCtx.createGain();
+          this.masterGain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+          this.masterGain.connect(this.audioCtx.destination);
+        }
+      }
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+      return this.audioCtx;
+    }
+
+    triggerHaptic(slotNum) {
+      if (typeof navigator === 'undefined' || !navigator.vibrate) return;
+      try {
+        const patterns = {
+          1: [70],                      // Warm analog hum
+          2: [35, 45, 35],              // Tactical sonar/radar chirp
+          3: [50, 75, 40],              // Cardiac lub-dub pulse
+          4: [15, 20, 15, 20, 25],      // High-speed digital packet chatter
+          5: [120, 40, 80],             // Heavy rotating machinery
+          6: [180]                      // High-voltage 50Hz AC buzz
+        };
+        const pat = patterns[slotNum] || [50];
+        navigator.vibrate(pat);
+      } catch (_) {}
+    }
+
+    startWaveVoice(slotNum, probeX = 0.5, probeY = 0.5) {
+      if (this.muted || (window.overclockApp && !window.overclockApp.audioEnabled)) return;
+      const ctx = this.ensureContext();
+      if (!ctx) return;
+
+      this.triggerHaptic(slotNum);
+
+      if (this.activeSlot === slotNum && this.activeVoice) {
+        this.modulateVoice(probeX, probeY);
+        return;
+      }
+
+      this.stopWaveVoice();
+
+      this.activeSlot = slotNum;
+      const now = ctx.currentTime;
+
+      switch (slotNum) {
+        case 1:
+          this.activeVoice = this.createHarmonicSynthVoice(ctx, now, probeX);
+          break;
+        case 2:
+          this.activeVoice = this.createRadarSonarVoice(ctx, now, probeX);
+          break;
+        case 3:
+          this.activeVoice = this.createECGHeartbeatVoice(ctx, now, probeX);
+          break;
+        case 4:
+          this.activeVoice = this.createDigitalLogicVoice(ctx, now, probeX);
+          break;
+        case 5:
+          this.activeVoice = this.createIndustrialVibrationVoice(ctx, now, probeX);
+          break;
+        case 6:
+          this.activeVoice = this.createHighVoltageACVoice(ctx, now, probeX);
+          break;
+      }
+    }
+
+    modulateVoice(probeX, probeY) {
+      if (this.activeVoice && typeof this.activeVoice.modulate === 'function') {
+        this.activeVoice.modulate(probeX, probeY);
+      }
+    }
+
+    triggerAcousticBurst(slotNum, probeX = 0.5) {
+      this.startWaveVoice(slotNum, probeX, 0.5);
+      setTimeout(() => {
+        if (this.activeSlot === slotNum) {
+          this.stopWaveVoice();
+        }
+      }, 1200);
+    }
+
+    stopWaveVoice() {
+      if (this.pulseTimer) {
+        clearInterval(this.pulseTimer);
+        clearTimeout(this.pulseTimer);
+        this.pulseTimer = null;
+      }
+      if (this.activeVoice) {
+        try {
+          this.activeVoice.stop();
+        } catch (_) {}
+        this.activeVoice = null;
+      }
+      this.activeSlot = null;
+    }
+
+    // 1. Slot 1: Multi-Harmonic Synthesizer (Amber)
+    createHarmonicSynthVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.75, now + 0.08);
+
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(196, now); // G3
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(293.66, now); // D4
+      osc2.detune.setValueAtTime(8, now);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.8, now);
+      filter.frequency.setValueAtTime(350 + probeX * 850, now);
+
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(4.5, now);
+      lfoGain.gain.setValueAtTime(3.5, now);
+      lfo.connect(osc1.frequency);
+
+      const oscMix = ctx.createGain();
+      oscMix.gain.setValueAtTime(0.45, now);
+      osc1.connect(filter);
+      osc2.connect(oscMix);
+      oscMix.connect(filter);
+
+      filter.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      lfo.start(now);
+
+      return {
+        modulate: (px) => {
+          const targetFreq = 196 + px * 60;
+          const targetCutoff = 350 + px * 1100;
+          osc1.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.04);
+          osc2.frequency.setTargetAtTime(targetFreq * 1.5, ctx.currentTime, 0.04);
+          filter.frequency.setTargetAtTime(targetCutoff, ctx.currentTime, 0.04);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.14);
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              lfo.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 160);
+        }
+      };
+    }
+
+    // 2. Slot 2: Tactical Radar & Sonar Ping (Cyan)
+    createRadarSonarVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      let currentProbeX = probeX;
+
+      const triggerPing = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+
+        // Sonar Ping (Resonant tone with slow decay)
+        const pingOsc = ctx.createOscillator();
+        const pingGain = ctx.createGain();
+        pingOsc.type = 'sine';
+        pingOsc.frequency.setValueAtTime(920 + currentProbeX * 280, t);
+        pingOsc.frequency.exponentialRampToValueAtTime(800, t + 0.45);
+
+        pingGain.gain.setValueAtTime(0.001, t);
+        pingGain.gain.linearRampToValueAtTime(0.8, t + 0.015);
+        pingGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+
+        pingOsc.connect(pingGain);
+        pingGain.connect(voiceGain);
+        pingOsc.start(t);
+        pingOsc.stop(t + 0.55);
+
+        // Tactical Chirp Burst (Fast frequency radar sweep)
+        const chirpOsc = ctx.createOscillator();
+        const chirpGain = ctx.createGain();
+        chirpOsc.type = 'sine';
+        chirpOsc.frequency.setValueAtTime(1100, t);
+        chirpOsc.frequency.exponentialRampToValueAtTime(2200, t + 0.065);
+
+        chirpGain.gain.setValueAtTime(0.001, t);
+        chirpGain.gain.linearRampToValueAtTime(0.35, t + 0.008);
+        chirpGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
+
+        chirpOsc.connect(chirpGain);
+        chirpGain.connect(voiceGain);
+        chirpOsc.start(t);
+        chirpOsc.stop(t + 0.08);
+
+        this.triggerHaptic(2);
+      };
+
+      triggerPing();
+      this.pulseTimer = setInterval(triggerPing, 700);
+
+      return {
+        modulate: (px) => {
+          currentProbeX = px;
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.08);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 150);
+        }
+      };
+    }
+
+    // 3. Slot 3: Clinical Biometric ECG Heartbeat Monitor (Emerald)
+    createECGHeartbeatVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      const triggerECGCycle = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+
+        // Cardiac Lub (Low damped tone)
+        const lubOsc = ctx.createOscillator();
+        const lubGain = ctx.createGain();
+        lubOsc.type = 'sine';
+        lubOsc.frequency.setValueAtTime(82, t);
+        lubOsc.frequency.exponentialRampToValueAtTime(42, t + 0.07);
+
+        lubGain.gain.setValueAtTime(0.001, t);
+        lubGain.gain.linearRampToValueAtTime(0.72, t + 0.015);
+        lubGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+
+        lubOsc.connect(lubGain);
+        lubGain.connect(voiceGain);
+        lubOsc.start(t);
+        lubOsc.stop(t + 0.09);
+
+        // Cardiac Dub (Second pulse)
+        const dubTime = t + 0.11;
+        const dubOsc = ctx.createOscillator();
+        const dubGain = ctx.createGain();
+        dubOsc.type = 'sine';
+        dubOsc.frequency.setValueAtTime(68, dubTime);
+        dubOsc.frequency.exponentialRampToValueAtTime(36, dubTime + 0.06);
+
+        dubGain.gain.setValueAtTime(0.001, dubTime);
+        dubGain.gain.linearRampToValueAtTime(0.6, dubTime + 0.012);
+        dubGain.gain.exponentialRampToValueAtTime(0.0001, dubTime + 0.07);
+
+        dubOsc.connect(dubGain);
+        dubGain.connect(voiceGain);
+        dubOsc.start(dubTime);
+        dubOsc.stop(dubTime + 0.08);
+
+        // Clinical Vitals Telemetry Monitor Blip (QRS)
+        const beepTime = t + 0.22;
+        const beepOsc = ctx.createOscillator();
+        const beepGain = ctx.createGain();
+        beepOsc.type = 'sine';
+        beepOsc.frequency.setValueAtTime(987.77, beepTime);
+
+        beepGain.gain.setValueAtTime(0.001, beepTime);
+        beepGain.gain.linearRampToValueAtTime(0.4, beepTime + 0.008);
+        beepGain.gain.exponentialRampToValueAtTime(0.0001, beepTime + 0.075);
+
+        beepOsc.connect(beepGain);
+        beepGain.connect(voiceGain);
+        beepOsc.start(beepTime);
+        beepOsc.stop(beepTime + 0.085);
+
+        this.triggerHaptic(3);
+      };
+
+      triggerECGCycle();
+      this.pulseTimer = setInterval(triggerECGCycle, 800);
+
+      return {
+        modulate: (px) => {
+          const interval = 880 - px * 220;
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          this.pulseTimer = setInterval(triggerECGCycle, interval);
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.08);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 150);
+        }
+      };
+    }
+
+    // 4. Slot 4: Digital Logic & PWM Telemetry Bus (Violet)
+    createDigitalLogicVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(1.0, now);
+      voiceGain.connect(this.masterGain);
+
+      let currentProbeX = probeX;
+
+      const triggerDataPacket = () => {
+        if (!this.activeVoice) return;
+        const t = ctx.currentTime;
+        const freqs = [587.33, 739.99, 880.00, 1174.66, 1479.98];
+        const stepDur = 0.024;
+
+        freqs.forEach((freq, idx) => {
+          const stepTime = t + idx * stepDur;
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq * (0.9 + currentProbeX * 0.3), stepTime);
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1600, stepTime);
+
+          g.gain.setValueAtTime(0.001, stepTime);
+          g.gain.linearRampToValueAtTime(0.26, stepTime + 0.004);
+          g.gain.exponentialRampToValueAtTime(0.0001, stepTime + stepDur - 0.002);
+
+          osc.connect(filter);
+          filter.connect(g);
+          g.connect(voiceGain);
+
+          osc.start(stepTime);
+          osc.stop(stepTime + stepDur);
+        });
+
+        this.triggerHaptic(4);
+      };
+
+      triggerDataPacket();
+      this.pulseTimer = setInterval(triggerDataPacket, 460);
+
+      return {
+        modulate: (px) => {
+          currentProbeX = px;
+        },
+        stop: () => {
+          if (this.pulseTimer) clearInterval(this.pulseTimer);
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.setTargetAtTime(0.0001, stopTime, 0.06);
+          setTimeout(() => {
+            try { voiceGain.disconnect(); } catch (_) {}
+          }, 120);
+        }
+      };
+    }
+
+    // 5. Slot 5: Industrial Automation Motor Vibration & Tachometer (Copper)
+    createIndustrialVibrationVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.85, now + 0.09);
+
+      const baseFreq = 75 + probeX * 55;
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(baseFreq, now);
+
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(baseFreq + 1.8, now);
+
+      const subOsc = ctx.createOscillator();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(baseFreq * 0.5, now);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.6, now);
+      filter.frequency.setValueAtTime(260 + probeX * 240, now);
+
+      const mix1 = ctx.createGain();
+      mix1.gain.setValueAtTime(0.42, now);
+      const mix2 = ctx.createGain();
+      mix2.gain.setValueAtTime(0.32, now);
+      const mixSub = ctx.createGain();
+      mixSub.gain.setValueAtTime(0.38, now);
+
+      osc1.connect(mix1);
+      osc2.connect(mix2);
+      subOsc.connect(mixSub);
+
+      mix1.connect(filter);
+      mix2.connect(filter);
+      mixSub.connect(filter);
+
+      filter.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc1.start(now);
+      osc2.start(now);
+      subOsc.start(now);
+
+      return {
+        modulate: (px) => {
+          const f = 75 + px * 60;
+          osc1.frequency.setTargetAtTime(f, ctx.currentTime, 0.05);
+          osc2.frequency.setTargetAtTime(f + 1.8, ctx.currentTime, 0.05);
+          subOsc.frequency.setTargetAtTime(f * 0.5, ctx.currentTime, 0.05);
+          filter.frequency.setTargetAtTime(260 + px * 300, ctx.currentTime, 0.05);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.16);
+          setTimeout(() => {
+            try {
+              osc1.stop();
+              osc2.stop();
+              subOsc.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 190);
+        }
+      };
+    }
+
+    // 6. Slot 6: High-Voltage 3-Phase AC Power Grid (Ruby)
+    createHighVoltageACVoice(ctx, now, probeX) {
+      const voiceGain = ctx.createGain();
+      voiceGain.gain.setValueAtTime(0.001, now);
+      voiceGain.gain.exponentialRampToValueAtTime(0.85, now + 0.08);
+
+      const osc50 = ctx.createOscillator();
+      osc50.type = 'sine';
+      osc50.frequency.setValueAtTime(50.0, now);
+
+      const osc100 = ctx.createOscillator();
+      osc100.type = 'sine';
+      osc100.frequency.setValueAtTime(100.0, now);
+
+      const osc150 = ctx.createOscillator();
+      osc150.type = 'triangle';
+      osc150.frequency.setValueAtTime(150.0, now);
+
+      const gain50 = ctx.createGain();
+      gain50.gain.setValueAtTime(0.65, now);
+      const gain100 = ctx.createGain();
+      gain100.gain.setValueAtTime(0.35, now);
+      const gain150 = ctx.createGain();
+      gain150.gain.setValueAtTime(0.2, now);
+
+      osc50.connect(gain50);
+      osc100.connect(gain100);
+      osc150.connect(gain150);
+
+      const gridMix = ctx.createGain();
+      gain50.connect(gridMix);
+      gain100.connect(gridMix);
+      gain150.connect(gridMix);
+
+      gridMix.connect(voiceGain);
+      voiceGain.connect(this.masterGain);
+
+      osc50.start(now);
+      osc100.start(now);
+      osc150.start(now);
+
+      return {
+        modulate: (px) => {
+          const gridFreq = 50.0 + (px - 0.5) * 1.5;
+          osc50.frequency.setTargetAtTime(gridFreq, ctx.currentTime, 0.08);
+          osc100.frequency.setTargetAtTime(gridFreq * 2, ctx.currentTime, 0.08);
+          osc150.frequency.setTargetAtTime(gridFreq * 3, ctx.currentTime, 0.08);
+        },
+        stop: () => {
+          const stopTime = ctx.currentTime;
+          voiceGain.gain.cancelScheduledValues(stopTime);
+          voiceGain.gain.setValueAtTime(voiceGain.gain.value, stopTime);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopTime + 0.16);
+          setTimeout(() => {
+            try {
+              osc50.stop();
+              osc100.stop();
+              osc150.stop();
+              voiceGain.disconnect();
+            } catch (_) {}
+          }, 190);
+        }
+      };
+    }
+  }
+
+  class DomainOscilloscopeEngine {
+    constructor() {
+      this.gridContainer = document.querySelector('.domain-slots-grid');
+      if (!this.gridContainer) return;
+
+      this.cards = Array.from(document.querySelectorAll('.domain-slot-card'));
+      if (this.cards.length === 0) return;
+
+      this.isVisible = false;
+      this.rafId = null;
+      this.lastTime = performance.now();
+      this.globalTime = 0;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      this.acousticEngine = new DomainWaveAcousticEngine();
+      this.scopes = [];
+      this.initScopes();
+      this.setupObserver();
+      this.bindWindowEvents();
+    }
+
+    initScopes() {
+      const DOMAIN_CONFIGS = [
+        // Slot 1: General Innovation & Open Innovation (Amber)
+        {
+          slot: 1,
+          color: '#FF9D3B',
+          glowColor: 'rgba(255, 157, 59, 0.75)',
+          beamColor: '#FFF1D0',
+          baseFreq: 433.92,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // AMBER TRACE',
+          hoverPrefix: 'SIGNAL LOCKED // 433.92 MHz · 3.42 Vpp · THD 1.2%',
+          draw: this.drawHarmonicSynthesizer.bind(this)
+        },
+        // Slot 2: Defence & National Security (Cyan)
+        {
+          slot: 2,
+          color: '#00E5FF',
+          glowColor: 'rgba(0, 229, 255, 0.75)',
+          beamColor: '#E0FFFF',
+          baseFreq: 868.30,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // CYAN TRACE',
+          hoverPrefix: 'TACTICAL ACQUIRED // 868.30 MHz · RADAR LOCK 99.4%',
+          draw: this.drawRadarChirp.bind(this)
+        },
+        // Slot 3: Healthcare & Assistive Technology (Emerald)
+        {
+          slot: 3,
+          color: '#00E676',
+          glowColor: 'rgba(0, 230, 118, 0.8)',
+          beamColor: '#E8F5E9',
+          baseFreq: 2.412,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // EMERALD TRACE',
+          hoverPrefix: 'VITALS ACTIVE // 78 BPM · SpO2 99% · 2.412 GHz',
+          draw: this.drawBiometricECG.bind(this)
+        },
+        // Slot 4: Smart Home & Consumer Electronics (Violet)
+        {
+          slot: 4,
+          color: '#BB86FC',
+          glowColor: 'rgba(187, 134, 252, 0.75)',
+          beamColor: '#F3E5F5',
+          baseFreq: 915.00,
+          unit: 'MHz',
+          idleTag: 'CARRIER ACTIVE // VIOLET TRACE',
+          hoverPrefix: 'BUS SYNCED // 915.00 MHz · I2C 400kHz · PWM 64%',
+          draw: this.drawDigitalLogicPWM.bind(this)
+        },
+        // Slot 5: Industrial Automation & Monitoring (Copper)
+        {
+          slot: 5,
+          color: '#FF8C42',
+          glowColor: 'rgba(255, 140, 66, 0.75)',
+          beamColor: '#FFE0B2',
+          baseFreq: 5.80,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // COPPER TRACE',
+          hoverPrefix: 'VIBE SENSOR // 5.80 GHz · 3600 RPM · 0.42 mm/s RMS',
+          draw: this.drawVibrationSawtooth.bind(this)
+        },
+        // Slot 6: Energy, Power & Sustainability (Ruby)
+        {
+          slot: 6,
+          color: '#FF4B6E',
+          glowColor: 'rgba(255, 75, 110, 0.8)',
+          beamColor: '#FFCDD2',
+          baseFreq: 10.50,
+          unit: 'GHz',
+          idleTag: 'CARRIER ACTIVE // RUBY TRACE',
+          hoverPrefix: 'GRID SYNCHRONIZED // 10.50 GHz · 50.02 Hz · 415 VAC',
+          draw: this.drawThreePhaseAC.bind(this)
+        }
+      ];
+
+      this.cards.forEach((card, index) => {
+        const slotNum = parseInt(card.dataset.slot || (index + 1), 10);
+        const config = DOMAIN_CONFIGS.find(c => c.slot === slotNum) || DOMAIN_CONFIGS[index % DOMAIN_CONFIGS.length];
+        const screen = card.querySelector('.domain-screen-display');
+        const container = card.querySelector('.screen-waveform-container');
+        const channelTag = card.querySelector('.slot-channel-tag');
+
+        if (!screen || !container) return;
+
+        // Ensure reticle grid and CRT glow elements exist
+        if (!screen.querySelector('.screen-reticle-grid')) {
+          const reticle = document.createElement('div');
+          reticle.className = 'screen-reticle-grid';
+          reticle.setAttribute('aria-hidden', 'true');
+          screen.insertBefore(reticle, screen.firstChild);
+        }
+
+        if (!screen.querySelector('.screen-crt-glow')) {
+          const glow = document.createElement('div');
+          glow.className = 'screen-crt-glow';
+          glow.setAttribute('aria-hidden', 'true');
+          screen.appendChild(glow);
+        }
+
+        // Hide fallback static SVG once canvas is active
+        const fallbackSvg = container.querySelector('.waveform-svg');
+        if (fallbackSvg) {
+          fallbackSvg.classList.add('fallback-wave');
+        }
+
+        // Create or bind canvas
+        let canvas = container.querySelector('.domain-scope-canvas');
+        if (!canvas) {
+          canvas = document.createElement('canvas');
+          canvas.className = 'domain-scope-canvas';
+          canvas.setAttribute('aria-hidden', 'true');
+          container.appendChild(canvas);
+        }
+
+        const ctx = canvas.getContext('2d', { alpha: true });
+
+        const scope = {
+          slotNum,
+          card,
+          screen,
+          container,
+          canvas,
+          ctx,
+          config,
+          channelTag,
+          width: 0,
+          height: 0,
+          isHovered: false,
+          hoverProgress: 0,
+          probeX: 0.5,
+          probeY: 0.5,
+          jitterCounter: 0,
+          ecgPhase: Math.random() * 10
+        };
+
+        // Inject Sonic Wave Voice Indicator Button into Topbar
+        const topbar = card.querySelector('.domain-slot-topbar');
+        let sonicBtn = card.querySelector('.slot-sonic-btn');
+        if (!sonicBtn && topbar) {
+          sonicBtn = document.createElement('button');
+          sonicBtn.type = 'button';
+          sonicBtn.className = 'slot-sonic-btn';
+          sonicBtn.setAttribute('aria-label', `Play wave audio and vibration for Domain Slot ${slotNum}`);
+          sonicBtn.setAttribute('title', `Click or probe to hear domain wave telemetry & vibration`);
+          sonicBtn.innerHTML = `
+            <span class="sonic-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="sonic-label">WAVE VOICE</span>
+          `;
+          const freqSpan = topbar.querySelector('.slot-freq');
+          if (freqSpan) {
+            topbar.insertBefore(sonicBtn, freqSpan);
+          } else {
+            topbar.appendChild(sonicBtn);
+          }
+
+          sonicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.acousticEngine.triggerAcousticBurst(slotNum, scope.probeX);
+            scope.card.classList.add('sonic-active');
+            setTimeout(() => {
+              if (!scope.isHovered) scope.card.classList.remove('sonic-active');
+            }, 1200);
+          });
+        }
+
+        this.bindScopeInteractions(scope);
+        this.resizeScope(scope);
+        this.scopes.push(scope);
+      });
+    }
+
+    bindScopeInteractions(scope) {
+      const updateProbe = (clientX, clientY) => {
+        const rect = scope.screen.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          scope.probeX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          scope.probeY = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+        }
+      };
+
+      scope.card.addEventListener('mouseenter', (e) => {
+        scope.isHovered = true;
+        updateProbe(e.clientX, e.clientY);
+        scope.card.classList.add('scope-probed', 'sonic-active');
+        this.acousticEngine.startWaveVoice(scope.slotNum, scope.probeX, scope.probeY);
+      });
+
+      scope.card.addEventListener('mousemove', (e) => {
+        updateProbe(e.clientX, e.clientY);
+        this.acousticEngine.modulateVoice(scope.probeX, scope.probeY);
+      });
+
+      scope.card.addEventListener('mouseleave', () => {
+        scope.isHovered = false;
+        scope.card.classList.remove('scope-probed', 'sonic-active');
+        this.acousticEngine.stopWaveVoice();
+        if (scope.channelTag) {
+          scope.channelTag.textContent = scope.config.idleTag;
+          scope.channelTag.classList.remove('telemetry-active');
+        }
+      });
+
+      // Click / Tap acoustic burst
+      scope.card.addEventListener('click', (e) => {
+        updateProbe(e.clientX, e.clientY);
+        scope.card.classList.add('sonic-active');
+        this.acousticEngine.triggerAcousticBurst(scope.slotNum, scope.probeX);
+        setTimeout(() => {
+          if (!scope.isHovered) {
+            scope.card.classList.remove('sonic-active');
+          }
+        }, 1200);
+      });
+
+      // Mobile Touch Handling
+      scope.card.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          scope.isHovered = true;
+          updateProbe(e.touches[0].clientX, e.touches[0].clientY);
+          scope.card.classList.add('scope-probed', 'sonic-active');
+          this.acousticEngine.startWaveVoice(scope.slotNum, scope.probeX, scope.probeY);
+        }
+      }, { passive: true });
+
+      scope.card.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+          updateProbe(e.touches[0].clientX, e.touches[0].clientY);
+          this.acousticEngine.modulateVoice(scope.probeX, scope.probeY);
+        }
+      }, { passive: true });
+
+      scope.card.addEventListener('touchend', () => {
+        setTimeout(() => {
+          scope.isHovered = false;
+          scope.card.classList.remove('scope-probed', 'sonic-active');
+          this.acousticEngine.stopWaveVoice();
+          if (scope.channelTag) {
+            scope.channelTag.textContent = scope.config.idleTag;
+            scope.channelTag.classList.remove('telemetry-active');
+          }
+        }, 1000);
+      }, { passive: true });
+    }
+
+    resizeScope(scope) {
+      const rect = scope.container.getBoundingClientRect();
+      const cssWidth = Math.max(rect.width, 240);
+      const cssHeight = Math.max(rect.height, 46);
+
+      scope.width = cssWidth;
+      scope.height = cssHeight;
+      scope.canvas.width = Math.floor(cssWidth * this.dpr);
+      scope.canvas.height = Math.floor(cssHeight * this.dpr);
+
+      scope.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      scope.ctx.scale(this.dpr, this.dpr);
+    }
+
+    resizeAll() {
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+      this.scopes.forEach(scope => this.resizeScope(scope));
+    }
+
+    setupObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          this.isVisible = entry.isIntersecting;
+          if (this.isVisible) {
+            this.lastTime = performance.now();
+            this.startLoop();
+          } else {
+            this.stopLoop();
+          }
+        });
+      }, { threshold: 0.05 });
+
+      observer.observe(this.gridContainer);
+    }
+
+    bindWindowEvents() {
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => this.resizeAll(), 150);
+      }, { passive: true });
+    }
+
+    startLoop() {
+      if (this.rafId) return;
+      const step = (now) => {
+        const delta = Math.min((now - this.lastTime) / 1000, 0.1);
+        this.lastTime = now;
+        this.globalTime += delta;
+
+        this.renderAll(delta, this.globalTime);
+
+        if (this.isVisible) {
+          this.rafId = requestAnimationFrame(step);
+        } else {
+          this.rafId = null;
+        }
+      };
+      this.rafId = requestAnimationFrame(step);
+    }
+
+    stopLoop() {
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+
+    renderAll(delta, t) {
+      this.scopes.forEach(scope => {
+        // Smooth hover transition
+        const targetHover = scope.isHovered ? 1.0 : 0.0;
+        scope.hoverProgress += (targetHover - scope.hoverProgress) * Math.min(delta * 8.0, 1.0);
+
+        // Update live fluctuating telemetry on hover
+        if (scope.isHovered && scope.channelTag) {
+          scope.jitterCounter += delta;
+          if (scope.jitterCounter > 0.08) {
+            scope.jitterCounter = 0;
+            this.updateLiveTelemetry(scope);
+          }
+        }
+
+        // Clear canvas
+        const ctx = scope.ctx;
+        const w = scope.width;
+        const h = scope.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw Reticle Center Line on Canvas
+        this.drawScopeGraticule(ctx, w, h);
+
+        // Render domain-specific mathematical waveform
+        scope.config.draw(scope, delta, t);
+      });
+    }
+
+    updateLiveTelemetry(scope) {
+      const tag = scope.channelTag;
+      if (!tag) return;
+      tag.classList.add('telemetry-active');
+
+      const jitterFreq = (scope.config.baseFreq + (Math.random() * 0.08 - 0.04)).toFixed(2);
+      const vpp = (3.2 + Math.random() * 0.35 + scope.hoverProgress * 0.5).toFixed(2);
+
+      switch (scope.slotNum) {
+        case 1:
+          tag.textContent = `SIGNAL LOCKED // ${jitterFreq} MHz · ${vpp} Vpp · THD 1.1%`;
+          break;
+        case 2:
+          const radarLock = (99.1 + Math.random() * 0.8).toFixed(1);
+          tag.textContent = `TACTICAL ACQUIRED // ${jitterFreq} MHz · LOCK ${radarLock}%`;
+          break;
+        case 3:
+          const bpm = Math.floor(74 + scope.hoverProgress * 18 + (Math.random() * 4 - 2));
+          tag.textContent = `VITALS ACTIVE // ${bpm} BPM · SpO2 99% · ${jitterFreq} GHz`;
+          break;
+        case 4:
+          const pwm = Math.floor(58 + scope.probeX * 28 + (Math.random() * 3));
+          tag.textContent = `BUS SYNCED // ${jitterFreq} MHz · I2C 400kHz · PWM ${pwm}%`;
+          break;
+        case 5:
+          const rpm = Math.floor(3580 + (Math.random() * 40 - 20) + scope.hoverProgress * 400);
+          tag.textContent = `VIBE SENSOR // ${jitterFreq} GHz · ${rpm} RPM · RMS 0.42mm/s`;
+          break;
+        case 6:
+          const gridHz = (50.00 + (Math.random() * 0.04 - 0.02)).toFixed(2);
+          const vac = Math.floor(414 + Math.random() * 3);
+          tag.textContent = `GRID SYNCED // ${jitterFreq} GHz · ${gridHz} Hz · ${vac} VAC`;
+          break;
+        default:
+          tag.textContent = scope.config.hoverPrefix;
+      }
+    }
+
+    drawScopeGraticule(ctx, w, h) {
+      ctx.save();
+      const midY = h * 0.5;
+
+      // Center horizontal axis
+      ctx.beginPath();
+      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = 'rgba(217, 169, 58, 0.18)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(0, midY);
+      ctx.lineTo(w, midY);
+      ctx.stroke();
+
+      // Tick marks on center horizontal axis
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(217, 169, 58, 0.28)';
+      const step = w / 10;
+      for (let i = 1; i < 10; i++) {
+        const x = i * step;
+        ctx.beginPath();
+        ctx.moveTo(x, midY - 3);
+        ctx.lineTo(x, midY + 3);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 1: General Innovation & Open Innovation (Amber)
+     * Rich Multi-Harmonic Synthesizer Wave with Phosphor Glow & Cursor Modulation
+     */
+    drawHarmonicSynthesizer(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress, probeX } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.0 : 3.5) + hoverProgress * 3.0;
+      const fHarmonic = 3.0 + hoverProgress * (probeX * 3.0 + 1.0);
+
+      const amp1 = h * 0.32;
+      const amp2 = h * (0.12 + hoverProgress * 0.08);
+      const amp3 = h * (0.05 + hoverProgress * 0.04);
+
+      // Phosphor Glow Layer
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.5 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 140);
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+        const y = midY +
+          Math.sin(u * Math.PI * 4 - t * speed) * amp1 +
+          Math.sin(u * Math.PI * fHarmonic * 2 - t * speed * 1.6 + 0.8) * amp2 +
+          Math.sin(u * Math.PI * 12 + t * speed * 0.8) * amp3;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Electron Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Leading Electron Sweep Head
+      const sweepU = (t * 0.35 * speed) % 1.0;
+      const sweepIdx = Math.floor(sweepU * (points.length - 1));
+      const head = points[sweepIdx] || points[0];
+
+      const grad = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 16);
+      grad.addColorStop(0, '#FFFFFF');
+      grad.addColorStop(0.25, config.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 2: Defence & National Security (Cyan)
+     * Tactical Radar Sweep & Encrypted Chirp Pulse Packet with Stepped Military Jitter
+     */
+    drawRadarChirp(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 0.8 : 2.4) + hoverProgress * 2.0;
+
+      // Advancing Chirp Wave Packet Center
+      const packetCenter = (t * speed * 0.45) % 1.25 - 0.12;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 150);
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Gaussian Envelope centered around packetCenter
+        const dist = Math.abs(u - packetCenter);
+        const envelope = Math.exp(-(dist * dist) / 0.018);
+
+        // High-frequency chirp within envelope + base carrier
+        const chirpCarrier = Math.sin((u * 14 + (dist < 0.15 ? Math.pow(u - packetCenter, 2) * 280 : 0)) * Math.PI * 2 - t * 6.0);
+        const baseNoise = Math.sin(u * Math.PI * 6 - t * speed * 1.2) * (h * 0.06);
+
+        // Stepped military encryption jitter
+        const digitalStep = (Math.floor(u * 28) % 3 === 0 ? 1 : -1) * (1.2 + hoverProgress * 1.8);
+
+        const y = midY + (chirpCarrier * (h * 0.38) * envelope) + baseNoise + digitalStep;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Sweeping Tactical Sonar Vertical Radar Beam
+      const radarX = Math.max(0, Math.min(w, packetCenter * w));
+      const beamGrad = ctx.createLinearGradient(radarX - 18, 0, radarX + 4, 0);
+      beamGrad.addColorStop(0, 'transparent');
+      beamGrad.addColorStop(0.7, 'rgba(0, 229, 255, 0.08)');
+      beamGrad.addColorStop(1, 'rgba(0, 229, 255, 0.38)');
+      ctx.fillStyle = beamGrad;
+      ctx.fillRect(radarX - 18, 0, 22, h);
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 3: Healthcare & Assistive Technology (Emerald)
+     * Clinical Biometric ECG (P-Q-R-S-T) Heartbeat Monitor with Phosphor Persistence Sweep
+     */
+    drawBiometricECG(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.52;
+      const heartRate = (this.prefersReducedMotion ? 0.9 : 1.35) + hoverProgress * 0.8;
+      scope.ecgPhase += delta * heartRate;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 14 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 1.8), 160);
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Cardiac cycle progress (0.0 to 1.0)
+        let tau = (u * 2.2 - scope.ecgPhase) % 1.0;
+        if (tau < 0) tau += 1.0;
+
+        let ecgY = 0;
+        // P-Wave (Atrial Depolarization)
+        if (tau >= 0.15 && tau < 0.25) {
+          const pt = (tau - 0.15) / 0.10;
+          ecgY = -Math.sin(pt * Math.PI) * (h * 0.14);
+        }
+        // Q-Dip
+        else if (tau >= 0.27 && tau < 0.30) {
+          const qt = (tau - 0.27) / 0.03;
+          ecgY = Math.sin(qt * Math.PI) * (h * 0.10);
+        }
+        // R-Spike (Ventricular Depolarization) - Massive sharp spike!
+        else if (tau >= 0.30 && tau < 0.35) {
+          const rt = (tau - 0.30) / 0.05;
+          ecgY = -Math.sin(rt * Math.PI) * (h * 0.44 + hoverProgress * (h * 0.08));
+        }
+        // S-Dip (Deep negative deflection)
+        else if (tau >= 0.35 && tau < 0.39) {
+          const st = (tau - 0.35) / 0.04;
+          ecgY = Math.sin(st * Math.PI) * (h * 0.16);
+        }
+        // T-Wave (Ventricular Repolarization)
+        else if (tau >= 0.48 && tau < 0.62) {
+          const tt = (tau - 0.48) / 0.14;
+          ecgY = -Math.sin(tt * Math.PI) * (h * 0.20);
+        }
+        // Isoelectric Baseline + subtle electronic 50Hz hum
+        else {
+          ecgY = Math.sin(u * Math.PI * 40 + t * 8) * 0.7;
+        }
+
+        const y = midY + ecgY;
+        points.push({ x, y, tau });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Electron Beam Sweep Wash
+      const sweepX = ((scope.ecgPhase * 0.45) % 1.0) * w;
+      const sweepFade = ctx.createLinearGradient(sweepX - 25, 0, sweepX + 2, 0);
+      sweepFade.addColorStop(0, 'transparent');
+      sweepFade.addColorStop(1, 'rgba(0, 230, 118, 0.28)');
+      ctx.fillStyle = sweepFade;
+      ctx.fillRect(sweepX - 25, 0, 27, h);
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 4: Smart Home & Consumer Electronics (Violet)
+     * Digital Logic Analyzer Bus with Clock Pulses, PWM Bursts & Slew S-Curves
+     */
+    drawDigitalLogicPWM(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress, probeX } = scope;
+      const highY = h * 0.22;
+      const lowY = h * 0.78;
+      const speed = (this.prefersReducedMotion ? 1.0 : 2.8) + hoverProgress * 3.5;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 160);
+
+      // Packet byte sequence
+      const bitStream = [1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1];
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Shift bit stream horizontally
+        const streamPos = (u * 12 + t * speed) % bitStream.length;
+        const bitIdx = Math.floor(streamPos);
+        const bitFrac = streamPos - bitIdx;
+
+        const currentBit = bitStream[bitIdx];
+        const nextBit = bitStream[(bitIdx + 1) % bitStream.length];
+
+        let targetY = currentBit === 1 ? highY : lowY;
+
+        // Slew rate rounding on transitions
+        if (currentBit !== nextBit && bitFrac > 0.82) {
+          const transitionProgress = (bitFrac - 0.82) / 0.18;
+          const nextY = nextBit === 1 ? highY : lowY;
+          // Smooth tanh transition
+          targetY = targetY + (nextY - targetY) * (0.5 + 0.5 * Math.sin((transitionProgress - 0.5) * Math.PI));
+        }
+
+        // Add PWM high-speed ripple on high states
+        if (currentBit === 1) {
+          const pwmFreq = 30 + hoverProgress * 20;
+          targetY += Math.sin(u * Math.PI * pwmFreq + t * 14) * (1.2 + hoverProgress * 1.4);
+        }
+
+        points.push({ x, y: targetY });
+        if (i === 0) ctx.moveTo(x, targetY);
+        else ctx.lineTo(x, targetY);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Clock tick pulses along bottom baseline
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(187, 134, 252, 0.45)';
+      ctx.lineWidth = 1;
+      const clockStep = w / 16;
+      for (let c = 0; c <= 16; c++) {
+        const cx = (c * clockStep + (t * speed * 8)) % w;
+        ctx.moveTo(cx, lowY + 5);
+        ctx.lineTo(cx, lowY + 9);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 5: Industrial Automation & Monitoring (Copper)
+     * Vibration Telemetry & Machine Tachometer Sawtooth FFT Harmonic Wave
+     */
+    drawVibrationSawtooth(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.0 : 3.0) + hoverProgress * 3.0;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 12 + hoverProgress * 8;
+
+      const points = [];
+      const steps = Math.min(Math.floor(w / 2), 150);
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Sawtooth ramp (RPM rotation cycle)
+        let ramp = (u * 4.5 - t * speed) % 1.0;
+        if (ramp < 0) ramp += 1.0;
+        const sawY = (ramp - 0.5) * (h * 0.46);
+
+        // High-frequency bearing resonance near ramp discharge
+        const bearingDecay = Math.exp(-Math.pow(ramp - 0.85, 2) / 0.035);
+        const bearingRing = Math.sin(u * Math.PI * 48 - t * 20) * (h * 0.15) * bearingDecay;
+
+        // Heavy industrial low-frequency vibration
+        const mechVibe = Math.sin(u * Math.PI * 8 + t * 4) * (h * 0.08);
+
+        const y = midY + sawY * 0.65 + bearingRing + mechVibe;
+        points.push({ x, y });
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Sharp Core Beam
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      points.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /**
+     * DOMAIN 6: Energy, Power & Sustainability (Ruby)
+     * Resonant 3-Phase High-Voltage AC Power Transmission & Corona Plasma Wave
+     */
+    drawThreePhaseAC(scope, delta, t) {
+      const { ctx, width: w, height: h, config, hoverProgress } = scope;
+      const midY = h * 0.5;
+      const speed = (this.prefersReducedMotion ? 1.2 : 3.6) + hoverProgress * 2.8;
+
+      ctx.save();
+      const steps = Math.min(Math.floor(w / 2), 150);
+
+      // Phase 1: Primary 50Hz Transmission Line
+      ctx.beginPath();
+      ctx.strokeStyle = config.glowColor;
+      ctx.lineWidth = 3.2 + hoverProgress * 1.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = config.color;
+      ctx.shadowBlur = 14 + hoverProgress * 8;
+
+      const p1 = [];
+      const p2 = [];
+
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const x = u * w;
+
+        // Phase 1 Sinusoid
+        const y1 = midY + Math.sin(u * Math.PI * 5 - t * speed) * (h * 0.38) +
+          Math.sin(u * Math.PI * 15 + t * 6) * (1.2 + hoverProgress * 2.0);
+
+        // Phase 2 (120-degree phase shift)
+        const y2 = midY + Math.sin(u * Math.PI * 5 - t * speed + (2 * Math.PI / 3)) * (h * 0.32) +
+          Math.cos(u * Math.PI * 15 + t * 6) * (1.0 + hoverProgress * 1.8);
+
+        p1.push({ x, y: y1 });
+        p2.push({ x, y: y2 });
+
+        if (i === 0) ctx.moveTo(x, y1);
+        else ctx.lineTo(x, y1);
+      }
+      ctx.stroke();
+
+      // Phase 2 Secondary Interlaced Trace
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255, 75, 110, 0.45)';
+      ctx.lineWidth = 2.0;
+      p2.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Sharp Core Electron Beam on Phase 1
+      ctx.beginPath();
+      ctx.strokeStyle = config.beamColor;
+      ctx.lineWidth = 1.6;
+      ctx.shadowBlur = 0;
+      p1.forEach((pt, i) => {
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      });
+      ctx.stroke();
+
+      // Plasma corona spark nodes at wave intersection points
+      if (hoverProgress > 0.15) {
+        ctx.fillStyle = '#FFFFFF';
+        p1.forEach((pt, i) => {
+          if (i % 24 === 0 && Math.abs(pt.y - p2[i].y) < 12) {
+            ctx.beginPath();
+            ctx.arc(pt.x, (pt.y + p2[i].y) * 0.5, 2.5 * hoverProgress, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
+
+      ctx.restore();
+    }
+  }
+
+  // Initialize on DOMContentLoaded or immediately if already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new DomainOscilloscopeEngine());
+  } else {
+    new DomainOscilloscopeEngine();
+  }
+})();
+R����      j�9�j�9�J�j�9�   S    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/domain-oscilloscope.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Content-type: text/javascript
+Content-Length: 49245
+Last-Modified: Sat, 31 Oct 2026 18:46:10 GMT
+Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 18:55:39 GMT
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 18:51:48 GMT
+Content-type: text/javascript
+Content-Length: 49245
+Last-Modified: Sat, 31 Oct 2026 18:46:10 GMT
+ ctid 2      �]

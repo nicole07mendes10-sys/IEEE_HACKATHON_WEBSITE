@@ -74,12 +74,11 @@ class TVATemporalIntroController {
   }
 
   async init() {
-    this.resetScrollToTop();
     // Check Reduced Motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const urlParams = new URLSearchParams(window.location.search);
     const forceReplay = urlParams.get('intro') === 'replay' || urlParams.get('replay') === '1';
-    const noIntro = urlParams.has('nointro') || urlParams.has('noboot');
+    const noIntro = urlParams.has('nointro') || urlParams.has('noboot') || urlParams.has('skipintro');
     const alreadyPlayed = sessionStorage.getItem('oc2027_temporal_intro_played') === 'true';
 
     this.container = document.getElementById('tva-temporal-intro');
@@ -88,6 +87,10 @@ class TVATemporalIntroController {
     if (noIntro || (alreadyPlayed && !forceReplay) || prefersReducedMotion) {
       this.bypassIntroImmediate();
       return;
+    }
+
+    if (!window.location.hash && !urlParams.has('goto')) {
+      this.resetScrollToTop();
     }
 
     // Load Three.js dynamically
@@ -418,42 +421,42 @@ class TVATemporalIntroController {
 
       // Bronze/Charcoal Gradient Background
       const grad = ctx.createLinearGradient(0, 0, 0, 1024);
-      grad.addColorStop(0, '#2b1b11');
-      grad.addColorStop(0.5, '#160e09');
-      grad.addColorStop(1, '#0c0704');
+      grad.addColorStop(0, '#26201A');
+      grad.addColorStop(0.5, '#1C1813');
+      grad.addColorStop(1, '#14110D');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 512, 1024);
 
-      // Distressed Grid Lines & Orange Borders
-      ctx.strokeStyle = 'rgba(232, 137, 43, 0.4)';
+      // Distressed Grid Lines & Brass Borders
+      ctx.strokeStyle = 'rgba(184, 146, 58, 0.4)';
       ctx.lineWidth = 4;
       ctx.strokeRect(20, 20, 472, 984);
       ctx.strokeRect(32, 32, 448, 960);
 
       // TVA Bold Wordmark
-      ctx.fillStyle = '#ff7700';
+      ctx.fillStyle = '#E8872B';
       ctx.font = 'bold 110px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('TVA', 256, 220);
 
       // Hourglass Emblem
-      ctx.strokeStyle = '#ffaa33';
+      ctx.strokeStyle = '#B8923A';
       ctx.lineWidth = 6;
       ctx.beginPath();
       ctx.arc(256, 330, 48, 0, Math.PI * 2);
       ctx.stroke();
 
       // Banner Text
-      ctx.fillStyle = '#ffdd99';
+      ctx.fillStyle = '#EADFC4';
       ctx.font = 'bold 36px sans-serif';
       ctx.letterSpacing = '6px';
       ctx.fillText(title, 256, 480);
 
-      ctx.fillStyle = '#e6cca8';
+      ctx.fillStyle = '#B9AD92';
       ctx.font = '26px monospace';
       ctx.fillText(subtitle, 256, 560);
 
-      ctx.fillStyle = '#ff9922';
+      ctx.fillStyle = '#3FB5A0';
       ctx.font = 'bold 30px monospace';
       ctx.fillText(tag, 256, 740);
 

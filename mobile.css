@@ -32,7 +32,7 @@
   .bureau-section {
     padding: 56px 20px 48px;
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
   }
@@ -85,7 +85,7 @@
   .section-subtext {
     font-size: 0.90rem;
     line-height: 1.5;
-    color: var(--text-dim, #C8B9A6);
+    color: var(--text-dim, #7C735F);
     max-width: 100%;
     margin-bottom: 20px;
   }
@@ -93,37 +93,35 @@
   /* --- Navigation Bar --- */
   .bureau-navbar {
     height: 60px;
-    background: rgba(20, 16, 12, 0.95);
+    background: rgba(20, 17, 13, 0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
 
   .nav-container {
-    padding: 0 70px 0 16px;
+    padding: 0 84px 0 16px !important;
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
   }
 
   .nav-brand-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
-    max-width: 100%;
+    max-width: calc(100% - 110px);
+    flex-shrink: 1;
+    min-width: 0;
   }
 
+  /* Secondary organization labels removed from mobile header to give OVERCLOCK breathing room */
   .brand-badge {
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    padding-right: 8px;
-    border-right: 1px solid rgba(217, 169, 58, 0.35);
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-    flex-shrink: 0;
+    display: none !important;
   }
 
   .brand-wordmark-wrap {
@@ -134,26 +132,89 @@
   }
 
   .brand-wordmark {
-    font-size: clamp(1.22rem, 4.4vw, 1.40rem);
+    font-size: clamp(1.28rem, 4.8vw, 1.55rem);
     letter-spacing: 0.04em;
     font-family: var(--font-display);
-    color: var(--amber-bright, #E8892B);
+    color: var(--tva-orange, #E8872B);
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(232, 137, 43, 0.4);
   }
 
   .brand-year-tag {
     font-size: 0.88rem;
     font-family: var(--font-mono);
-    color: var(--paper-cream, #EFE6D2);
+    color: var(--paper-cream, #EADFC4);
   }
 
+  .nav-actions-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Remove crowded desktop-only actions, secondary tags, replay intro button & temporal-log readouts */
   .nav-timeline-status,
   .nav-desktop-cta,
   .nav-actions,
+  .nav-replay-btn,
+  .nav-links-menu,
   .mobile-menu-toggle {
     display: none !important;
   }
 
-  /* --- Temporal Clock Navigator (Upper-Right Instrument) --- */
+  /* Transparent Dark-Blue Unstop Wordmark in Mobile Header */
+  .header-unstop-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 2px 4px !important;
+    text-decoration: none !important;
+    flex-shrink: 0 !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  .header-unstop-wordmark {
+    height: 20px !important;
+    width: auto !important;
+    max-width: 75px !important;
+    display: block !important;
+  }
+
+  /* Compact Audio Toggle Icon Button in Mobile Header */
+  .nav-audio-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    border-radius: 4px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Expand touch target to 42px without enlarging visible container */
+  .nav-audio-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: -5px !important;
+    cursor: pointer !important;
+  }
+
+  .nav-audio-btn .audio-toggle-svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* --- Temporal Clock Navigator (Upper-Right Corner Precision Instrument) --- */
   .corner-clock-navigator {
     position: fixed;
     top: 0;
@@ -166,29 +227,36 @@
   button.corner-dial-trigger,
   #corner-dial-trigger {
     position: fixed !important;
-    top: -50px !important;
-    right: -50px !important;
-    width: 110px !important;
-    height: 110px !important;
+    top: -46px !important;
+    right: -46px !important;
+    width: 104px !important;
+    height: 104px !important;
     z-index: 1000 !important;
     pointer-events: auto !important;
-    border: 1.5px solid rgba(217, 169, 58, 0.65) !important;
-    background: radial-gradient(circle at 100% 0%, #201710 0%, #17120F 70%, #130E0B 100%) !important;
+    border: 1.5px solid rgba(184, 146, 58, 0.65) !important;
+    background: radial-gradient(circle at 100% 0%, #26201A 0%, #1C1813 70%, #14110D 100%) !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85) !important;
     cursor: pointer;
+    padding: 0 !important;
+    margin: 0 !important;
+    touch-action: manipulation !important;
   }
 
   .corner-dial-pointer {
-    height: 38px !important;
+    height: 34px !important;
   }
 
   .corner-dial-pointer .pointer-needle {
-    height: 32px !important;
+    height: 28px !important;
     width: 1.5px !important;
   }
 
   .corner-rotor-marker {
-    transform: translate(-50%, -50%) rotate(var(--base-angle)) translateY(-38px) !important;
+    transform: translate(-50%, -50%) rotate(var(--base-angle)) translateY(-34px) !important;
+  }
+
+  .corner-dial-ray {
+    height: 52px !important;
   }
 
   /* Expanded Temporal Directory */
@@ -196,18 +264,19 @@
   nav.corner-temporal-menu,
   #corner-temporal-menu {
     position: fixed !important;
-    top: 62px !important;
-    right: 10px !important;
-    width: calc(100vw - 20px) !important;
-    max-width: 320px !important;
-    max-height: calc(100vh - 74px) !important;
+    top: 58px !important;
+    right: 8px !important;
+    width: calc(100vw - 16px) !important;
+    max-width: 310px !important;
+    max-height: calc(100vh - 68px) !important;
     overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     z-index: 1100 !important;
-    background: #16110D !important;
-    border: 1.5px solid var(--border-brass, #C89D42) !important;
+    background: #1C1813 !important;
+    border: 1.5px solid var(--border-brass, #B8923A) !important;
     border-radius: 6px !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.95) !important;
-    padding: 12px 14px !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.95) !important;
+    padding: 10px 12px 14px !important;
     box-sizing: border-box !important;
   }
 
@@ -222,26 +291,26 @@
   }
 
   .corner-temporal-menu .sector-box {
-    min-height: 42px;
-    padding: 8px 12px;
+    min-height: 40px;
+    padding: 7px 10px;
     margin-bottom: 6px;
-    border: 1px solid rgba(217, 169, 58, 0.35);
+    border: 1px solid rgba(184, 146, 58, 0.35);
     border-radius: 4px;
-    background: rgba(28, 21, 15, 0.9);
-    font-size: 0.82rem;
+    background: rgba(28, 24, 19, 0.9);
+    font-size: 0.80rem;
   }
 
   /* --- Floating Miss Minutes Mascot --- */
   .miss-minutes-overlay,
   #miss-minutes-overlay {
     position: fixed !important;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
-    right: calc(16px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
     left: auto !important;
     top: auto !important;
     transform: none !important;
-    width: 54px !important;
-    height: 54px !important;
+    width: 48px !important;
+    height: 48px !important;
     z-index: 950 !important;
     display: flex !important;
     opacity: 1 !important;
@@ -249,6 +318,8 @@
     background: transparent !important;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.75)) !important;
     border-radius: 50% !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
   }
 
   .miss-minutes-speech,
@@ -313,7 +384,7 @@
     font-size: clamp(0.85rem, 2.8vw, 0.92rem);
     line-height: 1.45;
     margin-bottom: 14px;
-    color: var(--text-body, #EFE6D2);
+    color: var(--text-body, #EADFC4);
   }
 
   .hero-clock-backdrop {
@@ -329,9 +400,9 @@
     gap: 8px 12px;
     padding: 12px 14px;
     margin-bottom: 16px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
-    background: rgba(28, 21, 15, 0.92) !important;
+    background: rgba(28, 24, 19, 0.92) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     width: 100%;
@@ -356,12 +427,12 @@
   .field-label {
     font-size: 0.64rem;
     letter-spacing: 0.05em;
-    color: var(--text-dim, #C8B9A6);
+    color: var(--text-dim, #7C735F);
   }
 
   .field-value {
     font-size: 0.82rem;
-    color: var(--text-bright, #FFF2DC);
+    color: var(--text-bright, #EADFC4);
   }
 
   .hero-cta-group {
@@ -395,44 +466,21 @@
     margin-top: 6px !important;
   }
 
-  /* Unstop Platform Header Link (in nav actions flow) */
-  .header-unstop-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    font-size: 0.65rem;
-  }
-
-  .unstop-logo-chip {
-    height: 17px;
-    padding: 1px 4px;
-  }
-
-  .unstop-logo-chip .header-unstop-logo {
-    height: 12px;
-    max-width: 50px;
-  }
-
-  @media screen and (max-width: 768px) {
-    .unstop-header-badge-tag {
-      display: none;
-    }
-  }
-
-  @media screen and (max-width: 560px) {
-    .unstop-btn-text {
-      display: none;
-    }
-    .header-unstop-link {
-      padding: 4px 6px;
-    }
-  }
-
   /* Organising Clubs Section & Cards */
   .clubs-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-evenly !important;
+    align-items: center !important;
+    gap: 24px !important;
+    max-width: 860px !important;
+    margin: 32px auto 0 !important;
+    padding: 14px 6px !important;
+  }
+
+  .tva-club-card {
+    --tva-w: 240px !important;
+    width: var(--tva-w) !important;
   }
 
   /* Downloads Resource Grid */
@@ -465,9 +513,9 @@
   .operational-status-panel {
     padding: 14px 14px;
     margin-bottom: 16px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(22, 17, 13, 0.9);
+    background: rgba(28, 24, 19, 0.9);
     box-sizing: border-box;
   }
 
@@ -478,7 +526,7 @@
     gap: 8px;
     margin-bottom: 10px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
   }
 
   .panel-header-title {
@@ -503,8 +551,8 @@
 
   .status-cell {
     padding: 8px 10px;
-    border: 1px solid rgba(217, 169, 58, 0.2);
-    background: rgba(20, 15, 11, 0.7);
+    border: 1px solid rgba(184, 146, 58, 0.2);
+    background: rgba(20, 17, 13, 0.7);
     border-radius: 4px;
     box-sizing: border-box;
   }
@@ -518,7 +566,7 @@
     letter-spacing: 0.04em;
     margin-bottom: 2px;
     display: block;
-    color: var(--text-dim, #C8B9A6);
+    color: var(--text-dim, #7C735F);
   }
 
   .status-v {
@@ -535,9 +583,9 @@
 
   .case-note-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
-    background: rgba(24, 18, 13, 0.85);
+    background: rgba(28, 24, 19, 0.85);
   }
 
   .note-stamp {
@@ -570,7 +618,7 @@
     padding: 0 !important;
     border: 2px solid var(--border-dim);
     border-radius: var(--radius-md);
-    background: #18120c;
+    background: #1C1813;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -585,8 +633,8 @@
     padding: 10px 14px;
     height: 42px;
     margin-bottom: 0 !important;
-    border-bottom: 1px solid rgba(217, 169, 58, 0.15);
-    background: #130d08;
+    border-bottom: 1px solid rgba(184, 146, 58, 0.15);
+    background: #14110D;
     box-sizing: border-box;
   }
 
@@ -701,9 +749,9 @@
     margin-top: 28px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    border: 1.5px solid var(--border-brass, #C89D42) !important;
+    border: 1.5px solid var(--border-brass, #B8923A) !important;
     border-radius: 6px !important;
-    background: rgba(26, 18, 12, 0.95) !important;
+    background: rgba(28, 24, 19, 0.95) !important;
   }
 
   .domain-cta-content {
@@ -728,7 +776,7 @@
     line-height: 1.25 !important;
     margin: 0 0 10px 0 !important;
     width: 100% !important;
-    color: var(--paper-cream, #EFE6D2) !important;
+    color: var(--paper-cream, #EADFC4) !important;
   }
 
   .domain-cta-text {
@@ -736,7 +784,7 @@
     line-height: 1.5 !important;
     margin: 0 0 14px 0 !important;
     width: 100% !important;
-    color: var(--text-dim, #C8B9A6) !important;
+    color: var(--text-dim, #7C735F) !important;
   }
 
   .domain-cta-action {
@@ -760,9 +808,9 @@
   /* --- Section 04: The Shortlist --- */
   .results-dossier-chamber {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(22, 17, 13, 0.92);
+    background: rgba(28, 24, 19, 0.92);
   }
 
   .dossier-teletype-header {
@@ -771,7 +819,7 @@
     gap: 4px;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
   }
 
   .teletype-title {
@@ -870,9 +918,9 @@
 
   .milestone-card-box {
     padding: 12px 14px !important;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3)) !important;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3)) !important;
     border-radius: 6px !important;
-    background: rgba(24, 18, 13, 0.88) !important;
+    background: rgba(28, 24, 19, 0.88) !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
@@ -916,9 +964,9 @@
   /* --- Section 06: Registration (Rs. 1,770 display) --- */
   .registration-terminal-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(22, 17, 13, 0.92);
+    background: rgba(28, 24, 19, 0.92);
   }
 
   .terminal-card-topbar {
@@ -927,7 +975,7 @@
     gap: 4px;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
   }
 
   .topbar-badge {
@@ -946,9 +994,9 @@
 
   .reg-milestone-panel {
     padding: 12px 14px;
-    border: 1px solid rgba(217, 169, 58, 0.2);
+    border: 1px solid rgba(184, 146, 58, 0.2);
     border-radius: 4px;
-    background: rgba(20, 15, 11, 0.6);
+    background: rgba(20, 17, 13, 0.6);
   }
 
   .reg-k-label {
@@ -969,9 +1017,9 @@
   .fee-calculation-box {
     padding: 14px 14px;
     text-align: center;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(28, 21, 15, 0.85);
+    background: rgba(28, 24, 19, 0.85);
   }
 
   .fee-box-title {
@@ -993,9 +1041,9 @@
 
   .quarters-stat-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
-    background: rgba(24, 18, 13, 0.85);
+    background: rgba(28, 24, 19, 0.85);
   }
 
   .stat-icon {
@@ -1024,7 +1072,7 @@
   .accommodation-details-panel {
     padding: 14px 14px;
     margin-top: 14px;
-    border: 1.5px solid rgba(217, 169, 58, 0.25);
+    border: 1.5px solid rgba(184, 146, 58, 0.25);
     border-radius: 6px;
   }
 
@@ -1047,7 +1095,7 @@
 
   .criterion-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
   }
 
@@ -1101,7 +1149,7 @@
   }
 
   .faq-item {
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
   }
 
@@ -1126,7 +1174,7 @@
 
   .venue-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
   }
 
@@ -1161,7 +1209,7 @@
 
   .footer-panel {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
   }
 
@@ -1178,7 +1226,7 @@
 
   .crew-roster-card {
     padding: 8px 10px;
-    border: 1px solid rgba(217, 169, 58, 0.2);
+    border: 1px solid rgba(184, 146, 58, 0.2);
     border-radius: 4px;
   }
 
@@ -1191,45 +1239,167 @@
     margin: 2px 0;
   }
 
-  .crew-phone-link {
-    font-size: 0.76rem;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-
   .footer-action-bar-single {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
     margin: 18px 0 14px;
     text-align: center;
   }
 
-  .btn-back-to-start {
+  .btn-back-to-start,
+  .btn-footer-developers {
     min-height: 44px;
     padding: 10px 18px;
     font-size: 0.80rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
   }
 
-  .footer-bottom-bar {
-    display: flex;
+  /* Footer Contact Card Mobile */
+  .footer-contact-card {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 11px 14px;
+  }
+
+  .footer-contact-phone {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  /* Developers Recognition Modal Mobile */
+  .developers-modal-overlay {
+    padding: 16px 12px;
+  }
+
+  .dev-modal-container {
+    max-height: 94vh;
+  }
+
+  .dev-modal-surface {
+    padding: 22px 16px 18px;
+  }
+
+  .dev-modal-topbar {
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+  }
+
+  .dev-modal-file-tag {
+    font-size: 0.65rem;
+  }
+
+  .dev-modal-close-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    font-size: 1.25rem;
+  }
+
+  .dev-modal-header {
+    margin-bottom: 20px;
+  }
+
+  .dev-modal-title {
+    font-size: 1.6rem;
+  }
+
+  .dev-modal-intro {
+    font-size: 0.85rem;
+    padding: 0 4px;
+  }
+
+  .dev-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .dev-modal-bottom-note {
+    font-size: 0.64rem;
     gap: 6px;
+    flex-direction: column;
+  }
+
+  /* Developers Card Mobile Rules */
+  .developers-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .developer-card {
+    padding: 18px 16px 16px;
+  }
+
+  .developer-name {
+    font-size: 1.42rem;
+  }
+
+  .developer-phone-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .developer-phone-link {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    font-size: 0.82rem;
+  }
+
+  .developer-github-btn {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+  }
+
+  .developers-bottom-bar {
+    font-size: 0.66rem;
+    gap: 8px;
+    flex-direction: column;
     text-align: center;
+  }
+
+  .footer-marquee-strip {
+    padding: 10px 0;
+  }
+
+  .f-m-item {
     font-size: 0.68rem;
+    letter-spacing: 0.08em;
   }
 
-  /* Header Unstop Compact */
-  .header-unstop-link {
-    padding: 3px 6px;
-    gap: 4px;
+  .f-m-sep {
+    padding: 0 12px;
   }
 
-  .header-unstop-logo {
-    height: 13px;
-    max-width: 48px;
+  .f-m-unstop-badge {
+    padding: 3px 9px;
+    gap: 5px;
+  }
+
+  .f-m-unstop-img {
+    height: 12px;
+  }
+
+  .f-m-unstop-text {
+    font-size: 0.62rem;
+  }
+
+  .f-m-dev-trigger {
+    padding: 3px 8px;
+    font-size: 0.65rem;
   }
 
   /* Organiser Logos Strip */
@@ -1237,29 +1407,52 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 8px;
+    margin: 12px 0 18px;
+    padding: 8px 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: rgba(20, 17, 13, 0.72);
+    border: 1px solid rgba(184, 146, 58, 0.3);
+    border-radius: var(--radius-sm, 6px);
   }
 
   .organiser-logo-item {
-    flex: 1 1 calc(33.333% - 8px);
-    min-width: 90px;
-    padding: 4px 6px;
-    gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 6px;
+    flex: 1 1 auto;
+    min-width: 80px;
   }
 
   .organiser-logo-badge {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
   }
 
   .organiser-logo-img {
-    width: 24px;
-    height: 24px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
-  .organiser-logo-name {
-    font-size: 0.66rem;
+  .organiser-logo-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--paper-cream, #EADFC4);
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
   /* Hero Register Button */
@@ -1273,13 +1466,36 @@
 
   /* Organising Clubs Section */
   .clubs-cards-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    margin-top: 18px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 22px !important;
+    margin-top: 18px !important;
+    width: 100% !important;
   }
 
-  .org-club-card {
-    padding: 18px 16px;
+  .tva-club-card {
+    --tva-w: min(230px, 75vw) !important;
+    width: var(--tva-w) !important;
+  }
+
+  .tva-card__back-content {
+    inset: 10px 12px !important;
+  }
+
+  .tva-back-body {
+    padding: 7px 7px !important;
+  }
+
+  .tva-back-footer {
+    flex-direction: column !important;
+    gap: 2px !important;
+    text-align: center !important;
+    padding-top: 5px !important;
+  }
+
+  .tva-flip-prompt {
+    margin-left: 0 !important;
   }
 
   /* Round 1 PPT Free Notice Panel */
@@ -1403,62 +1619,78 @@
   }
 
   .bureau-navbar {
-    height: 56px;
+    height: 54px;
   }
 
   .nav-container {
-    padding: 0 56px 0 10px;
+    padding: 0 76px 0 10px !important;
+  }
+
+  .nav-actions-group {
+    gap: 8px !important;
+    margin-right: 0 !important;
   }
 
   .brand-wordmark {
-    font-size: 1.18rem;
-    letter-spacing: 0.02em;
+    font-size: 1.18rem !important;
+    letter-spacing: 0.02em !important;
   }
 
   .brand-badge {
-    font-size: 0.60rem;
-    padding-right: 5px;
-    gap: 2px;
+    display: none !important;
+  }
+
+  .header-unstop-link {
+    padding: 2px 2px !important;
+  }
+
+  .header-unstop-wordmark {
+    height: 18px !important;
+    max-width: 65px !important;
   }
 
   /* Ultra-Compact Clock Dial */
   .corner-dial-trigger,
   button.corner-dial-trigger,
   #corner-dial-trigger {
-    top: -46px !important;
-    right: -46px !important;
-    width: 100px !important;
-    height: 100px !important;
+    top: -42px !important;
+    right: -42px !important;
+    width: 94px !important;
+    height: 94px !important;
   }
 
   .corner-dial-pointer {
-    height: 32px !important;
+    height: 30px !important;
   }
 
   .corner-dial-pointer .pointer-needle {
-    height: 26px !important;
+    height: 24px !important;
   }
 
   .corner-rotor-marker {
-    transform: translate(-50%, -50%) rotate(var(--base-angle)) translateY(-32px) !important;
+    transform: translate(-50%, -50%) rotate(var(--base-angle)) translateY(-30px) !important;
+  }
+
+  .corner-dial-ray {
+    height: 46px !important;
   }
 
   .corner-temporal-menu,
   nav.corner-temporal-menu,
   #corner-temporal-menu {
-    top: 58px !important;
-    right: 6px !important;
-    width: calc(100vw - 12px) !important;
+    top: 54px !important;
+    right: 4px !important;
+    width: calc(100vw - 8px) !important;
     max-width: 295px !important;
   }
 
   /* Ultra-Compact Mascot & CTA Clearance */
   .miss-minutes-overlay,
   #miss-minutes-overlay {
-    width: 46px !important;
-    height: 46px !important;
-    bottom: 12px !important;
-    right: 12px !important;
+    width: 40px !important;
+    height: 40px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(10px + env(safe-area-inset-right, 0px)) !important;
   }
 
   .hero-cta-group {
@@ -1471,7 +1703,7 @@
 
   /* Ultra-Compact Hero Elements */
   .split-flap-title .flap-char-box {
-    font-size: 1.10rem;
+    font-size: 1.08rem;
     padding: 3px 0;
   }
 
@@ -1519,19 +1751,6 @@
     padding: 10px 14px !important;
   }
 
-  /* Ultra-Compact adjustments for new elements */
-  .unstop-header-badge-tag {
-    display: none;
-  }
-
-  .header-unstop-link {
-    padding: 2px 5px;
-  }
-
-  .header-unstop-logo {
-    height: 12px;
-    max-width: 42px;
-  }
 
   .organiser-logo-item {
     flex: 1 1 100%;

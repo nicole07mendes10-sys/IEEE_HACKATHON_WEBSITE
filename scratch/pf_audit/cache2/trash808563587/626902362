@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OVERCLOCK 2027 | EESA · ISLE · IEEE Student Branch, FCRIT</title>
+  <meta name="description" content="Official website for OVERCLOCK 2027 — 24-hour hardware hackathon organized jointly by EESA, ISLE, and IEEE Student Branch at FCRIT, Vashi.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=2.4">
+  <link rel="stylesheet" href="mobile.css?v=1.3">
+  <link rel="stylesheet" href="tva-temporal-intro.css?v=1.0">
+  <link rel="preload" as="image" href="images/ezgif-frame-001.jpg" fetchpriority="high">
+  <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasScrollTarget = window.location.hash || urlParams.has('goto');
+
+    const resetScrollToTop = () => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } catch (e) {
+        window.scrollTo(0, 0);
+      }
+      document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    };
+
+    if (!hasScrollTarget) {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      resetScrollToTop();
+      window.addEventListener('beforeunload', resetScrollToTop);
+      window.addEventListener('pageshow', resetScrollToTop);
+      window.addEventListener('DOMContentLoaded', resetScrollToTop);
+      window.addEventListener('load', () => {
+        resetScrollToTop();
+        setTimeout(resetScrollToTop, 50);
+      });
+    } else {
+      const targetId = (window.location.hash ? window.location.hash.slice(1) : urlParams.get('goto'));
+      const scrollToTarget = () => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'auto' });
+        }
+      };
+      window.addEventListener('DOMContentLoaded', scrollToTarget);
+      window.addEventListener('load', () => setTimeout(scrollToTarget, 60));
+    }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || searchParams.has('noboot') || searchParams.has('skipboot')) {
+      document.documentElement.classList.add('skip-boot');
+    }
+    const onlySec = searchParams.get('only');
+    if (onlySec) {
+      document.addEventListener('DOMContentLoaded', () => {
+        if (onlySec === 'domain-cta') {
+          document.querySelectorAll('main > section').forEach(sec => {
+            if (sec.id !== 'problems') sec.style.display = 'none';
+          });
+          const grid = document.querySelector('.domain-slots-grid');
+          if (grid) grid.style.display = 'none';
+        } else {
+          document.querySelectorAll('main > section').forEach(sec => {
+            if (sec.id !== onlySec) sec.style.display = 'none';
+          });
+        }
+        const footer = document.querySelector('footer');
+        if (footer && onlySec !== 'footer') footer.style.display = 'none';
+      });
+    }
+  </script>
+</head>
+<body>
+
+  <!-- ==========================================================
+       1. TVA TEMPORAL ENTRY — 3D CINEMATIC INTRO ANIMATION
+  ========================================================== -->
+  <div id="tva-temporal-intro" class="tva-temporal-intro" role="dialog" aria-modal="true" aria-label="TVA Temporal Entry Cinematic Intro">
+    <canvas id="tva-intro-canvas" class="tva-intro-canvas"></canvas>
+    
+    <!-- Cinematic Letterbox Aspect Bars -->
+    <div class="tva-letterbox-bar bar-top" aria-hidden="true"></div>
+    <div class="tva-letterbox-bar bar-bottom" aria-hidden="true"></div>
+    
+    <!-- Atmospheric CRT Scanline & Grain Overlays -->
+    <div class="tva-intro-scanlines" aria-hidden="true"></div>
+    <div class="tva-intro-flare-overlay" aria-hidden="true"></div>
+
+    <!-- HUD Top Telemetry & Controls -->
+    <div class="tva-intro-hud-top">
+      <div class="tva-hud-telemetry">
+        <div class="tva-hud-line-1">
+          <span class="tva-pulse-pip"></span>
+          <span>TVA TEMPORAL GATEWAY // SECTOR 09</span>
+        </div>
+        <div class="tva-hud-line-2">
+          COORDINATES: 2027.02.19 // SACRED TIMELINE PROTOCOL // TRANSDIMENSIONAL LOCK
+        </div>
+      </div>
+
+      <div class="tva-hud-controls">
+        <button id="tva-intro-audio-btn" class="tva-intro-audio-btn" aria-label="Toggle Sound" title="Toggle Sound (Audio Drone)">
+          <svg class="audio-toggle-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scene 4: Grand OVERCLOCK 2027 Reveal Card -->
+    <div id="tva-intro-reveal" class="tva-intro-reveal" aria-hidden="true">
+      <div class="reveal-tva-watermark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" class="reveal-watermark-svg" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="1.5" />
+          <circle cx="50" cy="50" r="36" stroke="currentColor" stroke-width="1" />
+          <polygon points="50,18 78,74 22,74" stroke="currentColor" stroke-width="1.2" />
+          <polygon points="50,82 22,26 78,26" stroke="currentColor" stroke-width="1.2" />
+        </svg>
+      </div>
+
+      <div class="reveal-presents-badge" aria-label="FCRIT Presents in association with IEEE, EESA, and ISLE">
+        <div class="reveal-emblems-group">
+          <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Student Branch FCRIT Logo" class="reveal-club-emblem" title="IEEE Student Branch, FCRIT">
+          <img src="images/eesa-logo.jpg" alt="EESA Logo" class="reveal-club-emblem" title="EESA — Electrical Engineering Students Association">
+          <img src="images/isle-logo.jpg" alt="ISLE Logo" class="reveal-club-emblem" title="ISLE — Indian Society of Lighting Engineers">
+        </div>
+        <div class="reveal-presents-content">
+          <span class="reveal-presents-text">FCRIT PRESENTS</span>
+          <span class="reveal-presents-clubs">IEEE · EESA · ISLE</span>
+        </div>
+      </div>
+
+      <div class="reveal-title-wrap">
+        <h1 class="reveal-master-title">
+          <span class="reveal-word-over">OVER</span><span class="reveal-word-clock">CLOCK</span>
+          <span class="reveal-year-tag">2027</span>
+        </h1>
+      </div>
+
+      <p class="reveal-tagline">SAME IDEAS. DIFFERENT TIMELINES. A BRIGHTER TOMORROW.</p>
+      <div class="reveal-subtitle">A 24-HOUR HARDWARE HACKATHON</div>
+
+      <div class="reveal-tracks-pill-strip">
+        <span class="reveal-track-pill">ROBOTICS &amp; AUTONOMOUS SYSTEMS</span>
+        <span class="reveal-track-pill">EMBEDDED SYSTEMS &amp; IoT</span>
+        <span class="reveal-track-pill">ENERGY &amp; SUSTAINABILITY</span>
+        <span class="reveal-track-pill">INDUSTRIAL AUTOMATION</span>
+        <span class="reveal-track-pill">OPEN INNOVATION</span>
+      </div>
+    </div>
+
+    <!-- HUD Bottom Status Readout & Sequence Filament -->
+    <div class="tva-intro-hud-bottom">
+      <div id="tva-status-text" class="tva-status-readout">
+        INITIALIZING TVA TEMPORAL DRIVE...
+      </div>
+      <div class="tva-timeline-progress-track">
+        <div id="tva-progress-fill" class="tva-timeline-progress-fill"></div>
+      </div>
+      <div class="tva-timeline-phases-labels">
+        <span class="tva-phase-item active">ACTIVATION</span>
+        <span class="tva-phase-item">PORTAL</span>
+        <span class="tva-phase-item">WARP</span>
+        <span class="tva-phase-item">OVERCLOCK 2027</span>
+        <span class="tva-phase-item">ENTRY</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       2. PERSISTENT GLOBAL CANVAS & RETRO CRT/GRAIN OVERLAYS
+  ========================================================== -->
+  <canvas id="circuit-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <!-- ==========================================================
+       3. TVA TEMPORAL CLOCK NAVIGATOR (PRECISION INSTRUMENT)
+  ========================================================== -->
+  <!-- ==========================================================
+       3. TVA CORNER TEMPORAL CLOCK NAVIGATOR (PRECISION INSTRUMENT)
+       Compact quarter-circle anchored to upper-right corner.
+       Markers rotate with scrolling; click opens section directory.
+  ========================================================== -->
+  <aside id="temporal-clock-navigator" class="corner-clock-navigator" aria-label="TVA Temporal Navigation">
+    <!-- Clickable Precision Dial Trigger (Circular, anchored to top-right corner) -->
+    <button
+      type="button"
+      id="corner-dial-trigger"
+      class="corner-dial-trigger"
+      aria-expanded="false"
+      aria-haspopup="true"
+      aria-controls="corner-temporal-menu"
+      aria-label="Open section navigation"
+      title="Temporal Sector Navigator — Click to view directory"
+    >
+      <div class="corner-dial-stage">
+        <!-- Static Precision Outer Rings & Engraved Bezel -->
+        <svg class="corner-dial-svg" viewBox="0 0 200 200" aria-hidden="true">
+          <!-- Solid Opaque Base Plate Fill (#17120F / #1B1510) -->
+          <circle cx="100" cy="100" r="99" class="dial-svg-base-plate" fill="#17120F" />
+          <!-- Concentric Precision Dial Circles -->
+          <circle cx="100" cy="100" r="96" class="dial-svg-ring outer" />
+          <circle cx="100" cy="100" r="82" class="dial-svg-ring mid-dashed" />
+          <circle cx="100" cy="100" r="68" class="dial-svg-ring track" />
+          <circle cx="100" cy="100" r="46" class="dial-svg-ring inner-solid" />
+          <circle cx="100" cy="100" r="26" class="dial-svg-ring core" />
+
+          <!-- Precision Radial Tick Marks (Every 15deg and 30deg) -->
+          <g class="dial-ticks-group">
+            <line x1="100" y1="4" x2="100" y2="14" class="tick major" />
+            <line x1="100" y1="186" x2="100" y2="196" class="tick major" />
+            <line x1="4" y1="100" x2="14" y2="100" class="tick major" />
+            <line x1="186" y1="100" x2="196" y2="100" class="tick major" />
+            <line x1="32.13" y1="32.13" x2="39.2" y2="39.2" class="tick major" />
+            <line x1="167.87" y1="32.13" x2="160.8" y2="39.2" class="tick major" />
+            <line x1="32.13" y1="167.87" x2="39.2" y2="160.8" class="tick major" />
+            <line x1="167.87" y1="167.87" x2="160.8" y2="160.8" class="tick major" />
+            <line x1="148" y1="16.8" x2="143" y2="25.5" class="tick minor" />
+            <line x1="183.2" y1="52" x2="174.5" y2="57" class="tick minor" />
+            <line x1="183.2" y1="148" x2="174.5" y2="143" class="tick minor" />
+            <line x1="148" y1="183.2" x2="143" y2="174.5" class="tick minor" />
+            <line x1="52" y1="183.2" x2="57" y2="174.5" class="tick minor" />
+            <line x1="16.8" y1="148" x2="25.5" y2="143" class="tick minor" />
+            <line x1="16.8" y1="52" x2="25.5" y2="57" class="tick minor" />
+            <line x1="52" y1="16.8" x2="57" y2="25.5" class="tick minor" />
+          </g>
+        </svg>
+
+        <!-- Precision Clock Hand / Pointer (Originates at Center Pivot, Points at Active Section Marker) -->
+        <div class="corner-dial-pointer" id="corner-dial-pointer" aria-hidden="true">
+          <div class="pointer-needle"></div>
+          <div class="pointer-tip"></div>
+        </div>
+
+        <!-- 11 Section Markers Positioned Across Visible Arc (190deg to 260deg) -->
+        <div class="corner-markers-rotor" id="corner-markers-rotor" aria-hidden="true">
+          <span class="corner-rotor-marker active" data-section="hero" data-index="0" style="--base-angle: 190deg;" title="01 Home // Overview">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="about" data-index="1" style="--base-angle: 197deg;" title="02 About // Event Briefing">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="problems" data-index="2" style="--base-angle: 204deg;" title="03 Problem Domains">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="results" data-index="3" style="--base-angle: 211deg;" title="04 Selection Status">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="timeline" data-index="4" style="--base-angle: 218deg;" title="05 Event Timeline">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="registration" data-index="5" style="--base-angle: 225deg;" title="06 Registration Guidelines">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="accommodation" data-index="6" style="--base-angle: 232deg;" title="07 Campus Accommodation">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="judging" data-index="7" style="--base-angle: 239deg;" title="08 Judging & Recognition">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="sponsors" data-index="8" style="--base-angle: 246deg;" title="09 Sponsors & Partners">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="faq" data-index="9" style="--base-angle: 253deg;" title="10 Case Files // FAQs">
+            <span class="marker-pip"></span>
+          </span>
+          <span class="corner-rotor-marker" data-section="contact" data-index="10" style="--base-angle: 260deg;" title="11 Contact & Venue Location">
+            <span class="marker-pip"></span>
+          </span>
+        </div>
+
+        <!-- Center Pivot Jewel & Brass Screw at the corner vertex -->
+        <div class="corner-dial-pivot" aria-hidden="true">
+          <div class="pivot-bezel"></div>
+          <div class="pivot-jewel"></div>
+        </div>
+
+        <!-- Subtle Alignment Radial Line in visible quadrant -->
+        <div class="corner-dial-ray" aria-hidden="true"></div>
+      </div>
+    </button>
+
+    <!-- Expanded TVA Navigation Menu (Connected Golden-Line Directory) -->
+    <nav
+      id="corner-temporal-menu"
+      class="corner-temporal-menu"
+      aria-label="TVA Temporal Sector Directory"
+      hidden
+    >
+      <div class="temporal-directory-wrapper">
+        <div class="menu-header">
+          <div class="menu-header-badge">
+            <span class="menu-lamp live" aria-hidden="true"></span>
+            <span class="menu-header-title">TEMPORAL DIRECTORY</span>
+          </div>
+          <button
+            type="button"
+            class="menu-close-btn"
+            id="corner-menu-close-btn"
+            aria-label="Close section navigation"
+          >×</button>
+        </div>
+
+        <!-- Connected Golden-Line Spine List -->
+        <div class="temporal-spine-container">
+          <div class="temporal-golden-spine-line" aria-hidden="true"></div>
+          <ul class="temporal-sectors-spine-list" role="list">
+            <li class="temporal-spine-item">
+              <a href="#hero" class="sector-link active" data-section="hero">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">01</span>
+                  <span class="sector-name">Home // Overview</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#about" class="sector-link" data-section="about">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">02</span>
+                  <span class="sector-name">About // Event Briefing</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#problems" class="sector-link" data-section="problems">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">03</span>
+                  <span class="sector-name">Problem Domains (6 Tracks)</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#results" class="sector-link" data-section="results">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">04</span>
+                  <span class="sector-name">Selection Status & Shortlist</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#timeline" class="sector-link" data-section="timeline">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">05</span>
+                  <span class="sector-name">Event Timeline (24 Hours)</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#registration" class="sector-link" data-section="registration">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">06</span>
+                  <span class="sector-name">Registration Guidelines</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#accommodation" class="sector-link" data-section="accommodation">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">07</span>
+                  <span class="sector-name">Campus Accommodation</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#judging" class="sector-link" data-section="judging">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">08</span>
+                  <span class="sector-name">Judging & Recognition</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#sponsors" class="sector-link" data-section="sponsors">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">09</span>
+                  <span class="sector-name">Sponsors & Partners</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#faq" class="sector-link" data-section="faq">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">10</span>
+                  <span class="sector-name">Case Files // FAQs</span>
+                </div>
+              </a>
+            </li>
+            <li class="temporal-spine-item">
+              <a href="#contact" class="sector-link" data-section="contact">
+                <span class="nav-spine-node" aria-hidden="true"><span class="node-pip"></span></span>
+                <div class="sector-box">
+                  <span class="sector-code">11</span>
+                  <span class="sector-name">Contact & Venue Location</span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ==========================================================
+       4. NAVBAR — BRASS BUREAU NAMEPLATE BAR
+  ========================================================== -->
+  <header class="bureau-navbar" id="bureau-navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-brand-group" aria-label="OVERCLOCK 2027 Homepage">
+        <div class="brand-badge" title="Agnel Charities F.C.R.I.T Vashi">
+          <span class="fcrit-tag">Agnel Charities</span>
+          <span class="ieee-tag">F.C.R.I.T Vashi</span>
+        </div>
+        <div class="brand-wordmark-wrap">
+          <span class="brand-wordmark">OVERCLOCK</span>
+          <span class="brand-year-tag">2027</span>
+        </div>
+      </a>
+
+      <!-- Current Timeline Status Indicator, Unstop Wordmark & Audio Toggle Button -->
+      <div class="nav-actions-group">
+        <a
+          href="https://unstop.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header-unstop-link"
+          id="header-unstop-link"
+          aria-label="Unstop Platform"
+          title="Unstop — Official Platform Partner"
+        >
+          <img src="images/unstop-logo.png" alt="Unstop" class="header-unstop-wordmark">
+        </a>
+        <button id="audio-toggle-btn" class="nav-audio-btn muted" type="button" aria-label="Turn sound on" title="Turn sound on" aria-pressed="false">
+          <svg class="audio-toggle-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+            <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+            <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+          </svg>
+        </button>
+        <div class="nav-timeline-status" aria-label="Current section indicator">
+          <span class="nav-status-pip" aria-hidden="true"></span>
+          <span class="nav-status-sec" id="nav-current-section-name">HOME</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================
+       MAIN CONTENT LAYER (THE OVERCLOCK BUREAU)
+  ========================================================== -->
+  <main class="main-bureau-content">
+
+    <!-- ========================================================
+         01. HOME // OVERVIEW (THE ENTRANCE)
+    ======================================================== -->
+    <section id="hero" class="bureau-section hero-bureau-section stamped" data-section-num="01">
+      <div class="section-rubber-stamp">LOGGED #01</div>
+
+      <!-- Large Analog Clock Backdrop -->
+      <div class="hero-clock-backdrop" aria-hidden="true">
+        <div class="clock-face-dial">
+          <div class="clock-hand-hour" id="hero-clock-hour"></div>
+          <div class="clock-hand-min" id="hero-clock-min"></div>
+          <div class="clock-hand-sec" id="hero-clock-sec"></div>
+        </div>
+      </div>
+
+      <div class="hero-content-wrap">
+        <div class="hero-title-container">
+          <!-- Split-Flap Assembling Title -->
+          <div class="split-flap-title" aria-label="OVERCLOCK">
+            <div class="flap-char-box">O</div>
+            <div class="flap-char-box">V</div>
+            <div class="flap-char-box">E</div>
+            <div class="flap-char-box">R</div>
+            <div class="flap-char-box">C</div>
+            <div class="flap-char-box">L</div>
+            <div class="flap-char-box">O</div>
+            <div class="flap-char-box">C</div>
+            <div class="flap-char-box">K</div>
+          </div>
+          <div class="hero-subhead">2027 — HARDWARE HACKATHON</div>
+          <p class="hero-tagline">Bring your engineering ideas to life through 24 hours of hands-on hardware design and prototyping.</p>
+        </div>
+
+        <!-- Typed Office Form Strip -->
+        <div class="typed-form-strip">
+          <div class="form-field-unit organiser-field-unit">
+            <span class="field-label">ORGANISER</span>
+            <span class="field-value">EESA × ISLE × IEEE STUDENT BRANCH, FCRIT</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">REGISTRATION OPENS</span>
+            <span class="field-value">01 November 2026</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">INITIAL PROBLEMS</span>
+            <span class="field-value">01 December 2026</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">FORMAT</span>
+            <span class="field-value">24-Hour Physical Prototyping</span>
+          </div>
+        </div>
+
+        <!-- Compact Organiser Logo Strip -->
+        <div class="organiser-logos-strip" aria-label="Organising Club Logos">
+          <div class="organiser-logo-item" title="EESA — Electrical Engineering Students Association">
+            <div class="organiser-logo-badge">
+              <img src="images/eesa-logo.jpg" alt="EESA Logo" class="organiser-logo-img">
+            </div>
+            <span class="organiser-logo-tag">EESA</span>
+          </div>
+          <div class="organiser-logo-item" title="ISLE — Indian Society of Lighting Engineers">
+            <div class="organiser-logo-badge">
+              <img src="images/isle-logo.jpg" alt="ISLE Logo" class="organiser-logo-img">
+            </div>
+            <span class="organiser-logo-tag">ISLE</span>
+          </div>
+          <div class="organiser-logo-item" title="IEEE Student Branch, FCRIT">
+            <div class="organiser-logo-badge">
+              <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Student Branch, FCRIT Logo" class="organiser-logo-img">
+            </div>
+            <span class="organiser-logo-tag">IEEE SB FCRIT</span>
+          </div>
+        </div>
+
+        <div class="hero-cta-group">
+          <a href="#" id="hero-register-btn" class="btn-bureau-brass hero-register-cta" aria-label="Register for OVERCLOCK 2027 on Unstop">
+            <span>REGISTER NOW</span>
+            <span class="btn-cta-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         02. ABOUT — EVENT BRIEFING
+    ======================================================== -->
+    <section id="about" class="bureau-section" data-section-num="02">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">EVENT BRIEFING // LEVEL 02</div>
+        <h2 class="section-main-heading">OVERCLOCK at a Glance</h2>
+        <p class="section-subtext">OVERCLOCK 2027 is a 24-hour on-campus physical hardware engineering hackathon jointly organised by EESA, ISLE, and the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi. Emerging builders are invited to tackle rigorous technical challenges, engineer working circuits, and deploy physical systems under relentless clock cycles.</p>
+      </div>
+
+      <!-- Manila Case File Dossier (4 Information Cards) -->
+      <div class="case-file-dossier" style="margin-top: 32px;">
+        <div class="case-file-tab">CLASSIFIED: BRIEFING</div>
+        
+        <div class="case-notes-grid">
+          <!-- Note 1 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 01 // OVERVIEW</div>
+            <h3 class="note-title">WHAT IT IS</h3>
+            <p class="note-body">A 24-hour physical hardware engineering hackathon where teams wire, solder, code, and deploy working electronic prototypes and embedded hardware, not just presentation decks.</p>
+          </div>
+
+          <!-- Note 2 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 02 // PERSONNEL</div>
+            <h3 class="note-title">WHO CAN JOIN</h3>
+            <p class="note-body">Open to undergraduate and polytechnic engineering students. Team composition parameters and eligibility guidelines will be detailed in the official rulebook upon registration release.</p>
+          </div>
+
+          <!-- Note 3 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 03 // LOGISTICS</div>
+            <h3 class="note-title">WHAT YOU GET</h3>
+            <p class="note-body">Full access to campus testing laboratories, digital oscilloscopes, bench power supplies, technical guidance from faculty and IEEE mentors, and official institutional certificates.</p>
+          </div>
+
+          <!-- Note 4 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 04 // RATIONALE</div>
+            <h3 class="note-title">WHY HARDWARE</h3>
+            <p class="note-body">Real discrete circuitry, physical transducers, real-time microcontrollers, and oscilloscope debugging. Build tangible engineering solutions that interact with the physical world.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================
+           THE ORGANISING CLUBS (3 CO-ORGANISING BODIES)
+      ======================================================== -->
+      <div class="organising-clubs-section" id="organising-clubs">
+        <div class="subsection-header-wrap">
+          <div class="bureau-tag amber">CO-ORGANISERS // ALLIED CHAPTERS</div>
+          <h3 class="subsection-main-heading">THE ORGANISING CLUBS</h3>
+          <p class="subsection-subtext">OVERCLOCK 2027 is presented through the joint technical collaboration of three student and professional engineering societies at FCRIT.</p>
+        </div>
+
+        <div class="clubs-cards-grid">
+          <!-- Card 1: EESA -->
+          <div class="club-profile-card">
+            <div class="club-logo-box">
+              <img src="images/eesa-logo.jpg" alt="EESA — Electrical Engineering Students Association Logo" class="club-logo-img">
+            </div>
+            <div class="club-details">
+              <h4 class="club-acronym">EESA</h4>
+              <div class="club-fullname">Electrical Engineering Students Association</div>
+              <p class="club-description">A student community centred on electrical engineering, technical learning, and student collaboration.</p>
+            </div>
+          </div>
+
+          <!-- Card 2: ISLE -->
+          <div class="club-profile-card">
+            <div class="club-logo-box">
+              <img src="images/isle-logo.jpg" alt="ISLE — Indian Society of Lighting Engineers Logo" class="club-logo-img">
+            </div>
+            <div class="club-details">
+              <h4 class="club-acronym">ISLE</h4>
+              <div class="club-fullname">Indian Society of Lighting Engineers</div>
+              <p class="club-description">A professional community focused on lighting engineering, illumination, and related technical knowledge.</p>
+            </div>
+          </div>
+
+          <!-- Card 3: IEEE STUDENT BRANCH, FCRIT -->
+          <div class="club-profile-card">
+            <div class="club-logo-box">
+              <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Student Branch, FCRIT Logo" class="club-logo-img">
+            </div>
+            <div class="club-details">
+              <h4 class="club-acronym">IEEE SB FCRIT</h4>
+              <div class="club-fullname">IEEE Student Branch, FCRIT</div>
+              <p class="club-description">A student engineering community supporting technical learning, technology, and professional development.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================
+         03. PROBLEM STATEMENTS — FIVE DOMAIN ENVIRONMENTS
+    ======================================================== -->
+    <section id="problems" class="bureau-section" data-section-num="03">
+      <div class="section-rubber-stamp">LEVEL 03</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">DOMAIN ENVIRONMENTS // LEVEL 03</div>
+        <h2 class="section-main-heading">EXPLORE THE SIX DOMAINS</h2>
+        <p class="section-subtext">Choose a domain and explore the engineering challenges.</p>
+      </div>
+
+      <!-- Free Round 1 PPT Submission Notice -->
+      <div class="round-one-notice-panel" role="region" aria-label="Round 1 PPT Submission Status">
+        <div class="notice-indicator-strip">
+          <span class="notice-badge">STAGE 01 EVALUATION</span>
+          <span class="notice-meta">ZERO COST SUBMISSION</span>
+        </div>
+        <h3 class="notice-title">ROUND 1 PPT SUBMISSION — FREE</h3>
+        <p class="notice-body">
+          Submission of the Round 1 problem-statement presentation is free.
+        </p>
+      </div>
+
+      <!-- Six Distinct Domain Slots -->
+      <div class="domain-slots-grid">
+
+        <!-- Domain Slot 01: General Innovation & Open Innovation -->
+        <div class="domain-slot-card slot-amber" data-slot="1">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 01</span>
+            <span class="slot-freq">CH-01 · 433 MHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="1"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 35 10 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave amber-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // AMBER TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse amber"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">General Innovation & Open Innovation</h3>
+            <p class="slot-desc">Focuses on creative, non-traditional solutions for everyday challenges, accessibility, and social welfare. It empowers teams to bridge hardware, software, and human experience to build practical tools that don't fit into rigid silos.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Assistive Tech</span>
+                <span class="slot-tag">Civic Hardware</span>
+                <span class="slot-tag">Campus Utilities</span>
+                <span class="slot-tag">Community IoT</span>
+                <span class="slot-tag">Wearable Gear</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Rapid Prototyping, Multidisciplinary Teams, Product Design & Human-Centric Hardware</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">◈</span>
+              <span class="teaser-text">"Where unconventional thinking meets tangible impact—rethink everyday mechanics before the clock starts ticking."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Challenges Unlocking Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Slot 02: Defence & National Security -->
+        <div class="domain-slot-card slot-cyan" data-slot="2">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 02</span>
+            <span class="slot-freq">CH-02 · 868 MHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="2"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 35 50 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave cyan-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // CYAN TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse cyan"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">Defence & National Security</h3>
+            <p class="slot-desc">Explores ruggedized, mission-critical engineering designed to protect infrastructure, secure communication lines, and assist emergency response teams. Projects demand resilient architectures operating in hostile, remote, or constrained environments.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Reconnaissance Robotics</span>
+                <span class="slot-tag">Encrypted Edge Comms</span>
+                <span class="slot-tag">Perimeter Telemetry</span>
+                <span class="slot-tag">Search & Rescue Tech</span>
+                <span class="slot-tag">Threat Detection</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Robotics, Embedded Systems, RF Communications, Cyber-Physical Security & Rugged Electronics</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">◈</span>
+              <span class="teaser-text">"High stakes and zero tolerance for failure—engineer systems that stay online when everything else goes down."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Classified Briefing Dropping Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Slot 03: Healthcare & Assistive Technology -->
+        <div class="domain-slot-card slot-emerald" data-slot="3">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 03</span>
+            <span class="slot-freq">CH-03 · 2.4 GHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="3"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 35 15 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave emerald-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // EMERALD TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse emerald"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">Healthcare & Assistive Technology</h3>
+            <p class="slot-desc">Dedicated to elevating patient outcomes, clinical efficiency, and physical independence through intelligent biomedical hardware and point-of-care diagnostics. Design non-invasive, dependable devices that save critical seconds in emergencies.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Vital Signs Telemetry</span>
+                <span class="slot-tag">Rehabilitation Hardware</span>
+                <span class="slot-tag">Smart Emergency Triage</span>
+                <span class="slot-tag">Portable Diagnostics</span>
+                <span class="slot-tag">Sensory Feedback</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Biomedical Instrumentation, Analog Sensor Integration, DSP, Wearable Tech & Health Informatics</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">◈</span>
+              <span class="teaser-text">"The pulse of precision engineering—design the hardware that will save seconds and lives."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Clinical Dossier Coming Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Slot 04: Smart Home & Consumer Electronics -->
+        <div class="domain-slot-card slot-violet" data-slot="4">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 04</span>
+            <span class="slot-freq">CH-04 · 915 MHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="4"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 35 45 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave violet-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // VIOLET TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse violet"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">Smart Home & Consumer Electronics</h3>
+            <p class="slot-desc">Targets the next generation of intelligent, energy-aware, and secure consumer appliances. Embed edge intelligence, robust fail-safes, and intuitive automation directly into the physical devices inhabiting modern residential environments.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Low-Latency Automation</span>
+                <span class="slot-tag">Smart Energy Metering</span>
+                <span class="slot-tag">Ambient Hazard Sensors</span>
+                <span class="slot-tag">Edge AI Local Hubs</span>
+                <span class="slot-tag">Matter & BLE Mesh</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">IoT Architectures, Embedded Microcontrollers (ESP32/ARM Cortex), Wireless Mesh & Consumer UX</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">◈</span>
+              <span class="teaser-text">"Bringing intelligence inside the home—turn ordinary circuits into autonomous living spaces."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Protocols Revealed Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Slot 05: Industrial Automation & Monitoring -->
+        <div class="domain-slot-card slot-copper" data-slot="5">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 05</span>
+            <span class="slot-freq">CH-05 · 5.8 GHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="5"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 35 20 70 30 T 140 30 T 210 30 T 280 30" class="carrier-wave copper-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // COPPER TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse copper"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">Industrial Automation & Monitoring</h3>
+            <p class="slot-desc">Tackles the demands of modern manufacturing, assembly floors, and heavy machinery uptime through predictive intelligence. Design ruggedized data acquisition and actuation systems that preempt costly breakdowns and optimize industrial throughput.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Predictive Maintenance</span>
+                <span class="slot-tag">IIoT Gateways</span>
+                <span class="slot-tag">Machine Vision Quality</span>
+                <span class="slot-tag">Automated Sorting</span>
+                <span class="slot-tag">PLC & SCADA Interfacing</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Instrumentation, Mechatronics, Power Electronics, Sensor Fusion & Predictive Telemetry</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">◈</span>
+              <span class="teaser-text">"The heartbeat of heavy industry—engineer the feedback loops that keep the factories running."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Industrial Briefing Coming Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Domain Slot 06: Energy, Power & Sustainability -->
+        <div class="domain-slot-card slot-ruby" data-slot="6">
+          <div class="domain-slot-topbar">
+            <span class="slot-badge">DOMAIN SLOT 06</span>
+            <span class="slot-freq">CH-06 · 10.5 GHz</span>
+          </div>
+          <div class="domain-screen-display">
+            <div class="screen-reticle-grid" aria-hidden="true"></div>
+            <div class="screen-scanlines" aria-hidden="true"></div>
+            <div class="screen-crt-glow" aria-hidden="true"></div>
+            <div class="screen-waveform-container" aria-hidden="true">
+              <canvas class="domain-scope-canvas" data-slot="6"></canvas>
+              <svg viewBox="0 0 280 60" class="waveform-svg fallback-wave">
+                <path d="M 0 30 Q 25 5 50 30 T 100 30 T 150 30 T 200 30 T 250 30 T 280 30" class="carrier-wave ruby-wave" />
+              </svg>
+            </div>
+            <div class="slot-channel-tag">CARRIER ACTIVE // RUBY TRACE</div>
+          </div>
+          <div class="slot-content-chamber">
+            <div class="slot-status-indicator">
+              <span class="status-dot-pulse ruby"></span>
+              <span class="status-text">Official Release in 1 Month · 01 Dec 2026</span>
+            </div>
+            <h3 class="slot-title">Energy, Power & Sustainability</h3>
+            <p class="slot-desc">Drives the transition toward cleaner, resilient energy distribution, electrification, and high-efficiency power management. Builders design physical systems that optimize renewable capture, battery reliability, and grid stability for sustainable community power.</p>
+            <div class="slot-subtopics-block">
+              <span class="subtopics-label">AREAS TO EXPLORE:</span>
+              <div class="slot-tags-container">
+                <span class="slot-tag">Smart Grid Telemetry</span>
+                <span class="slot-tag">EV Charging & BMS</span>
+                <span class="slot-tag">Solar/Wind MPPT</span>
+                <span class="slot-tag">Energy Harvesting</span>
+                <span class="slot-tag">Power Conditioning</span>
+              </div>
+            </div>
+            <div class="slot-audience-row">
+              <span class="audience-label">WHO SHOULD EXPLORE:</span>
+              <span class="audience-text">Electrical Machines, Power Systems, Battery Storage, Renewable Energy & Embedded Control</span>
+            </div>
+            <div class="slot-teaser-box">
+              <span class="teaser-icon">◈</span>
+              <span class="teaser-text">"From raw generation to intelligent distribution—harness the current and power a sustainable tomorrow."</span>
+            </div>
+            <div class="slot-action-area">
+              <button class="slot-pending-btn" disabled aria-disabled="true">
+                <span>Power Matrix Unlocking Soon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================
+           SECONDARY REGISTRATION CTA BANNER (POST-DOMAINS ACTION)
+      ====================================================== -->
+      <div class="domain-closing-cta-card">
+        <div class="domain-cta-content">
+          <div class="bureau-tag amber">CROSS-SECTOR INITIATIVE // TIMELINE PROTOCOL</div>
+          <h3 class="domain-cta-title">Prepare Your Engineering Crew for OVERCLOCK 2027</h3>
+          <p class="domain-cta-text">
+            Five domains. 24 hours of real physical circuit wiring, embedded programming, and hardware deployment. Assemble your team and prepare for official registration on Unstop.
+          </p>
+        </div>
+        <div class="domain-cta-action">
+          <a href="#registration" class="btn-bureau-secondary">
+            <span>View Registration Guidelines</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           PHASE 7: DETAILED PROBLEM-STATEMENT COMPONENT TEMPLATE
+           Structured data/DOM template ready to render official
+           specifications upon release without exposing fake content.
+      ====================================================== -->
+      <template id="tva-problem-statement-template">
+        <article class="problem-statement-dossier" data-problem-id="">
+          <header class="ps-header">
+            <div class="ps-meta-row">
+              <span class="ps-id-tag" data-field="problemIdentification"></span>
+              <span class="ps-domain-tag" data-field="domain"></span>
+            </div>
+            <h3 class="ps-title" data-field="problemTitle"></h3>
+          </header>
+          
+          <div class="ps-body-sections">
+            <section class="ps-section">
+              <h4 class="ps-subhead">BACKGROUND</h4>
+              <p class="ps-content" data-field="background"></p>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">THE CHALLENGE</h4>
+              <p class="ps-content" data-field="theChallenge"></p>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">OBJECTIVE</h4>
+              <p class="ps-content" data-field="objective"></p>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">TECHNICAL REQUIREMENTS</h4>
+              <ul class="ps-list" data-field="technicalRequirements"></ul>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">EXPECTED DELIVERABLES</h4>
+              <ul class="ps-list" data-field="expectedDeliverables"></ul>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">EVALUATION CRITERIA</h4>
+              <ul class="ps-list" data-field="evaluationCriteria"></ul>
+            </section>
+
+            <section class="ps-section">
+              <h4 class="ps-subhead">SUBMISSION INSTRUCTIONS</h4>
+              <p class="ps-content" data-field="submissionInstructions"></p>
+            </section>
+
+            <section class="ps-section ps-resources-section">
+              <h4 class="ps-subhead">RESOURCES & RELEVANT DATASETS</h4>
+              <div class="ps-resources-list" data-field="resources"></div>
+            </section>
+          </div>
+        </article>
+      </template>
+    </section>
+
+    <!-- ========================================================
+         04. RESULTS — SHORTLISTED TEAMS
+    ======================================================== -->
+    <section id="results" class="bureau-section" data-section-num="04">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">SELECTION STATUS // LEVEL 04</div>
+        <h2 class="section-main-heading">The Shortlist</h2>
+        <p class="section-subtext">Official qualification roster for teams advancing to the on-campus physical hackathon. Preliminary proposals submitted during the 10–15 December 2026 window are evaluated prior to announcement.</p>
+      </div>
+
+      <div class="results-dossier-chamber">
+        <div class="dossier-teletype-header">
+          <div class="teletype-indicator">
+            <span class="teletype-dot"></span>
+            <span class="teletype-title">OFFICIAL SELECTION TELETYPE ARCHIVE</span>
+          </div>
+          <div class="teletype-code">ARCHIVE REF: TVA-SL-2026/27</div>
+        </div>
+
+        <div class="results-status-banner">
+          <div class="status-data-column">
+            <span class="status-label">SHORTLIST ANNOUNCEMENT</span>
+            <span class="status-date-val">22 DECEMBER 2026</span>
+          </div>
+          <div class="status-data-column">
+            <span class="status-label">RESULT STATUS</span>
+            <span class="status-state-val">AWAITING OFFICIAL ANNOUNCEMENT</span>
+          </div>
+        </div>
+
+        <div class="results-notice-body">
+          <div class="notice-stamp-graphic" aria-hidden="true">PENDING RATIFICATION</div>
+          <div class="notice-paragraph">
+            <strong>SELECTION NOTICE:</strong> Following the PPT submission window (10–15 December 2026), the review panel will evaluate technical viability, schematic proposals, and hardware architecture.
+          </div>
+          <div class="notice-paragraph">
+            The confirmed roster of shortlisted teams authorized for the physical build will be published on this terminal on <strong>22 December 2026</strong>.
+          </div>
+        </div>
+
+        <!-- Structural container ready for search & official roster -->
+        <div class="results-roster-chamber" id="results-roster-chamber">
+          <div class="roster-standby-message">
+            <span class="standby-icon" aria-hidden="true">
+              <svg class="standby-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <span class="standby-text">No team records published. Roster activates post-evaluation on 22 December 2026.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         05. TIMELINE — EVENT SCHEDULE
+    ======================================================== -->
+    <section id="timeline" class="bureau-section" data-section-num="05">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">EVENT SCHEDULE // LEVEL 05</div>
+        <h2 class="section-main-heading">The Timeline</h2>
+        <p class="section-subtext">Chronological progression of OVERCLOCK 2027. Milestones unrolled along the master temporal track.</p>
+      </div>
+
+      <!-- TVA Chronological Event Timeline (Connected Progression Sequence) -->
+      <div class="tva-chronological-timeline" id="tva-chronological-timeline">
+        <!-- Continuous Golden Timeline Spine Track -->
+        <div class="timeline-spine-track" aria-hidden="true">
+          <div class="timeline-spine-base"></div>
+          <div class="timeline-spine-progress" id="timeline-spine-progress"></div>
+        </div>
+
+        <!-- 5 Chronological Milestone Checkpoints -->
+        <div class="timeline-milestones-list">
+          <!-- Milestone 01 (Left on desktop) -->
+          <article class="timeline-milestone-item milestone-left" data-milestone="1">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
+            </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 01</span>
+                <span class="milestone-status-stamp">CONFIRMED DATE</span>
+              </div>
+              <h3 class="milestone-title">Registration Opens</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <span class="date-text">01 November 2026</span>
+              </div>
+              <p class="milestone-description">The intake portal opens for participant registration and Round 1 idea submissions.</p>
+
+              <!-- Registration Fee Section -->
+              <div class="milestone-fee-structure">
+                <div class="fee-divider" aria-hidden="true"></div>
+                <div class="fee-rows-group">
+                  <div class="fee-row-item">
+                    <div class="fee-row-header">
+                      <svg class="fee-icon fee-icon-free" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg>
+                      <span class="fee-stage-title">ROUND 1</span>
+                      <span class="fee-sep">—</span>
+                      <span class="fee-pill fee-pill-free">FREE</span>
+                    </div>
+                    <p class="fee-detail-text">Submit your idea PPT with no registration fee.</p>
+                  </div>
+                  <div class="fee-row-item">
+                    <div class="fee-row-header">
+                      <svg class="fee-icon fee-icon-paid" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
+                        <path d="M13 5v2"></path>
+                        <path d="M13 11v2"></path>
+                        <path d="M13 17v2"></path>
+                      </svg>
+                      <span class="fee-stage-title">ROUND 2</span>
+                      <span class="fee-sep">//</span>
+                      <span class="fee-pill fee-pill-paid">PAID — ₹1,500 + 18% GST</span>
+                    </div>
+                    <p class="fee-detail-text">Participation fees apply only to shortlisted teams advancing to Round 2.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-01</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Milestone 02 (Right on desktop) -->
+          <article class="timeline-milestone-item milestone-right" data-milestone="2">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
+            </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 02</span>
+                <span class="milestone-status-stamp">CONFIRMED DATE</span>
+              </div>
+              <h3 class="milestone-title">Initial Problem Statements Released</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <span class="date-text">01 December 2026</span>
+              </div>
+              <p class="milestone-description">Domain challenges and initial problem statements published across the six sectors.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-02</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Milestone 03 (Left on desktop) -->
+          <article class="timeline-milestone-item milestone-left" data-milestone="3">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
+            </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 03</span>
+                <span class="milestone-status-stamp window-stamp">5-DAY WINDOW</span>
+              </div>
+              <h3 class="milestone-title">PPT Submission Window</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <span class="date-text">10–15 December 2026</span>
+              </div>
+              <p class="milestone-description">Five-day window for teams to submit conceptual hardware presentations.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-03</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Milestone 04 (Right on desktop) -->
+          <article class="timeline-milestone-item milestone-right" data-milestone="4">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
+            </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num">MILESTONE 04</span>
+                <span class="milestone-status-stamp">CONFIRMED DATE</span>
+              </div>
+              <h3 class="milestone-title">Shortlisted Teams Announced</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <span class="date-text">22 December 2026</span>
+              </div>
+              <p class="milestone-description">Official publication of teams selected for the on-campus build phase.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-04</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Milestone 05 (Left on desktop, final build target) -->
+          <article class="timeline-milestone-item milestone-left final-phase" data-milestone="5">
+            <div class="milestone-node-anchor">
+              <div class="milestone-node-dot">
+                <span class="node-inner-core"></span>
+              </div>
+              <div class="milestone-node-stem"></div>
+            </div>
+            <div class="milestone-card-box">
+              <div class="milestone-card-header">
+                <span class="milestone-badge-num highlight">MILESTONE 05</span>
+                <span class="milestone-status-stamp final-stamp">FINAL STATEMENT</span>
+              </div>
+              <h3 class="milestone-title">Final Problem Statement Released</h3>
+              <div class="milestone-date-display">
+                <span class="date-icon" aria-hidden="true">
+                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
+                <span class="date-text">22 January 2027</span>
+              </div>
+              <p class="milestone-description">Final problem statement released as scheduled for the physical engineering phase.</p>
+              <div class="milestone-card-footer">
+                <span class="milestone-track-code">CHRONO-REF // SEC-05 · TARGET BUILD</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         06. REGISTRATION
+    ======================================================== -->
+    <section id="registration" class="bureau-section" data-section-num="06">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">PARTICIPANT INTAKE // LEVEL 06</div>
+        <h2 class="section-main-heading">Register for OVERCLOCK 2027</h2>
+        <p class="section-subtext">Official participant onboarding, registration schedule, and fee breakdown as established by the organizing committee.</p>
+      </div>
+
+      <div class="registration-terminal-card">
+        <div class="terminal-card-topbar">
+          <div class="topbar-badge">SCHEDULE // REGISTRATION PROTOCOL</div>
+          <div class="topbar-status">INTAKE OPENS 01 NOV 2026</div>
+        </div>
+
+        <div class="registration-content-grid">
+          <div class="reg-milestone-panel">
+            <div class="reg-k-label">REGISTRATION OPENS</div>
+            <div class="reg-date-headline">01 NOVEMBER 2026</div>
+            <p class="reg-helper-note">The official registration portal activates on 01 November 2026.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         EVENT RESOURCES // DOWNLOADS
+         Dedicated Downloads Section following Registration Guidelines
+    ======================================================== -->
+    <section id="downloads" class="bureau-section downloads-bureau-section" data-section-num="06-DL">
+      <div class="section-rubber-stamp">ARCHIVE</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">DOCUMENTATION // RESOURCE ARCHIVE</div>
+        <h2 class="section-main-heading">EVENT RESOURCES // DOWNLOADS</h2>
+        <p class="section-subtext">Official dossiers, presentation templates, and technical specifications for OVERCLOCK 2027 participants.</p>
+      </div>
+
+      <div class="downloads-resource-grid">
+        <!-- Resource 1: Participant Rules & Field Guide -->
+        <div class="download-resource-card" id="card-download-participant-guide">
+          <div class="download-card-header">
+            <span class="doc-format-badge">PDF // EVENT BROCHURE (OC-27/PG)</span>
+            <span class="doc-status-pill ready" id="status-download-participant-guide">OFFICIAL PDF</span>
+          </div>
+          <div class="download-card-body">
+            <h3 class="download-card-title">EVENT BROCHURE — PDF</h3>
+            <p class="download-card-desc">Official OVERCLOCK 2027 Event Brochure and Field Manual (Form OC-27/PG) covering event architecture, required hardware equipment, campus facilities, lab toolkits, and preparation directives.</p>
+          </div>
+          <div class="download-card-action">
+            <a href="docs/OVERCLOCK_2027_Participant_Guide.pdf" class="btn-download-resource is-ready" id="btn-download-participant-guide" download="OVERCLOCK_2027_Participant_Guide.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Event Brochure PDF (3.8 MB)">
+              <span class="download-icon" aria-hidden="true">↓</span>
+              <span class="download-btn-text">DOWNLOAD PDF (3.8 MB)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 2: Rules & Regulations -->
+        <div class="download-resource-card" id="card-download-rules">
+          <div class="download-card-header">
+            <span class="doc-format-badge">PDF // DIRECTIVE (OC-27/RR)</span>
+            <span class="doc-status-pill ready" id="status-download-rules">OFFICIAL PDF</span>
+          </div>
+          <div class="download-card-body">
+            <h3 class="download-card-title">RULES &amp; REGULATIONS — PDF</h3>
+            <p class="download-card-desc">Official TVA Participant Directive (Form OC-27/RR) covering team eligibility, 2-round evaluation structure, registration guidelines, hardware build specs, and safety guidelines.</p>
+          </div>
+          <div class="download-card-action download-card-action-dual">
+            <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" class="btn-download-resource is-ready" id="btn-download-rules" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Rules & Regulations PDF (3.8 MB)">
+              <span class="download-icon" aria-hidden="true">↓</span>
+              <span class="download-btn-text">DOWNLOAD PDF (3.8 MB)</span>
+            </a>
+            <button type="button" class="btn-view-directive-modal" id="btn-open-rules-modal" aria-haspopup="dialog" title="Read Interactive Rules & Regulations Dossier">
+              <span class="btn-icon" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </span>
+              <span class="btn-text">READ DOSSIER</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Resource 3: PPT Submission Template -->
+        <div class="download-resource-card" id="card-download-ppt">
+          <div class="download-card-header">
+            <span class="doc-format-badge">PPTX // TEMPLATE (OC-27/PPT)</span>
+            <span class="doc-status-pill ready" id="status-download-ppt">OFFICIAL PPTX</span>
+          </div>
+          <div class="download-card-body">
+            <h3 class="download-card-title">PPT SUBMISSION TEMPLATE — PPTX</h3>
+            <p class="download-card-desc">Official 9-slide PowerPoint template for the free Round 1 preliminary evaluation. Includes Problem Statement, Proposed Solution, Methodology, Technical Approach, Hardware Requirements, Feasibility, and References.</p>
+          </div>
+          <div class="download-card-action">
+            <a href="docs/OVERCLOCK_2027_Participant_Template.pptx" class="btn-download-resource is-ready" id="btn-download-ppt" download="OVERCLOCK_2027_Participant_Template.pptx" target="_blank" rel="noopener noreferrer" title="Download Official Round 1 PPTX Template (1.6 MB)">
+              <span class="download-icon" aria-hidden="true">↓</span>
+              <span class="download-btn-text">DOWNLOAD PPTX (1.6 MB)</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         07. ACCOMMODATION
+    ======================================================== -->
+    <section id="accommodation" class="bureau-section" data-section-num="07">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">CAMPUS RESIDENCE // LEVEL 07</div>
+        <h2 class="section-main-heading">Stay on Campus</h2>
+        <p class="section-subtext">On-campus residential arrangements for outstation participants during OVERCLOCK 2027.</p>
+      </div>
+
+      <div class="accommodation-container">
+        <!-- Confirmed Logistics Cards (Simplified to Approved Information) -->
+        <div class="accommodation-notes-grid accommodation-two-cards">
+          <div class="quarters-stat-card">
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <circle cx="7" cy="7" r="1.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <h3 class="stat-heading">NOMINAL FEE</h3>
+            <p class="stat-body">On-campus accommodation is available at a nominal fee to support participating and outstation teams.</p>
+          </div>
+
+          <div class="quarters-stat-card highlight-card">
+            <div class="stat-icon" aria-hidden="true">
+              <svg class="stat-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <h3 class="stat-heading">FIRST-COME, FIRST-SERVED BASIS</h3>
+            <p class="stat-body">Accommodation requests are processed strictly on a first-come, first-served basis subject to campus availability upon shortlist publication.</p>
+          </div>
+        </div>
+
+        <!-- Structural Placeholders for Future Specific Details -->
+        <div class="accommodation-details-panel">
+          <div class="panel-section-title">CAMPUS RESIDENTIAL GUIDANCE</div>
+          <div class="specs-grid">
+            <div class="spec-unit">
+              <span class="spec-label">ACCOMMODATION COST</span>
+              <span class="spec-val-pending">Nominal rate to be announced post-shortlist</span>
+            </div>
+            <div class="spec-unit">
+              <span class="spec-label">BOOKING ALLOCATION</span>
+              <span class="spec-val-pending">Processed strictly on a first-come, first-served basis</span>
+            </div>
+            <div class="spec-unit">
+              <span class="spec-label">CHECK-IN &amp; CHECK-OUT</span>
+              <span class="spec-val-pending">Schedules aligned with the 24H build cycle</span>
+            </div>
+            <div class="spec-unit">
+              <span class="spec-label">VERIFICATION</span>
+              <span class="spec-val-pending">Valid institution student ID required upon campus check-in</span>
+            </div>
+            <div class="spec-unit span-two">
+              <span class="spec-label">CONTACT FOR ENQUIRIES</span>
+              <span class="spec-val-pending">Campus hospitality liaison details will be issued upon official schedule publication</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         08. JUDGING AND RECOGNITION
+    ======================================================== -->
+    <section id="judging" class="bureau-section" data-section-num="08">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">EVALUATION PROTOCOL // LEVEL 08</div>
+        <h2 class="section-main-heading">Judging and Recognition</h2>
+        <p class="section-subtext">Rigorous, multi-faceted hardware evaluation protocol designed to test schematic precision, embedded execution, and functional reliability.</p>
+      </div>
+
+      <div class="judging-protocol-wrapper">
+        <!-- Provisional Panel Structure Notice -->
+        <div class="judging-bench-notice">
+          <div class="bench-notice-header">
+            <span class="bench-tag">PROVISIONAL EVALUATION BENCH</span>
+            <span class="bench-badge">SUBJECT TO FORMAL RATIFICATION</span>
+          </div>
+          <p class="bench-note">
+            Preliminary briefing notes specify a 3-judge evaluation bench consisting of <strong>2 Internal Judges</strong> (academic faculty) and <strong>1 External Judge</strong> (industry hardware specialist). Formal appointments will be announced prior to the finals.
+          </p>
+        </div>
+
+        <!-- 4 Evaluation Pillars -->
+        <div class="evaluation-pillars-grid">
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 01</div>
+            <h3 class="pillar-title">Hardware Architecture</h3>
+            <p class="pillar-desc">Circuit schematic integrity, component selection, board layout safety, power dissipation, and discrete signal cleanliness.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 02</div>
+            <h3 class="pillar-title">Embedded Firmware</h3>
+            <p class="pillar-desc">Real-time controller responsiveness, sensor calibration, communication bus reliability (I2C/SPI/UART), and bug-free execution.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 03</div>
+            <h3 class="pillar-title">Problem Alignment</h3>
+            <p class="pillar-desc">Novelty and technical depth applied to the selected domain challenge statement, with feasible real-world utility.</p>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-num">PILLAR 04</div>
+            <h3 class="pillar-title">Physical Working Demo</h3>
+            <p class="pillar-desc">Live on-bench functional demonstration of the assembled physical prototype operating under evaluation test cycles.</p>
+          </div>
+        </div>
+
+        <!-- Awards and Recognition Panel -->
+        <div class="recognition-standby-panel">
+          <div class="rec-title">AWARDS &amp; RECOGNITION</div>
+          <div class="rec-prize-highlight">
+            <span class="rec-prize-badge">GRAND REWARDS</span>
+            <span class="rec-prize-amount">₹50,000 CASH PRIZE POOL</span>
+          </div>
+          <p class="rec-sub">Compete for the ₹50,000 cash prize pool, institutional honours, and category awards sanctioned by EESA, ISLE, and IEEE Student Branch, FCRIT.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         09. SPONSORS AND PARTNERS
+    ======================================================== -->
+    <section id="sponsors" class="bureau-section" data-section-num="09">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">AUTHORIZED PARTNERS // LEVEL 09</div>
+        <h2 class="section-main-heading">Sponsors and Partners</h2>
+        <p class="section-subtext">Official institutional and technical partners supporting the hardware prototyping facilities for OVERCLOCK 2027.</p>
+      </div>
+
+      <div class="sponsors-pinboard-deck">
+        <div class="pinboard-cork-mesh" aria-hidden="true"></div>
+
+        <!-- Dynamically rendered tiers & authorization clearance cards -->
+        <div id="sponsors-tier-container" class="sponsors-tier-wrapper">
+          <!-- Populated from sponsors-config.js via app.js -->
+        </div>
+
+        <!-- Partnership Requisition Notice Panel -->
+        <div class="partnership-requisition-panel">
+          <div class="partnership-notice-text">
+            <div class="notice-title">PARTNERSHIP REQUISITION OPEN</div>
+            <p>Interested in supporting OVERCLOCK 2027? Get in touch with the organizing team to discuss hardware sponsorships, lab tools, and technical mentorship.</p>
+          </div>
+          <div class="partnership-actions-wrap">
+            <a id="sponsor-contact-btn" href="mailto:sponsorship.overclock@fcrit.ac.in" class="btn-bureau-brass">Become a Sponsor</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         10. FAQs — CASE FILES
+    ======================================================== -->
+    <section id="faq" class="bureau-section" data-section-num="10">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">INQUIRY ARCHIVE // LEVEL 10</div>
+        <h2 class="section-main-heading">Case Files (FAQ)</h2>
+        <p class="section-subtext">Classified inquiries and operational questions answered directly by the Bureau.</p>
+      </div>
+
+      <div class="case-files-accordion">
+        <!-- Case 001 -->
+        <div class="case-folder-unit open">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #001</span>
+              <span class="folder-query-title">Who is organizing OVERCLOCK 2027?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[OPEN]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              OVERCLOCK 2027 is jointly organized by EESA, ISLE, and the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 002 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #002</span>
+              <span class="folder-query-title">When does registration open and what is the fee?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Registration opens on 01 November 2026. Round 1 PPT submission is free. Shortlisted teams advancing to the physical build pay a registration fee of ₹1,500 + 18% GST.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 003 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #003</span>
+              <span class="folder-query-title">What is the problem statement and submission schedule?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Initial problem statements will be released on 01 December 2026. Teams submit their preliminary approach during the PPT submission window from 10–15 December 2026. Shortlisted teams are announced on 22 December 2026, and the final problem statement releases on 22 January 2027.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 004 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #004</span>
+              <span class="folder-query-title">Is on-campus accommodation provided?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Yes. On-campus residential accommodation is available for confirmed outstation participants at a nominal fee on a first-come, first-served basis.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 005 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #005</span>
+              <span class="folder-query-title">Can we submit software-only projects?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              No. OVERCLOCK is dedicated strictly to physical hardware engineering. Every project must interface with physical electronic hardware, sensors, actuators, or discrete circuitry.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 006 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #006</span>
+              <span class="folder-query-title">How will projects be evaluated?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Preliminary notes indicate a panel of 2 internal judges and 1 external judge evaluating projects across circuit architecture, firmware reliability, problem statement alignment, and working physical prototype execution.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         11. CONTACT & VENUE
+    ======================================================== -->
+    <section id="contact" class="bureau-section" data-section-num="11">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">COMMUNICATIONS LOG // LEVEL 11</div>
+        <h2 class="section-main-heading">Contact & Venue</h2>
+        <p class="section-subtext">Official communication coordinates and campus location details for OVERCLOCK 2027.</p>
+      </div>
+
+      <div class="contact-cards-grid">
+        <!-- Campus Venue Card -->
+        <div class="contact-dossier-card">
+          <div class="contact-card-tag">CAMPUS VENUE</div>
+          <h3 class="contact-card-title">Fr. C. Rodrigues Institute of Technology</h3>
+          <p class="contact-card-body">
+            Agnel Technical Education Complex, Sector 9A, Vashi, Navi Mumbai, Maharashtra 400703.
+          </p>
+          <div class="contact-action-link">
+            <a href="https://maps.google.com/?q=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi" target="_blank" rel="noopener noreferrer" class="contact-sub-link">
+              <span class="contact-link-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <span>View Campus Location Map</span>
+              <span class="arrow-ext" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Organizing Committee Card -->
+        <div class="contact-dossier-card">
+          <div class="contact-card-tag">ORGANISERS</div>
+          <h3 class="contact-card-title">IEEE STUDENT BRANCH FCRIT · ISLE · EESA</h3>
+          <p class="contact-card-body">
+            Official organizing bureau representing IEEE Student Branch FCRIT, ISLE, and EESA for OVERCLOCK 2027. Inquiries regarding registration, timelines, and partnerships.
+          </p>
+          <div class="contact-action-link">
+            <a href="mailto:ieee@fcrit.ac.in" class="contact-sub-link">
+              <span class="contact-link-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </span>
+              <span>ieee@fcrit.ac.in</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Transit & Transit Notes -->
+        <div class="contact-dossier-card">
+          <div class="contact-card-tag">TRANSIT & ACCESS</div>
+          <h3 class="contact-card-title">Navi Mumbai Transit Hub</h3>
+          <p class="contact-card-body">
+            Easily accessible via Vashi and Sanpada Railway Stations on the Mumbai Suburban Harbour Line. Frequent auto-rickshaw and bus connections directly to campus.
+          </p>
+          <div class="contact-action-link">
+            <a href="https://fcrit.ac.in" target="_blank" rel="noopener noreferrer" class="contact-sub-link">
+              <span class="contact-link-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </span>
+              <span>Visit Official FCRIT Website</span>
+              <span class="arrow-ext" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================
+       12. FINAL TRANSMISSION // OVERCLOCK 2027 (EVENT FOOTER)
+  ========================================================== -->
+  <footer id="closing" class="tva-event-footer bureau-section" data-section-num="12">
+    <div class="footer-inner-container">
+      <!-- Section Header -->
+      <div class="footer-transmission-header">
+        <div class="bureau-tag amber">FINAL TRANSMISSION // CHECKPOINT 12</div>
+        <h2 class="footer-main-heading">FINAL TRANSMISSION // OVERCLOCK 2027</h2>
+        <p class="footer-lead-text">
+          A national-level 24-hour physical hardware engineering hackathon jointly organised by EESA, ISLE, and the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology, Vashi. Build before time runs out.
+        </p>
+      </div>
+
+      <!-- Main Footer Grid: 2 Content Pillars (Location/Map & Crew) -->
+      <div class="footer-control-grid footer-simplified-grid">
+        <!-- Panel 1: EVENT LOCATION / MAP & TRAVEL DIRECTIONS -->
+        <div class="footer-panel footer-venue-panel">
+          <div class="panel-header-label">
+            <span class="panel-lamp"></span>
+            <span>LOCATION // EVENT VENUE</span>
+          </div>
+          
+          <!-- Map Preview Container -->
+          <div class="footer-map-card">
+            <div class="map-viewport-frame">
+              <iframe
+                src="https://maps.google.com/maps?q=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi+Navi+Mumbai&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+                class="footer-map-embed"
+                loading="lazy"
+                title="Fr. C. Rodrigues Institute of Technology Vashi Campus Location Map"
+                aria-label="Map showing campus location of FCRIT, Sector 9A, Vashi, Navi Mumbai">
+              </iframe>
+              <div class="map-frame-reticle" aria-hidden="true"></div>
+            </div>
+            <div class="venue-info-box">
+              <div class="venue-name">Fr. C. Rodrigues Institute of Technology</div>
+              <div class="venue-address">
+                Agnel Technical Education Complex, Sector 9A, Vashi, Navi Mumbai, Maharashtra 400703
+              </div>
+              <div class="venue-action-bar">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&amp;query=Fr.+C.+Rodrigues+Institute+of+Technology+Vashi+Navi+Mumbai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-open-maps"
+                  aria-label="Open FCRIT Vashi in Google Maps in a new tab"
+                >
+                  <span class="maps-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </span>
+                  <span>OPEN IN MAPS</span>
+                  <span class="maps-arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- GETTING HERE // TRAVEL INFORMATION -->
+          <div class="footer-travel-section" id="travel-information">
+            <div class="travel-section-header">
+              <span class="travel-lamp"></span>
+              <span class="travel-title">GETTING HERE // TRAVEL INFORMATION</span>
+            </div>
+
+            <!-- Transit Connection: Vashi Station to Campus -->
+            <div class="shared-auto-card">
+              <div class="auto-fare-badge">
+                <span class="auto-fare-tag">TRANSIT FARE</span>
+                <span class="auto-fare-val">₹15 PER SEAT</span>
+              </div>
+              <div class="auto-info-content">
+                <h4 class="auto-card-heading">SHARED AUTO FROM VASHI STATION</h4>
+                <p class="auto-card-body">
+                  From Vashi Railway Station, FCRIT (Agnel Technical Education Complex, Sector 9A) is situated approximately 1.8 km away. Attendees can take a shared auto at ₹15 per seat from the station auto stand directly to the campus gate, or take a metered auto.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: FOR MORE DETAILS // CONTACT -->
+        <div class="footer-panel footer-contact-panel">
+          <div class="panel-header-label">
+            <span class="panel-lamp"></span>
+            <span>FOR MORE DETAILS // CONTACT</span>
+          </div>
+          <p class="crew-intro-note">
+            For event-related queries and additional information, please contact:
+          </p>
+          <div class="footer-contact-list" id="footer-contact-list">
+            <!-- Contact 01: Yash Bandkar -->
+            <div class="footer-contact-card">
+              <span class="footer-contact-name">Yash Bandkar</span>
+              <a href="tel:+917738707573" class="footer-contact-phone" aria-label="Call Yash Bandkar at +91 77387 07573">
+                <span class="contact-phone-icon" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <span class="contact-phone-val">+91 77387 07573</span>
+              </a>
+            </div>
+            <!-- Contact 02: Sujit Ratan -->
+            <div class="footer-contact-card">
+              <span class="footer-contact-name">Sujit Ratan</span>
+              <a href="tel:+918591273903" class="footer-contact-phone" aria-label="Call Sujit Ratan at +91 85912 73903">
+                <span class="contact-phone-icon" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <span class="contact-phone-val">+91 85912 73903</span>
+              </a>
+            </div>
+            <!-- Contact 03: Aalok Mishra -->
+            <div class="footer-contact-card">
+              <span class="footer-contact-name">Aalok Mishra</span>
+              <a href="tel:+919694542775" class="footer-contact-phone" aria-label="Call Aalok Mishra at +91 96945 42775">
+                <span class="contact-phone-icon" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <span class="contact-phone-val">+91 96945 42775</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Navigation Actions: BACK TO START ↑ & DEVELOPERS Trigger -->
+      <div class="footer-action-bar-single footer-action-bar-dual">
+        <a href="#hero" class="btn-back-to-start" id="footer-back-to-start" aria-label="Back to start of page">
+          <span class="btn-bts-text">BACK TO START</span>
+          <span class="btn-bts-arrow" aria-hidden="true">↑</span>
+        </a>
+        <button
+          type="button"
+          class="btn-back-to-start btn-footer-developers"
+          id="footer-developers-trigger"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls="developers-modal-overlay"
+          aria-label="Toggle Developers Recognition Panel"
+        >
+          <span class="btn-bts-text">DEVELOPERS</span>
+          <span class="btn-bts-arrow" aria-hidden="true">◈</span>
+        </button>
+      </div>
+
+      <!-- Footer Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <div class="bottom-bar-left">
+          <span class="brand-tag">OVERCLOCK 2027</span>
+          <span class="bar-divider">//</span>
+          <span class="attrib-tag">Organised by EESA, ISLE, and IEEE Student Branch, Fr. C. Rodrigues Institute of Technology, Vashi, Navi Mumbai.</span>
+          <span class="bar-divider">//</span>
+          <button
+            type="button"
+            class="footer-dev-textlink"
+            id="footer-bottom-dev-trigger"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="developers-modal-overlay"
+            title="Toggle Developers Recognition Panel"
+          >
+            DEVELOPERS
+          </button>
+        </div>
+        <div class="bottom-bar-unstop">
+          <a
+            href="https://unstop.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-unstop-link"
+            id="footer-unstop-link"
+            aria-label="Unstop"
+            title="Unstop"
+          >
+            <img src="images/unstop-logo.png" alt="Unstop Logo" class="footer-unstop-logo">
+          </a>
+        </div>
+        <div class="bottom-bar-center">
+          <span class="copyright-tag">© 2026–2027 OVERCLOCK 2027. All rights reserved.</span>
+        </div>
+        <div class="bottom-bar-right">
+          <span class="status-pip-pulse" aria-hidden="true"></span>
+          <span class="system-status-tag">SYSTEM STATUS // STABLE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         FOOTER CLOSING TREATMENT: CONTINUOUS RIGHT-MOVING MARQUEE
+         Seamless marquee moving continuously towards the RIGHT.
+    ======================================================== -->
+    <div class="footer-marquee-strip" role="region" aria-label="Event Ending Continuous Marquee">
+      <div class="footer-marquee-track" aria-hidden="true">
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ORGANIZED BY EESA</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ISLE</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">IEEE STUDENT BRANCH, FCRIT</span>
+          <span class="f-m-sep">·</span>
+        </div>
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ORGANIZED BY EESA</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ISLE</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">IEEE STUDENT BRANCH, FCRIT</span>
+          <span class="f-m-sep">·</span>
+        </div>
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ORGANIZED BY EESA</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ISLE</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">IEEE STUDENT BRANCH, FCRIT</span>
+          <span class="f-m-sep">·</span>
+        </div>
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ORGANIZED BY EESA</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">ISLE</span>
+          <span class="f-m-sep">·</span>
+          <span class="f-m-item org">IEEE STUDENT BRANCH, FCRIT</span>
+          <span class="f-m-sep">·</span>
+        </div>
+      </div>
+      <span class="sr-only">OVERCLOCK 2027 · ORGANIZED BY EESA · ISLE · IEEE STUDENT BRANCH, FCRIT</span>
+    </div>
+  </footer>
+
+  <!-- ==========================================================
+       DEVELOPERS RECOGNITION PANEL (TOGGLEABLE OVERLAY / MODAL)
+       Recognition & Credits - Hidden by default, takes no page space
+  ========================================================== -->
+  <div
+    id="developers-modal-overlay"
+    class="developers-modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dev-modal-title"
+    aria-hidden="true"
+    hidden
+  >
+    <div class="dev-modal-backdrop" id="dev-modal-backdrop" aria-hidden="true"></div>
+    <div class="dev-modal-container">
+      <div class="dev-modal-surface">
+        <!-- Corner brass bracket accents -->
+        <span class="modal-bracket top-left" aria-hidden="true"></span>
+        <span class="modal-bracket top-right" aria-hidden="true"></span>
+        <span class="modal-bracket bottom-left" aria-hidden="true"></span>
+        <span class="modal-bracket bottom-right" aria-hidden="true"></span>
+
+        <!-- Modal Top Bar -->
+        <div class="dev-modal-topbar">
+          <div class="dev-modal-file-tag">
+            <span class="dev-tag-lamp" aria-hidden="true"></span>
+            <span>CLEARANCE LEVEL 10 // DIGITAL ARCHITECTURE</span>
+          </div>
+          <button
+            type="button"
+            class="dev-modal-close-btn"
+            id="dev-modal-close-btn"
+            aria-label="Close Developers Recognition Panel"
+          >
+            <span class="close-icon" aria-hidden="true">✕</span>
+          </button>
+        </div>
+
+        <!-- Heading & Intro -->
+        <div class="dev-modal-header">
+          <h2 class="dev-modal-title" id="dev-modal-title">
+            DEVELOPERS <span class="dev-title-divider">//</span> TECHNICAL TEAM
+          </h2>
+          <p class="dev-modal-intro">
+            The technical team behind the OVERCLOCK 2027 digital experience.
+          </p>
+        </div>
+
+        <!-- Two Developer Cards Grid -->
+        <div class="dev-modal-grid">
+          <!-- Developer 01: Nicole Mendes -->
+          <article class="developer-card" id="developer-card-nicole">
+            <div class="developer-card-header">
+              <span class="developer-id-tag">DEVELOPER 01</span>
+              <span class="developer-sys-label">SYS // ENG-01</span>
+            </div>
+
+            <h3 class="developer-name">Nicole Mendes</h3>
+            <div class="developer-role">Developer</div>
+
+            <div class="developer-card-divider" aria-hidden="true"></div>
+
+            <div class="developer-contact-block">
+              <div class="developer-phone-row">
+                <span class="developer-phone-label">Direct Contact</span>
+                <a href="tel:+919822009126" class="developer-phone-link" aria-label="Call Nicole Mendes at +91 98220 09126">
+                  <span class="dev-phone-icon" aria-hidden="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
+                  <span class="dev-phone-val">+91 98220 09126</span>
+                </a>
+              </div>
+
+              <div class="developer-action-row">
+                <a
+                  href="https://github.com/nicole07mendes10-sys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="developer-github-btn"
+                  aria-label="View Nicole Mendes's GitHub Profile"
+                >
+                  <span class="dev-gh-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  </span>
+                  <span class="dev-gh-text">GITHUB PROFILE</span>
+                  <span class="dev-gh-arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Developer 02: Kunal Pate -->
+          <article class="developer-card" id="developer-card-kunal">
+            <div class="developer-card-header">
+              <span class="developer-id-tag">DEVELOPER 02</span>
+              <span class="developer-sys-label">OPS // DEV-02</span>
+            </div>
+
+            <h3 class="developer-name">Kunal Pate</h3>
+            <div class="developer-role">Developer</div>
+
+            <div class="developer-card-divider" aria-hidden="true"></div>
+
+            <div class="developer-contact-block">
+              <div class="developer-phone-row">
+                <span class="developer-phone-label">Direct Contact</span>
+                <a href="tel:+919820526617" class="developer-phone-link" aria-label="Call Kunal Pate at +91 98205 26617">
+                  <span class="dev-phone-icon" aria-hidden="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </span>
+                  <span class="dev-phone-val">+91 98205 26617</span>
+                </a>
+              </div>
+
+              <div class="developer-action-row">
+                <a
+                  href="https://github.com/kunalpate31-ops"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="developer-github-btn"
+                  aria-label="View Kunal Pate's GitHub Profile"
+                >
+                  <span class="dev-gh-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  </span>
+                  <span class="dev-gh-text">GITHUB PROFILE</span>
+                  <span class="dev-gh-arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Modal Bottom Status Note -->
+        <div class="dev-modal-bottom-note">
+          <span>OVERCLOCK 2027 // DIGITAL EXPERIENCE ARCHITECTURE</span>
+          <span class="note-divider">//</span>
+          <span>TIME VARIANCE AUTHORITY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==========================================================
+       MISS MINUTES ANIMATED OVERLAY (CONCEALING GEMINI WATERMARK)
+  ========================================================== -->
+  <div
+    id="miss-minutes-overlay"
+    class="miss-minutes-overlay"
+    role="button"
+    tabindex="0"
+    aria-label="Miss Minutes — Open Registration Modal"
+    aria-haspopup="dialog"
+  >
+    <div id="miss-minutes-speech" class="miss-minutes-speech" aria-hidden="true">
+      GOT A MINUTE, PARTNER?
+    </div>
+    <img
+      id="miss-minutes-img"
+      class="miss-minutes-img"
+      src="images/miss_minutes_poster.png?v=3"
+      alt="Miss Minutes"
+      aria-hidden="true"
+    >
+    <video
+      id="miss-minutes-video"
+      class="miss-minutes-video"
+      style="display: none;"
+      autoplay
+      loop
+      muted
+      playsinline
+      webkit-playsinline
+      preload="auto"
+      disablepictureinpicture
+      disableremoteplayback
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <source src="videos/miss_minutes.webm" type="video/webm">
+    </video>
+  </div>
+
+  <!-- ==========================================================
+       MISS MINUTES REGISTRATION MODAL
+  ========================================================== -->
+  <div
+    id="miss-minutes-modal"
+    class="mm-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mm-modal-title"
+    aria-hidden="true"
+  >
+    <div class="mm-modal-card" id="mm-modal-card">
+      <button
+        type="button"
+        class="mm-modal-close"
+        id="mm-modal-close-btn"
+        aria-label="Close Miss Minutes registration modal"
+      >
+        <span aria-hidden="true">✕</span>
+      </button>
+
+      <div class="mm-modal-badge">
+        <span class="mm-badge-dot" aria-hidden="true"></span>
+        <span>TVA // TEMPORAL REGISTRATION</span>
+        <span class="mm-badge-dot" aria-hidden="true"></span>
+      </div>
+
+      <h2 id="mm-modal-title" class="mm-modal-heading">MISS MINUTES</h2>
+
+      <div class="mm-character-stage">
+        <video
+          class="mm-modal-video"
+          autoplay
+          loop
+          muted
+          playsinline
+          webkit-playsinline
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <source src="videos/miss_minutes.webm" type="video/webm">
+        </video>
+        <img
+          class="mm-modal-img-fallback"
+          src="images/miss_minutes_poster.png?v=3"
+          alt="Miss Minutes"
+          aria-hidden="true"
+        >
+      </div>
+
+      <p class="mm-modal-dialogue">
+        &ldquo;Well hey there, partner! Don't let your timeline get pruned. Step up, assemble your team, and lock in your registration for OVERCLOCK 2027!&rdquo;
+      </p>
+
+      <div class="mm-cta-block">
+        <a
+          href="#"
+          id="mm-register-btn"
+          class="btn-bureau-brass mm-modal-register-btn"
+          aria-label="Register for OVERCLOCK 2027 on Unstop"
+        >
+          <span>REGISTER NOW</span>
+          <span class="btn-cta-arrow" aria-hidden="true">↗</span>
+        </a>
+        <div id="mm-status-note" class="mm-status-note">PORTAL // OPENS 01 NOV 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       MODAL DIALOG: OPEN A CASE FILE (EXPRESS INTEREST)
+  ========================================================== -->
+  <div id="case-file-modal" class="bureau-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bureau-modal-card">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close Case File Dialog">✕</button>
+      
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--amber-bright); margin-bottom: 6px;">
+        CASE INTAKE FORM // REF: OC-2027-INTAKE
+      </div>
+      <h3 id="modal-title" style="font-family: var(--font-display); font-size: 2rem; color: var(--paper-cream); margin-bottom: 18px;">
+        Open a Case File
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">
+        Express your interest to receive timeline notices, domain briefs, and registration announcements first.
+      </p>
+
+      <form id="case-intake-form">
+        <div class="modal-form-group">
+          <label for="intake-name">FULL NAME</label>
+          <input type="text" id="intake-name" class="modal-input" placeholder="e.g. Alan Turing" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="intake-email">EMAIL ADDRESS</label>
+          <input type="email" id="intake-email" class="modal-input" placeholder="e.g. builder@fcrit.ac.in" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="intake-domain">PREFERRED BRANCH</label>
+          <select id="intake-domain" class="modal-input" style="cursor: pointer;">
+            <option value="general">General Participant Track (Awaiting Domain Release)</option>
+            <option value="slot-1">Domain Slot 01 (Release 01 Dec 2026)</option>
+            <option value="slot-2">Domain Slot 02 (Release 01 Dec 2026)</option>
+            <option value="slot-3">Domain Slot 03 (Release 01 Dec 2026)</option>
+            <option value="slot-4">Domain Slot 04 (Release 01 Dec 2026)</option>
+            <option value="slot-5">Domain Slot 05 (Release 01 Dec 2026)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-bureau-brass" style="width: 100%; justify-content: center; margin-top: 12px;">
+          Submit to Bureau Archive
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       OFFICIAL RULES & REGULATIONS DOSSIER MODAL
+       Form OC-27 / RR · Sacred Timeline Participant Directive
+  ======================================================== -->
+  <div id="rules-dossier-modal" class="bureau-modal-overlay rules-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title" hidden>
+    <div class="rules-dossier-card" id="rules-dossier-card">
+      <!-- Modal Top Bar -->
+      <div class="rules-modal-topbar">
+        <div class="rules-topbar-meta">
+          <span class="rules-division-tag">TEMPORAL CONDUCT DIVISION</span>
+          <span class="rules-bullet-sep">•</span>
+          <span class="rules-doc-ref">FORM OC-27 / RR</span>
+          <span class="rules-bullet-sep">•</span>
+          <span class="rules-rev-pill">REV 01</span>
+          <span class="rules-stamp-pill">CLEARED FOR ALL TIMELINES</span>
+        </div>
+        <button type="button" class="rules-modal-close-btn" id="rules-modal-close-btn" aria-label="Close Rules and Regulations Dossier">✕</button>
+      </div>
+
+      <!-- Dossier Hero Banner -->
+      <div class="rules-dossier-banner">
+        <div class="rules-banner-classification">SACRED TIMELINE // PARTICIPANT DIRECTIVE</div>
+        <h2 id="rules-modal-title" class="rules-dossier-heading">OVERCLOCK 2027</h2>
+        <div class="rules-dossier-subhead">RULES &amp; REGULATIONS — FORM OC-27 / RR</div>
+        <p class="rules-banner-meta">24-Hour National-Level Hardware Hackathon • 29–30 January 2027 • Fr. C. Rodrigues Institute of Technology, Vashi</p>
+        
+        <!-- Key Quick-Telemetry Badges -->
+        <div class="rules-telemetry-grid">
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">TEAM SIZE</span>
+            <span class="rules-tele-v">2–4 MEMBERS</span>
+          </div>
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">ELIGIBILITY</span>
+            <span class="rules-tele-v">UG · ALL INDIA</span>
+          </div>
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">ROUND 1 ENTRY</span>
+            <span class="rules-tele-v tele-free">FREE</span>
+          </div>
+          <div class="rules-tele-pill">
+            <span class="rules-tele-k">ROUND 2 ENTRY</span>
+            <span class="rules-tele-v tele-cost">₹1,770 / TEAM (INCL. GST)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable Dossier Content -->
+      <div class="rules-dossier-scroll" tabindex="0">
+        <!-- 01: Eligibility & Team Formation -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">01</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">ELIGIBILITY &amp; TEAM FORMATION</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 01</span>
+            </div>
+            <span class="rules-block-status-stamp verified">VERIFIED</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">The hackathon is open to <strong>undergraduate students</strong> from recognized institutions across India.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Each team must consist of <strong>2–4 members</strong>.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text"><strong>Cross-college teams are permitted.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Each participant may register with <strong>only one team</strong>.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">All participants must complete registration and submit valid details before the deadline.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 02: Registration & Shortlisting -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">02</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">REGISTRATION &amp; SHORTLISTING</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 02</span>
+            </div>
+            <span class="rules-block-status-stamp verified">VERIFIED</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text"><strong>Registration for Round 1 is completely FREE</strong> — no entry fee to register, submit a proposal, or participate in the preliminary evaluation.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Teams must submit their initial problem proposal and presentation (PPT) within the announced deadlines.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text">Shortlisting is based on the submitted proposal, technical feasibility, innovation, and relevance to the selected domain.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Only shortlisted teams are eligible for Round 2, the final on-site hackathon.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Organizers reserve the right to reject incomplete or inaccurate submissions.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Shortlisted teams must complete Round 2 registration and pay the applicable entry fee to confirm participation.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 03: Hackathon Structure -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">03</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">HACKATHON STRUCTURE</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 03</span>
+            </div>
+            <span class="rules-block-status-stamp rounds-stamp">TWO ROUNDS</span>
+          </div>
+
+          <!-- Round 1 Subcard -->
+          <div class="rules-round-subcard round-1-subcard">
+            <div class="round-subcard-header">
+              <div class="round-subcard-heading">
+                <span class="round-dot green" aria-hidden="true"></span>
+                <span class="round-label">ROUND 1 — PRELIMINARY EVALUATION &amp; FILTERING</span>
+              </div>
+              <div class="round-fee-badge free">
+                <span class="fee-big">FREE</span>
+                <span class="fee-sub">ENTRY FEE · ROUND 1 (No fee required)</span>
+              </div>
+            </div>
+            <ol class="rules-clause-list">
+              <li class="rules-clause-item">
+                <span class="clause-num">01</span>
+                <span class="clause-text">Teams submit their proposed solution via a PPT or other format specified by the organizers.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">02</span>
+                <span class="clause-text">The presentation should cover the problem statement, proposed solution, system architecture, hardware requirements, feasibility, and expected impact.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">03</span>
+                <span class="clause-text">Judges evaluate on innovation, technical feasibility, problem relevance, and implementation potential.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">04</span>
+                <span class="clause-text">Only shortlisted teams advance to Round 2.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">05</span>
+                <span class="clause-text">The shortlist and submission deadlines are communicated through official channels.</span>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Round 2 Subcard -->
+          <div class="rules-round-subcard round-2-subcard">
+            <div class="round-subcard-header">
+              <div class="round-subcard-heading">
+                <span class="round-dot amber" aria-hidden="true"></span>
+                <span class="round-label">ROUND 2 — FINAL EVALUATION &amp; PROTOTYPE DEMONSTRATION</span>
+              </div>
+              <div class="round-fee-badge paid">
+                <span class="fee-big">₹1,770</span>
+                <span class="fee-sub">PER TEAM (₹1,500 + 18% GST)</span>
+              </div>
+            </div>
+            <div class="round-fee-inclusions-note">
+              ✓ Covers meals, snacks, tea breaks &amp; event stationery (ID cards, essentials). Accommodation not included.
+            </div>
+            <ol class="rules-clause-list">
+              <li class="rules-clause-item">
+                <span class="clause-num">01</span>
+                <span class="clause-text">Only shortlisted teams are eligible to participate in Round 2.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">02</span>
+                <span class="clause-text">Selected teams must register and pay the prescribed fee to confirm participation.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">03</span>
+                <span class="clause-text">Teams develop their solutions during the <strong>24-hour on-site hackathon</strong>.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">04</span>
+                <span class="clause-text">A <strong>functional hardware prototype</strong>, supported by software where required, must be demonstrated at final evaluation.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">05</span>
+                <span class="clause-text">Teams present their implementation, demonstrate functionality, explain the technical design, and answer the judging panel.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">06</span>
+                <span class="clause-text">Final evaluation considers technical implementation, functionality, innovation, real-world impact, feasibility, reliability, and presentation.</span>
+              </li>
+              <li class="rules-clause-item">
+                <span class="clause-num">07</span>
+                <span class="clause-text">The judges' decisions will be final.</span>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- 04: Hardware & Development Rules -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">04</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">HARDWARE &amp; DEVELOPMENT RULES</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 04</span>
+            </div>
+            <span class="rules-block-status-stamp spec-stamp">BUILD SPEC</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">Individual components, sensors, microcontrollers, development boards, and standalone modules are permitted.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Teams may bring their own components and specialized equipment, subject to organizer approval and safety requirements.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text"><strong>Pre-built projects, previously completed prototypes, and ready-made integrated solutions may not be submitted as entries.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text"><strong>The core solution must be developed during the event.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Open-source libraries, frameworks, and reference materials may be used, provided their use is disclosed when requested.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Teams must acknowledge third-party designs, code, datasets, and other external resources used.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">07</span>
+              <span class="clause-text">Any use of pre-existing work must be clearly disclosed to the organizers and judges.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">08</span>
+              <span class="clause-text">Participants needing specialized equipment (induction motors, autotransformers, three-phase supplies, PCB fabrication) must submit requirements in advance.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">09</span>
+              <span class="clause-text">All equipment usage is subject to availability, approval, and applicable safety requirements.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 05: Code of Conduct & Safety -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">05</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">CODE OF CONDUCT &amp; SAFETY</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 05</span>
+            </div>
+            <span class="rules-block-status-stamp mandatory-stamp">MANDATORY</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">Follow all instructions from organizers, faculty coordinators, mentors, and venue staff.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Use equipment responsibly and maintain a safe working environment.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text"><strong>High-voltage equipment, hazardous materials, and dangerous experiments require prior approval and supervision.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Do not damage, misuse, or remove institute equipment without authorization.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Harassment, cheating, plagiarism, sabotage, and disruptive behavior will not be tolerated.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Organizers may disqualify teams that violate safety requirements or engage in misconduct.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">07</span>
+              <span class="clause-text">Comply with venue security rules and overnight access restrictions, and report accidents or unsafe conditions immediately.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 06: Judging & Results -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">06</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">JUDGING &amp; RESULTS</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 06</span>
+            </div>
+            <span class="rules-block-status-stamp final-stamp">FINAL</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text">All eligible final-round teams are evaluated using the published judging criteria and weightages.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Judges may ask about design decisions, implementation, testing, originality, and practical feasibility.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text">Teams must ensure their prototype is ready for demonstration at the assigned evaluation time.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Judges may request evidence of functionality or clarification on the development process.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Any attempt to misrepresent progress, originality, or functionality may result in disqualification.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text"><strong>The judges' decisions will be binding.</strong></span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- 07: Accommodation & General Conditions -->
+        <section class="rules-section-block">
+          <div class="rules-block-header">
+            <div class="rules-block-num">07</div>
+            <div class="rules-block-title-wrap">
+              <h3 class="rules-block-title">ACCOMMODATION &amp; GENERAL CONDITIONS</h3>
+              <span class="rules-file-ref">FILE OC-27/RR · 07</span>
+            </div>
+            <span class="rules-block-status-stamp general-stamp">GENERAL</span>
+          </div>
+          <ol class="rules-clause-list">
+            <li class="rules-clause-item">
+              <span class="clause-num">01</span>
+              <span class="clause-text"><strong>Accommodation is not included in the Round 2 registration fee.</strong></span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">02</span>
+              <span class="clause-text">Accommodation, if available, is provided separately at a nominal cost, <strong>first-come first-served</strong>.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">03</span>
+              <span class="clause-text">Availability, charges, and allocation are subject to organizer confirmation.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">04</span>
+              <span class="clause-text">Follow the venue's overnight access, security, and accommodation rules.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">05</span>
+              <span class="clause-text">Participants are responsible for their personal belongings and specialized equipment.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">06</span>
+              <span class="clause-text">Organizers provide common facilities and equipment subject to availability and prior approval.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">07</span>
+              <span class="clause-text">Teams bring any specialized components required unless provision is confirmed by the organizers.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">08</span>
+              <span class="clause-text">Comply with all instructions on food, workspace allocation, equipment handling, and schedules.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">09</span>
+              <span class="clause-text">Organizers may modify schedules or arrangements when necessary; significant changes are communicated officially.</span>
+            </li>
+            <li class="rules-clause-item">
+              <span class="clause-num">10</span>
+              <span class="clause-text">By participating, teams agree to comply with these rules and any additional official instructions.</span>
+            </li>
+          </ol>
+        </section>
+
+        <!-- Final Stabilization Seal -->
+        <div class="rules-timeline-seal">
+          <div class="seal-diamond-symbol">◆ TIMELINE STABILIZED ◆</div>
+          <p class="seal-directive-text">By participating in OVERCLOCK 2027, every team agrees to abide by these rules and all instructions officially communicated by the organizers.</p>
+          <div class="seal-footnote">DOC · OC-27/RR · REV 01 • SACRED TIMELINE • PAGES 01–06 COMPLETE</div>
+        </div>
+      </div>
+
+      <!-- Modal Action Bar -->
+      <div class="rules-modal-actions">
+        <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" class="btn-dossier-download">
+          <span class="action-icon">↓</span>
+          <span class="action-text">DOWNLOAD OFFICIAL PDF (3.8 MB)</span>
+        </a>
+        <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" class="btn-dossier-tab">
+          <span class="action-icon">↗</span>
+          <span class="action-text">OPEN IN NEW TAB</span>
+        </a>
+        <button type="button" class="btn-dossier-close" id="btn-close-rules-dossier-bottom">
+          <span>CLOSE DOSSIER</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application & Engine Scripts -->
+  <script src="bureau-engine.js"></script>
+  <script src="sponsors-config.js"></script>
+  <script src="app.js"></script>
+  <script src="tva-inspection-game.js"></script>
+  <script src="domain-oscilloscope.js"></script>
+  <script type="module" src="tva-temporal-intro.js"></script>
+</body>
+</html>
+�A�Wc6      j�EIj�EIJ�tj�En   U    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/?nointro=1&goto=timeline necko:classified 1 peer-ip-address 127.0.0.1 peer-port 3000 strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 19:45:13 GMT
+Content-type: text/html
+Content-Length: 145123
+Last-Modified: Sat, 31 Oct 2026 19:38:57 GMT
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sat, 31 Oct 2026 19:45:13 GMT
+Content-type: text/html
+Content-Length: 145123
+Last-Modified: Sat, 31 Oct 2026 19:38:57 GMT
+ ctid 1 net-response-time-onstart 63 net-response-time-onstop 202     6�

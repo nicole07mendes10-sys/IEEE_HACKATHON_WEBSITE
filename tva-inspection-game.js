@@ -229,10 +229,18 @@
     announce() {}
   }
 
-  // Initialize and export controller globally
-  document.addEventListener('DOMContentLoaded', () => {
+  function initMM() {
     const mmModal = new MissMinutesRegistrationModal();
     window.missMinutesModal = mmModal;
     window.tvaInspectionGame = mmModal; // Backwards-compatible alias
-  });
+    if (window.location.search.includes('mm=open')) {
+      mmModal.open();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMM);
+  } else {
+    initMM();
+  }
 })();

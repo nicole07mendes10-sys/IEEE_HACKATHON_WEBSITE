@@ -57,38 +57,6 @@ window.OVERCLOCK_CONFIG = {
   }
 };
 
-window.OVERCLOCK_CREW = [
-  {
-    role: "Chairperson",
-    name: "Krishna Jaiswar",
-    phone: "+91 90826 11721",
-    tel: "tel:+919082611721"
-  },
-  {
-    role: "Vice Chairperson",
-    name: "Yash Bandkar",
-    phone: "+91 77387 07573",
-    tel: "tel:+917738707573"
-  },
-  {
-    role: "Secretary",
-    name: "Sujit Ratan",
-    phone: "+91 85912 73903",
-    tel: "tel:+918591273903"
-  },
-  {
-    role: "Technical Head",
-    name: "Nicole Mendes",
-    phone: "+91 98220 09126",
-    tel: "tel:+919822009126"
-  },
-  {
-    role: "Technical Head",
-    name: "Kunal Pate",
-    phone: "+91 98205 26617",
-    tel: "tel:+919820526617"
-  }
-];
 
 /**
  * OVERCLOCK 2027 — APPLICATION LOGIC & BUREAU INTERACTIVITY
@@ -332,8 +300,8 @@ class BureauSpatialScrollController {
         const glow = (f_smooth * 0.65).toFixed(2);
         const sy = (8 + f_smooth * 12).toFixed(1);
         const sb = (18 + f_smooth * 16).toFixed(1);
-        card.style.boxShadow = `0 ${sy}px ${sb}px rgba(0, 0, 0, 0.45), 0 0 ${(f_smooth * 22).toFixed(1)}px rgba(232, 137, 43, ${glow}), inset 0 0 ${(f_smooth * 8).toFixed(1)}px rgba(232, 137, 43, 0.25)`;
-        card.style.outline = `1.5px solid rgba(232, 137, 43, ${(f_smooth * 0.85).toFixed(2)})`;
+        card.style.boxShadow = `0 ${sy}px ${sb}px rgba(0, 0, 0, 0.45), 0 0 ${(f_smooth * 18).toFixed(1)}px rgba(184, 146, 58, ${glow}), inset 0 0 ${(f_smooth * 6).toFixed(1)}px rgba(184, 146, 58, 0.2)`;
+        card.style.outline = `1.5px solid rgba(184, 146, 58, ${(f_smooth * 0.7).toFixed(2)})`;
       } else {
         card.style.boxShadow = '';
         card.style.outline = '';
@@ -449,9 +417,9 @@ class BureauSpatialScrollController {
       frame.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
       if (isFinal && f_smooth > 0.05) {
-        frame.style.boxShadow = `0 0 ${(16 + f_smooth * 20).toFixed(1)}px rgba(232, 137, 43, 0.4)`;
+        frame.style.boxShadow = `0 0 ${(16 + f_smooth * 20).toFixed(1)}px rgba(184, 146, 58, 0.35)`;
       } else if (f_smooth > 0.08) {
-        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(217, 169, 58, 0.25)`;
+        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(184, 146, 58, 0.25)`;
       } else {
         frame.style.boxShadow = '';
       }
@@ -575,7 +543,7 @@ class BureauSpatialScrollController {
         card.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
         if (f_smooth > 0.06) {
-          card.style.boxShadow = `0 12px 28px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 20).toFixed(1)}px rgba(232, 137, 43, ${(f_smooth * 0.55).toFixed(2)})`;
+          card.style.boxShadow = `0 12px 28px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 18).toFixed(1)}px rgba(184, 146, 58, ${(f_smooth * 0.45).toFixed(2)})`;
         } else {
           card.style.boxShadow = '';
         }
@@ -614,7 +582,7 @@ class BureauSpatialScrollController {
       folder.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
       if (f_smooth > 0.1) {
-        folder.style.boxShadow = `0 6px 20px rgba(0, 0, 0, 0.4), 0 0 ${(f_smooth * 18).toFixed(1)}px rgba(232, 137, 43, ${(f_smooth * 0.4).toFixed(2)})`;
+        folder.style.boxShadow = `0 6px 20px rgba(0, 0, 0, 0.4), 0 0 ${(f_smooth * 16).toFixed(1)}px rgba(184, 146, 58, ${(f_smooth * 0.35).toFixed(2)})`;
       } else if (!folder.classList.contains('open')) {
         folder.style.boxShadow = '';
       }
@@ -676,7 +644,7 @@ class BureauSpatialScrollController {
       const tz = f_smooth * 16;
       this.completionCard.style.transform = `perspective(600px) translate3d(0px, 0px, ${tz.toFixed(1)}px)`;
       if (f_smooth > 0.1) {
-        this.completionCard.style.boxShadow = `0 0 ${(f_smooth * 22).toFixed(1)}px rgba(232, 137, 43, ${(f_smooth * 0.45).toFixed(2)}), inset 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(232, 137, 43, 0.15)`;
+        this.completionCard.style.boxShadow = `0 0 ${(f_smooth * 18).toFixed(1)}px rgba(184, 146, 58, ${(f_smooth * 0.4).toFixed(2)}), inset 0 0 ${(f_smooth * 12).toFixed(1)}px rgba(184, 146, 58, 0.15)`;
       } else {
         this.completionCard.style.boxShadow = '';
       }
@@ -715,7 +683,9 @@ class OverclockApp {
     this.soundProfiles = ['tactile', 'tva-relay', 'sci-fi', 'typewriter'];
     const savedProfile = localStorage.getItem('oc2027_sound_profile');
     this.soundProfile = (savedProfile && this.soundProfiles.includes(savedProfile)) ? savedProfile : 'tva-relay';
-    this.audioEnabled = true; // Audio is continuously active; mute option removed per directive
+    // Audio starts muted per browser autoplay standards; enabled on explicit user interaction
+    const savedAudio = localStorage.getItem('oc2027_audio_enabled');
+    this.audioEnabled = savedAudio === 'true';
     this.audioCtx = null;
     this.noiseBuffer = null;
     this.lastClickSoundTime = 0;
@@ -723,10 +693,6 @@ class OverclockApp {
     this.isHomepageActive = false;
     this.clockInterval = null;
     
-    // Puzzle state
-    this.puzzleSwitches = { 1: false, 2: false, 3: false };
-    this.puzzleSolved = false;
-
     // Sponsors state
     this.sponsorsStamped = false;
 
@@ -734,30 +700,41 @@ class OverclockApp {
     this.currentActiveSection = 'hero';
     this.countdownStarted = false;
     this.sectionLabels = {
-      'hero': 'SEC 01/11: HERO',
-      'about': 'SEC 02/11: ABOUT',
-      'problems': 'SEC 03/11: DOMAINS',
-      'results': 'SEC 04/11: RESULTS',
-      'timeline': 'SEC 05/11: TIMELINE',
-      'registration': 'SEC 06/11: REGISTER',
-      'accommodation': 'SEC 07/11: QUARTERS',
-      'judging': 'SEC 08/11: JUDGING',
-      'sponsors': 'SEC 09/11: SPONSORS',
-      'faq': 'SEC 10/11: FAQ',
-      'contact': 'SEC 11/11: CONTACT'
+      'hero': 'HOME',
+      'about': 'ABOUT',
+      'problems': 'DOMAINS',
+      'results': 'RESULTS',
+      'timeline': 'TIMELINE',
+      'registration': 'REGISTER',
+      'accommodation': 'STAY',
+      'judging': 'JUDGING',
+      'sponsors': 'SPONSORS',
+      'faq': 'FAQ',
+      'contact': 'CONTACT'
     };
 
     this.init();
   }
 
   init() {
-    try {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    } catch (e) {
-      window.scrollTo(0, 0);
+    const urlParams = new URLSearchParams(window.location.search);
+    const scrollTarget = window.location.hash || urlParams.get('goto');
+    const scrollYParam = urlParams.get('scroll');
+
+    if (!scrollTarget && !scrollYParam) {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } catch (e) {
+        window.scrollTo(0, 0);
+      }
+      document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    } else if (scrollYParam === 'bottom') {
+      window.scrollTo(0, document.body.scrollHeight || 999999);
+    } else if (scrollYParam) {
+      const sY = parseInt(scrollYParam, 10);
+      window.scrollTo(0, sY);
     }
-    document.documentElement.scrollTop = 0;
-    if (document.body) document.body.scrollTop = 0;
 
     this.setupAudio();
     this.setupGlobalClickSound();
@@ -770,7 +747,7 @@ class OverclockApp {
     this.setupRegistrationCTA();
     this.setupDownloadsSection();
     this.setupUnstopLinks();
-    this.setupFooterCrew();
+    this.setupTvaClubCards();
     this.setupSponsorsSection();
     this.setupFAQ();
     this.setupModals();
@@ -816,43 +793,68 @@ class OverclockApp {
     const audioBtn = document.getElementById('audio-toggle-btn');
     if (!audioBtn) return;
 
-    const profileConfigs = {
-      'tva-relay': { label: 'SOUND: TVA RELAY', icon: '⚡', title: 'Active Profile: TVA Industrial Relay (Click to Switch Sound Profile)' },
-      'tactile': { label: 'SOUND: TACTILE', icon: '🔊', title: 'Active Profile: Tactile Haptic Tap (Click to Switch Sound Profile)' },
-      'sci-fi': { label: 'SOUND: QUANTUM', icon: '✨', title: 'Active Profile: Futuristic Quantum Blip (Click to Switch Sound Profile)' },
-      'typewriter': { label: 'SOUND: TYPEWRITER', icon: '⌨️', title: 'Active Profile: Vintage Mechanical Key (Click to Switch Sound Profile)' }
+    this.updateAudioBtnUI = () => {
+      const isSoundOn = this.audioEnabled;
+      const speakerOnSvg = `<svg class="audio-toggle-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>`;
+      const speakerOffSvg = `<svg class="audio-toggle-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line><line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line></svg>`;
+
+      if (isSoundOn) {
+        audioBtn.innerHTML = speakerOnSvg;
+        audioBtn.classList.remove('muted');
+        audioBtn.classList.add('audio-active');
+        audioBtn.setAttribute('aria-label', 'Turn sound off');
+        audioBtn.setAttribute('title', 'Turn sound off');
+        audioBtn.setAttribute('aria-pressed', 'true');
+      } else {
+        audioBtn.innerHTML = speakerOffSvg;
+        audioBtn.classList.add('muted');
+        audioBtn.classList.remove('audio-active');
+        audioBtn.setAttribute('aria-label', 'Turn sound on');
+        audioBtn.setAttribute('title', 'Turn sound on');
+        audioBtn.setAttribute('aria-pressed', 'false');
+      }
     };
 
-    const updateBtnUI = () => {
-      const cfg = profileConfigs[this.soundProfile] || profileConfigs['tva-relay'];
-      const label = audioBtn.querySelector('.audio-label');
-      if (label) label.textContent = cfg.label;
-      const icon = audioBtn.querySelector('.audio-icon');
-      if (icon) icon.textContent = cfg.icon;
-      audioBtn.title = cfg.title;
-
-      audioBtn.classList.remove('muted');
-      audioBtn.setAttribute('aria-pressed', 'true');
-    };
-
-    updateBtnUI();
+    this.updateAudioBtnUI();
 
     audioBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      this.ensureAudioContext();
-
-      // Cycle through active acoustic profiles (continuous sound; mute option removed)
-      const currentIdx = this.soundProfiles.indexOf(this.soundProfile);
-      const nextIdx = (currentIdx + 1) % this.soundProfiles.length;
-      this.soundProfile = this.soundProfiles[nextIdx];
-      this.audioEnabled = true;
-      try {
-        localStorage.setItem('oc2027_sound_profile', this.soundProfile);
-      } catch (err) {}
-
-      updateBtnUI();
-      this.playClickSound(null, true);
+      this.toggleAudio();
     });
+  }
+
+  toggleAudio() {
+    this.audioEnabled = !this.audioEnabled;
+    try {
+      localStorage.setItem('oc2027_audio_enabled', this.audioEnabled ? 'true' : 'false');
+    } catch (err) {}
+
+    if (this.audioEnabled) {
+      const ctx = this.ensureAudioContext();
+      if (ctx && ctx.state === 'suspended') {
+        try { ctx.resume(); } catch (e) {}
+      }
+      if (window.TVATemporalIntro) {
+        window.TVATemporalIntro.isAudioMuted = false;
+        if (window.TVATemporalIntro.audioGain && window.TVATemporalIntro.audioCtx) {
+          try {
+            window.TVATemporalIntro.audioGain.gain.setValueAtTime(0.22, window.TVATemporalIntro.audioCtx.currentTime);
+          } catch (e) {}
+        }
+      }
+      if (this.updateAudioBtnUI) this.updateAudioBtnUI();
+      this.playClickSound(null, true);
+    } else {
+      if (window.TVATemporalIntro) {
+        window.TVATemporalIntro.isAudioMuted = true;
+        if (window.TVATemporalIntro.audioGain && window.TVATemporalIntro.audioCtx) {
+          try {
+            window.TVATemporalIntro.audioGain.gain.setValueAtTime(0.0001, window.TVATemporalIntro.audioCtx.currentTime);
+          } catch (e) {}
+        }
+      }
+      if (this.updateAudioBtnUI) this.updateAudioBtnUI();
+    }
   }
 
   setupGlobalClickSound() {
@@ -1379,17 +1381,17 @@ class OverclockApp {
     const markerAngles = [190, 197, 204, 211, 218, 225, 232, 239, 246, 253, 260];
 
     const sectionLabelsMap = {
-      'hero': 'HOME // OVERVIEW',
-      'about': 'ABOUT BRIEFING',
-      'problems': 'PROBLEM STATEMENTS',
-      'results': 'SELECTION STATUS',
-      'timeline': 'EVENT TIMELINE',
-      'registration': 'REGISTRATION',
-      'accommodation': 'STAY ON CAMPUS',
-      'judging': 'JUDGING & RECOGNITION',
-      'sponsors': 'SPONSORS & PARTNERS',
-      'faq': 'CASE FILES (FAQ)',
-      'contact': 'CONTACT & VENUE'
+      'hero': 'HOME',
+      'about': 'ABOUT',
+      'problems': 'DOMAINS',
+      'results': 'RESULTS',
+      'timeline': 'TIMELINE',
+      'registration': 'REGISTER',
+      'accommodation': 'STAY',
+      'judging': 'JUDGING',
+      'sponsors': 'SPONSORS',
+      'faq': 'FAQ',
+      'contact': 'CONTACT'
     };
 
     // Toggle expanded section directory menu
@@ -1440,6 +1442,7 @@ class OverclockApp {
     }
 
     if (window.location.search.includes('menu=open')) {
+      openMenu();
       setTimeout(openMenu, 150);
     }
 
@@ -1448,8 +1451,9 @@ class OverclockApp {
     if (gotoParam) {
       const target = document.getElementById(gotoParam);
       if (target) {
-        window.scrollTo(0, target.offsetTop);
+        target.scrollIntoView({ behavior: 'auto' });
         this.targetScrollY = target.offsetTop;
+        this.smoothScrollY = target.offsetTop;
       }
     }
 
@@ -1507,6 +1511,13 @@ class OverclockApp {
 
         closeMenu();
         if (targetSec) {
+          if (navStatusSec && sectionLabelsMap[targetSecId]) {
+            navStatusSec.style.opacity = '0.4';
+            navStatusSec.textContent = sectionLabelsMap[targetSecId];
+            setTimeout(() => {
+              if (navStatusSec) navStatusSec.style.opacity = '1';
+            }, 80);
+          }
           this.playRelayClick(880);
           targetSec.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
         }
@@ -1541,6 +1552,106 @@ class OverclockApp {
           }
         });
       });
+    }
+
+    // Developers Recognition Panel (Toggleable Overlay / Modal)
+    const devModalOverlay = document.getElementById('developers-modal-overlay');
+    const devModalBackdrop = document.getElementById('dev-modal-backdrop');
+    const devModalCloseBtn = document.getElementById('dev-modal-close-btn');
+    const footerDevTrigger = document.getElementById('footer-developers-trigger');
+    const footerBottomDevTrigger = document.getElementById('footer-bottom-dev-trigger');
+
+    let isDevModalOpen = false;
+    let devModalPreviousFocus = null;
+
+    const openDevModal = () => {
+      if (isDevModalOpen || !devModalOverlay) return;
+      isDevModalOpen = true;
+      devModalPreviousFocus = document.activeElement;
+      this.playRelayClick(880);
+      document.body.classList.add('dev-modal-open');
+      devModalOverlay.removeAttribute('hidden');
+      devModalOverlay.setAttribute('aria-hidden', 'false');
+      void devModalOverlay.offsetWidth;
+      devModalOverlay.classList.add('is-active');
+
+      if (footerDevTrigger) footerDevTrigger.setAttribute('aria-expanded', 'true');
+      if (footerBottomDevTrigger) footerBottomDevTrigger.setAttribute('aria-expanded', 'true');
+      document.querySelectorAll('.f-m-dev-trigger').forEach(btn => btn.setAttribute('aria-expanded', 'true'));
+
+      if (devModalCloseBtn) {
+        devModalCloseBtn.focus();
+      }
+    };
+
+    const closeDevModal = () => {
+      if (!isDevModalOpen || !devModalOverlay) return;
+      isDevModalOpen = false;
+      this.playRelayClick(620);
+      document.body.classList.remove('dev-modal-open');
+      devModalOverlay.classList.remove('is-active');
+
+      if (footerDevTrigger) footerDevTrigger.setAttribute('aria-expanded', 'false');
+      if (footerBottomDevTrigger) footerBottomDevTrigger.setAttribute('aria-expanded', 'false');
+      document.querySelectorAll('.f-m-dev-trigger').forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+
+      setTimeout(() => {
+        if (!isDevModalOpen && devModalOverlay) {
+          devModalOverlay.setAttribute('hidden', '');
+          devModalOverlay.setAttribute('aria-hidden', 'true');
+        }
+      }, 250);
+
+      if (devModalPreviousFocus && typeof devModalPreviousFocus.focus === 'function') {
+        devModalPreviousFocus.focus();
+      }
+    };
+
+    const toggleDevModal = (e) => {
+      if (e) e.preventDefault();
+      if (isDevModalOpen) {
+        closeDevModal();
+      } else {
+        openDevModal();
+      }
+    };
+
+    if (footerDevTrigger) {
+      footerDevTrigger.addEventListener('click', toggleDevModal);
+    }
+    if (footerBottomDevTrigger) {
+      footerBottomDevTrigger.addEventListener('click', toggleDevModal);
+    }
+    document.querySelectorAll('.f-m-dev-trigger').forEach(btn => {
+      btn.addEventListener('click', toggleDevModal);
+    });
+    if (devModalCloseBtn) {
+      devModalCloseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeDevModal();
+      });
+    }
+    if (devModalBackdrop) {
+      devModalBackdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeDevModal();
+      });
+    }
+    if (devModalOverlay) {
+      devModalOverlay.addEventListener('click', (e) => {
+        if (e.target === devModalOverlay) {
+          closeDevModal();
+        }
+      });
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isDevModalOpen) {
+        closeDevModal();
+      }
+    });
+
+    if (window.location.search.includes('dev=open') || window.location.hash === '#developers') {
+      openDevModal();
     }
 
     // Scroll state observer: updates active section, pointer angle, marker pulse & timeline progress
@@ -1652,9 +1763,13 @@ class OverclockApp {
       const activeSecEl = sectionElements[activeIdx];
       if (activeSecEl) {
         const secId = activeSecEl.id;
-        const fullLabel = sectionLabelsMap[secId] || secId.toUpperCase();
-        if (navStatusSec) {
-          navStatusSec.textContent = fullLabel;
+        const shortLabel = sectionLabelsMap[secId] || secId.toUpperCase();
+        if (navStatusSec && navStatusSec.textContent !== shortLabel) {
+          navStatusSec.style.opacity = '0.35';
+          navStatusSec.textContent = shortLabel;
+          setTimeout(() => {
+            if (navStatusSec) navStatusSec.style.opacity = '1';
+          }, 70);
         }
         this.currentActiveSection = secId;
       }
@@ -2024,8 +2139,7 @@ class OverclockApp {
     const closeBtn = document.getElementById('rules-modal-close-btn');
     const bottomCloseBtn = document.getElementById('btn-close-rules-dossier-bottom');
     const openBtns = [
-      document.getElementById('btn-open-rules-modal'),
-      document.getElementById('btn-open-rules-from-reg')
+      document.getElementById('btn-open-rules-modal')
     ].filter(Boolean);
 
     let lastFocusedElement = null;
@@ -2102,30 +2216,130 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     6. FOOTER CREW ROSTER INITIALIZER
-     Populates crew roles and sample-name placeholders from config.
+     5D. TVA ORGANISING CLUB ID CARDS FLIP & SCROLL REVEAL
+     - Cards initially face backwards (circuit schematic / dossier).
+     - As user scrolls into view, cards turn forward in staggered cascade
+       and keep floating with ambient 3D buoyant levitation.
+     - When scrolling back up, cards revert the same way (rotate back to 180deg).
+     - Manual click / tap / keyboard toggles inspection of either face.
   ========================================================== */
-  setupFooterCrew() {
-    const rosterContainer = document.getElementById('footer-crew-roster');
-    if (!rosterContainer || !Array.isArray(window.OVERCLOCK_CREW)) return;
+  setupTvaClubCards() {
+    const cards = document.querySelectorAll('.tva-club-card');
+    const clubsSection = document.getElementById('organising-clubs');
+    if (!cards.length || !clubsSection) return;
 
-    rosterContainer.innerHTML = '';
-    window.OVERCLOCK_CREW.forEach(member => {
-      const card = document.createElement('div');
-      card.className = 'crew-roster-card';
-      card.innerHTML = `
-        <div class="crew-role">${member.role}</div>
-        <div class="crew-name">${member.name}</div>
-        <div class="crew-phone">
-          <a href="${member.tel}" class="crew-phone-link" aria-label="Call ${member.name} at ${member.phone}">
-            <span class="crew-phone-icon" aria-hidden="true">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </span>
-            <span class="crew-phone-number">${member.phone}</span>
-          </a>
-        </div>
-      `;
-      rosterContainer.appendChild(card);
+    let isRevealedForward = false;
+    let ticking = false;
+
+    const setCardsOrientation = (forward) => {
+      if (forward === isRevealedForward) return;
+      isRevealedForward = forward;
+
+      cards.forEach((card) => {
+        // Clear manual flip overrides on transition
+        card.classList.remove('is-user-flipped');
+        card.classList.remove('is-flipped');
+
+        if (forward) {
+          card.classList.add('is-forward');
+          card.classList.add('is-floating');
+          card.setAttribute('aria-pressed', 'false');
+          const clubName = card.getAttribute('data-club-name') || 'Organising Club';
+          card.setAttribute('aria-label', `${clubName} ID card (front face shown). Click, tap or press Enter to view details.`);
+        } else {
+          card.classList.remove('is-forward');
+          card.classList.remove('is-floating');
+          card.setAttribute('aria-pressed', 'false');
+          const clubName = card.getAttribute('data-club-name') || 'Organising Club';
+          card.setAttribute('aria-label', `${clubName} ID card (back face shown). Click, tap or press Enter to flip to front.`);
+        }
+      });
+    };
+
+    const checkOrientation = () => {
+      const rect = clubsSection.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+
+      // Reveal forward when section enters reading range
+      if (rect.top <= vh * 0.82 && rect.bottom >= -80) {
+        setCardsOrientation(true);
+      } else if (rect.top > vh * 0.88) {
+        // Revert back when user scrolls back up towards hero
+        setCardsOrientation(false);
+      }
+    };
+
+    const onScrollOrResize = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          checkOrientation();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+    // Initial check on load
+    checkOrientation();
+
+    // Interactive flip handlers
+    cards.forEach((card) => {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isTouchScrolling = false;
+
+      const flipCard = () => {
+        const isFlipped = card.classList.toggle('is-user-flipped');
+        const isCurrentlyFront = card.classList.contains('is-forward') ? !isFlipped : isFlipped;
+        card.setAttribute('aria-pressed', String(!isCurrentlyFront));
+        const clubName = card.getAttribute('data-club-name') || 'Organising Club';
+        card.setAttribute(
+          'aria-label',
+          isCurrentlyFront
+            ? `${clubName} ID card (front face shown). Click, tap or press Enter to view details.`
+            : `${clubName} ID card (back face shown). Click, tap or press Enter to flip to front.`
+        );
+        this.playRelayClick(820);
+      };
+
+      // Primary click / tap event
+      card.addEventListener('click', () => {
+        if (isTouchScrolling) {
+          isTouchScrolling = false;
+          return;
+        }
+        flipCard();
+      });
+
+      // Touch handlers to prevent accidental flip during mobile page scroll
+      card.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isTouchScrolling = false;
+        }
+      }, { passive: true });
+
+      card.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
+          const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+          if (deltaX > 8 || deltaY > 8) {
+            isTouchScrolling = true;
+          }
+        }
+      }, { passive: true });
+
+      // Keyboard activation: Enter or Space
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          flipCard();
+        }
+      });
     });
   }
 
@@ -2352,8 +2566,8 @@ class OverclockApp {
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
           submitBtn.textContent = 'LOGGED TO ARCHIVE [RECORDED]';
-          submitBtn.style.background = '#7CFF9B';
-          submitBtn.style.color = '#14100C';
+          submitBtn.style.background = '#7E9A5B';
+          submitBtn.style.color = '#14110D';
         }
         this.playStampThunk();
         setTimeout(() => {
@@ -2448,19 +2662,7 @@ class OverclockApp {
   }
 
   setupReplayIntro() {
-    document.addEventListener('click', (e) => {
-      const replayBtn = e.target.closest('#btn-replay-intro, .btn-replay-intro, [data-action="replay-intro"]');
-      if (replayBtn) {
-        e.preventDefault();
-        try { this.playRelayClick(1200); } catch (err) {}
-        if (window.TVATemporalIntro && typeof window.TVATemporalIntro.replay === 'function') {
-          window.TVATemporalIntro.replay();
-        } else {
-          sessionStorage.removeItem('oc2027_temporal_intro_played');
-          window.location.href = window.location.pathname + '?intro=replay';
-        }
-      }
-    });
+    // Replay intro control removed per header refinement directive
   }
 
   /* ==========================================================
@@ -2564,6 +2766,10 @@ class OverclockApp {
     });
 
     updatePosition();
+    if (window.location.search.includes('modal=open') || window.location.search.includes('mm=open')) {
+      openTerminal();
+      setTimeout(openTerminal, 100);
+    }
     window.addEventListener('resize', updatePosition, { passive: true });
     window.addEventListener('orientationchange', () => {
       setTimeout(updatePosition, 100);
@@ -2621,7 +2827,15 @@ class OverclockApp {
   }
 }
 
-// Initialize on DOM load
+// Initialize on DOM load or immediately if already parsed
 window.addEventListener('DOMContentLoaded', () => {
-  window.overclockApp = new OverclockApp();
+  if (!window.overclockApp) {
+    window.overclockApp = new OverclockApp();
+  }
 });
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (!window.overclockApp) {
+    window.overclockApp = new OverclockApp();
+  }
+}

@@ -30,13 +30,13 @@ html.lenis, html.lenis body {
   position: relative;
   width: 100%;
   height: 220px;
-  background: radial-gradient(circle at center, rgba(32, 22, 14, 0.95) 0%, rgba(12, 8, 5, 0.98) 100%);
-  border: 1px solid rgba(217, 169, 58, 0.4);
+  background: radial-gradient(circle at center, rgba(38, 32, 26, 0.95) 0%, rgba(20, 17, 13, 0.98) 100%);
+  border: 1px solid rgba(184, 146, 58, 0.4);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 
     inset 0 0 25px rgba(0, 0, 0, 0.95),
-    0 0 20px rgba(255, 140, 0, 0.15);
+    0 0 20px rgba(232, 135, 43, 0.15);
   cursor: grab;
   user-select: none;
   touch-action: none;
@@ -65,7 +65,7 @@ html.lenis, html.lenis body {
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(217, 169, 58, 0.25) 50%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(184, 146, 58, 0.25) 50%, transparent);
 }
 
 .crosshair-axis.v {
@@ -74,7 +74,7 @@ html.lenis, html.lenis body {
   top: 10%;
   bottom: 10%;
   width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(217, 169, 58, 0.25) 50%, transparent);
+  background: linear-gradient(180deg, transparent, rgba(184, 146, 58, 0.25) 50%, transparent);
 }
 
 .crosshair-ring {
@@ -85,7 +85,7 @@ html.lenis, html.lenis body {
   height: 140px;
   margin-top: -70px;
   margin-left: -70px;
-  border: 1px dashed rgba(217, 169, 58, 0.2);
+  border: 1px dashed rgba(184, 146, 58, 0.2);
   border-radius: 50%;
   animation: holoRingRotate 20s linear infinite;
 }
@@ -105,11 +105,11 @@ html.lenis, html.lenis body {
   font-family: var(--font-mono, monospace);
   font-size: 0.65rem;
   letter-spacing: 0.08em;
-  color: #d9a93a;
-  background: rgba(14, 10, 7, 0.75);
+  color: var(--brass);
+  background: rgba(20, 17, 13, 0.75);
   padding: 3px 8px;
   border-radius: 4px;
-  border: 1px solid rgba(217, 169, 58, 0.25);
+  border: 1px solid rgba(184, 146, 58, 0.25);
   pointer-events: none;
 }
 
@@ -117,8 +117,8 @@ html.lenis, html.lenis body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ff8c00;
-  box-shadow: 0 0 6px #ff8c00;
+  background: var(--tva-orange);
+  box-shadow: 0 0 6px var(--tva-orange);
   animation: consolePip 1.5s infinite;
 }
 
@@ -143,10 +143,10 @@ html.lenis, html.lenis body {
   align-items: baseline;
   gap: clamp(12px, 2vw, 28px);
   text-transform: uppercase;
-  background: linear-gradient(180deg, #ffffff 0%, #ffe6cc 45%, #ff8c00 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #ffe6cc 45%, var(--tva-orange) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 35px rgba(255, 140, 0, 0.65));
+  filter: drop-shadow(0 0 35px rgba(232, 135, 43, 0.65));
   margin: 0;
 }
 
@@ -155,13 +155,13 @@ html.lenis, html.lenis body {
   font-size: clamp(1.8rem, 3.8vw, 3.6rem);
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #ffaa33;
-  -webkit-text-fill-color: #ffaa33;
-  border: 2px solid #d9a93a;
+  color: var(--tva-orange);
+  -webkit-text-fill-color: var(--tva-orange);
+  border: 2px solid var(--brass);
   padding: 4px 16px;
   border-radius: 6px;
-  background: rgba(30, 20, 14, 0.75);
-  box-shadow: 0 0 20px rgba(255, 140, 0, 0.45);
+  background: rgba(38, 32, 26, 0.75);
+  box-shadow: 0 0 20px rgba(232, 135, 43, 0.45);
 }
 
 .hero-subline-bar {
@@ -176,7 +176,7 @@ html.lenis, html.lenis body {
   font-family: var(--font-mono, monospace);
   font-size: clamp(0.9rem, 1.8vw, 1.3rem);
   letter-spacing: 0.14em;
-  color: #f7eedd;
+  color: var(--paper);
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -185,8 +185,8 @@ html.lenis, html.lenis body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ff8c00;
-  box-shadow: 0 0 8px #ff8c00;
+  background: var(--tva-orange);
+  box-shadow: 0 0 8px var(--tva-orange);
 }
 
 /* 4. Frosted Glass HUD Floating Panels */
@@ -209,13 +209,13 @@ html.lenis, html.lenis body {
 
 /* Overclock Frequency Telemetry Console in Hero */
 .hud-telemetry-console {
-  background: rgba(20, 14, 9, 0.78);
-  border: 1px solid rgba(217, 169, 58, 0.45);
+  background: rgba(28, 24, 19, 0.78);
+  border: 1px solid rgba(184, 146, 58, 0.45);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 
     0 16px 45px rgba(0, 0, 0, 0.75),
-    0 0 30px rgba(255, 140, 0, 0.18),
+    0 0 30px rgba(232, 135, 43, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -228,7 +228,7 @@ html.lenis, html.lenis body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(217, 169, 58, 0.25);
+  border-bottom: 1px solid rgba(184, 146, 58, 0.25);
   padding-bottom: 10px;
 }
 
@@ -240,21 +240,21 @@ html.lenis, html.lenis body {
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #ffaa33;
+  color: var(--tva-orange);
 }
 
 .console-led-pip {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #39ff14;
-  box-shadow: 0 0 10px #39ff14;
+  background: var(--crt-teal);
+  box-shadow: 0 0 10px var(--crt-teal);
   animation: consolePip 2s infinite ease-in-out;
 }
 
 .console-led-pip.overclocked {
-  background: #ff3300;
-  box-shadow: 0 0 16px #ff3300;
+  background: var(--brick);
+  box-shadow: 0 0 16px var(--brick);
 }
 
 @keyframes consolePip {
@@ -275,8 +275,8 @@ html.lenis, html.lenis body {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  background: rgba(14, 10, 7, 0.88);
-  border: 1px solid rgba(217, 169, 58, 0.3);
+  background: rgba(20, 17, 13, 0.88);
+  border: 1px solid rgba(184, 146, 58, 0.3);
   border-radius: 8px;
   padding: 8px 12px;
 }
@@ -284,7 +284,7 @@ html.lenis, html.lenis body {
 .stepper-label {
   font-family: var(--font-mono, monospace);
   font-size: 0.72rem;
-  color: #d9a93a;
+  color: var(--brass);
   letter-spacing: 0.1em;
   font-weight: 700;
 }
@@ -296,9 +296,9 @@ html.lenis, html.lenis body {
 }
 
 .hud-freq-btn {
-  background: rgba(35, 24, 16, 0.85);
-  border: 1px solid rgba(217, 169, 58, 0.35);
-  color: #d8c2aa;
+  background: rgba(38, 32, 26, 0.85);
+  border: 1px solid rgba(184, 146, 58, 0.35);
+  color: var(--paper-muted);
   padding: 6px 12px;
   border-radius: 4px;
   font-family: var(--font-mono, monospace);
@@ -309,22 +309,22 @@ html.lenis, html.lenis body {
 }
 
 .hud-freq-btn:hover {
-  background: rgba(255, 140, 0, 0.25);
-  border-color: #ffaa33;
+  background: rgba(232, 135, 43, 0.25);
+  border-color: var(--tva-orange);
   color: #fff;
   transform: translateY(-1px);
 }
 
 .hud-freq-btn.active {
-  background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);
-  border-color: #ffd070;
+  background: linear-gradient(135deg, var(--tva-orange) 0%, var(--tva-orange-hot) 100%);
+  border-color: var(--paper);
   color: #fff;
-  box-shadow: 0 0 16px rgba(255, 140, 0, 0.75);
+  box-shadow: 0 0 16px rgba(232, 135, 43, 0.75);
 }
 
 .hud-freq-btn.active.extreme {
-  background: linear-gradient(135deg, #ff3300 0%, #ff0055 100%);
-  box-shadow: 0 0 22px rgba(255, 50, 0, 0.95);
+  background: linear-gradient(135deg, var(--brick) 0%, var(--brick) 100%);
+  box-shadow: 0 0 22px rgba(196, 69, 45, 0.95);
   animation: extremeFlicker 0.4s infinite alternate;
 }
 
@@ -333,8 +333,8 @@ html.lenis, html.lenis body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  background: rgba(12, 8, 5, 0.85);
-  border: 1px solid rgba(217, 169, 58, 0.22);
+  background: rgba(20, 17, 13, 0.85);
+  border: 1px solid rgba(184, 146, 58, 0.22);
   border-radius: 8px;
   padding: 10px 14px;
 }
@@ -347,7 +347,7 @@ html.lenis, html.lenis body {
 .diag-stat-k {
   font-family: var(--font-mono, monospace);
   font-size: 0.60rem;
-  color: rgba(217, 169, 58, 0.75);
+  color: rgba(184, 146, 58, 0.75);
   letter-spacing: 0.08em;
 }
 
@@ -360,7 +360,7 @@ html.lenis, html.lenis body {
 }
 
 .diag-stat-v.highlight {
-  color: #ffaa33;
+  color: var(--tva-orange);
   text-shadow: 0 0 8px rgba(255, 170, 51, 0.6);
 }
 
@@ -376,9 +376,9 @@ html.lenis, html.lenis body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(30, 20, 14, 0.85);
-  border: 1px solid #c88a35;
-  color: #d9a93a;
+  background: rgba(38, 32, 26, 0.85);
+  border: 1px solid var(--brass);
+  color: var(--brass);
   padding: 10px 14px;
   border-radius: 6px;
   font-family: var(--font-mono, monospace);
@@ -390,10 +390,10 @@ html.lenis, html.lenis body {
 }
 
 .portal-trigger-btn:hover {
-  background: rgba(255, 140, 0, 0.25);
-  border-color: #ffaa33;
+  background: rgba(232, 135, 43, 0.25);
+  border-color: var(--tva-orange);
   color: #fff;
-  box-shadow: 0 0 16px rgba(255, 140, 0, 0.45);
+  box-shadow: 0 0 16px rgba(232, 135, 43, 0.45);
   transform: translateY(-1px);
 }
 
@@ -411,16 +411,16 @@ html.lenis, html.lenis body {
 .timeline-card,
 .prize-card,
 .faq-accordion-item {
-  background: rgba(20, 14, 10, 0.78) !important;
+  background: rgba(28, 24, 19, 0.78) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border-color: rgba(217, 169, 58, 0.35) !important;
+  border-color: rgba(184, 146, 58, 0.35) !important;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65) !important;
 }
 
 .domain-slot-card:hover {
-  border-color: rgba(255, 140, 0, 0.8) !important;
-  box-shadow: 0 18px 45px rgba(255, 140, 0, 0.3) !important;
+  border-color: rgba(232, 135, 43, 0.8) !important;
+  box-shadow: 0 18px 45px rgba(232, 135, 43, 0.3) !important;
 }
 
 /* Mobile Adjustments */

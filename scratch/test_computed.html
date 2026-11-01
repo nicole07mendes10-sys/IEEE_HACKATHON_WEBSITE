@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<iframe id="test" src="http://localhost:3000/developers.html" width="1440" height="900" style="position:absolute;left:-9999px;"></iframe>
+<div id="output">Running...</div>
+<script>
+window.addEventListener('message', (e) => {
+  document.getElementById('output').textContent = e.data;
+});
+const iframe = document.getElementById('test');
+iframe.onload = () => {
+  try {
+    const doc = iframe.contentDocument;
+    const header = doc.querySelector('.developers-header-wrap');
+    const h1 = doc.querySelector('.developers-main-heading');
+    const intro = doc.querySelector('.developers-intro');
+    const cs = doc.defaultView.getComputedStyle(header);
+    const h1cs = doc.defaultView.getComputedStyle(h1);
+    const rect = header.getBoundingClientRect();
+    const info = `HEADER: display=${cs.display}, opacity=${cs.opacity}, visibility=${cs.visibility}, height=${rect.height}, top=${rect.top}\nH1: text="${h1 ? h1.textContent : 'NONE'}", color=${h1cs.color}, opacity=${h1cs.opacity}, display=${h1cs.display}\nINTRO: text="${intro ? intro.textContent.trim() : 'NONE'}"`;
+    document.getElementById('output').textContent = info;
+  } catch(err) {
+    document.getElementById('output').textContent = 'ERROR: ' + err.message;
+  }
+};
+</script>
+</body>
+</html>
