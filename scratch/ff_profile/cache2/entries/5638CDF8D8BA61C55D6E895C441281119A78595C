@@ -52,7 +52,7 @@
     }
 
     const searchParams = new URLSearchParams(window.location.search);
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || searchParams.has('noboot') || searchParams.has('skipboot')) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || searchParams.has('noboot') || searchParams.has('skipboot') || searchParams.has('nointro') || searchParams.has('skipintro')) {
       document.documentElement.classList.add('skip-boot');
     }
     const onlySec = searchParams.get('only');
@@ -64,6 +64,26 @@
           });
           const grid = document.querySelector('.domain-slots-grid');
           if (grid) grid.style.display = 'none';
+        } else if (onlySec === 'clubs') {
+          document.querySelectorAll('main > section').forEach(sec => {
+            if (sec.id !== 'about') sec.style.display = 'none';
+          });
+          const dossier = document.querySelector('#about .case-file-dossier');
+          if (dossier) dossier.style.display = 'none';
+          const header = document.querySelector('#about .section-header-wrap');
+          if (header) header.style.display = 'none';
+          const stamp = document.querySelector('#about .section-rubber-stamp');
+          if (stamp) stamp.style.display = 'none';
+          if (searchParams.has('forward') || searchParams.get('state') === 'forward') {
+            document.querySelectorAll('.tva-club-card').forEach(c => {
+              c.classList.add('is-forward');
+              c.classList.add('is-floating');
+            });
+          } else if (searchParams.has('flip') || searchParams.get('state') === 'back') {
+            document.querySelectorAll('.tva-club-card').forEach(c => {
+              c.classList.remove('is-forward');
+            });
+          }
         } else {
           document.querySelectorAll('main > section').forEach(sec => {
             if (sec.id !== onlySec) sec.style.display = 'none';
@@ -105,7 +125,10 @@
 
       <div class="tva-hud-controls">
         <button id="tva-intro-audio-btn" class="tva-intro-audio-btn" aria-label="Toggle Sound" title="Toggle Sound (Audio Drone)">
-          <span>🔊</span>
+          <svg class="audio-toggle-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
         </button>
       </div>
     </div>
@@ -199,8 +222,8 @@
       <div class="corner-dial-stage">
         <!-- Static Precision Outer Rings & Engraved Bezel -->
         <svg class="corner-dial-svg" viewBox="0 0 200 200" aria-hidden="true">
-          <!-- Solid Opaque Base Plate Fill (#17120F / #1B1510) -->
-          <circle cx="100" cy="100" r="99" class="dial-svg-base-plate" fill="#17120F" />
+          <!-- Solid Opaque Base Plate Fill (var(--bg-surface)) -->
+          <circle cx="100" cy="100" r="99" class="dial-svg-base-plate" fill="var(--bg-surface)" />
           <!-- Concentric Precision Dial Circles -->
           <circle cx="100" cy="100" r="96" class="dial-svg-ring outer" />
           <circle cx="100" cy="100" r="82" class="dial-svg-ring mid-dashed" />
@@ -408,12 +431,6 @@
               </a>
             </li>
           </ul>
-          <div class="menu-replay-action-wrap" style="padding: 16px 8px 8px 8px; border-top: 1px dashed rgba(232, 137, 43, 0.25); margin-top: 12px;">
-            <button type="button" class="btn-replay-intro menu-replay-btn" data-action="replay-intro" aria-label="Replay 3D Cinematic Intro">
-              <span class="replay-icon">⏱</span>
-              <span>REPLAY 3D CINEMATIC INTRO</span>
-            </button>
-          </div>
         </div>
       </div>
     </nav>
@@ -435,7 +452,7 @@
         </div>
       </a>
 
-      <!-- Current Timeline Status Indicator, Unstop Partner Badge, Audio Toggle & Replay Intro Button -->
+      <!-- Current Timeline Status Indicator, Unstop Wordmark & Audio Toggle Button -->
       <div class="nav-actions-group">
         <a
           href="https://unstop.com"
@@ -443,27 +460,20 @@
           rel="noopener noreferrer"
           class="header-unstop-link"
           id="header-unstop-link"
-          aria-label="Register on Unstop Platform"
-          title="Unstop — Official Hackathon Platform Partner (Click to Register)"
+          aria-label="Unstop Platform"
+          title="Unstop — Official Platform Partner"
         >
-          <span class="unstop-logo-chip" aria-hidden="true">
-            <img src="images/unstop-logo.png" alt="Unstop" class="header-unstop-logo">
-          </span>
-          <span class="unstop-btn-text">UNSTOP</span>
-          <span class="unstop-header-badge-tag">OFFICIAL</span>
+          <img src="images/unstop-logo.png" alt="Unstop" class="header-unstop-wordmark">
         </a>
-        <button id="audio-toggle-btn" class="nav-audio-btn" type="button" aria-label="Cycle Sound Profile" title="Acoustic Profile: TVA Industrial Relay (Click to Switch Sound Profile)">
-          <span class="audio-icon">⚡</span>
-          <span class="audio-label">SOUND: TVA RELAY</span>
+        <button id="audio-toggle-btn" class="nav-audio-btn muted" type="button" aria-label="Turn sound on" title="Turn sound on" aria-pressed="false">
+          <svg class="audio-toggle-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+            <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+            <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+          </svg>
         </button>
-        <button id="btn-replay-intro" class="nav-replay-btn btn-replay-intro" data-action="replay-intro" type="button" aria-label="Replay 3D Cinematic Intro" title="Replay TVA Temporal Entry Intro">
-          <span class="replay-icon">⏱</span>
-          <span class="replay-label">REPLAY INTRO</span>
-        </button>
-        <div class="nav-timeline-status" aria-hidden="true">
-          <span class="nav-status-pip"></span>
-          <span class="nav-status-label">TEMPORAL LOG</span>
-          <span class="nav-status-sep">//</span>
+        <div class="nav-timeline-status" aria-label="Current section indicator">
+          <span class="nav-status-pip" aria-hidden="true"></span>
           <span class="nav-status-sec" id="nav-current-section-name">HOME</span>
         </div>
       </div>
@@ -491,8 +501,6 @@
       </div>
 
       <div class="hero-content-wrap">
-        <div class="bureau-tag amber">EESA · ISLE · IEEE STUDENT BRANCH, FCRIT • TEMPORAL PROTOCOL</div>
-
         <div class="hero-title-container">
           <!-- Split-Flap Assembling Title -->
           <div class="split-flap-title" aria-label="OVERCLOCK">
@@ -507,14 +515,14 @@
             <div class="flap-char-box">K</div>
           </div>
           <div class="hero-subhead">2027 — HARDWARE HACKATHON</div>
-          <p class="hero-tagline">A platform for emerging builders to explore technical challenges, develop ideas, and engineer solutions.</p>
+          <p class="hero-tagline">Bring your engineering ideas to life through 24 hours of hands-on hardware design and prototyping.</p>
         </div>
 
         <!-- Typed Office Form Strip -->
         <div class="typed-form-strip">
           <div class="form-field-unit organiser-field-unit">
-            <span class="field-label">ORGANISING CLUBS</span>
-            <span class="field-value">EESA · ISLE · IEEE STUDENT BRANCH, FCRIT</span>
+            <span class="field-label">ORGANISER</span>
+            <span class="field-value">EESA × ISLE × IEEE STUDENT BRANCH, FCRIT</span>
           </div>
           <div class="form-field-unit">
             <span class="field-label">REGISTRATION OPENS</span>
@@ -527,10 +535,6 @@
           <div class="form-field-unit">
             <span class="field-label">FORMAT</span>
             <span class="field-value">24-Hour Physical Prototyping</span>
-          </div>
-          <div class="form-field-unit prize-field-unit">
-            <span class="field-label">CASH PRIZE POOL</span>
-            <span class="field-value prize-highlight-val">₹50,000 CASH PRIZE</span>
           </div>
         </div>
 
@@ -561,16 +565,6 @@
             <span>REGISTER NOW</span>
             <span class="btn-cta-arrow" aria-hidden="true">↗</span>
           </a>
-          <div class="hero-prize-pill" title="Total Cash Prize Pool for OVERCLOCK 2027">
-            <span class="prize-pill-pip" aria-hidden="true"></span>
-            <span class="prize-pill-text">₹50,000 CASH PRIZE POOL</span>
-          </div>
-        </div>
-
-        <!-- Compact Information Marker -->
-        <div class="hero-registration-pill" style="margin-top: 20px; display: inline-flex; align-items: center; gap: 10px; background: rgba(22, 17, 13, 0.88); border: 1px solid var(--amber-glow); padding: 8px 18px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.08em; color: var(--amber-bright); box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--amber-bright); box-shadow: 0 0 8px var(--amber-glow);"></span>
-          <span>REGISTRATION OPENS // 01 NOVEMBER 2026</span>
         </div>
       </div>
     </section>
@@ -585,47 +579,6 @@
         <div class="bureau-tag">EVENT BRIEFING // LEVEL 02</div>
         <h2 class="section-main-heading">OVERCLOCK at a Glance</h2>
         <p class="section-subtext">OVERCLOCK 2027 is a 24-hour on-campus physical hardware engineering hackathon jointly organised by EESA, ISLE, and the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi. Emerging builders are invited to tackle rigorous technical challenges, engineer working circuits, and deploy physical systems under relentless clock cycles.</p>
-      </div>
-
-      <!-- Operational Status Panel -->
-      <div class="operational-status-panel">
-        <div class="panel-header-bar">
-          <div class="panel-header-title">
-            <span class="status-indicator-lamp"></span>
-            <span>TVA STATUS READOUT // OPERATIONAL PARAMETERS</span>
-          </div>
-          <div class="panel-header-badge">STABLE TIMELINE</div>
-        </div>
-        <div class="status-readout-grid">
-          <div class="status-cell">
-            <span class="status-k">EVENT</span>
-            <span class="status-v highlight">OVERCLOCK 2027</span>
-          </div>
-          <div class="status-cell">
-            <span class="status-k">ORGANISING CLUBS</span>
-            <span class="status-v">EESA · ISLE · IEEE SB FCRIT</span>
-          </div>
-          <div class="status-cell">
-            <span class="status-k">REGISTRATION OPENS</span>
-            <span class="status-v highlight">01 NOVEMBER 2026</span>
-          </div>
-          <div class="status-cell">
-            <span class="status-k">INITIAL PROBLEM STATEMENTS</span>
-            <span class="status-v">01 DECEMBER 2026</span>
-          </div>
-          <div class="status-cell">
-            <span class="status-k">PPT SUBMISSION</span>
-            <span class="status-v">10–15 DECEMBER 2026</span>
-          </div>
-          <div class="status-cell">
-            <span class="status-k">SHORTLIST ANNOUNCEMENT</span>
-            <span class="status-v highlight">22 DECEMBER 2026</span>
-          </div>
-          <div class="status-cell span-full">
-            <span class="status-k">FINAL PROBLEM STATEMENT</span>
-            <span class="status-v highlight-amber">22 JANUARY 2027</span>
-          </div>
-        </div>
       </div>
 
       <!-- Manila Case File Dossier (4 Information Cards) -->
@@ -679,38 +632,593 @@
 
         <div class="clubs-cards-grid">
           <!-- Card 1: EESA -->
-          <div class="club-profile-card">
-            <div class="club-logo-box">
-              <img src="images/eesa-logo.jpg" alt="EESA — Electrical Engineering Students Association Logo" class="club-logo-img">
-            </div>
-            <div class="club-details">
-              <h4 class="club-acronym">EESA</h4>
-              <div class="club-fullname">Electrical Engineering Students Association</div>
-              <p class="club-description">A student community centred on electrical engineering, technical learning, and student collaboration.</p>
+          <div class="tva-card tva-club-card" id="tva-card-eesa" role="button" tabindex="0" aria-pressed="false" data-club-name="EESA" aria-label="EESA ID card. Click, tap or press Enter to view details.">
+            <div class="tva-card__inner">
+              <!-- FRONT -->
+              <div class="tva-card__face tva-card__front">
+                <svg viewBox="0 0 340 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="tva-cu-eesa" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#BD7546"/>
+                      <stop offset=".5" stop-color="#A85F37"/>
+                      <stop offset="1" stop-color="#8D4B2B"/>
+                    </linearGradient>
+                    <linearGradient id="tva-sheen-eesa" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                      <stop offset=".35" stop-color="#fff" stop-opacity=".08"/>
+                      <stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="tva-win-eesa" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#241912"/>
+                      <stop offset="1" stop-color="#120D0A"/>
+                    </linearGradient>
+                    <filter id="tva-grain-eesa" x="0" y="0" width="100%" height="100%">
+                      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/>
+                      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 -.18"/>
+                    </filter>
+                  </defs>
+
+                  <!-- copper face -->
+                  <rect width="340" height="540" rx="20" fill="url(#tva-cu-eesa)"/>
+                  <rect width="340" height="540" rx="20" filter="url(#tva-grain-eesa)" opacity=".5"/>
+                  <rect width="340" height="540" rx="20" fill="url(#tva-sheen-eesa)"/>
+                  <rect x="3" y="3" width="334" height="534" rx="18" fill="none" stroke="#0F0B08" stroke-opacity=".55" stroke-width="2"/>
+
+                  <!-- side deco rails -->
+                  <g fill="#0F0B08">
+                    <path d="M18,46 H30 V496 H18 Z"/>
+                    <path d="M310,46 H322 V496 H310 Z"/>
+                    <path d="M96,3 H106 V28 H96 Z"/>
+                    <path d="M234,3 H244 V28 H234 Z"/>
+                  </g>
+                  <g stroke="#0F0B08" stroke-width="1.6" fill="none">
+                    <path d="M38,60 V482"/><path d="M302,60 V482"/>
+                    <path d="M18,38 H30 M310,38 H322 M18,504 H30 M310,504 H322"/>
+                  </g>
+
+                  <!-- name plaque -->
+                  <path d="M62,26 H278 V56 H62 Z" fill="#0F0B08"/>
+                  <rect x="66" y="30" width="208" height="22" fill="none" stroke="#A85F37" stroke-opacity=".6" stroke-width=".8"/>
+                  <text x="170" y="45.5" text-anchor="middle" fill="#D48B57"
+                        font-family="Futura, 'Century Gothic', 'Barlow Condensed', sans-serif"
+                        font-weight="700" font-size="11.6" letter-spacing="2">OVERCLOCK 2027</text>
+
+                  <!-- label band: ORGANISING CLUB -->
+                  <path d="M48,72 H292 M48,102 H292" stroke="#0F0B08" stroke-width="1.5"/>
+                  <text x="170" y="92" text-anchor="middle" fill="#0F0B08" fill-opacity=".9"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-weight="700" font-size="11.5" letter-spacing="2.2">ORGANISING CLUB</text>
+
+                  <!-- logo tab arch -->
+                  <path d="M52,246 V138 Q52,116 80,116 H260 Q288,116 288,138 V246" fill="none" stroke="#0F0B08" stroke-width="4"/>
+                  <path d="M60,246 V140 Q60,122 82,122 H258 Q280,122 280,140 V246" fill="none" stroke="#0F0B08" stroke-width="1.4"/>
+
+                  <!-- Prominent Club Acronym -->
+                  <text x="170" y="196" text-anchor="middle" fill="#0F0B08"
+                        font-family="'Barlow Condensed', 'Bebas Neue', sans-serif"
+                        font-size="48" font-weight="900" letter-spacing="4">EESA</text>
+                  <text x="170" y="222" text-anchor="middle" fill="#0F0B08" fill-opacity=".75"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-size="9.5" font-weight="600" letter-spacing="1.5">FCRIT CHAPTER</text>
+
+                  <!-- compact photo housing (fitted closely around the logo square) -->
+                  <path d="M48,248 Q48,236 68,236 H272 Q292,236 292,248 V430 Q292,442 272,442 H68 Q48,442 48,430 Z" fill="#0F0B08"/>
+                  <path d="M55,250 Q55,242 70,242 H270 Q285,242 285,250 V428 Q285,436 270,436 H70 Q55,436 55,428 Z"
+                        fill="none" stroke="#A85F37" stroke-opacity=".55" stroke-width=".9"/>
+
+                  <!-- central square photo window (172x172 1:1 square) -->
+                  <rect x="84" y="252" width="172" height="172" rx="8" fill="url(#tva-win-eesa)"/>
+                  <rect x="84" y="252" width="172" height="172" rx="8" fill="none" stroke="#A85F37" stroke-width="2.2"/>
+
+                  <!-- zigzag strips beside the window -->
+                  <g fill="#A85F37">
+                    <path d="M60,282 L69,268 L78,282 Z M60,304 L69,290 L78,304 Z M60,326 L69,312 L78,326 Z M60,348 L69,334 L78,348 Z M60,370 L69,356 L78,370 Z M60,392 L69,378 L78,392 Z M60,414 L69,400 L78,414 Z"/>
+                    <path d="M262,282 L271,268 L280,282 Z M262,304 L271,290 L280,304 Z M262,326 L271,312 L280,326 Z M262,348 L271,334 L280,348 Z M262,370 L271,356 L280,370 Z M262,392 L271,378 L280,392 Z M262,414 L271,400 L280,414 Z"/>
+                  </g>
+
+                  <!-- bottom label band & event mark -->
+                  <path d="M48,460 H292 M48,488 H292" stroke="#0F0B08" stroke-width="1.5"/>
+                  <rect x="52" y="463" width="236" height="22" fill="#0F0B08" rx="3"/>
+                  <rect x="56" y="466" width="228" height="16" fill="none" stroke="#A85F37" stroke-opacity=".4" stroke-width=".8"/>
+                  <text x="170" y="478" text-anchor="middle" fill="#D48B57"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-size="10" font-weight="700" letter-spacing="2.2">ORGANISING CLUB</text>
+
+                  <text x="170" y="515" text-anchor="middle" fill="#0F0B08"
+                        font-family="Futura, 'Century Gothic', 'Barlow Condensed', sans-serif"
+                        font-size="12" font-weight="800" letter-spacing="2.4">OVERCLOCK 2027</text>
+                  <path d="M148,525 H192" stroke="#0F0B08" stroke-width="1.2"/>
+                </svg>
+
+                <!-- Club Logo Container (Sits over photo window) -->
+                <div class="tva-photo">
+                  <img src="images/eesa-logo.jpg" alt="EESA — Electrical Engineering Students Association Logo" class="tva-club-logo">
+                </div>
+              </div>
+
+              <!-- BACK -->
+              <div class="tva-card__face tva-card__back">
+                <svg viewBox="0 0 340 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="tva-sheen-b-eesa" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                      <stop offset=".4" stop-color="#fff" stop-opacity=".04"/>
+                      <stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="340" height="540" rx="20" fill="#0F0B08"/>
+                  <rect width="340" height="540" rx="20" fill="url(#tva-sheen-b-eesa)"/>
+
+                  <!-- copper frame -->
+                  <rect x="8" y="8" width="324" height="524" rx="14" fill="none" stroke="#A85F37" stroke-width="3.2"/>
+                  <rect x="19" y="19" width="302" height="502" rx="8" fill="none" stroke="#A85F37" stroke-opacity=".5" stroke-width="1"/>
+
+                  <!-- corner and top deco -->
+                  <g fill="none" stroke="#A85F37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M24,92 L92,24 M34,102 L102,34"/>
+                    <path d="M316,92 L248,24 M306,102 L238,34"/>
+                    <path d="M104,24 L126,60 H214 L236,24" stroke-width="1.2"/>
+                    <path d="M126,60 L134,72 H206 L214,60" stroke-opacity=".5" stroke-width="1"/>
+                    <path d="M26,452 L26,512 H86 M36,462 V502 H76"/>
+                    <path d="M314,452 L314,512 H254 M304,462 V502 H264"/>
+                    <path d="M26,452 L62,488 M314,452 L278,488" stroke-opacity=".5"/>
+                  </g>
+
+                  <!-- circuit tree (watermark depth) -->
+                  <g fill="none" stroke="#A85F37" stroke-linecap="round" stroke-linejoin="round" opacity=".28">
+                    <path d="M170.0,398.0 L170.0,352.0" stroke-width="4.80"/>
+                    <path d="M170.0,352.0 L170.0,278.0" stroke-width="4.80"/>
+                    <path d="M170.0,278.0 L146.2,226.2" stroke-width="3.26"/>
+                    <path d="M146.2,226.2 L111.5,199.4" stroke-width="2.22"/>
+                    <path d="M128.8,212.8 L112.1,212.8" stroke-width="1.20"/>
+                    <path d="M111.5,199.4 L78.8,190.8" stroke-width="1.51"/>
+                    <path d="M78.8,190.8 L53.8,198.1" stroke-width="1.10"/>
+                    <path d="M53.8,198.1 L39.1,211.7" stroke-width="1.10"/>
+                    <path d="M53.8,198.1 L34.4,193.0" stroke-width="1.10"/>
+                    <path d="M78.8,190.8 L59.2,173.7" stroke-width="1.10"/>
+                    <path d="M59.2,173.7 L39.6,169.9" stroke-width="1.10"/>
+                    <path d="M59.2,173.7 L51.5,155.2" stroke-width="1.10"/>
+                    <path d="M78.8,190.8 L53.8,183.8" stroke-width="1.10"/>
+                    <path d="M53.8,183.8 L34.5,189.3" stroke-width="1.10"/>
+                    <path d="M53.8,183.8 L40.3,169.0" stroke-width="1.10"/>
+                    <path d="M111.5,199.4 L96.0,169.3" stroke-width="1.51"/>
+                    <path d="M146.2,226.2 L146.2,182.4" stroke-width="2.22"/>
+                    <path d="M170.0,278.0 L194.4,226.5" stroke-width="3.26"/>
+                    <path d="M194.4,226.5 L192.5,182.7" stroke-width="2.22"/>
+                    <path d="M194.4,226.5 L227.9,198.2" stroke-width="2.22"/>
+                  </g>
+                  <!-- roots as circuit traces -->
+                  <g fill="none" stroke="#A85F37" stroke-linecap="round" stroke-linejoin="round" opacity=".28">
+                    <path d="M170.0,398.0 L170.0,404.0" stroke-width="1.6"/>
+                    <path d="M92.0,404.0 L248.0,404.0" stroke-width="1.6"/>
+                    <path d="M92.0,404.0 L92.0,438.0" stroke-width="1.6"/>
+                    <path d="M118.0,404.0 L118.0,460.0" stroke-width="1.6"/>
+                    <path d="M144.0,404.0 L144.0,478.0" stroke-width="1.6"/>
+                    <path d="M170.0,404.0 L170.0,500.0" stroke-width="1.6"/>
+                    <path d="M196.0,404.0 L196.0,478.0" stroke-width="1.6"/>
+                    <path d="M222.0,404.0 L222.0,460.0" stroke-width="1.6"/>
+                    <path d="M248.0,404.0 L248.0,438.0" stroke-width="1.6"/>
+                  </g>
+                </svg>
+
+                <!-- Back Content Overlay -->
+                <div class="tva-card__back-content">
+                  <div class="tva-back-top-tag">
+                    <span class="tva-back-pip" aria-hidden="true"></span>
+                    <span>OVERCLOCK 2027 // CO-ORGANISER</span>
+                  </div>
+
+                  <div class="tva-back-body">
+                    <span class="tva-back-category">CO-ORGANISING CHAPTER</span>
+                    <h4 class="tva-back-heading">EESA</h4>
+                    <div class="tva-back-divider" aria-hidden="true"></div>
+                    <div class="tva-back-fullname">Electrical Engineering Students Association</div>
+                    <p class="tva-back-description">
+                      A student community centred on electrical engineering, technical learning, and student collaboration.
+                    </p>
+                  </div>
+
+                  <div class="tva-back-footer">
+                    <span class="tva-back-affiliation">FCRIT VASHI · ALLIED CHAPTER</span>
+                    <span class="tva-flip-prompt" aria-hidden="true">FLIP CARD ⟲</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Card 2: ISLE -->
-          <div class="club-profile-card">
-            <div class="club-logo-box">
-              <img src="images/isle-logo.jpg" alt="ISLE — Indian Society of Lighting Engineers Logo" class="club-logo-img">
-            </div>
-            <div class="club-details">
-              <h4 class="club-acronym">ISLE</h4>
-              <div class="club-fullname">Indian Society of Lighting Engineers</div>
-              <p class="club-description">A professional community focused on lighting engineering, illumination, and related technical knowledge.</p>
+          <div class="tva-card tva-club-card" id="tva-card-isle" role="button" tabindex="0" aria-pressed="false" data-club-name="ISLE" aria-label="ISLE ID card. Click, tap or press Enter to view details.">
+            <div class="tva-card__inner">
+              <!-- FRONT -->
+              <div class="tva-card__face tva-card__front">
+                <svg viewBox="0 0 340 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="tva-cu-isle" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#BD7546"/>
+                      <stop offset=".5" stop-color="#A85F37"/>
+                      <stop offset="1" stop-color="#8D4B2B"/>
+                    </linearGradient>
+                    <linearGradient id="tva-sheen-isle" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                      <stop offset=".35" stop-color="#fff" stop-opacity=".08"/>
+                      <stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="tva-win-isle" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#241912"/>
+                      <stop offset="1" stop-color="#120D0A"/>
+                    </linearGradient>
+                    <filter id="tva-grain-isle" x="0" y="0" width="100%" height="100%">
+                      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/>
+                      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 -.18"/>
+                    </filter>
+                  </defs>
+
+                  <!-- copper face -->
+                  <rect width="340" height="540" rx="20" fill="url(#tva-cu-isle)"/>
+                  <rect width="340" height="540" rx="20" filter="url(#tva-grain-isle)" opacity=".5"/>
+                  <rect width="340" height="540" rx="20" fill="url(#tva-sheen-isle)"/>
+                  <rect x="3" y="3" width="334" height="534" rx="18" fill="none" stroke="#0F0B08" stroke-opacity=".55" stroke-width="2"/>
+
+                  <!-- side deco rails -->
+                  <g fill="#0F0B08">
+                    <path d="M18,46 H30 V496 H18 Z"/>
+                    <path d="M310,46 H322 V496 H310 Z"/>
+                    <path d="M96,3 H106 V28 H96 Z"/>
+                    <path d="M234,3 H244 V28 H234 Z"/>
+                  </g>
+                  <g stroke="#0F0B08" stroke-width="1.6" fill="none">
+                    <path d="M38,60 V482"/><path d="M302,60 V482"/>
+                    <path d="M18,38 H30 M310,38 H322 M18,504 H30 M310,504 H322"/>
+                  </g>
+
+                  <!-- name plaque -->
+                  <path d="M62,26 H278 V56 H62 Z" fill="#0F0B08"/>
+                  <rect x="66" y="30" width="208" height="22" fill="none" stroke="#A85F37" stroke-opacity=".6" stroke-width=".8"/>
+                  <text x="170" y="45.5" text-anchor="middle" fill="#D48B57"
+                        font-family="Futura, 'Century Gothic', 'Barlow Condensed', sans-serif"
+                        font-weight="700" font-size="11.6" letter-spacing="2">OVERCLOCK 2027</text>
+
+                  <!-- label band: ORGANISING CLUB -->
+                  <path d="M48,72 H292 M48,102 H292" stroke="#0F0B08" stroke-width="1.5"/>
+                  <text x="170" y="92" text-anchor="middle" fill="#0F0B08" fill-opacity=".9"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-weight="700" font-size="11.5" letter-spacing="2.2">ORGANISING CLUB</text>
+
+                  <!-- logo tab arch -->
+                  <path d="M52,246 V138 Q52,116 80,116 H260 Q288,116 288,138 V246" fill="none" stroke="#0F0B08" stroke-width="4"/>
+                  <path d="M60,246 V140 Q60,122 82,122 H258 Q280,122 280,140 V246" fill="none" stroke="#0F0B08" stroke-width="1.4"/>
+
+                  <!-- Prominent Club Acronym -->
+                  <text x="170" y="196" text-anchor="middle" fill="#0F0B08"
+                        font-family="'Barlow Condensed', 'Bebas Neue', sans-serif"
+                        font-size="48" font-weight="900" letter-spacing="4">ISLE</text>
+                  <text x="170" y="222" text-anchor="middle" fill="#0F0B08" fill-opacity=".75"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-size="9.5" font-weight="600" letter-spacing="1.5">FCRIT CHAPTER</text>
+
+                  <!-- compact photo housing (fitted closely around the logo square) -->
+                  <path d="M48,248 Q48,236 68,236 H272 Q292,236 292,248 V430 Q292,442 272,442 H68 Q48,442 48,430 Z" fill="#0F0B08"/>
+                  <path d="M55,250 Q55,242 70,242 H270 Q285,242 285,250 V428 Q285,436 270,436 H70 Q55,436 55,428 Z"
+                        fill="none" stroke="#A85F37" stroke-opacity=".55" stroke-width=".9"/>
+
+                  <!-- central square photo window (172x172 1:1 square) -->
+                  <rect x="84" y="252" width="172" height="172" rx="8" fill="url(#tva-win-isle)"/>
+                  <rect x="84" y="252" width="172" height="172" rx="8" fill="none" stroke="#A85F37" stroke-width="2.2"/>
+
+                  <!-- zigzag strips beside the window -->
+                  <g fill="#A85F37">
+                    <path d="M60,282 L69,268 L78,282 Z M60,304 L69,290 L78,304 Z M60,326 L69,312 L78,326 Z M60,348 L69,334 L78,348 Z M60,370 L69,356 L78,370 Z M60,392 L69,378 L78,392 Z M60,414 L69,400 L78,414 Z"/>
+                    <path d="M262,282 L271,268 L280,282 Z M262,304 L271,290 L280,304 Z M262,326 L271,312 L280,326 Z M262,348 L271,334 L280,348 Z M262,370 L271,356 L280,370 Z M262,392 L271,378 L280,392 Z M262,414 L271,400 L280,414 Z"/>
+                  </g>
+
+                  <!-- bottom label band & event mark -->
+                  <path d="M48,460 H292 M48,488 H292" stroke="#0F0B08" stroke-width="1.5"/>
+                  <rect x="52" y="463" width="236" height="22" fill="#0F0B08" rx="3"/>
+                  <rect x="56" y="466" width="228" height="16" fill="none" stroke="#A85F37" stroke-opacity=".4" stroke-width=".8"/>
+                  <text x="170" y="478" text-anchor="middle" fill="#D48B57"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-size="10" font-weight="700" letter-spacing="2.2">ORGANISING CLUB</text>
+
+                  <text x="170" y="515" text-anchor="middle" fill="#0F0B08"
+                        font-family="Futura, 'Century Gothic', 'Barlow Condensed', sans-serif"
+                        font-size="12" font-weight="800" letter-spacing="2.4">OVERCLOCK 2027</text>
+                  <path d="M148,525 H192" stroke="#0F0B08" stroke-width="1.2"/>
+                </svg>
+
+                <!-- Club Logo Container -->
+                <div class="tva-photo">
+                  <img src="images/isle-logo.jpg" alt="ISLE — Indian Society of Lighting Engineers Logo" class="tva-club-logo">
+                </div>
+              </div>
+
+              <!-- BACK -->
+              <div class="tva-card__face tva-card__back">
+                <svg viewBox="0 0 340 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="tva-sheen-b-isle" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                      <stop offset=".4" stop-color="#fff" stop-opacity=".04"/>
+                      <stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="340" height="540" rx="20" fill="#0F0B08"/>
+                  <rect width="340" height="540" rx="20" fill="url(#tva-sheen-b-isle)"/>
+
+                  <!-- copper frame -->
+                  <rect x="8" y="8" width="324" height="524" rx="14" fill="none" stroke="#A85F37" stroke-width="3.2"/>
+                  <rect x="19" y="19" width="302" height="502" rx="8" fill="none" stroke="#A85F37" stroke-opacity=".5" stroke-width="1"/>
+
+                  <!-- corner and top deco -->
+                  <g fill="none" stroke="#A85F37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M24,92 L92,24 M34,102 L102,34"/>
+                    <path d="M316,92 L248,24 M306,102 L238,34"/>
+                    <path d="M104,24 L126,60 H214 L236,24" stroke-width="1.2"/>
+                    <path d="M126,60 L134,72 H206 L214,60" stroke-opacity=".5" stroke-width="1"/>
+                    <path d="M26,452 L26,512 H86 M36,462 V502 H76"/>
+                    <path d="M314,452 L314,512 H254 M304,462 V502 H264"/>
+                    <path d="M26,452 L62,488 M314,452 L278,488" stroke-opacity=".5"/>
+                  </g>
+
+                  <!-- circuit tree (watermark depth) -->
+                  <g fill="none" stroke="#A85F37" stroke-linecap="round" stroke-linejoin="round" opacity=".28">
+                    <path d="M170.0,398.0 L170.0,352.0" stroke-width="4.80"/>
+                    <path d="M170.0,352.0 L170.0,278.0" stroke-width="4.80"/>
+                    <path d="M170.0,278.0 L146.2,226.2" stroke-width="3.26"/>
+                    <path d="M146.2,226.2 L111.5,199.4" stroke-width="2.22"/>
+                    <path d="M128.8,212.8 L112.1,212.8" stroke-width="1.20"/>
+                    <path d="M111.5,199.4 L78.8,190.8" stroke-width="1.51"/>
+                    <path d="M78.8,190.8 L53.8,198.1" stroke-width="1.10"/>
+                    <path d="M53.8,198.1 L39.1,211.7" stroke-width="1.10"/>
+                    <path d="M53.8,198.1 L34.4,193.0" stroke-width="1.10"/>
+                    <path d="M78.8,190.8 L59.2,173.7" stroke-width="1.10"/>
+                    <path d="M59.2,173.7 L39.6,169.9" stroke-width="1.10"/>
+                    <path d="M59.2,173.7 L51.5,155.2" stroke-width="1.10"/>
+                    <path d="M78.8,190.8 L53.8,183.8" stroke-width="1.10"/>
+                    <path d="M53.8,183.8 L34.5,189.3" stroke-width="1.10"/>
+                    <path d="M53.8,183.8 L40.3,169.0" stroke-width="1.10"/>
+                    <path d="M111.5,199.4 L96.0,169.3" stroke-width="1.51"/>
+                    <path d="M146.2,226.2 L146.2,182.4" stroke-width="2.22"/>
+                    <path d="M170.0,278.0 L194.4,226.5" stroke-width="3.26"/>
+                    <path d="M194.4,226.5 L192.5,182.7" stroke-width="2.22"/>
+                    <path d="M194.4,226.5 L227.9,198.2" stroke-width="2.22"/>
+                  </g>
+                  <!-- roots as circuit traces -->
+                  <g fill="none" stroke="#A85F37" stroke-linecap="round" stroke-linejoin="round" opacity=".28">
+                    <path d="M170.0,398.0 L170.0,404.0" stroke-width="1.6"/>
+                    <path d="M92.0,404.0 L248.0,404.0" stroke-width="1.6"/>
+                    <path d="M92.0,404.0 L92.0,438.0" stroke-width="1.6"/>
+                    <path d="M118.0,404.0 L118.0,460.0" stroke-width="1.6"/>
+                    <path d="M144.0,404.0 L144.0,478.0" stroke-width="1.6"/>
+                    <path d="M170.0,404.0 L170.0,500.0" stroke-width="1.6"/>
+                    <path d="M196.0,404.0 L196.0,478.0" stroke-width="1.6"/>
+                    <path d="M222.0,404.0 L222.0,460.0" stroke-width="1.6"/>
+                    <path d="M248.0,404.0 L248.0,438.0" stroke-width="1.6"/>
+                  </g>
+                </svg>
+
+                <!-- Back Content Overlay -->
+                <div class="tva-card__back-content">
+                  <div class="tva-back-top-tag">
+                    <span class="tva-back-pip" aria-hidden="true"></span>
+                    <span>OVERCLOCK 2027 // CO-ORGANISER</span>
+                  </div>
+
+                  <div class="tva-back-body">
+                    <span class="tva-back-category">CO-ORGANISING CHAPTER</span>
+                    <h4 class="tva-back-heading">ISLE</h4>
+                    <div class="tva-back-divider" aria-hidden="true"></div>
+                    <div class="tva-back-fullname">Indian Society of Lighting Engineers</div>
+                    <p class="tva-back-description">
+                      A professional community focused on lighting engineering, illumination, and related technical knowledge.
+                    </p>
+                  </div>
+
+                  <div class="tva-back-footer">
+                    <span class="tva-back-affiliation">FCRIT ELECTRICAL CHAPTER</span>
+                    <span class="tva-flip-prompt" aria-hidden="true">FLIP CARD ⟲</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Card 3: IEEE STUDENT BRANCH, FCRIT -->
-          <div class="club-profile-card">
-            <div class="club-logo-box">
-              <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Student Branch, FCRIT Logo" class="club-logo-img">
-            </div>
-            <div class="club-details">
-              <h4 class="club-acronym">IEEE STUDENT BRANCH, FCRIT</h4>
-              <div class="club-fullname">IEEE Student Branch, FCRIT</div>
-              <p class="club-description">A student engineering community supporting technical learning, technology, and professional development.</p>
+          <div class="tva-card tva-club-card" id="tva-card-ieee" role="button" tabindex="0" aria-pressed="false" data-club-name="IEEE Student Branch" aria-label="IEEE Student Branch ID card. Click, tap or press Enter to view details.">
+            <div class="tva-card__inner">
+              <!-- FRONT -->
+              <div class="tva-card__face tva-card__front">
+                <svg viewBox="0 0 340 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="tva-cu-ieee" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#BD7546"/>
+                      <stop offset=".5" stop-color="#A85F37"/>
+                      <stop offset="1" stop-color="#8D4B2B"/>
+                    </linearGradient>
+                    <linearGradient id="tva-sheen-ieee" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                      <stop offset=".35" stop-color="#fff" stop-opacity=".08"/>
+                      <stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="tva-win-ieee" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#241912"/>
+                      <stop offset="1" stop-color="#120D0A"/>
+                    </linearGradient>
+                    <filter id="tva-grain-ieee" x="0" y="0" width="100%" height="100%">
+                      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/>
+                      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 -.18"/>
+                    </filter>
+                  </defs>
+
+                  <!-- copper face -->
+                  <rect width="340" height="540" rx="20" fill="url(#tva-cu-ieee)"/>
+                  <rect width="340" height="540" rx="20" filter="url(#tva-grain-ieee)" opacity=".5"/>
+                  <rect width="340" height="540" rx="20" fill="url(#tva-sheen-ieee)"/>
+                  <rect x="3" y="3" width="334" height="534" rx="18" fill="none" stroke="#0F0B08" stroke-opacity=".55" stroke-width="2"/>
+
+                  <!-- side deco rails -->
+                  <g fill="#0F0B08">
+                    <path d="M18,46 H30 V496 H18 Z"/>
+                    <path d="M310,46 H322 V496 H310 Z"/>
+                    <path d="M96,3 H106 V28 H96 Z"/>
+                    <path d="M234,3 H244 V28 H234 Z"/>
+                  </g>
+                  <g stroke="#0F0B08" stroke-width="1.6" fill="none">
+                    <path d="M38,60 V482"/><path d="M302,60 V482"/>
+                    <path d="M18,38 H30 M310,38 H322 M18,504 H30 M310,504 H322"/>
+                  </g>
+
+                  <!-- name plaque -->
+                  <path d="M62,26 H278 V56 H62 Z" fill="#0F0B08"/>
+                  <rect x="66" y="30" width="208" height="22" fill="none" stroke="#A85F37" stroke-opacity=".6" stroke-width=".8"/>
+                  <text x="170" y="45.5" text-anchor="middle" fill="#D48B57"
+                        font-family="Futura, 'Century Gothic', 'Barlow Condensed', sans-serif"
+                        font-weight="700" font-size="11.6" letter-spacing="2">OVERCLOCK 2027</text>
+
+                  <!-- label band: ORGANISING CLUB -->
+                  <path d="M48,72 H292 M48,102 H292" stroke="#0F0B08" stroke-width="1.5"/>
+                  <text x="170" y="92" text-anchor="middle" fill="#0F0B08" fill-opacity=".9"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-weight="700" font-size="11.5" letter-spacing="2.2">ORGANISING CLUB</text>
+
+                  <!-- logo tab arch -->
+                  <path d="M52,246 V138 Q52,116 80,116 H260 Q288,116 288,138 V246" fill="none" stroke="#0F0B08" stroke-width="4"/>
+                  <path d="M60,246 V140 Q60,122 82,122 H258 Q280,122 280,140 V246" fill="none" stroke="#0F0B08" stroke-width="1.4"/>
+
+                  <!-- Prominent Club Acronym -->
+                  <text x="170" y="172" text-anchor="middle" fill="#0F0B08"
+                        font-family="'Barlow Condensed', 'Bebas Neue', sans-serif"
+                        font-size="34" font-weight="900" letter-spacing="3">IEEE</text>
+                  <text x="170" y="198" text-anchor="middle" fill="#0F0B08"
+                        font-family="'Barlow Condensed', 'IBM Plex Mono', sans-serif"
+                        font-size="15" font-weight="800" letter-spacing="2">STUDENT BRANCH</text>
+                  <text x="170" y="222" text-anchor="middle" fill="#0F0B08" fill-opacity=".75"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-size="9.5" font-weight="600" letter-spacing="1.5">FCRIT VASHI</text>
+
+                  <!-- compact photo housing (fitted closely around the logo square) -->
+                  <path d="M48,248 Q48,236 68,236 H272 Q292,236 292,248 V430 Q292,442 272,442 H68 Q48,442 48,430 Z" fill="#0F0B08"/>
+                  <path d="M55,250 Q55,242 70,242 H270 Q285,242 285,250 V428 Q285,436 270,436 H70 Q55,436 55,428 Z"
+                        fill="none" stroke="#A85F37" stroke-opacity=".55" stroke-width=".9"/>
+
+                  <!-- central square photo window (172x172 1:1 square) -->
+                  <rect x="84" y="252" width="172" height="172" rx="8" fill="url(#tva-win-ieee)"/>
+                  <rect x="84" y="252" width="172" height="172" rx="8" fill="none" stroke="#A85F37" stroke-width="2.2"/>
+
+                  <!-- zigzag strips beside the window -->
+                  <g fill="#A85F37">
+                    <path d="M60,282 L69,268 L78,282 Z M60,304 L69,290 L78,304 Z M60,326 L69,312 L78,326 Z M60,348 L69,334 L78,348 Z M60,370 L69,356 L78,370 Z M60,392 L69,378 L78,392 Z M60,414 L69,400 L78,414 Z"/>
+                    <path d="M262,282 L271,268 L280,282 Z M262,304 L271,290 L280,304 Z M262,326 L271,312 L280,326 Z M262,348 L271,334 L280,348 Z M262,370 L271,356 L280,370 Z M262,392 L271,378 L280,392 Z M262,414 L271,400 L280,414 Z"/>
+                  </g>
+
+                  <!-- bottom label band & event mark -->
+                  <path d="M48,460 H292 M48,488 H292" stroke="#0F0B08" stroke-width="1.5"/>
+                  <rect x="52" y="463" width="236" height="22" fill="#0F0B08" rx="3"/>
+                  <rect x="56" y="466" width="228" height="16" fill="none" stroke="#A85F37" stroke-opacity=".4" stroke-width=".8"/>
+                  <text x="170" y="478" text-anchor="middle" fill="#D48B57"
+                        font-family="'IBM Plex Mono', monospace"
+                        font-size="10" font-weight="700" letter-spacing="2.2">ORGANISING CLUB</text>
+
+                  <text x="170" y="515" text-anchor="middle" fill="#0F0B08"
+                        font-family="Futura, 'Century Gothic', 'Barlow Condensed', sans-serif"
+                        font-size="12" font-weight="800" letter-spacing="2.4">OVERCLOCK 2027</text>
+                  <path d="M148,525 H192" stroke="#0F0B08" stroke-width="1.2"/>
+                </svg>
+
+                <!-- Club Logo Container -->
+                <div class="tva-photo">
+                  <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Student Branch, FCRIT Logo" class="tva-club-logo">
+                </div>
+              </div>
+
+              <!-- BACK -->
+              <div class="tva-card__face tva-card__back">
+                <svg viewBox="0 0 340 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="tva-sheen-b-ieee" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                      <stop offset=".4" stop-color="#fff" stop-opacity=".04"/>
+                      <stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="340" height="540" rx="20" fill="#0F0B08"/>
+                  <rect width="340" height="540" rx="20" fill="url(#tva-sheen-b-ieee)"/>
+
+                  <!-- copper frame -->
+                  <rect x="8" y="8" width="324" height="524" rx="14" fill="none" stroke="#A85F37" stroke-width="3.2"/>
+                  <rect x="19" y="19" width="302" height="502" rx="8" fill="none" stroke="#A85F37" stroke-opacity=".5" stroke-width="1"/>
+
+                  <!-- corner and top deco -->
+                  <g fill="none" stroke="#A85F37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M24,92 L92,24 M34,102 L102,34"/>
+                    <path d="M316,92 L248,24 M306,102 L238,34"/>
+                    <path d="M104,24 L126,60 H214 L236,24" stroke-width="1.2"/>
+                    <path d="M126,60 L134,72 H206 L214,60" stroke-opacity=".5" stroke-width="1"/>
+                    <path d="M26,452 L26,512 H86 M36,462 V502 H76"/>
+                    <path d="M314,452 L314,512 H254 M304,462 V502 H264"/>
+                    <path d="M26,452 L62,488 M314,452 L278,488" stroke-opacity=".5"/>
+                  </g>
+
+                  <!-- circuit tree (watermark depth) -->
+                  <g fill="none" stroke="#A85F37" stroke-linecap="round" stroke-linejoin="round" opacity=".28">
+                    <path d="M170.0,398.0 L170.0,352.0" stroke-width="4.80"/>
+                    <path d="M170.0,352.0 L170.0,278.0" stroke-width="4.80"/>
+                    <path d="M170.0,278.0 L146.2,226.2" stroke-width="3.26"/>
+                    <path d="M146.2,226.2 L111.5,199.4" stroke-width="2.22"/>
+                    <path d="M128.8,212.8 L112.1,212.8" stroke-width="1.20"/>
+                    <path d="M111.5,199.4 L78.8,190.8" stroke-width="1.51"/>
+                    <path d="M78.8,190.8 L53.8,198.1" stroke-width="1.10"/>
+                    <path d="M53.8,198.1 L39.1,211.7" stroke-width="1.10"/>
+                    <path d="M53.8,198.1 L34.4,193.0" stroke-width="1.10"/>
+                    <path d="M78.8,190.8 L59.2,173.7" stroke-width="1.10"/>
+                    <path d="M59.2,173.7 L39.6,169.9" stroke-width="1.10"/>
+                    <path d="M59.2,173.7 L51.5,155.2" stroke-width="1.10"/>
+                    <path d="M78.8,190.8 L53.8,183.8" stroke-width="1.10"/>
+                    <path d="M53.8,183.8 L34.5,189.3" stroke-width="1.10"/>
+                    <path d="M53.8,183.8 L40.3,169.0" stroke-width="1.10"/>
+                    <path d="M111.5,199.4 L96.0,169.3" stroke-width="1.51"/>
+                    <path d="M146.2,226.2 L146.2,182.4" stroke-width="2.22"/>
+                    <path d="M170.0,278.0 L194.4,226.5" stroke-width="3.26"/>
+                    <path d="M194.4,226.5 L192.5,182.7" stroke-width="2.22"/>
+                    <path d="M194.4,226.5 L227.9,198.2" stroke-width="2.22"/>
+                  </g>
+                  <!-- roots as circuit traces -->
+                  <g fill="none" stroke="#A85F37" stroke-linecap="round" stroke-linejoin="round" opacity=".28">
+                    <path d="M170.0,398.0 L170.0,404.0" stroke-width="1.6"/>
+                    <path d="M92.0,404.0 L248.0,404.0" stroke-width="1.6"/>
+                    <path d="M92.0,404.0 L92.0,438.0" stroke-width="1.6"/>
+                    <path d="M118.0,404.0 L118.0,460.0" stroke-width="1.6"/>
+                    <path d="M144.0,404.0 L144.0,478.0" stroke-width="1.6"/>
+                    <path d="M170.0,404.0 L170.0,500.0" stroke-width="1.6"/>
+                    <path d="M196.0,404.0 L196.0,478.0" stroke-width="1.6"/>
+                    <path d="M222.0,404.0 L222.0,460.0" stroke-width="1.6"/>
+                    <path d="M248.0,404.0 L248.0,438.0" stroke-width="1.6"/>
+                  </g>
+                </svg>
+
+                <!-- Back Content Overlay -->
+                <div class="tva-card__back-content">
+                  <div class="tva-back-top-tag">
+                    <span class="tva-back-pip" aria-hidden="true"></span>
+                    <span>OVERCLOCK 2027 // CO-ORGANISER</span>
+                  </div>
+
+                  <div class="tva-back-body">
+                    <span class="tva-back-category">CO-ORGANISING CHAPTER</span>
+                    <h4 class="tva-back-heading" style="font-size: clamp(1.4rem, 2.2vw, 1.8rem);">IEEE SB FCRIT</h4>
+                    <div class="tva-back-divider" aria-hidden="true"></div>
+                    <div class="tva-back-fullname">IEEE Student Branch, FCRIT</div>
+                    <p class="tva-back-description">
+                      A student engineering community supporting technical learning, technology, and professional development.
+                    </p>
+                  </div>
+
+                  <div class="tva-back-footer">
+                    <span class="tva-back-affiliation">IEEE STUDENT CHAPTER · FCRIT</span>
+                    <span class="tva-flip-prompt" aria-hidden="true">FLIP CARD ⟲</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -719,15 +1227,15 @@
     </section>
 
     <!-- ========================================================
-         03. PROBLEM STATEMENTS — SIX DOMAIN ENVIRONMENTS
+         03. PROBLEM STATEMENTS — FIVE DOMAIN ENVIRONMENTS
     ======================================================== -->
     <section id="problems" class="bureau-section" data-section-num="03">
       <div class="section-rubber-stamp">LEVEL 03</div>
 
       <div class="section-header-wrap">
         <div class="bureau-tag amber">DOMAIN ENVIRONMENTS // LEVEL 03</div>
-        <h2 class="section-main-heading">Explore the Domains</h2>
-        <p class="section-subtext">The challenge space features six multidisciplinary technology domains. Official, detailed problem statements will be revealed in one month (01 December 2026). Explore the scope below, identify your preferred track, and start assembling your team.</p>
+        <h2 class="section-main-heading">EXPLORE THE SIX DOMAINS</h2>
+        <p class="section-subtext">Choose a domain and explore the engineering challenges.</p>
       </div>
 
       <!-- Free Round 1 PPT Submission Notice -->
@@ -742,18 +1250,7 @@
         </p>
       </div>
 
-      <!-- Domain Wave Sonic Telemetry Ribbon -->
-      <div class="domain-sonic-telemetry-ribbon" role="region" aria-label="Domain Wave Acoustic Telemetry">
-        <div class="sonic-ribbon-left">
-          <span class="sonic-pulse-dot" aria-hidden="true"></span>
-          <span class="sonic-ribbon-tag">ACOUSTIC TELEMETRY // 6 DOMAIN WAVE FREQUENCIES ACTIVE</span>
-        </div>
-        <div class="sonic-ribbon-right">
-          <span class="sonic-ribbon-hint">🔊 Hover, probe, or tap each CRT monitor to experience authentic wave voices &amp; haptic vibration</span>
-        </div>
-      </div>
-
-      <!-- Exactly Six Distinct Domain Slots -->
+      <!-- Six Distinct Domain Slots -->
       <div class="domain-slots-grid">
 
         <!-- Domain Slot 01: General Innovation & Open Innovation -->
@@ -796,12 +1293,12 @@
               <span class="audience-text">Rapid Prototyping, Multidisciplinary Teams, Product Design & Human-Centric Hardware</span>
             </div>
             <div class="slot-teaser-box">
-              <span class="teaser-icon">⚡</span>
+              <span class="teaser-icon">◈</span>
               <span class="teaser-text">"Where unconventional thinking meets tangible impact—rethink everyday mechanics before the clock starts ticking."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>🔒 Challenges Unlocking Soon</span>
+                <span>Challenges Unlocking Soon</span>
               </button>
             </div>
           </div>
@@ -847,12 +1344,12 @@
               <span class="audience-text">Robotics, Embedded Systems, RF Communications, Cyber-Physical Security & Rugged Electronics</span>
             </div>
             <div class="slot-teaser-box">
-              <span class="teaser-icon">⚡</span>
+              <span class="teaser-icon">◈</span>
               <span class="teaser-text">"High stakes and zero tolerance for failure—engineer systems that stay online when everything else goes down."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>🔒 Classified Briefing Dropping Soon</span>
+                <span>Classified Briefing Dropping Soon</span>
               </button>
             </div>
           </div>
@@ -898,12 +1395,12 @@
               <span class="audience-text">Biomedical Instrumentation, Analog Sensor Integration, DSP, Wearable Tech & Health Informatics</span>
             </div>
             <div class="slot-teaser-box">
-              <span class="teaser-icon">⚡</span>
+              <span class="teaser-icon">◈</span>
               <span class="teaser-text">"The pulse of precision engineering—design the hardware that will save seconds and lives."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>🔒 Clinical Dossier Coming Soon</span>
+                <span>Clinical Dossier Coming Soon</span>
               </button>
             </div>
           </div>
@@ -949,12 +1446,12 @@
               <span class="audience-text">IoT Architectures, Embedded Microcontrollers (ESP32/ARM Cortex), Wireless Mesh & Consumer UX</span>
             </div>
             <div class="slot-teaser-box">
-              <span class="teaser-icon">⚡</span>
+              <span class="teaser-icon">◈</span>
               <span class="teaser-text">"Bringing intelligence inside the home—turn ordinary circuits into autonomous living spaces."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>🔒 Protocols Revealed Soon</span>
+                <span>Protocols Revealed Soon</span>
               </button>
             </div>
           </div>
@@ -1000,12 +1497,12 @@
               <span class="audience-text">Instrumentation, Mechatronics, Power Electronics, Sensor Fusion & Predictive Telemetry</span>
             </div>
             <div class="slot-teaser-box">
-              <span class="teaser-icon">⚡</span>
+              <span class="teaser-icon">◈</span>
               <span class="teaser-text">"The heartbeat of heavy industry—engineer the feedback loops that keep the factories running."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>🔒 Industrial Briefing Coming Soon</span>
+                <span>Industrial Briefing Coming Soon</span>
               </button>
             </div>
           </div>
@@ -1051,12 +1548,12 @@
               <span class="audience-text">Electrical Machines, Power Systems, Battery Storage, Renewable Energy & Embedded Control</span>
             </div>
             <div class="slot-teaser-box">
-              <span class="teaser-icon">⚡</span>
+              <span class="teaser-icon">◈</span>
               <span class="teaser-text">"From raw generation to intelligent distribution—harness the current and power a sustainable tomorrow."</span>
             </div>
             <div class="slot-action-area">
               <button class="slot-pending-btn" disabled aria-disabled="true">
-                <span>🔒 Power Matrix Unlocking Soon</span>
+                <span>Power Matrix Unlocking Soon</span>
               </button>
             </div>
           </div>
@@ -1072,7 +1569,7 @@
           <div class="bureau-tag amber">CROSS-SECTOR INITIATIVE // TIMELINE PROTOCOL</div>
           <h3 class="domain-cta-title">Prepare Your Engineering Crew for OVERCLOCK 2027</h3>
           <p class="domain-cta-text">
-            Six domains. 24 hours of real physical circuit wiring, embedded programming, and hardware deployment. Assemble your team and prepare for official registration on Unstop.
+            Five domains. 24 hours of real physical circuit wiring, embedded programming, and hardware deployment. Assemble your team and prepare for official registration on Unstop.
           </p>
         </div>
         <div class="domain-cta-action">
@@ -1266,8 +1763,8 @@
                         <path d="M13 17v2"></path>
                       </svg>
                       <span class="fee-stage-title">ROUND 2</span>
-                      <span class="fee-sep">—</span>
-                      <span class="fee-pill fee-pill-paid">PAID</span>
+                      <span class="fee-sep">//</span>
+                      <span class="fee-pill fee-pill-paid">PAID — ₹1,500 + 18% GST</span>
                     </div>
                     <p class="fee-detail-text">Participation fees apply only to shortlisted teams advancing to Round 2.</p>
                   </div>
@@ -1415,39 +1912,6 @@
             <div class="reg-date-headline">01 NOVEMBER 2026</div>
             <p class="reg-helper-note">The official registration portal activates on 01 November 2026.</p>
           </div>
-
-          <div class="fee-calculation-box">
-            <div class="fee-box-title">REGISTRATION FEE</div>
-            <div class="fee-amount-display">
-              <span class="fee-amount-val">₹1,500 + 18% GST</span>
-            </div>
-          </div>
-
-          <div class="fee-calculation-box prize-pool-card-box">
-            <div class="fee-box-title">CASH PRIZE POOL</div>
-            <div class="fee-amount-display">
-              <span class="fee-amount-val prize-val">₹50,000</span>
-            </div>
-            <span class="prize-card-sub">50K CASH PRIZE</span>
-          </div>
-        </div>
-
-        <!-- Official Directive Callout Banner -->
-        <div class="registration-directive-callout">
-          <div class="directive-callout-icon" aria-hidden="true">📜</div>
-          <div class="directive-callout-body">
-            <div class="directive-callout-tag">OFFICIAL DIRECTIVE // FORM OC-27 / RR · REV 01</div>
-            <h4 class="directive-callout-title">Participant Rules &amp; Regulations Dossier Cleared</h4>
-            <p class="directive-callout-text">The official 7-section regulatory framework (eligibility, free Round 1 PPT submission, ₹1,770 Round 2 fee, hardware build spec, and safety rules) is now cleared for all timelines.</p>
-          </div>
-          <div class="directive-callout-actions">
-            <button type="button" class="btn-directive-open" id="btn-open-rules-from-reg" aria-haspopup="dialog">
-              <span>VIEW DOSSIER</span>
-            </button>
-            <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" class="btn-directive-dl" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer">
-              <span>DOWNLOAD PDF (3.8 MB)</span>
-            </a>
-          </div>
         </div>
       </div>
     </section>
@@ -1469,15 +1933,15 @@
         <!-- Resource 1: Participant Rules & Field Guide -->
         <div class="download-resource-card" id="card-download-participant-guide">
           <div class="download-card-header">
-            <span class="doc-format-badge">PDF // FIELD MANUAL (OC-27/PG)</span>
+            <span class="doc-format-badge">PDF // EVENT BROCHURE (OC-27/PG)</span>
             <span class="doc-status-pill ready" id="status-download-participant-guide">OFFICIAL PDF</span>
           </div>
           <div class="download-card-body">
-            <h3 class="download-card-title">PARTICIPANT RULES &amp; GUIDE — PDF</h3>
-            <p class="download-card-desc">Official TVA Participant Field Manual (Form OC-27/PG) covering required hardware equipment, campus facilities, lab toolkits, and preparation directives.</p>
+            <h3 class="download-card-title">EVENT BROCHURE — PDF</h3>
+            <p class="download-card-desc">Official OVERCLOCK 2027 Event Brochure and Field Manual (Form OC-27/PG) covering event architecture, required hardware equipment, campus facilities, lab toolkits, and preparation directives.</p>
           </div>
           <div class="download-card-action">
-            <a href="docs/OVERCLOCK_2027_Participant_Guide.pdf" class="btn-download-resource is-ready" id="btn-download-participant-guide" download="OVERCLOCK_2027_Participant_Guide.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Participant Rules & Guide PDF (3.8 MB)">
+            <a href="docs/OVERCLOCK_2027_Participant_Guide.pdf" class="btn-download-resource is-ready" id="btn-download-participant-guide" download="OVERCLOCK_2027_Participant_Guide.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Event Brochure PDF (3.8 MB)">
               <span class="download-icon" aria-hidden="true">↓</span>
               <span class="download-btn-text">DOWNLOAD PDF (3.8 MB)</span>
             </a>
@@ -1492,7 +1956,7 @@
           </div>
           <div class="download-card-body">
             <h3 class="download-card-title">RULES &amp; REGULATIONS — PDF</h3>
-            <p class="download-card-desc">Official TVA Participant Directive (Form OC-27/RR) covering team eligibility, 2-round structure, ₹1,770 fee, hardware build specs, and safety guidelines.</p>
+            <p class="download-card-desc">Official TVA Participant Directive (Form OC-27/RR) covering team eligibility, 2-round evaluation structure, registration guidelines, hardware build specs, and safety guidelines.</p>
           </div>
           <div class="download-card-action download-card-action-dual">
             <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" class="btn-download-resource is-ready" id="btn-download-rules" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" title="Download Official Rules & Regulations PDF (3.8 MB)">
@@ -1500,7 +1964,9 @@
               <span class="download-btn-text">DOWNLOAD PDF (3.8 MB)</span>
             </a>
             <button type="button" class="btn-view-directive-modal" id="btn-open-rules-modal" aria-haspopup="dialog" title="Read Interactive Rules & Regulations Dossier">
-              <span class="btn-icon" aria-hidden="true">📜</span>
+              <span class="btn-icon" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </span>
               <span class="btn-text">READ DOSSIER</span>
             </button>
           </div>
@@ -1665,7 +2131,6 @@
       <div class="section-header-wrap">
         <div class="bureau-tag amber">AUTHORIZED PARTNERS // LEVEL 09</div>
         <h2 class="section-main-heading">Sponsors and Partners</h2>
-        <div class="bureau-tag amber" style="margin-top: 4px;">SPONSORS TO BE ANNOUNCED</div>
         <p class="section-subtext">Official institutional and technical partners supporting the hardware prototyping facilities for OVERCLOCK 2027.</p>
       </div>
 
@@ -1685,7 +2150,6 @@
           </div>
           <div class="partnership-actions-wrap">
             <a id="sponsor-contact-btn" href="mailto:sponsorship.overclock@fcrit.ac.in" class="btn-bureau-brass">Become a Sponsor</a>
-            <a id="sponsor-brochure-btn" href="#" class="btn-bureau-secondary" style="display: none;">Download Sponsorship Brochure</a>
           </div>
         </div>
       </div>
@@ -1711,12 +2175,12 @@
               <span class="folder-case-num">CASE #001</span>
               <span class="folder-query-title">Who is organizing OVERCLOCK 2027?</span>
             </div>
-            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[OPEN]</span>
+            <span style="font-family: var(--font-mono); color: var(--crt-teal);">[OPEN]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              OVERCLOCK 2027 is organized by the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai.
+              OVERCLOCK 2027 is jointly organized by EESA, ISLE, and the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai.
             </div>
           </div>
         </div>
@@ -1728,12 +2192,12 @@
               <span class="folder-case-num">CASE #002</span>
               <span class="folder-query-title">When does registration open and what is the fee?</span>
             </div>
-            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+            <span style="font-family: var(--font-mono); color: var(--crt-teal);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              Registration opens on 01 November 2026. The listed registration fee is ₹1,500 + 18% GST (approx. ₹1,770 total). Whether this fee applies per team or per participant will be confirmed upon registration portal launch.
+              Registration opens on 01 November 2026. Round 1 PPT submission is free. Shortlisted teams advancing to the physical build pay a registration fee of ₹1,500 + 18% GST.
             </div>
           </div>
         </div>
@@ -1745,7 +2209,7 @@
               <span class="folder-case-num">CASE #003</span>
               <span class="folder-query-title">What is the problem statement and submission schedule?</span>
             </div>
-            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+            <span style="font-family: var(--font-mono); color: var(--crt-teal);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
@@ -1762,12 +2226,12 @@
               <span class="folder-case-num">CASE #004</span>
               <span class="folder-query-title">Is on-campus accommodation provided?</span>
             </div>
-            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+            <span style="font-family: var(--font-mono); color: var(--crt-teal);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
               <div class="answered-stamp-badge">ANSWERED</div>
-              Yes. Accommodation on campus is available at nominal cost on a first-come, first-served basis. Approximately 100 beds are available overall, with a standard guideline of two beds per team.
+              Yes. On-campus residential accommodation is available for confirmed outstation participants at a nominal fee on a first-come, first-served basis.
             </div>
           </div>
         </div>
@@ -1779,7 +2243,7 @@
               <span class="folder-case-num">CASE #005</span>
               <span class="folder-query-title">Can we submit software-only projects?</span>
             </div>
-            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+            <span style="font-family: var(--font-mono); color: var(--crt-teal);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
@@ -1796,7 +2260,7 @@
               <span class="folder-case-num">CASE #006</span>
               <span class="folder-query-title">How will projects be evaluated?</span>
             </div>
-            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+            <span style="font-family: var(--font-mono); color: var(--crt-teal);">[EXPAND]</span>
           </div>
           <div class="folder-content-drawer">
             <div class="folder-drawer-inner">
@@ -1843,20 +2307,6 @@
         <div class="contact-dossier-card">
           <div class="contact-card-tag">ORGANISERS</div>
           <h3 class="contact-card-title">IEEE STUDENT BRANCH FCRIT · ISLE · EESA</h3>
-          <div class="contact-card-clubs-strip">
-            <div class="contact-club-badge" title="IEEE Student Branch, FCRIT">
-              <img src="images/ieee-fcrit-logo.jpg" alt="IEEE Logo" class="contact-club-img">
-              <span>IEEE SB FCRIT</span>
-            </div>
-            <div class="contact-club-badge" title="Indian Society of Lighting Engineers">
-              <img src="images/isle-logo.jpg" alt="ISLE Logo" class="contact-club-img">
-              <span>ISLE</span>
-            </div>
-            <div class="contact-club-badge" title="Electrical Engineering Students Association">
-              <img src="images/eesa-logo.jpg" alt="EESA Logo" class="contact-club-img">
-              <span>EESA</span>
-            </div>
-          </div>
           <p class="contact-card-body">
             Official organizing bureau representing IEEE Student Branch FCRIT, ISLE, and EESA for OVERCLOCK 2027. Inquiries regarding registration, timelines, and partnerships.
           </p>
@@ -1957,27 +2407,18 @@
               <span class="travel-title">GETTING HERE // TRAVEL INFORMATION</span>
             </div>
 
-            <!-- Organiser Supplied Shared Auto Information -->
+            <!-- Transit Connection: Vashi Station to Campus -->
             <div class="shared-auto-card">
               <div class="auto-fare-badge">
-                <span class="auto-fare-tag">SUPPLIED FARE</span>
+                <span class="auto-fare-tag">TRANSIT FARE</span>
                 <span class="auto-fare-val">₹15 PER SEAT</span>
               </div>
               <div class="auto-info-content">
                 <h4 class="auto-card-heading">SHARED AUTO FROM VASHI STATION</h4>
                 <p class="auto-card-body">
-                  Shared autos are available from Vashi Station to the venue. The fare supplied for this route is ₹15 per seat.
+                  From Vashi Railway Station, FCRIT (Agnel Technical Education Complex, Sector 9A) is situated approximately 1.8 km away. Attendees can take a shared auto at ₹15 per seat from the station auto stand directly to the campus gate, or take a metered auto.
                 </p>
               </div>
-            </div>
-
-
-            <!-- Last-Mile Connection: Vashi Station to Campus -->
-            <div class="station-to-venue-card">
-              <div class="stv-title">CONNECTING FROM VASHI STATION TO VENUE</div>
-              <p class="stv-desc">
-                From Vashi Railway Station, FCRIT (Agnel Technical Education Complex, Sector 9A) is situated approximately 1.8 km away. Attendees can take a shared auto at ₹15 per seat from the station auto stand directly to the campus gate, or take a metered auto.
-              </p>
             </div>
           </div>
         </div>
@@ -2046,46 +2487,117 @@
         </button>
       </div>
 
-      <!-- Footer Bottom Bar -->
-      <div class="footer-bottom-bar">
-        <div class="bottom-bar-left">
-          <span class="brand-tag">OVERCLOCK 2027</span>
-          <span class="bar-divider">//</span>
-          <span class="attrib-tag">Organised by EESA, ISLE, and IEEE Student Branch, Fr. C. Rodrigues Institute of Technology, Vashi, Navi Mumbai.</span>
-          <span class="bar-divider">//</span>
-          <button
-            type="button"
-            class="footer-dev-textlink"
-            id="footer-bottom-dev-trigger"
-            aria-haspopup="dialog"
-            aria-expanded="false"
-            aria-controls="developers-modal-overlay"
-            title="Toggle Developers Recognition Panel"
-          >
-            DEVELOPERS
-          </button>
-        </div>
-        <div class="bottom-bar-unstop">
-          <a
-            href="https://unstop.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="footer-unstop-link"
-            id="footer-unstop-link"
-            aria-label="Unstop"
-            title="Unstop"
-          >
-            <img src="images/unstop-logo.png" alt="Unstop Logo" class="footer-unstop-logo">
+    </div>
+
+    <!-- ========================================================
+         FOOTER CLOSING TREATMENT: CONTINUOUS RIGHT-MOVING MARQUEE
+         Seamless marquee moving continuously towards the RIGHT.
+         Includes OVERCLOCK brand, organisers, Unstop registration badge,
+         Developers recognition trigger, copyright, and system status.
+    ======================================================== -->
+    <div class="footer-marquee-strip" role="region" aria-label="Event Ending Continuous Marquee">
+      <div class="footer-marquee-track" aria-hidden="true">
+        <!-- Sequence 1 -->
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item org">ORGANISED BY EESA, ISLE &amp; IEEE STUDENT BRANCH · FCRIT VASHI</span>
+          <span class="f-m-sep">//</span>
+          <a href="https://unstop.com" target="_blank" rel="noopener noreferrer" class="f-m-unstop-badge" aria-label="Register on Unstop" title="Register on Unstop">
+            <img src="images/unstop-logo.png" alt="Unstop Logo" class="f-m-unstop-img">
+            <span class="f-m-unstop-text">REGISTER ON UNSTOP ↗</span>
           </a>
+          <span class="f-m-sep">//</span>
+          <button type="button" class="f-m-dev-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="developers-modal-overlay" title="Toggle Developers Recognition Panel">
+            <span class="f-m-dev-text">DEVELOPERS</span>
+            <span class="f-m-dev-glyph" aria-hidden="true">◈</span>
+          </button>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item copyright">© 2026–2027 OVERCLOCK 2027 · ALL RIGHTS RESERVED</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-status-wrap">
+            <span class="status-pip-pulse" aria-hidden="true"></span>
+            <span class="f-m-item status">SYSTEM STATUS // STABLE</span>
+          </span>
+          <span class="f-m-sep">//</span>
         </div>
-        <div class="bottom-bar-center">
-          <span class="copyright-tag">© 2026–2027 OVERCLOCK 2027. All rights reserved.</span>
+
+        <!-- Sequence 2 -->
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item org">ORGANISED BY EESA, ISLE &amp; IEEE STUDENT BRANCH · FCRIT VASHI</span>
+          <span class="f-m-sep">//</span>
+          <a href="https://unstop.com" target="_blank" rel="noopener noreferrer" class="f-m-unstop-badge" aria-label="Register on Unstop" title="Register on Unstop">
+            <img src="images/unstop-logo.png" alt="Unstop Logo" class="f-m-unstop-img">
+            <span class="f-m-unstop-text">REGISTER ON UNSTOP ↗</span>
+          </a>
+          <span class="f-m-sep">//</span>
+          <button type="button" class="f-m-dev-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="developers-modal-overlay" title="Toggle Developers Recognition Panel">
+            <span class="f-m-dev-text">DEVELOPERS</span>
+            <span class="f-m-dev-glyph" aria-hidden="true">◈</span>
+          </button>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item copyright">© 2026–2027 OVERCLOCK 2027 · ALL RIGHTS RESERVED</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-status-wrap">
+            <span class="status-pip-pulse" aria-hidden="true"></span>
+            <span class="f-m-item status">SYSTEM STATUS // STABLE</span>
+          </span>
+          <span class="f-m-sep">//</span>
         </div>
-        <div class="bottom-bar-right">
-          <span class="status-pip-pulse" aria-hidden="true"></span>
-          <span class="system-status-tag">SYSTEM STATUS // STABLE</span>
+
+        <!-- Sequence 3 -->
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item org">ORGANISED BY EESA, ISLE &amp; IEEE STUDENT BRANCH · FCRIT VASHI</span>
+          <span class="f-m-sep">//</span>
+          <a href="https://unstop.com" target="_blank" rel="noopener noreferrer" class="f-m-unstop-badge" aria-label="Register on Unstop" title="Register on Unstop">
+            <img src="images/unstop-logo.png" alt="Unstop Logo" class="f-m-unstop-img">
+            <span class="f-m-unstop-text">REGISTER ON UNSTOP ↗</span>
+          </a>
+          <span class="f-m-sep">//</span>
+          <button type="button" class="f-m-dev-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="developers-modal-overlay" title="Toggle Developers Recognition Panel">
+            <span class="f-m-dev-text">DEVELOPERS</span>
+            <span class="f-m-dev-glyph" aria-hidden="true">◈</span>
+          </button>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item copyright">© 2026–2027 OVERCLOCK 2027 · ALL RIGHTS RESERVED</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-status-wrap">
+            <span class="status-pip-pulse" aria-hidden="true"></span>
+            <span class="f-m-item status">SYSTEM STATUS // STABLE</span>
+          </span>
+          <span class="f-m-sep">//</span>
+        </div>
+
+        <!-- Sequence 4 -->
+        <div class="footer-marquee-sequence">
+          <span class="f-m-item brand">OVERCLOCK 2027</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item org">ORGANISED BY EESA, ISLE &amp; IEEE STUDENT BRANCH · FCRIT VASHI</span>
+          <span class="f-m-sep">//</span>
+          <a href="https://unstop.com" target="_blank" rel="noopener noreferrer" class="f-m-unstop-badge" aria-label="Register on Unstop" title="Register on Unstop">
+            <img src="images/unstop-logo.png" alt="Unstop Logo" class="f-m-unstop-img">
+            <span class="f-m-unstop-text">REGISTER ON UNSTOP ↗</span>
+          </a>
+          <span class="f-m-sep">//</span>
+          <button type="button" class="f-m-dev-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="developers-modal-overlay" title="Toggle Developers Recognition Panel">
+            <span class="f-m-dev-text">DEVELOPERS</span>
+            <span class="f-m-dev-glyph" aria-hidden="true">◈</span>
+          </button>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-item copyright">© 2026–2027 OVERCLOCK 2027 · ALL RIGHTS RESERVED</span>
+          <span class="f-m-sep">//</span>
+          <span class="f-m-status-wrap">
+            <span class="status-pip-pulse" aria-hidden="true"></span>
+            <span class="f-m-item status">SYSTEM STATUS // STABLE</span>
+          </span>
+          <span class="f-m-sep">//</span>
         </div>
       </div>
+      <span class="sr-only">OVERCLOCK 2027 // Organised by EESA, ISLE &amp; IEEE Student Branch, FCRIT Vashi // Register on Unstop // Developers // © 2026–2027 OVERCLOCK 2027. All rights reserved. // System Status: Stable</span>
     </div>
   </footer>
 
@@ -2124,7 +2636,6 @@
             aria-label="Close Developers Recognition Panel"
           >
             <span class="close-icon" aria-hidden="true">✕</span>
-            <span class="close-text">CLOSE [ESC]</span>
           </button>
         </div>
 
@@ -2350,13 +2861,13 @@
     <div class="bureau-modal-card">
       <button class="modal-close-btn" id="modal-close-btn" aria-label="Close Case File Dialog">✕</button>
       
-      <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--amber-bright); margin-bottom: 6px;">
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--crt-teal); margin-bottom: 6px;">
         CASE INTAKE FORM // REF: OC-2027-INTAKE
       </div>
-      <h3 id="modal-title" style="font-family: var(--font-display); font-size: 2rem; color: var(--paper-cream); margin-bottom: 18px;">
+      <h3 id="modal-title" style="font-family: var(--font-display); font-size: 2rem; color: var(--paper); margin-bottom: 18px;">
         Open a Case File
       </h3>
-      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">
+      <p style="font-size: 0.9rem; color: var(--paper-muted); margin-bottom: 24px;">
         Express your interest to receive timeline notices, domain briefs, and registration announcements first.
       </p>
 
@@ -2798,7 +3309,7 @@
       <!-- Modal Action Bar -->
       <div class="rules-modal-actions">
         <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" download="OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" class="btn-dossier-download">
-          <span class="action-icon">📥</span>
+          <span class="action-icon">↓</span>
           <span class="action-text">DOWNLOAD OFFICIAL PDF (3.8 MB)</span>
         </a>
         <a href="docs/OVERCLOCK_2027_Rules_and_Regulations.pdf" target="_blank" rel="noopener noreferrer" class="btn-dossier-tab">
@@ -2821,15 +3332,15 @@
   <script type="module" src="tva-temporal-intro.js"></script>
 </body>
 </html>
-�^9N      j�%�j�%�J7j�%�   G    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/?nointro=1 necko:classified 1 peer-ip-address 127.0.0.1 peer-port 3000 strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
-Content-type: text/html
-Content-Length: 149856
-Last-Modified: Sat, 31 Oct 2026 17:22:49 GMT
-Date: Sat, 31 Oct 2026 17:30:02 GMT
+;ˈ�NP      j�)�j�)�Jb�j�*�   G    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/?nointro=1 strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.14.4
- original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 17:27:12 GMT
+Date: Sun, 01 Nov 2026 12:00:34 GMT
 Content-type: text/html
-Content-Length: 149856
-Last-Modified: Sat, 31 Oct 2026 17:22:49 GMT
- ctid 1 net-response-time-onstart 32 net-response-time-onstop 156     I`
+Content-Length: 185823
+Last-Modified: Sun, 01 Nov 2026 11:20:12 GMT
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sun, 01 Nov 2026 12:00:34 GMT
+Content-type: text/html
+Content-Length: 185823
+Last-Modified: Sun, 01 Nov 2026 11:20:12 GMT
+ ctid 1 necko:classified 1     ��

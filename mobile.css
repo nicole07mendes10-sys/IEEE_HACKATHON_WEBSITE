@@ -30,17 +30,41 @@
   }
 
   .bureau-section {
-    padding: 56px 20px 48px;
+    padding: 56px 20px 48px !important;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
   }
 
-  .hero-bureau-section {
-    padding-top: 24px;
-    padding-bottom: 40px;
-    min-height: calc(100vh - 60px);
+  .bureau-section:first-of-type {
+    margin-top: 0 !important;
+  }
+
+  /* Spacious, clean whitespace separation between consecutive sections (no line/divider) */
+  .bureau-section + .bureau-section {
+    margin-top: 56px !important;
+    border: none !important;
+    border-top: none !important;
+  }
+
+  .bureau-section + .bureau-section::before,
+  .bureau-section + .bureau-section::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Compact Hero: starts cleanly below navbar with space so LOGGED #01 stamp is fully visible */
+  .hero-bureau-section,
+  #hero.bureau-section {
+    min-height: auto !important;
+    justify-content: flex-start !important;
+    padding-top: 32px !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
     box-sizing: border-box;
   }
 
@@ -57,7 +81,7 @@
 
   /* --- Section Typography Hierarchy --- */
   .section-header-wrap {
-    margin-bottom: 22px;
+    margin-bottom: 34px !important;
     width: 100%;
   }
 
@@ -336,20 +360,27 @@
   .hero-title-container {
     width: 100%;
     position: relative;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
   }
 
   .hero-bureau-section .section-rubber-stamp {
-    top: -6px;
-    right: 0;
+    top: 6px !important;
+    right: 14px !important;
+    z-index: 10 !important;
+    font-size: 0.74rem !important;
+    padding: 2px 8px !important;
   }
 
   .split-flap-title {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
-    max-width: 360px;
-    margin: 10px 0;
-    gap: 3px;
+    max-width: 100%;
+    margin: 12px 0 10px !important;
+    gap: clamp(2px, 1.2vw, 5px);
+    box-sizing: border-box;
   }
 
   .split-flap-title .flap-char-box,
@@ -367,23 +398,52 @@
   .split-flap-title .flap-char-box {
     flex: 1 1 0;
     min-width: 0;
-    padding: 4px 0;
-    font-size: clamp(1.15rem, 5vw, 1.45rem);
-    border-width: 1.5px;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    height: clamp(56px, 15vw, 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-family: var(--font-display, 'Bebas Neue', sans-serif);
+    font-size: clamp(2.15rem, 8.8vw, 3.2rem);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--amber-bright, #FFAE42);
+    text-shadow: 0 0 16px rgba(255, 174, 66, 0.55), 0 2px 6px rgba(0, 0, 0, 0.95);
+    border: 2px solid rgba(214, 150, 60, 0.85);
+    border-radius: 5px;
+    background: linear-gradient(180deg, #251c14 0%, #17120c 50%, #0e0b08 51%, #1b150f 100%);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 12px rgba(232, 135, 43, 0.3);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    box-sizing: border-box;
+  }
+
+  .split-flap-title .flap-char-box::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: rgba(0, 0, 0, 0.75);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+    pointer-events: none;
   }
 
   .hero-subhead {
-    font-size: clamp(0.92rem, 3.2vw, 1.05rem);
-    letter-spacing: 0.08em;
+    font-size: clamp(0.78rem, 2.5vw, 0.88rem);
+    letter-spacing: 0.14em;
+    color: var(--brass, #B8923A);
     margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
   .hero-tagline {
-    font-size: clamp(0.85rem, 2.8vw, 0.92rem);
+    font-size: clamp(0.82rem, 2.7vw, 0.90rem);
     line-height: 1.45;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     color: var(--text-body, #EADFC4);
   }
 
@@ -503,10 +563,18 @@
 
   /* Gutters & Margins for Standard Mobile */
   .bureau-section {
-    padding-left: 18px;
-    padding-right: 18px;
-    padding-top: 48px;
-    padding-bottom: 40px;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-top: 56px !important;
+    padding-bottom: 48px !important;
+    border: none !important;
+  }
+
+  .hero-bureau-section,
+  #hero.bureau-section {
+    padding-top: 30px !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
   }
 
   /* --- Section 02: About / Event Briefing --- */
@@ -1612,10 +1680,18 @@
 
   /* Minimum Side Margins */
   .bureau-section {
-    padding-left: 14px;
-    padding-right: 14px;
-    padding-top: 40px;
-    padding-bottom: 34px;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    padding-top: 48px !important;
+    padding-bottom: 40px !important;
+    border: none !important;
+  }
+
+  .hero-bureau-section,
+  #hero.bureau-section {
+    padding-top: 26px !important;
+    padding-bottom: 20px !important;
+    margin-top: 0 !important;
   }
 
   .bureau-navbar {
@@ -1703,8 +1779,9 @@
 
   /* Ultra-Compact Hero Elements */
   .split-flap-title .flap-char-box {
-    font-size: 1.08rem;
-    padding: 3px 0;
+    height: 48px;
+    font-size: 1.62rem;
+    padding: 0;
   }
 
   .typed-form-strip {

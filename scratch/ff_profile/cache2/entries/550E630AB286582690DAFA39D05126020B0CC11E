@@ -85,11 +85,11 @@ class BureauScrollSequenceEngine {
     const isMobile = (this.width || window.innerWidth) <= 768;
     const count = isMobile ? 36 : 90;
     const colors = [
-      '#f59e0b', // Amber primary
-      '#fbbf24', // Warm gold
-      '#ff8c00', // Deep orange
-      '#ffe082', // Bright highlight
-      '#38bdf8'  // Cyan tachyon spark
+      '#B8923A', // Brass primary
+      '#C8A348', // Warm brass
+      '#E8872B', // TVA orange accent
+      '#EADFC4', // Paper speckle
+      '#3FB5A0'  // CRT teal terminal spark
     ];
 
     for (let i = 0; i < count; i++) {
@@ -388,7 +388,7 @@ class BureauScrollSequenceEngine {
         x2: p2.x,
         y2: p2.y,
         life: 1.0,
-        color: Math.random() > 0.4 ? '#ffaa33' : '#38bdf8'
+        color: Math.random() > 0.45 ? (Math.random() > 0.35 ? '#B8923A' : '#E8872B') : '#3FB5A0'
       });
     }
   }
@@ -442,9 +442,9 @@ class BureauScrollSequenceEngine {
 
     ctx.save();
     ctx.globalAlpha = Math.max(0, this.shockwaveAlpha);
-    ctx.strokeStyle = '#ff9900';
+    ctx.strokeStyle = '#E8872B';
     ctx.lineWidth = 3.5;
-    ctx.shadowColor = '#ff6600';
+    ctx.shadowColor = 'rgba(232, 135, 43, 0.45)';
     ctx.shadowBlur = 24;
 
     ctx.beginPath();
@@ -452,7 +452,7 @@ class BureauScrollSequenceEngine {
     ctx.stroke();
 
     // Inner chromatic resonance ring
-    ctx.strokeStyle = '#38bdf8';
+    ctx.strokeStyle = '#3FB5A0';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.arc(this.shockwaveOrigin.x, this.shockwaveOrigin.y, Math.max(0, this.shockwaveRadius - 14), 0, Math.PI * 2);
@@ -604,15 +604,15 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
   }
 }
-wY~kî           jÊ8ƒJ—«jÊ:   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/bureau-engine.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Q7ä?™           jÁ)„JxËjÁ@    M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/bureau-engine.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:51:48 GMT
+Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/javascript
-Content-Length: 18319
-Last-Modified: Sat, 31 Oct 2026 17:54:38 GMT
+Content-Length: 18383
+Last-Modified: Sat, 31 Oct 2026 20:17:02 GMT
  original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:51:48 GMT
+Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/javascript
-Content-Length: 18319
-Last-Modified: Sat, 31 Oct 2026 17:54:38 GMT
- ctid 2      Gè
+Content-Length: 18383
+Last-Modified: Sat, 31 Oct 2026 20:17:02 GMT
+ ctid 2      Gœ

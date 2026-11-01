@@ -1827,6 +1827,38 @@ class OverclockApp {
   setupScrollAnimations() {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Enable responsive card slide & swivel animations if motion is allowed
+    if (!prefersReducedMotion) {
+      document.body.classList.add('bureau-scroll-fx-active');
+
+      const cardObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-scroll-revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '0px 0px -8% 0px',
+        threshold: 0.08
+      });
+
+      const cardsToAnimate = document.querySelectorAll(`
+        .case-note-card,
+        .domain-slot-card,
+        .timeline-milestone-item .milestone-card-box,
+        .download-resource-card,
+        .quarters-stat-card,
+        .pillar-card,
+        .auth-clearance-card,
+        .case-folder-unit,
+        .bureau-scroll-card
+      `);
+
+      cardsToAnimate.forEach(card => cardObserver.observe(card));
+    }
+
     const observerOptions = {
       root: null,
       rootMargin: '0px 0px -10% 0px',

@@ -85,7 +85,7 @@
   .section-subtext {
     font-size: 0.90rem;
     line-height: 1.5;
-    color: var(--text-dim, #C8B9A6);
+    color: var(--text-dim, #7C735F);
     max-width: 100%;
     margin-bottom: 20px;
   }
@@ -93,13 +93,13 @@
   /* --- Navigation Bar --- */
   .bureau-navbar {
     height: 60px;
-    background: rgba(20, 16, 12, 0.95);
+    background: rgba(20, 17, 13, 0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
 
   .nav-container {
-    padding: 0 76px 0 16px;
+    padding: 0 84px 0 16px !important;
     height: 100%;
     display: flex;
     align-items: center;
@@ -114,7 +114,7 @@
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    max-width: calc(100% - 90px);
+    max-width: calc(100% - 110px);
     flex-shrink: 1;
     min-width: 0;
   }
@@ -135,7 +135,7 @@
     font-size: clamp(1.28rem, 4.8vw, 1.55rem);
     letter-spacing: 0.04em;
     font-family: var(--font-display);
-    color: var(--amber-bright, #E8892B);
+    color: var(--tva-orange, #E8872B);
     line-height: 1;
     text-shadow: 0 0 10px rgba(232, 137, 43, 0.4);
   }
@@ -143,15 +143,16 @@
   .brand-year-tag {
     font-size: 0.88rem;
     font-family: var(--font-mono);
-    color: var(--paper-cream, #EFE6D2);
+    color: var(--paper-cream, #EADFC4);
   }
 
   .nav-actions-group {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 10px !important;
     margin-left: auto !important;
-    flex-shrink: 0;
+    margin-right: 0 !important;
+    flex-shrink: 0 !important;
   }
 
   /* Remove crowded desktop-only actions, secondary tags, replay intro button & temporal-log readouts */
@@ -191,15 +192,26 @@
     justify-content: center !important;
     width: 32px !important;
     height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
     padding: 0 !important;
     border-radius: 4px !important;
     flex-shrink: 0 !important;
+    position: relative !important;
     touch-action: manipulation !important;
   }
 
+  /* Expand touch target to 42px without enlarging visible container */
+  .nav-audio-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: -5px !important;
+    cursor: pointer !important;
+  }
+
   .nav-audio-btn .audio-toggle-svg {
-    width: 15px !important;
-    height: 15px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 
   /* --- Temporal Clock Navigator (Upper-Right Corner Precision Instrument) --- */
@@ -221,8 +233,8 @@
     height: 104px !important;
     z-index: 1000 !important;
     pointer-events: auto !important;
-    border: 1.5px solid rgba(217, 169, 58, 0.65) !important;
-    background: radial-gradient(circle at 100% 0%, #201710 0%, #17120F 70%, #130E0B 100%) !important;
+    border: 1.5px solid rgba(184, 146, 58, 0.65) !important;
+    background: radial-gradient(circle at 100% 0%, #26201A 0%, #1C1813 70%, #14110D 100%) !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85) !important;
     cursor: pointer;
     padding: 0 !important;
@@ -260,8 +272,8 @@
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
     z-index: 1100 !important;
-    background: #16110D !important;
-    border: 1.5px solid var(--border-brass, #C89D42) !important;
+    background: #1C1813 !important;
+    border: 1.5px solid var(--border-brass, #B8923A) !important;
     border-radius: 6px !important;
     box-shadow: 0 10px 32px rgba(0, 0, 0, 0.95) !important;
     padding: 10px 12px 14px !important;
@@ -282,9 +294,9 @@
     min-height: 40px;
     padding: 7px 10px;
     margin-bottom: 6px;
-    border: 1px solid rgba(217, 169, 58, 0.35);
+    border: 1px solid rgba(184, 146, 58, 0.35);
     border-radius: 4px;
-    background: rgba(28, 21, 15, 0.9);
+    background: rgba(28, 24, 19, 0.9);
     font-size: 0.80rem;
   }
 
@@ -372,7 +384,7 @@
     font-size: clamp(0.85rem, 2.8vw, 0.92rem);
     line-height: 1.45;
     margin-bottom: 14px;
-    color: var(--text-body, #EFE6D2);
+    color: var(--text-body, #EADFC4);
   }
 
   .hero-clock-backdrop {
@@ -388,9 +400,9 @@
     gap: 8px 12px;
     padding: 12px 14px;
     margin-bottom: 16px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
-    background: rgba(28, 21, 15, 0.92) !important;
+    background: rgba(28, 24, 19, 0.92) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     width: 100%;
@@ -415,12 +427,12 @@
   .field-label {
     font-size: 0.64rem;
     letter-spacing: 0.05em;
-    color: var(--text-dim, #C8B9A6);
+    color: var(--text-dim, #7C735F);
   }
 
   .field-value {
     font-size: 0.82rem;
-    color: var(--text-bright, #FFF2DC);
+    color: var(--text-bright, #EADFC4);
   }
 
   .hero-cta-group {
@@ -456,8 +468,19 @@
 
   /* Organising Clubs Section & Cards */
   .clubs-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-evenly !important;
+    align-items: center !important;
+    gap: 24px !important;
+    max-width: 860px !important;
+    margin: 32px auto 0 !important;
+    padding: 14px 6px !important;
+  }
+
+  .tva-club-card {
+    --tva-w: 240px !important;
+    width: var(--tva-w) !important;
   }
 
   /* Downloads Resource Grid */
@@ -490,9 +513,9 @@
   .operational-status-panel {
     padding: 14px 14px;
     margin-bottom: 16px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(22, 17, 13, 0.9);
+    background: rgba(28, 24, 19, 0.9);
     box-sizing: border-box;
   }
 
@@ -503,7 +526,7 @@
     gap: 8px;
     margin-bottom: 10px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
   }
 
   .panel-header-title {
@@ -528,8 +551,8 @@
 
   .status-cell {
     padding: 8px 10px;
-    border: 1px solid rgba(217, 169, 58, 0.2);
-    background: rgba(20, 15, 11, 0.7);
+    border: 1px solid rgba(184, 146, 58, 0.2);
+    background: rgba(20, 17, 13, 0.7);
     border-radius: 4px;
     box-sizing: border-box;
   }
@@ -543,7 +566,7 @@
     letter-spacing: 0.04em;
     margin-bottom: 2px;
     display: block;
-    color: var(--text-dim, #C8B9A6);
+    color: var(--text-dim, #7C735F);
   }
 
   .status-v {
@@ -560,9 +583,9 @@
 
   .case-note-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
-    background: rgba(24, 18, 13, 0.85);
+    background: rgba(28, 24, 19, 0.85);
   }
 
   .note-stamp {
@@ -595,7 +618,7 @@
     padding: 0 !important;
     border: 2px solid var(--border-dim);
     border-radius: var(--radius-md);
-    background: #18120c;
+    background: #1C1813;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -610,8 +633,8 @@
     padding: 10px 14px;
     height: 42px;
     margin-bottom: 0 !important;
-    border-bottom: 1px solid rgba(217, 169, 58, 0.15);
-    background: #130d08;
+    border-bottom: 1px solid rgba(184, 146, 58, 0.15);
+    background: #14110D;
     box-sizing: border-box;
   }
 
@@ -726,9 +749,9 @@
     margin-top: 28px !important;
     box-sizing: border-box !important;
     width: 100% !important;
-    border: 1.5px solid var(--border-brass, #C89D42) !important;
+    border: 1.5px solid var(--border-brass, #B8923A) !important;
     border-radius: 6px !important;
-    background: rgba(26, 18, 12, 0.95) !important;
+    background: rgba(28, 24, 19, 0.95) !important;
   }
 
   .domain-cta-content {
@@ -753,7 +776,7 @@
     line-height: 1.25 !important;
     margin: 0 0 10px 0 !important;
     width: 100% !important;
-    color: var(--paper-cream, #EFE6D2) !important;
+    color: var(--paper-cream, #EADFC4) !important;
   }
 
   .domain-cta-text {
@@ -761,7 +784,7 @@
     line-height: 1.5 !important;
     margin: 0 0 14px 0 !important;
     width: 100% !important;
-    color: var(--text-dim, #C8B9A6) !important;
+    color: var(--text-dim, #7C735F) !important;
   }
 
   .domain-cta-action {
@@ -785,9 +808,9 @@
   /* --- Section 04: The Shortlist --- */
   .results-dossier-chamber {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(22, 17, 13, 0.92);
+    background: rgba(28, 24, 19, 0.92);
   }
 
   .dossier-teletype-header {
@@ -796,7 +819,7 @@
     gap: 4px;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
   }
 
   .teletype-title {
@@ -895,9 +918,9 @@
 
   .milestone-card-box {
     padding: 12px 14px !important;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3)) !important;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3)) !important;
     border-radius: 6px !important;
-    background: rgba(24, 18, 13, 0.88) !important;
+    background: rgba(28, 24, 19, 0.88) !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
@@ -941,9 +964,9 @@
   /* --- Section 06: Registration (Rs. 1,770 display) --- */
   .registration-terminal-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(22, 17, 13, 0.92);
+    background: rgba(28, 24, 19, 0.92);
   }
 
   .terminal-card-topbar {
@@ -952,7 +975,7 @@
     gap: 4px;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(217, 169, 58, 0.25);
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
   }
 
   .topbar-badge {
@@ -971,9 +994,9 @@
 
   .reg-milestone-panel {
     padding: 12px 14px;
-    border: 1px solid rgba(217, 169, 58, 0.2);
+    border: 1px solid rgba(184, 146, 58, 0.2);
     border-radius: 4px;
-    background: rgba(20, 15, 11, 0.6);
+    background: rgba(20, 17, 13, 0.6);
   }
 
   .reg-k-label {
@@ -994,9 +1017,9 @@
   .fee-calculation-box {
     padding: 14px 14px;
     text-align: center;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
-    background: rgba(28, 21, 15, 0.85);
+    background: rgba(28, 24, 19, 0.85);
   }
 
   .fee-box-title {
@@ -1018,9 +1041,9 @@
 
   .quarters-stat-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
-    background: rgba(24, 18, 13, 0.85);
+    background: rgba(28, 24, 19, 0.85);
   }
 
   .stat-icon {
@@ -1049,7 +1072,7 @@
   .accommodation-details-panel {
     padding: 14px 14px;
     margin-top: 14px;
-    border: 1.5px solid rgba(217, 169, 58, 0.25);
+    border: 1.5px solid rgba(184, 146, 58, 0.25);
     border-radius: 6px;
   }
 
@@ -1072,7 +1095,7 @@
 
   .criterion-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
   }
 
@@ -1126,7 +1149,7 @@
   }
 
   .faq-item {
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
   }
 
@@ -1151,7 +1174,7 @@
 
   .venue-card {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-brass, #C89D42);
+    border: 1.5px solid var(--border-brass, #B8923A);
     border-radius: 6px;
   }
 
@@ -1186,7 +1209,7 @@
 
   .footer-panel {
     padding: 14px 14px;
-    border: 1.5px solid var(--border-subtle, rgba(217, 169, 58, 0.3));
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
   }
 
@@ -1203,7 +1226,7 @@
 
   .crew-roster-card {
     padding: 8px 10px;
-    border: 1px solid rgba(217, 169, 58, 0.2);
+    border: 1px solid rgba(184, 146, 58, 0.2);
     border-radius: 4px;
   }
 
@@ -1274,9 +1297,12 @@
   }
 
   .dev-modal-close-btn {
-    padding: 6px 10px;
-    font-size: 0.70rem;
-    min-height: 38px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    font-size: 1.25rem;
   }
 
   .dev-modal-header {
@@ -1345,12 +1371,35 @@
     text-align: center;
   }
 
-  .footer-bottom-bar {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
+  .footer-marquee-strip {
+    padding: 10px 0;
+  }
+
+  .f-m-item {
     font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  .f-m-sep {
+    padding: 0 12px;
+  }
+
+  .f-m-unstop-badge {
+    padding: 3px 9px;
+    gap: 5px;
+  }
+
+  .f-m-unstop-img {
+    height: 12px;
+  }
+
+  .f-m-unstop-text {
+    font-size: 0.62rem;
+  }
+
+  .f-m-dev-trigger {
+    padding: 3px 8px;
+    font-size: 0.65rem;
   }
 
   /* Organiser Logos Strip */
@@ -1363,8 +1412,8 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    background: rgba(20, 16, 12, 0.72);
-    border: 1px solid rgba(217, 169, 58, 0.3);
+    background: rgba(20, 17, 13, 0.72);
+    border: 1px solid rgba(184, 146, 58, 0.3);
     border-radius: var(--radius-sm, 6px);
   }
 
@@ -1401,7 +1450,7 @@
     font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: var(--paper-cream, #EFE6D2);
+    color: var(--paper-cream, #EADFC4);
     text-transform: uppercase;
     white-space: nowrap;
   }
@@ -1417,13 +1466,36 @@
 
   /* Organising Clubs Section */
   .clubs-cards-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    margin-top: 18px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 22px !important;
+    margin-top: 18px !important;
+    width: 100% !important;
   }
 
-  .org-club-card {
-    padding: 18px 16px;
+  .tva-club-card {
+    --tva-w: min(230px, 75vw) !important;
+    width: var(--tva-w) !important;
+  }
+
+  .tva-card__back-content {
+    inset: 10px 12px !important;
+  }
+
+  .tva-back-body {
+    padding: 7px 7px !important;
+  }
+
+  .tva-back-footer {
+    flex-direction: column !important;
+    gap: 2px !important;
+    text-align: center !important;
+    padding-top: 5px !important;
+  }
+
+  .tva-flip-prompt {
+    margin-left: 0 !important;
   }
 
   /* Round 1 PPT Free Notice Panel */
@@ -1551,12 +1623,17 @@
   }
 
   .nav-container {
-    padding: 0 54px 0 10px;
+    padding: 0 76px 0 10px !important;
+  }
+
+  .nav-actions-group {
+    gap: 8px !important;
+    margin-right: 0 !important;
   }
 
   .brand-wordmark {
-    font-size: 1.25rem !important;
-    letter-spacing: 0.03em !important;
+    font-size: 1.18rem !important;
+    letter-spacing: 0.02em !important;
   }
 
   .brand-badge {
@@ -1698,16 +1775,15 @@
     font-size: 1.35rem;
   }
 }
-P≈å           jÊ8ƒJ—«jÊ:
-   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/mobile.css?v=1.3 strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+ÈòD           jÁ)„JxËjÁ*À   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/mobile.css?v=1.3 strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:51:48 GMT
+Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/css
-Content-Length: 35321
-Last-Modified: Sat, 31 Oct 2026 17:57:27 GMT
+Content-Length: 36921
+Last-Modified: Sun, 01 Nov 2026 11:21:52 GMT
  original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:51:48 GMT
+Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/css
-Content-Length: 35321
-Last-Modified: Sat, 31 Oct 2026 17:57:27 GMT
- ctid 5      â˘
+Content-Length: 36921
+Last-Modified: Sun, 01 Nov 2026 11:21:52 GMT
+ ctid 5      ê9

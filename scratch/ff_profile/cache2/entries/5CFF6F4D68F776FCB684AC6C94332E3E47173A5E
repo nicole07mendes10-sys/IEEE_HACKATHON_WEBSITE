@@ -582,9 +582,9 @@
         // Slot 1: General Innovation & Open Innovation (Amber)
         {
           slot: 1,
-          color: '#FF9D3B',
-          glowColor: 'rgba(255, 157, 59, 0.75)',
-          beamColor: '#FFF1D0',
+          color: '#D68A2E',
+          glowColor: 'rgba(214, 138, 46, 0.65)',
+          beamColor: '#EADFC4',
           baseFreq: 433.92,
           unit: 'MHz',
           idleTag: 'CARRIER ACTIVE // AMBER TRACE',
@@ -594,9 +594,9 @@
         // Slot 2: Defence & National Security (Cyan)
         {
           slot: 2,
-          color: '#00E5FF',
-          glowColor: 'rgba(0, 229, 255, 0.75)',
-          beamColor: '#E0FFFF',
+          color: '#38B8CA',
+          glowColor: 'rgba(56, 184, 202, 0.65)',
+          beamColor: '#DDF4F8',
           baseFreq: 868.30,
           unit: 'MHz',
           idleTag: 'CARRIER ACTIVE // CYAN TRACE',
@@ -606,9 +606,9 @@
         // Slot 3: Healthcare & Assistive Technology (Emerald)
         {
           slot: 3,
-          color: '#00E676',
-          glowColor: 'rgba(0, 230, 118, 0.8)',
-          beamColor: '#E8F5E9',
+          color: '#56B870',
+          glowColor: 'rgba(86, 184, 112, 0.65)',
+          beamColor: '#E2F3E6',
           baseFreq: 2.412,
           unit: 'GHz',
           idleTag: 'CARRIER ACTIVE // EMERALD TRACE',
@@ -618,9 +618,9 @@
         // Slot 4: Smart Home & Consumer Electronics (Violet)
         {
           slot: 4,
-          color: '#BB86FC',
-          glowColor: 'rgba(187, 134, 252, 0.75)',
-          beamColor: '#F3E5F5',
+          color: '#9B78D6',
+          glowColor: 'rgba(155, 120, 214, 0.65)',
+          beamColor: '#EFE7F8',
           baseFreq: 915.00,
           unit: 'MHz',
           idleTag: 'CARRIER ACTIVE // VIOLET TRACE',
@@ -630,9 +630,9 @@
         // Slot 5: Industrial Automation & Monitoring (Copper)
         {
           slot: 5,
-          color: '#FF8C42',
-          glowColor: 'rgba(255, 140, 66, 0.75)',
-          beamColor: '#FFE0B2',
+          color: '#C67D3A',
+          glowColor: 'rgba(198, 125, 58, 0.65)',
+          beamColor: '#F5E6D3',
           baseFreq: 5.80,
           unit: 'GHz',
           idleTag: 'CARRIER ACTIVE // COPPER TRACE',
@@ -642,9 +642,9 @@
         // Slot 6: Energy, Power & Sustainability (Ruby)
         {
           slot: 6,
-          color: '#FF4B6E',
-          glowColor: 'rgba(255, 75, 110, 0.8)',
-          beamColor: '#FFCDD2',
+          color: '#C64E5E',
+          glowColor: 'rgba(198, 78, 94, 0.65)',
+          beamColor: '#F6E1E4',
           baseFreq: 10.50,
           unit: 'GHz',
           idleTag: 'CARRIER ACTIVE // RUBY TRACE',
@@ -713,36 +713,6 @@
           ecgPhase: Math.random() * 10
         };
 
-        // Inject Sonic Wave Voice Indicator Button into Topbar
-        const topbar = card.querySelector('.domain-slot-topbar');
-        let sonicBtn = card.querySelector('.slot-sonic-btn');
-        if (!sonicBtn && topbar) {
-          sonicBtn = document.createElement('button');
-          sonicBtn.type = 'button';
-          sonicBtn.className = 'slot-sonic-btn';
-          sonicBtn.setAttribute('aria-label', `Play wave audio and vibration for Domain Slot ${slotNum}`);
-          sonicBtn.setAttribute('title', `Click or probe to hear domain wave telemetry & vibration`);
-          sonicBtn.innerHTML = `
-            <span class="sonic-bars" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="sonic-label">WAVE VOICE</span>
-          `;
-          const freqSpan = topbar.querySelector('.slot-freq');
-          if (freqSpan) {
-            topbar.insertBefore(sonicBtn, freqSpan);
-          } else {
-            topbar.appendChild(sonicBtn);
-          }
-
-          sonicBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.acousticEngine.triggerAcousticBurst(slotNum, scope.probeX);
-            scope.card.classList.add('sonic-active');
-            setTimeout(() => {
-              if (!scope.isHovered) scope.card.classList.remove('sonic-active');
-            }, 1200);
-          });
-        }
-
         this.bindScopeInteractions(scope);
         this.resizeScope(scope);
         this.scopes.push(scope);
@@ -761,35 +731,20 @@
       scope.card.addEventListener('mouseenter', (e) => {
         scope.isHovered = true;
         updateProbe(e.clientX, e.clientY);
-        scope.card.classList.add('scope-probed', 'sonic-active');
-        this.acousticEngine.startWaveVoice(scope.slotNum, scope.probeX, scope.probeY);
+        scope.card.classList.add('scope-probed');
       });
 
       scope.card.addEventListener('mousemove', (e) => {
         updateProbe(e.clientX, e.clientY);
-        this.acousticEngine.modulateVoice(scope.probeX, scope.probeY);
       });
 
       scope.card.addEventListener('mouseleave', () => {
         scope.isHovered = false;
-        scope.card.classList.remove('scope-probed', 'sonic-active');
-        this.acousticEngine.stopWaveVoice();
+        scope.card.classList.remove('scope-probed');
         if (scope.channelTag) {
           scope.channelTag.textContent = scope.config.idleTag;
           scope.channelTag.classList.remove('telemetry-active');
         }
-      });
-
-      // Click / Tap acoustic burst
-      scope.card.addEventListener('click', (e) => {
-        updateProbe(e.clientX, e.clientY);
-        scope.card.classList.add('sonic-active');
-        this.acousticEngine.triggerAcousticBurst(scope.slotNum, scope.probeX);
-        setTimeout(() => {
-          if (!scope.isHovered) {
-            scope.card.classList.remove('sonic-active');
-          }
-        }, 1200);
       });
 
       // Mobile Touch Handling
@@ -797,23 +752,20 @@
         if (e.touches && e.touches[0]) {
           scope.isHovered = true;
           updateProbe(e.touches[0].clientX, e.touches[0].clientY);
-          scope.card.classList.add('scope-probed', 'sonic-active');
-          this.acousticEngine.startWaveVoice(scope.slotNum, scope.probeX, scope.probeY);
+          scope.card.classList.add('scope-probed');
         }
       }, { passive: true });
 
       scope.card.addEventListener('touchmove', (e) => {
         if (e.touches && e.touches[0]) {
           updateProbe(e.touches[0].clientX, e.touches[0].clientY);
-          this.acousticEngine.modulateVoice(scope.probeX, scope.probeY);
         }
       }, { passive: true });
 
       scope.card.addEventListener('touchend', () => {
         setTimeout(() => {
           scope.isHovered = false;
-          scope.card.classList.remove('scope-probed', 'sonic-active');
-          this.acousticEngine.stopWaveVoice();
+          scope.card.classList.remove('scope-probed');
           if (scope.channelTag) {
             scope.channelTag.textContent = scope.config.idleTag;
             scope.channelTag.classList.remove('telemetry-active');
@@ -964,7 +916,7 @@
       // Center horizontal axis
       ctx.beginPath();
       ctx.setLineDash([2, 4]);
-      ctx.strokeStyle = 'rgba(217, 169, 58, 0.18)';
+      ctx.strokeStyle = 'rgba(184, 146, 58, 0.2)';
       ctx.lineWidth = 1;
       ctx.moveTo(0, midY);
       ctx.lineTo(w, midY);
@@ -972,7 +924,7 @@
 
       // Tick marks on center horizontal axis
       ctx.setLineDash([]);
-      ctx.strokeStyle = 'rgba(217, 169, 58, 0.28)';
+      ctx.strokeStyle = 'rgba(184, 146, 58, 0.3)';
       const step = w / 10;
       for (let i = 1; i < 10; i++) {
         const x = i * step;
@@ -1112,8 +1064,8 @@
       const radarX = Math.max(0, Math.min(w, packetCenter * w));
       const beamGrad = ctx.createLinearGradient(radarX - 18, 0, radarX + 4, 0);
       beamGrad.addColorStop(0, 'transparent');
-      beamGrad.addColorStop(0.7, 'rgba(0, 229, 255, 0.08)');
-      beamGrad.addColorStop(1, 'rgba(0, 229, 255, 0.38)');
+      beamGrad.addColorStop(0.7, 'rgba(56, 184, 202, 0.08)');
+      beamGrad.addColorStop(1, 'rgba(56, 184, 202, 0.35)');
       ctx.fillStyle = beamGrad;
       ctx.fillRect(radarX - 18, 0, 22, h);
 
@@ -1203,7 +1155,7 @@
       const sweepX = ((scope.ecgPhase * 0.45) % 1.0) * w;
       const sweepFade = ctx.createLinearGradient(sweepX - 25, 0, sweepX + 2, 0);
       sweepFade.addColorStop(0, 'transparent');
-      sweepFade.addColorStop(1, 'rgba(0, 230, 118, 0.28)');
+      sweepFade.addColorStop(1, 'rgba(86, 184, 112, 0.25)');
       ctx.fillStyle = sweepFade;
       ctx.fillRect(sweepX - 25, 0, 27, h);
 
@@ -1282,7 +1234,7 @@
 
       // Clock tick pulses along bottom baseline
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(187, 134, 252, 0.45)';
+      ctx.strokeStyle = 'rgba(155, 120, 214, 0.4)';
       ctx.lineWidth = 1;
       const clockStep = w / 16;
       for (let c = 0; c <= 16; c++) {
@@ -1399,7 +1351,7 @@
 
       // Phase 2 Secondary Interlaced Trace
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255, 75, 110, 0.45)';
+      ctx.strokeStyle = 'rgba(198, 78, 94, 0.45)';
       ctx.lineWidth = 2.0;
       p2.forEach((pt, i) => {
         if (i === 0) ctx.moveTo(pt.x, pt.y);
@@ -1441,15 +1393,15 @@
     new DomainOscilloscopeEngine();
   }
 })();
-R§ûÍ×      jæ9ªjæ9«J¼jæ9â   S    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/domain-oscilloscope.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
-Content-type: text/javascript
-Content-Length: 49245
-Last-Modified: Sat, 31 Oct 2026 18:46:10 GMT
+œõ¦9d7           jç)ãJxèjç?û   S    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/domain-oscilloscope.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:55:39 GMT
- original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:51:48 GMT
+Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/javascript
-Content-Length: 49245
-Last-Modified: Sat, 31 Oct 2026 18:46:10 GMT
- ctid 2      À]
+Content-Length: 46978
+Last-Modified: Sat, 31 Oct 2026 20:17:54 GMT
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sun, 01 Nov 2026 12:00:35 GMT
+Content-type: text/javascript
+Content-Length: 46978
+Last-Modified: Sat, 31 Oct 2026 20:17:54 GMT
+ ctid 2      ·‚

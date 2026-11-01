@@ -300,8 +300,8 @@ class BureauSpatialScrollController {
         const glow = (f_smooth * 0.65).toFixed(2);
         const sy = (8 + f_smooth * 12).toFixed(1);
         const sb = (18 + f_smooth * 16).toFixed(1);
-        card.style.boxShadow = `0 ${sy}px ${sb}px rgba(0, 0, 0, 0.45), 0 0 ${(f_smooth * 22).toFixed(1)}px rgba(232, 137, 43, ${glow}), inset 0 0 ${(f_smooth * 8).toFixed(1)}px rgba(232, 137, 43, 0.25)`;
-        card.style.outline = `1.5px solid rgba(232, 137, 43, ${(f_smooth * 0.85).toFixed(2)})`;
+        card.style.boxShadow = `0 ${sy}px ${sb}px rgba(0, 0, 0, 0.45), 0 0 ${(f_smooth * 18).toFixed(1)}px rgba(184, 146, 58, ${glow}), inset 0 0 ${(f_smooth * 6).toFixed(1)}px rgba(184, 146, 58, 0.2)`;
+        card.style.outline = `1.5px solid rgba(184, 146, 58, ${(f_smooth * 0.7).toFixed(2)})`;
       } else {
         card.style.boxShadow = '';
         card.style.outline = '';
@@ -417,9 +417,9 @@ class BureauSpatialScrollController {
       frame.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
       if (isFinal && f_smooth > 0.05) {
-        frame.style.boxShadow = `0 0 ${(16 + f_smooth * 20).toFixed(1)}px rgba(232, 137, 43, 0.4)`;
+        frame.style.boxShadow = `0 0 ${(16 + f_smooth * 20).toFixed(1)}px rgba(184, 146, 58, 0.35)`;
       } else if (f_smooth > 0.08) {
-        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(217, 169, 58, 0.25)`;
+        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(184, 146, 58, 0.25)`;
       } else {
         frame.style.boxShadow = '';
       }
@@ -543,7 +543,7 @@ class BureauSpatialScrollController {
         card.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
         if (f_smooth > 0.06) {
-          card.style.boxShadow = `0 12px 28px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 20).toFixed(1)}px rgba(232, 137, 43, ${(f_smooth * 0.55).toFixed(2)})`;
+          card.style.boxShadow = `0 12px 28px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 18).toFixed(1)}px rgba(184, 146, 58, ${(f_smooth * 0.45).toFixed(2)})`;
         } else {
           card.style.boxShadow = '';
         }
@@ -582,7 +582,7 @@ class BureauSpatialScrollController {
       folder.style.transform = `perspective(800px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
 
       if (f_smooth > 0.1) {
-        folder.style.boxShadow = `0 6px 20px rgba(0, 0, 0, 0.4), 0 0 ${(f_smooth * 18).toFixed(1)}px rgba(232, 137, 43, ${(f_smooth * 0.4).toFixed(2)})`;
+        folder.style.boxShadow = `0 6px 20px rgba(0, 0, 0, 0.4), 0 0 ${(f_smooth * 16).toFixed(1)}px rgba(184, 146, 58, ${(f_smooth * 0.35).toFixed(2)})`;
       } else if (!folder.classList.contains('open')) {
         folder.style.boxShadow = '';
       }
@@ -644,7 +644,7 @@ class BureauSpatialScrollController {
       const tz = f_smooth * 16;
       this.completionCard.style.transform = `perspective(600px) translate3d(0px, 0px, ${tz.toFixed(1)}px)`;
       if (f_smooth > 0.1) {
-        this.completionCard.style.boxShadow = `0 0 ${(f_smooth * 22).toFixed(1)}px rgba(232, 137, 43, ${(f_smooth * 0.45).toFixed(2)}), inset 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(232, 137, 43, 0.15)`;
+        this.completionCard.style.boxShadow = `0 0 ${(f_smooth * 18).toFixed(1)}px rgba(184, 146, 58, ${(f_smooth * 0.4).toFixed(2)}), inset 0 0 ${(f_smooth * 12).toFixed(1)}px rgba(184, 146, 58, 0.15)`;
       } else {
         this.completionCard.style.boxShadow = '';
       }
@@ -747,6 +747,7 @@ class OverclockApp {
     this.setupRegistrationCTA();
     this.setupDownloadsSection();
     this.setupUnstopLinks();
+    this.setupTvaClubCards();
     this.setupSponsorsSection();
     this.setupFAQ();
     this.setupModals();
@@ -1576,6 +1577,7 @@ class OverclockApp {
 
       if (footerDevTrigger) footerDevTrigger.setAttribute('aria-expanded', 'true');
       if (footerBottomDevTrigger) footerBottomDevTrigger.setAttribute('aria-expanded', 'true');
+      document.querySelectorAll('.f-m-dev-trigger').forEach(btn => btn.setAttribute('aria-expanded', 'true'));
 
       if (devModalCloseBtn) {
         devModalCloseBtn.focus();
@@ -1591,6 +1593,7 @@ class OverclockApp {
 
       if (footerDevTrigger) footerDevTrigger.setAttribute('aria-expanded', 'false');
       if (footerBottomDevTrigger) footerBottomDevTrigger.setAttribute('aria-expanded', 'false');
+      document.querySelectorAll('.f-m-dev-trigger').forEach(btn => btn.setAttribute('aria-expanded', 'false'));
 
       setTimeout(() => {
         if (!isDevModalOpen && devModalOverlay) {
@@ -1619,6 +1622,9 @@ class OverclockApp {
     if (footerBottomDevTrigger) {
       footerBottomDevTrigger.addEventListener('click', toggleDevModal);
     }
+    document.querySelectorAll('.f-m-dev-trigger').forEach(btn => {
+      btn.addEventListener('click', toggleDevModal);
+    });
     if (devModalCloseBtn) {
       devModalCloseBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -2210,6 +2216,134 @@ class OverclockApp {
   }
 
   /* ==========================================================
+     5D. TVA ORGANISING CLUB ID CARDS FLIP & SCROLL REVEAL
+     - Cards initially face backwards (circuit schematic / dossier).
+     - As user scrolls into view, cards turn forward in staggered cascade
+       and keep floating with ambient 3D buoyant levitation.
+     - When scrolling back up, cards revert the same way (rotate back to 180deg).
+     - Manual click / tap / keyboard toggles inspection of either face.
+  ========================================================== */
+  setupTvaClubCards() {
+    const cards = document.querySelectorAll('.tva-club-card');
+    const clubsSection = document.getElementById('organising-clubs');
+    if (!cards.length || !clubsSection) return;
+
+    let isRevealedForward = false;
+    let ticking = false;
+
+    const setCardsOrientation = (forward) => {
+      if (forward === isRevealedForward) return;
+      isRevealedForward = forward;
+
+      cards.forEach((card) => {
+        // Clear manual flip overrides on transition
+        card.classList.remove('is-user-flipped');
+        card.classList.remove('is-flipped');
+
+        if (forward) {
+          card.classList.add('is-forward');
+          card.classList.add('is-floating');
+          card.setAttribute('aria-pressed', 'false');
+          const clubName = card.getAttribute('data-club-name') || 'Organising Club';
+          card.setAttribute('aria-label', `${clubName} ID card (front face shown). Click, tap or press Enter to view details.`);
+        } else {
+          card.classList.remove('is-forward');
+          card.classList.remove('is-floating');
+          card.setAttribute('aria-pressed', 'false');
+          const clubName = card.getAttribute('data-club-name') || 'Organising Club';
+          card.setAttribute('aria-label', `${clubName} ID card (back face shown). Click, tap or press Enter to flip to front.`);
+        }
+      });
+    };
+
+    const checkOrientation = () => {
+      const rect = clubsSection.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+
+      // Reveal forward when section enters reading range
+      if (rect.top <= vh * 0.82 && rect.bottom >= -80) {
+        setCardsOrientation(true);
+      } else if (rect.top > vh * 0.88) {
+        // Revert back when user scrolls back up towards hero
+        setCardsOrientation(false);
+      }
+    };
+
+    const onScrollOrResize = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          checkOrientation();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+
+    // Initial check on load
+    checkOrientation();
+
+    // Interactive flip handlers
+    cards.forEach((card) => {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isTouchScrolling = false;
+
+      const flipCard = () => {
+        const isFlipped = card.classList.toggle('is-user-flipped');
+        const isCurrentlyFront = card.classList.contains('is-forward') ? !isFlipped : isFlipped;
+        card.setAttribute('aria-pressed', String(!isCurrentlyFront));
+        const clubName = card.getAttribute('data-club-name') || 'Organising Club';
+        card.setAttribute(
+          'aria-label',
+          isCurrentlyFront
+            ? `${clubName} ID card (front face shown). Click, tap or press Enter to view details.`
+            : `${clubName} ID card (back face shown). Click, tap or press Enter to flip to front.`
+        );
+        this.playRelayClick(820);
+      };
+
+      // Primary click / tap event
+      card.addEventListener('click', () => {
+        if (isTouchScrolling) {
+          isTouchScrolling = false;
+          return;
+        }
+        flipCard();
+      });
+
+      // Touch handlers to prevent accidental flip during mobile page scroll
+      card.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isTouchScrolling = false;
+        }
+      }, { passive: true });
+
+      card.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
+          const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+          if (deltaX > 8 || deltaY > 8) {
+            isTouchScrolling = true;
+          }
+        }
+      }, { passive: true });
+
+      // Keyboard activation: Enter or Space
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          flipCard();
+        }
+      });
+    });
+  }
+
+  /* ==========================================================
      6. SPONSORS ("AUTHORIZED PARTNERS") SECTION
   ========================================================== */
   setupSponsorsSection() {
@@ -2432,8 +2566,8 @@ class OverclockApp {
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
           submitBtn.textContent = 'LOGGED TO ARCHIVE [RECORDED]';
-          submitBtn.style.background = '#7CFF9B';
-          submitBtn.style.color = '#14100C';
+          submitBtn.style.background = '#7E9A5B';
+          submitBtn.style.color = '#14110D';
         }
         this.playStampThunk();
         setTimeout(() => {
@@ -2705,15 +2839,15 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     window.overclockApp = new OverclockApp();
   }
 }
-†f}fF´      jÊ9™jÊ9´JºjÊ9‰   C    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/app.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
-Content-type: text/javascript
-Content-Length: 97299
-Last-Modified: Sat, 31 Oct 2026 18:45:59 GMT
+ÿ‘≈F           jÁ)„JxËjÁ*»   C    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/app.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
 Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:55:39 GMT
- original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sat, 31 Oct 2026 18:51:48 GMT
+Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/javascript
-Content-Length: 97299
-Last-Modified: Sat, 31 Oct 2026 18:45:59 GMT
- ctid 2     |
+Content-Length: 102473
+Last-Modified: Sun, 01 Nov 2026 11:22:16 GMT
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Sun, 01 Nov 2026 12:00:35 GMT
+Content-type: text/javascript
+Content-Length: 102473
+Last-Modified: Sun, 01 Nov 2026 11:22:16 GMT
+ ctid 2     êI
