@@ -6411,25 +6411,26 @@ body {
   }
 
   .case-notes-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     width: 100%;
   }
 
   .case-note-card {
-    padding: 18px 14px;
+    padding: 12px 10px;
     width: 100%;
     box-sizing: border-box;
   }
 
   .note-title {
-    font-size: 1.05rem;
-    margin-bottom: 6px;
+    font-size: 0.90rem;
+    margin-bottom: 4px;
+    line-height: 1.25;
   }
 
   .note-body {
-    font-size: 0.86rem;
-    line-height: 1.5;
+    font-size: 0.74rem;
+    line-height: 1.38;
   }
 
   /* Problem Statements */
@@ -6537,31 +6538,34 @@ body {
   }
 
   /* Accommodation */
-  .accommodation-notes-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .accommodation-notes-grid,
+  .accommodation-two-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     width: 100%;
   }
 
   .quarters-stat-card {
-    padding: 16px 14px;
+    padding: 12px 10px;
     width: 100%;
     box-sizing: border-box;
   }
 
   .stat-icon {
-    width: 36px;
-    height: 36px;
-    margin-bottom: 10px;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
   }
 
   .stat-heading {
-    font-size: 0.88rem;
+    font-size: 0.76rem;
+    margin-bottom: 4px;
+    line-height: 1.25;
   }
 
   .stat-body {
-    font-size: 0.84rem;
-    line-height: 1.45;
+    font-size: 0.72rem;
+    line-height: 1.35;
   }
 
   .accommodation-details-panel {
@@ -6572,44 +6576,97 @@ body {
   }
 
   .specs-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
   /* Judging & Recognition */
   .evaluation-pillars-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     width: 100%;
   }
 
   .pillar-card {
-    padding: 16px 14px;
+    padding: 12px 10px;
     width: 100%;
     box-sizing: border-box;
   }
 
   .pillar-title {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .pillar-desc {
-    font-size: 0.84rem;
-    line-height: 1.5;
+    font-size: 0.72rem;
+    line-height: 1.38;
   }
 
-  /* Sponsors & Partners */
+  /* Sponsors & Partners (2-Column Mobile Format) */
   .sponsors-pinboard-deck {
-    padding: 20px 14px;
+    padding: 20px 10px;
     width: 100%;
     box-sizing: border-box;
   }
 
+  .tier-title-container {
+    max-width: 210px;
+  }
+
   .tier-gold-grid,
   .tier-silver-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     width: 100%;
+  }
+
+  .auth-clearance-card,
+  .tier-title-card,
+  .tier-gold-card,
+  .tier-silver-card {
+    padding: 12px 8px 10px;
+  }
+
+  .card-pushpin-head {
+    width: 10px;
+    height: 10px;
+    top: -6px;
+  }
+
+  .card-auth-number {
+    font-size: 0.52rem;
+    margin-bottom: 5px;
+  }
+
+  .card-logo-container,
+  .tier-title-card .card-logo-container,
+  .tier-gold-card .card-logo-container,
+  .tier-silver-card .card-logo-container {
+    height: 44px;
+    margin-bottom: 6px;
+  }
+
+  .card-sponsor-name,
+  .tier-title-card .card-sponsor-name,
+  .tier-gold-card .card-sponsor-name,
+  .tier-silver-card .card-sponsor-name {
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+  }
+
+  .card-clearance-footer {
+    padding-top: 5px;
+    gap: 4px;
+  }
+
+  .card-tier-stamp {
+    font-size: 0.48rem;
+    padding: 2px 4px;
+  }
+
+  .card-approved-stamp {
+    font-size: 0.65rem;
+    padding: 1px 3px;
   }
 
   .partnership-requisition-panel {

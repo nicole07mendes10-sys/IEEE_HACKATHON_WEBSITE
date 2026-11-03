@@ -645,31 +645,46 @@
 
   .case-notes-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
   }
 
   .case-note-card {
-    padding: 14px 14px;
+    padding: 12px 10px;
     border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
     background: rgba(28, 24, 19, 0.85);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .note-header-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+    color: var(--amber-bright, #E8892B);
   }
 
   .note-stamp {
-    font-size: 0.64rem;
-    padding: 2px 6px;
+    font-size: 0.60rem;
+    padding: 2px 5px;
     margin-bottom: 6px;
   }
 
   .note-title {
-    font-size: 1.05rem;
-    margin-bottom: 6px;
+    font-size: 0.90rem;
+    margin-bottom: 4px;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
   }
 
   .note-body {
-    font-size: 0.84rem;
-    line-height: 1.45;
+    font-size: 0.74rem;
+    line-height: 1.38;
+    color: var(--paper-muted, #B8B09F);
   }
 
   /* --- Section 03: Problem Statements (Single Column, 6 Slots) --- */
@@ -900,21 +915,23 @@
 
   .results-status-banner {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 10px 12px;
+    padding: 10px 10px;
     margin-bottom: 12px;
     border-radius: 4px;
   }
 
   .status-label {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     margin-bottom: 2px;
+    letter-spacing: 0.04em;
   }
 
   .status-date-val,
   .status-state-val {
-    font-size: 0.84rem;
+    font-size: 0.78rem;
+    line-height: 1.25;
   }
 
   .results-notice-body {
@@ -1100,45 +1117,52 @@
     font-size: 1.55rem;
   }
 
-  /* --- Section 07: Accommodation --- */
-  .accommodation-notes-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+  /* --- Section 07: Accommodation (2 Columns for Mobile) --- */
+  .accommodation-notes-grid,
+  .accommodation-two-cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100%;
   }
 
   .quarters-stat-card {
-    padding: 14px 14px;
+    padding: 12px 10px;
     border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
     background: rgba(28, 24, 19, 0.85);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .stat-icon {
-    width: 34px;
-    height: 34px;
-    margin-bottom: 8px;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
     border-radius: 4px;
   }
 
   .stat-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
   }
 
   .stat-heading {
-    font-size: 0.90rem;
-    letter-spacing: 0.06em;
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
     margin-bottom: 4px;
+    line-height: 1.25;
   }
 
   .stat-body {
-    font-size: 0.82rem;
-    line-height: 1.45;
+    font-size: 0.72rem;
+    line-height: 1.35;
   }
 
   .accommodation-details-panel {
-    padding: 14px 14px;
+    padding: 14px 12px;
     margin-top: 14px;
     border: 1.5px solid rgba(184, 146, 58, 0.25);
     border-radius: 6px;
@@ -1149,39 +1173,196 @@
     margin-bottom: 10px;
   }
 
+  .specs-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .spec-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .spec-unit.span-two {
+    grid-column: 1 / -1 !important;
+  }
+
+  .spec-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+  }
+
+  .spec-val-pending {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
   .spec-row {
     font-size: 0.78rem;
     padding: 6px 0;
   }
 
-  /* --- Section 08: Judging & Recognition --- */
+  /* --- Section 08: Judging & Recognition (2 Columns for Mobile) --- */
+  .evaluation-pillars-grid,
   .judging-criteria-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
   }
 
+  .pillar-card,
   .criterion-card {
-    padding: 14px 14px;
+    padding: 12px 10px !important;
     border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
     border-radius: 6px;
+    background: rgba(28, 24, 19, 0.85);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100% !important;
+  }
+
+  .pillar-num {
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+    color: var(--amber-bright, #E8892B);
+  }
+
+  .pillar-title,
+  .criterion-title {
+    font-size: 0.88rem;
+    margin: 3px 0 5px;
+    line-height: 1.25;
+    color: var(--paper-cream, #EFECE6);
+  }
+
+  .pillar-desc,
+  .criterion-desc {
+    font-size: 0.72rem;
+    line-height: 1.38;
+    color: var(--paper-muted, #B8B09F);
   }
 
   .criterion-weight {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
   }
 
-  .criterion-title {
-    font-size: 1.05rem;
-    margin-bottom: 4px;
+  /* --- Section 09: Sponsors & Partners (2-Column Clearance Cards on Mobile) --- */
+  .sponsors-pinboard-deck {
+    padding: 24px 10px 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
-  .criterion-desc {
-    font-size: 0.82rem;
-    line-height: 1.45;
+  .sponsors-tier-wrapper {
+    gap: 20px !important;
+    margin-bottom: 24px !important;
+    width: 100% !important;
   }
 
-  /* --- Section 09: Sponsors & Partners --- */
+  .tier-section-group {
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .tier-divider-label {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.1em !important;
+    padding: 3px 12px !important;
+  }
+
+  /* Title Partner: Compact Centered Card */
+  .tier-title-container {
+    width: 100% !important;
+    max-width: 210px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Gold & Silver Tiers: 2-Column Grid on Mobile */
+  .tier-gold-grid,
+  .tier-silver-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .auth-clearance-card,
+  .tier-title-card,
+  .tier-gold-card,
+  .tier-silver-card {
+    padding: 12px 8px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 5px !important;
+  }
+
+  /* Compact Pushpin */
+  .card-pushpin-head {
+    width: 10px !important;
+    height: 10px !important;
+    top: -6px !important;
+    border-width: 1.5px !important;
+  }
+
+  /* Compact Auth Number */
+  .card-auth-number {
+    font-size: 0.52rem !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 5px !important;
+  }
+
+  /* Compact Logo Box */
+  .card-logo-container,
+  .tier-title-card .card-logo-container,
+  .tier-gold-card .card-logo-container,
+  .tier-silver-card .card-logo-container {
+    height: 44px !important;
+    margin-bottom: 6px !important;
+    border-radius: 3px !important;
+  }
+
+  .card-logo-placeholder-text {
+    font-size: 0.70rem !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  /* Compact Sponsor Name */
+  .card-sponsor-name,
+  .tier-title-card .card-sponsor-name,
+  .tier-gold-card .card-sponsor-name,
+  .tier-silver-card .card-sponsor-name {
+    font-size: 0.95rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 5px !important;
+    white-space: normal !important;
+  }
+
+  /* Compact Footer Strip */
+  .card-clearance-footer {
+    padding-top: 5px !important;
+    gap: 4px !important;
+    justify-content: space-between !important;
+  }
+
+  .card-tier-stamp {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.03em !important;
+    padding: 2px 4px !important;
+  }
+
+  .card-approved-stamp {
+    font-size: 0.65rem !important;
+    padding: 1px 3px !important;
+    letter-spacing: 0.04em !important;
+  }
+
   .sponsors-intro-card {
     padding: 14px 14px;
     margin-bottom: 14px;
@@ -1199,7 +1380,7 @@
 
   .sponsor-cards-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
@@ -1342,94 +1523,189 @@
     box-sizing: border-box;
   }
 
-  /* Developers Recognition Modal Mobile */
+  /* Developers Recognition Modal Mobile (Compact 2-Column Layout) */
   .developers-modal-overlay {
-    padding: 16px 12px;
+    padding: 10px 8px !important;
   }
 
   .dev-modal-container {
-    max-height: 94vh;
+    max-height: 94vh !important;
+    max-width: 480px !important;
+    width: 100% !important;
   }
 
   .dev-modal-surface {
-    padding: 22px 16px 18px;
+    padding: 14px 10px 12px !important;
   }
 
   .dev-modal-topbar {
-    margin-bottom: 16px;
-    padding-bottom: 10px;
+    margin-bottom: 8px !important;
+    padding-bottom: 6px !important;
   }
 
   .dev-modal-file-tag {
-    font-size: 0.65rem;
+    font-size: 0.56rem !important;
+    letter-spacing: 0.05em !important;
   }
 
   .dev-modal-close-btn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 0;
-    font-size: 1.25rem;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    font-size: 1.05rem !important;
   }
 
   .dev-modal-header {
-    margin-bottom: 20px;
+    margin-bottom: 10px !important;
   }
 
   .dev-modal-title {
-    font-size: 1.6rem;
+    font-size: 1.15rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 3px !important;
   }
 
   .dev-modal-intro {
-    font-size: 0.85rem;
-    padding: 0 4px;
+    font-size: 0.70rem !important;
+    line-height: 1.35 !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
   }
 
-  .dev-modal-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 18px;
+  /* 2-Column Developer Grid on Mobile */
+  .dev-modal-grid,
+  .developers-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
   }
 
   .dev-modal-bottom-note {
-    font-size: 0.64rem;
-    gap: 6px;
-    flex-direction: column;
-  }
-
-  /* Developers Card Mobile Rules */
-  .developers-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 28px;
+    font-size: 0.54rem !important;
+    gap: 4px !important;
+    padding-top: 8px !important;
+    margin-top: 4px !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
   }
 
   .developer-card {
-    padding: 18px 16px 16px;
+    padding: 10px 8px 8px !important;
+    border-radius: 5px !important;
+    border-left: 2.5px solid var(--brass) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .developer-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 4px !important;
+    gap: 4px !important;
+  }
+
+  .developer-id-tag {
+    font-size: 0.50rem !important;
+    padding: 2px 4px !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .developer-sys-label {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.04em !important;
   }
 
   .developer-name {
-    font-size: 1.42rem;
+    font-size: 1.05rem !important;
+    line-height: 1.15 !important;
+    margin: 0 0 2px !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .developer-role {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.06em !important;
+    margin: 0 0 4px !important;
+  }
+
+  .developer-card-divider {
+    margin: 2px 0 6px !important;
+  }
+
+  .developer-contact-block {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    margin-top: auto !important;
   }
 
   .developer-phone-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 2px !important;
+  }
+
+  .developer-phone-label {
+    font-size: 0.50rem !important;
+    letter-spacing: 0.06em !important;
   }
 
   .developer-phone-link {
-    width: 100%;
-    justify-content: center;
-    min-height: 44px;
-    font-size: 0.82rem;
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 30px !important;
+    padding: 4px 4px !important;
+    font-size: 0.65rem !important;
+    gap: 4px !important;
+    border-radius: 3px !important;
+    box-sizing: border-box !important;
+  }
+
+  .developer-phone-link .dev-phone-icon svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .developer-phone-link .dev-phone-val {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .developer-action-row {
+    width: 100% !important;
   }
 
   .developer-github-btn {
-    min-height: 44px;
-    padding: 10px 14px;
-    font-size: 0.78rem;
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 30px !important;
+    padding: 4px 6px !important;
+    font-size: 0.62rem !important;
+    gap: 4px !important;
+    border-radius: 3px !important;
+    box-sizing: border-box !important;
+  }
+
+  .developer-github-btn .dev-gh-icon svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .developer-github-btn .dev-gh-text {
+    font-size: 0.60rem !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .developer-github-btn .dev-gh-arrow {
+    font-size: 0.68rem !important;
   }
 
   .developers-bottom-bar {
@@ -1600,10 +1876,11 @@
     justify-content: center;
   }
 
-  /* Accommodation 2-cards */
+  /* Accommodation 2-cards (2 Columns on Mobile) */
   .accommodation-two-cards {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
     margin-top: 18px;
   }
 

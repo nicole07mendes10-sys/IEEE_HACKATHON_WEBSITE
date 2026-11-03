@@ -108,15 +108,15 @@
         this.registerBtn.href = '#';
         this.registerBtn.setAttribute('aria-disabled', 'true');
         this.registerBtn.classList.add('is-pending');
-        this.registerBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        this.registerBtn.title = 'Official Unstop registration portal activates on 06 November 2026';
         if (this.statusNote) {
-          this.statusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 01 NOV 2026';
+          this.statusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 06 NOV 2026';
         }
         this.registerBtn.onclick = (e) => {
           e.preventDefault();
           this.playAudio(650);
           if (window.bureauEngine?.showRegistrationNotice) {
-            window.bureauEngine.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+            window.bureauEngine.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026. Stay tuned!');
           }
         };
       }

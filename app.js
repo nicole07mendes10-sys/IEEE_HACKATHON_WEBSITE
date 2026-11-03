@@ -8,7 +8,7 @@ window.OVERCLOCK_CONFIG = {
   UNSTOP_EVENT_URL: null,
   UNSTOP_PLATFORM_URL: "https://unstop.com",
   registrationUrl: null, // Unified backward-compatible alias
-  registrationPendingStatus: "REGISTRATION PORTAL // OPENS 01 NOV 2026",
+  registrationPendingStatus: "REGISTRATION PORTAL // OPENS 06 NOV 2026",
   registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
 
   // Central Downloads Resources Configuration
@@ -1994,11 +1994,11 @@ class OverclockApp {
         heroBtn.href = '#';
         heroBtn.setAttribute('aria-disabled', 'true');
         heroBtn.classList.add('is-pending');
-        heroBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        heroBtn.title = 'Official Unstop registration portal activates on 06 November 2026';
         heroBtn.addEventListener('click', (e) => {
           e.preventDefault();
           this.playRelayClick(650);
-          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+          this.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026. Stay tuned!');
         });
       }
     }
@@ -2021,14 +2021,14 @@ class OverclockApp {
         mmBtn.href = '#';
         mmBtn.setAttribute('aria-disabled', 'true');
         mmBtn.classList.add('is-pending');
-        mmBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        mmBtn.title = 'Official Unstop registration portal activates on 06 November 2026';
         if (mmStatusNote) {
-          mmStatusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 01 NOV 2026';
+          mmStatusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 06 NOV 2026';
         }
         mmBtn.addEventListener('click', (e) => {
           e.preventDefault();
           this.playRelayClick(650);
-          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+          this.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026. Stay tuned!');
         });
       }
     }
@@ -2049,10 +2049,10 @@ class OverclockApp {
         btn.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
-          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026.');
+          this.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026.');
         };
         if (statusText) {
-          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // OPENS 01 NOV 2026';
+          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // OPENS 06 NOV 2026';
         }
         if (lamp) {
           lamp.classList.remove('live');
