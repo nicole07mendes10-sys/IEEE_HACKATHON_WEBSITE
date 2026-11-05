@@ -8,7 +8,7 @@ window.OVERCLOCK_CONFIG = {
   UNSTOP_EVENT_URL: null,
   UNSTOP_PLATFORM_URL: "https://unstop.com",
   registrationUrl: null, // Unified backward-compatible alias
-  registrationPendingStatus: "REGISTRATION PORTAL // OPENS 01 NOV 2026",
+  registrationPendingStatus: "REGISTRATION PORTAL // OPENS 06 NOV 2026",
   registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
 
   // Central Downloads Resources Configuration
@@ -1793,10 +1793,9 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     4B. TVA EVENT TIMELINE ONE-TIME PROGRESSIVE SCROLL REVEAL
-     IntersectionObserver ensures each milestone reveals ONLY ONCE
-     per page session. Scrolling up keeps them fully visible,
-     and scrolling down again never replays entrance animations.
+     4B. TVA EVENT TIMELINE BIDIRECTIONAL PROGRESSIVE SCROLL REVEAL
+     IntersectionObserver animates milestones into view on scroll down,
+     and smoothly reverses the animation when scrolling back up.
   ========================================================== */
   setupTimelineReveals() {
     const milestoneItems = document.querySelectorAll('.timeline-milestone-item');
@@ -1804,16 +1803,18 @@ class OverclockApp {
 
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -10% 0px',
-      threshold: 0.15
+      rootMargin: '120px 0px -8% 0px',
+      threshold: 0.08
     };
 
-    const observer = new IntersectionObserver((entries, obs) => {
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-revealed');
-          // Once revealed, unobserve permanently so animation never repeats or disappears
-          obs.unobserve(entry.target);
+        } else {
+          if (entry.boundingClientRect.top > 0) {
+            entry.target.classList.remove('is-revealed');
+          }
         }
       });
     }, observerOptions);
@@ -1822,23 +1823,82 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     SCROLL-TRIGGERED ANIMATION SYSTEM (INTERSECTION OBSERVER)
+     SCROLL-TRIGGERED ANIMATION SYSTEM (BIDIRECTIONAL OBSERVER)
+     - When scrolling down: cards and boxes glide & tilt into resting view.
+     - When scrolling up: cards and boxes smoothly reverse back to initial state.
+     - Works across all 11 sections, mobile and desktop.
   ========================================================== */
   setupScrollAnimations() {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Enable responsive card slide & swivel animations if motion is allowed
+    if (!prefersReducedMotion) {
+      document.body.classList.add('bureau-scroll-fx-active');
+
+      const cardObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-scroll-revealed');
+          } else {
+            // When user scrolls back up and card moves down past viewport, reverse animation
+            if (entry.boundingClientRect.top > 0) {
+              entry.target.classList.remove('is-scroll-revealed');
+            }
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '120px 0px -8% 0px',
+        threshold: 0.05
+      });
+
+      const cardsToAnimate = document.querySelectorAll(`
+        .case-note-card,
+        .domain-slot-card,
+        .domain-closing-cta-card,
+        .results-dossier-chamber,
+        .highlight-card,
+        .winner-intel-card,
+        .timeline-milestone-item .milestone-card-box,
+        .download-resource-card,
+        .registration-terminal-card,
+        .rules-dossier-card,
+        .round-1-subcard,
+        .round-2-subcard,
+        .rules-round-subcard,
+        .round-one-notice-panel,
+        .ppt-free-notice-panel,
+        .reg-milestone-panel,
+        .quarters-stat-card,
+        .accommodation-details-panel,
+        .pillar-card,
+        .recognition-standby-panel,
+        .auth-clearance-card,
+        .partnership-requisition-panel,
+        .case-folder-unit,
+        .developer-card,
+        .contact-dossier-card,
+        .footer-contact-card,
+        .footer-map-card,
+        .venue-info-box,
+        .footer-venue-panel,
+        .bureau-scroll-card
+      `);
+
+      cardsToAnimate.forEach(card => cardObserver.observe(card));
+    }
+
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -10% 0px',
-      threshold: 0.12
+      rootMargin: '100px 0px -10% 0px',
+      threshold: 0.10
     };
 
-    const onIntersect = (entries, observer) => {
+    const onIntersect = (entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const el = entry.target;
           el.classList.add('revealed');
-          observer.unobserve(el);
 
           // Section specific triggers
           if (el.id === 'overclock-24h' || el.classList.contains('overclock-crucible-chamber')) {
@@ -1847,6 +1907,18 @@ class OverclockApp {
             this.animateSponsorCards();
           } else if (el.id === 'branches' || el.classList.contains('crt-monitors-grid')) {
             this.triggerBranchCardsReveal();
+          }
+        } else {
+          if (entry.boundingClientRect.top > 0) {
+            entry.target.classList.remove('revealed');
+            if (entry.target.id === 'sponsors' || entry.target.classList.contains('sponsors-tier-wrapper')) {
+              this.sponsorsStamped = false;
+              const cards = document.querySelectorAll('.auth-clearance-card');
+              cards.forEach(c => {
+                c.classList.remove('scan-active');
+                c.classList.remove('revealed');
+              });
+            }
           }
         }
       });
@@ -1962,11 +2034,11 @@ class OverclockApp {
         heroBtn.href = '#';
         heroBtn.setAttribute('aria-disabled', 'true');
         heroBtn.classList.add('is-pending');
-        heroBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        heroBtn.title = 'Official Unstop registration portal activates on 06 November 2026';
         heroBtn.addEventListener('click', (e) => {
           e.preventDefault();
           this.playRelayClick(650);
-          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+          this.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026. Stay tuned!');
         });
       }
     }
@@ -1989,14 +2061,14 @@ class OverclockApp {
         mmBtn.href = '#';
         mmBtn.setAttribute('aria-disabled', 'true');
         mmBtn.classList.add('is-pending');
-        mmBtn.title = 'Official Unstop registration portal activates on 01 November 2026';
+        mmBtn.title = 'Official Unstop registration portal activates on 06 November 2026';
         if (mmStatusNote) {
-          mmStatusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 01 NOV 2026';
+          mmStatusNote.textContent = config.registrationPendingStatus || 'PORTAL // OPENS 06 NOV 2026';
         }
         mmBtn.addEventListener('click', (e) => {
           e.preventDefault();
           this.playRelayClick(650);
-          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026. Stay tuned!');
+          this.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026. Stay tuned!');
         });
       }
     }
@@ -2017,10 +2089,10 @@ class OverclockApp {
         btn.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
-          this.showRegistrationNotice('Official Unstop registration portal activates on 01 November 2026.');
+          this.showRegistrationNotice('Official Unstop registration portal activates on 06 November 2026.');
         };
         if (statusText) {
-          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // OPENS 01 NOV 2026';
+          statusText.textContent = config.registrationPendingStatus || 'REGISTRATION PORTAL // OPENS 06 NOV 2026';
         }
         if (lamp) {
           lamp.classList.remove('live');
@@ -2480,8 +2552,7 @@ class OverclockApp {
 
     if (prefersReducedMotion) {
       cards.forEach(c => {
-        c.style.opacity = '1';
-        c.style.transform = 'none';
+        c.classList.add('is-scroll-revealed');
         c.classList.add('revealed');
       });
       return;
@@ -2489,9 +2560,8 @@ class OverclockApp {
 
     cards.forEach((card, index) => {
       setTimeout(() => {
-        card.style.transition = 'opacity 0.35s ease';
-        card.style.opacity = '1';
         card.classList.add('scan-active');
+        card.classList.add('is-scroll-revealed');
         card.classList.add('revealed');
         if (index < 3) this.playStampThunk();
       }, index * 95);
@@ -2511,13 +2581,13 @@ class OverclockApp {
         const wasOpen = folder.classList.contains('open');
         folders.forEach(f => {
           f.classList.remove('open');
-          const indicator = f.querySelector('.folder-tab-bar span:last-child');
-          if (indicator) indicator.textContent = '[EXPAND]';
+          const indicator = f.querySelector('.folder-action-toggle');
+          if (indicator) indicator.textContent = '[OPEN CASE]';
         });
         if (!wasOpen) {
           folder.classList.add('open');
-          const indicator = folder.querySelector('.folder-tab-bar span:last-child');
-          if (indicator) indicator.textContent = '[OPEN]';
+          const indicator = folder.querySelector('.folder-action-toggle');
+          if (indicator) indicator.textContent = '[CLOSE CASE]';
           this.playRelayClick(950);
         }
       });
@@ -2839,15 +2909,15 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     window.overclockApp = new OverclockApp();
   }
 }
-ÿ‘≈F           jÁ)„JxËjÁ*»   C    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/app.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+~˜£$øK      jÏ}äjÏ}äJ˝æjÏ}¶   C    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/app.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Content-type: text/javascript
+Content-Length: 104874
+Last-Modified: Thu, 05 Nov 2026 12:54:09 GMT
+Date: Thu, 05 Nov 2026 12:58:50 GMT
 Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sun, 01 Nov 2026 12:00:35 GMT
-Content-type: text/javascript
-Content-Length: 102473
-Last-Modified: Sun, 01 Nov 2026 11:22:16 GMT
  original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sun, 01 Nov 2026 12:00:35 GMT
+Date: Thu, 05 Nov 2026 12:55:42 GMT
 Content-type: text/javascript
-Content-Length: 102473
-Last-Modified: Sun, 01 Nov 2026 11:22:16 GMT
- ctid 2     êI
+Content-Length: 104874
+Last-Modified: Thu, 05 Nov 2026 12:54:09 GMT
+ ctid 2     ô™

@@ -7302,24 +7302,45 @@ body {
   transform-style: preserve-3d;
 }
 
-/* Progressive enhancement: Only apply unrevealed translation & tilt when bureau-scroll-fx-active is on body */
+/* Progressive enhancement: Apply scroll entrance & reverse animations to every card, box and panel */
 .bureau-scroll-fx-active .case-note-card,
 .bureau-scroll-fx-active .domain-slot-card,
+.bureau-scroll-fx-active .domain-closing-cta-card,
+.bureau-scroll-fx-active .highlight-card,
+.bureau-scroll-fx-active .winner-intel-card,
+.bureau-scroll-fx-active .results-dossier-chamber,
 .bureau-scroll-fx-active .timeline-milestone-item .milestone-card-box,
 .bureau-scroll-fx-active .download-resource-card,
+.bureau-scroll-fx-active .registration-terminal-card,
+.bureau-scroll-fx-active .rules-dossier-card,
+.bureau-scroll-fx-active .round-1-subcard,
+.bureau-scroll-fx-active .round-2-subcard,
+.bureau-scroll-fx-active .rules-round-subcard,
+.bureau-scroll-fx-active .round-one-notice-panel,
+.bureau-scroll-fx-active .ppt-free-notice-panel,
+.bureau-scroll-fx-active .reg-milestone-panel,
 .bureau-scroll-fx-active .quarters-stat-card,
+.bureau-scroll-fx-active .accommodation-details-panel,
 .bureau-scroll-fx-active .pillar-card,
+.bureau-scroll-fx-active .recognition-standby-panel,
 .bureau-scroll-fx-active .auth-clearance-card,
+.bureau-scroll-fx-active .partnership-requisition-panel,
 .bureau-scroll-fx-active .case-folder-unit,
+.bureau-scroll-fx-active .developer-card,
+.bureau-scroll-fx-active .contact-dossier-card,
+.bureau-scroll-fx-active .footer-contact-card,
+.bureau-scroll-fx-active .footer-map-card,
+.bureau-scroll-fx-active .venue-info-box,
+.bureau-scroll-fx-active .footer-venue-panel,
 .bureau-scroll-fx-active .bureau-scroll-card {
   will-change: transform, opacity;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   opacity: 0;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, box-shadow 0.28s ease, border-color 0.28s ease;
 }
 
-/* Odd cards: Glide in from the left with subtle negative 3D Y-yaw and Z-tilt */
+/* Odd cards: Glide in with subtle negative 3D Y-yaw and Z-tilt */
 .bureau-scroll-fx-active .case-note-card:nth-child(odd),
 .bureau-scroll-fx-active .domain-slot-card:nth-child(odd),
 .bureau-scroll-fx-active .timeline-milestone-item:nth-child(odd) .milestone-card-box,
@@ -7328,11 +7349,12 @@ body {
 .bureau-scroll-fx-active .pillar-card:nth-child(odd),
 .bureau-scroll-fx-active .auth-clearance-card:nth-child(odd),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(odd),
+.bureau-scroll-fx-active .developer-card:nth-child(odd),
 .bureau-scroll-fx-active .bureau-scroll-card:nth-child(odd) {
-  transform: translate3d(-32px, 20px, 0) rotateY(-8deg) rotateZ(-1.2deg);
+  transform: translate3d(-24px, 28px, 0) rotateY(-5deg) rotateZ(-0.8deg) scale(0.98);
 }
 
-/* Even cards: Glide in from the right with subtle positive 3D Y-yaw and Z-tilt */
+/* Even cards: Glide in with subtle positive 3D Y-yaw and Z-tilt */
 .bureau-scroll-fx-active .case-note-card:nth-child(even),
 .bureau-scroll-fx-active .domain-slot-card:nth-child(even),
 .bureau-scroll-fx-active .timeline-milestone-item:nth-child(even) .milestone-card-box,
@@ -7341,16 +7363,43 @@ body {
 .bureau-scroll-fx-active .pillar-card:nth-child(even),
 .bureau-scroll-fx-active .auth-clearance-card:nth-child(even),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(even),
+.bureau-scroll-fx-active .developer-card:nth-child(even),
 .bureau-scroll-fx-active .bureau-scroll-card:nth-child(even) {
-  transform: translate3d(32px, 20px, 0) rotateY(8deg) rotateZ(1.2deg);
+  transform: translate3d(24px, 28px, 0) rotateY(5deg) rotateZ(0.8deg) scale(0.98);
 }
 
-/* Stagger delays across children for natural cascading cascade wave */
+/* Wide / Standalone panels & boxes: Glide smoothly upward from bottom */
+.bureau-scroll-fx-active .domain-closing-cta-card,
+.bureau-scroll-fx-active .highlight-card,
+.bureau-scroll-fx-active .winner-intel-card,
+.bureau-scroll-fx-active .results-dossier-chamber,
+.bureau-scroll-fx-active .registration-terminal-card,
+.bureau-scroll-fx-active .rules-dossier-card,
+.bureau-scroll-fx-active .round-1-subcard,
+.bureau-scroll-fx-active .round-2-subcard,
+.bureau-scroll-fx-active .rules-round-subcard,
+.bureau-scroll-fx-active .round-one-notice-panel,
+.bureau-scroll-fx-active .ppt-free-notice-panel,
+.bureau-scroll-fx-active .reg-milestone-panel,
+.bureau-scroll-fx-active .accommodation-details-panel,
+.bureau-scroll-fx-active .recognition-standby-panel,
+.bureau-scroll-fx-active .partnership-requisition-panel,
+.bureau-scroll-fx-active .contact-dossier-card,
+.bureau-scroll-fx-active .footer-contact-card,
+.bureau-scroll-fx-active .footer-map-card,
+.bureau-scroll-fx-active .venue-info-box,
+.bureau-scroll-fx-active .footer-venue-panel {
+  transform: translate3d(0, 32px, 0) scale(0.985);
+}
+
+/* Stagger delays across children for natural cascading cascade waves */
 .bureau-scroll-fx-active .case-note-card:nth-child(1),
 .bureau-scroll-fx-active .domain-slot-card:nth-child(1),
 .bureau-scroll-fx-active .download-resource-card:nth-child(1),
 .bureau-scroll-fx-active .quarters-stat-card:nth-child(1),
 .bureau-scroll-fx-active .pillar-card:nth-child(1),
+.bureau-scroll-fx-active .auth-clearance-card:nth-child(1),
+.bureau-scroll-fx-active .developer-card:nth-child(1),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(1) {
   transition-delay: 0.04s;
 }
@@ -7360,6 +7409,8 @@ body {
 .bureau-scroll-fx-active .download-resource-card:nth-child(2),
 .bureau-scroll-fx-active .quarters-stat-card:nth-child(2),
 .bureau-scroll-fx-active .pillar-card:nth-child(2),
+.bureau-scroll-fx-active .auth-clearance-card:nth-child(2),
+.bureau-scroll-fx-active .developer-card:nth-child(2),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(2) {
   transition-delay: 0.12s;
 }
@@ -7367,19 +7418,24 @@ body {
 .bureau-scroll-fx-active .case-note-card:nth-child(3),
 .bureau-scroll-fx-active .domain-slot-card:nth-child(3),
 .bureau-scroll-fx-active .download-resource-card:nth-child(3),
+.bureau-scroll-fx-active .quarters-stat-card:nth-child(3),
 .bureau-scroll-fx-active .pillar-card:nth-child(3),
+.bureau-scroll-fx-active .auth-clearance-card:nth-child(3),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(3) {
   transition-delay: 0.20s;
 }
 
 .bureau-scroll-fx-active .case-note-card:nth-child(4),
 .bureau-scroll-fx-active .domain-slot-card:nth-child(4),
+.bureau-scroll-fx-active .quarters-stat-card:nth-child(4),
 .bureau-scroll-fx-active .pillar-card:nth-child(4),
+.bureau-scroll-fx-active .auth-clearance-card:nth-child(4),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(4) {
   transition-delay: 0.28s;
 }
 
 .bureau-scroll-fx-active .domain-slot-card:nth-child(5),
+.bureau-scroll-fx-active .pillar-card:nth-child(5),
 .bureau-scroll-fx-active .case-folder-unit:nth-child(5) {
   transition-delay: 0.36s;
 }
@@ -7392,50 +7448,62 @@ body {
 /* REVEALED STATE: Return to resting alignment smoothly with full opacity */
 .bureau-scroll-fx-active .case-note-card.is-scroll-revealed,
 .bureau-scroll-fx-active .domain-slot-card.is-scroll-revealed,
+.bureau-scroll-fx-active .domain-closing-cta-card.is-scroll-revealed,
+.bureau-scroll-fx-active .highlight-card.is-scroll-revealed,
+.bureau-scroll-fx-active .winner-intel-card.is-scroll-revealed,
+.bureau-scroll-fx-active .results-dossier-chamber.is-scroll-revealed,
 .bureau-scroll-fx-active .timeline-milestone-item .milestone-card-box.is-scroll-revealed,
 .bureau-scroll-fx-active .download-resource-card.is-scroll-revealed,
+.bureau-scroll-fx-active .registration-terminal-card.is-scroll-revealed,
+.bureau-scroll-fx-active .rules-dossier-card.is-scroll-revealed,
+.bureau-scroll-fx-active .round-1-subcard.is-scroll-revealed,
+.bureau-scroll-fx-active .round-2-subcard.is-scroll-revealed,
+.bureau-scroll-fx-active .rules-round-subcard.is-scroll-revealed,
+.bureau-scroll-fx-active .round-one-notice-panel.is-scroll-revealed,
+.bureau-scroll-fx-active .ppt-free-notice-panel.is-scroll-revealed,
+.bureau-scroll-fx-active .reg-milestone-panel.is-scroll-revealed,
 .bureau-scroll-fx-active .quarters-stat-card.is-scroll-revealed,
+.bureau-scroll-fx-active .accommodation-details-panel.is-scroll-revealed,
 .bureau-scroll-fx-active .pillar-card.is-scroll-revealed,
+.bureau-scroll-fx-active .recognition-standby-panel.is-scroll-revealed,
 .bureau-scroll-fx-active .auth-clearance-card.is-scroll-revealed,
+.bureau-scroll-fx-active .partnership-requisition-panel.is-scroll-revealed,
 .bureau-scroll-fx-active .case-folder-unit.is-scroll-revealed,
-.bureau-scroll-fx-active .bureau-scroll-card.is-scroll-revealed,
-.bureau-section.revealed .case-note-card,
-.bureau-section.revealed .domain-slot-card,
-.bureau-section.revealed .timeline-milestone-item .milestone-card-box,
-.bureau-section.revealed .download-resource-card,
-.bureau-section.revealed .quarters-stat-card,
-.bureau-section.revealed .pillar-card,
-.bureau-section.revealed .auth-clearance-card,
-.bureau-section.revealed .case-folder-unit {
+.bureau-scroll-fx-active .developer-card.is-scroll-revealed,
+.bureau-scroll-fx-active .contact-dossier-card.is-scroll-revealed,
+.bureau-scroll-fx-active .footer-contact-card.is-scroll-revealed,
+.bureau-scroll-fx-active .footer-map-card.is-scroll-revealed,
+.bureau-scroll-fx-active .venue-info-box.is-scroll-revealed,
+.bureau-scroll-fx-active .footer-venue-panel.is-scroll-revealed,
+.bureau-scroll-fx-active .bureau-scroll-card.is-scroll-revealed {
   opacity: 1 !important;
   transform: translate3d(0, 0, 0) rotate(0deg) scale(1) !important;
 }
 
 /* Post-reveal hover interaction (Desktop pointer only) */
 @media (hover: hover) and (pointer: fine) {
-  .bureau-scroll-fx-active .case-note-card.is-scroll-revealed:hover,
-  .bureau-section.revealed .case-note-card:hover {
+  .bureau-scroll-fx-active .case-note-card.is-scroll-revealed:hover {
     transform: translate3d(0, -6px, 0) rotate(0deg) scale(1.01) !important;
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6) !important;
   }
 
-  .bureau-scroll-fx-active .domain-slot-card.is-scroll-revealed:hover,
-  .bureau-section.revealed .domain-slot-card:hover {
+  .bureau-scroll-fx-active .domain-slot-card.is-scroll-revealed:hover {
     transform: translate3d(0, -6px, 0) rotate(0deg) scale(1.015) !important;
   }
 
-  .bureau-scroll-fx-active .download-resource-card.is-scroll-revealed:hover,
-  .bureau-section.revealed .download-resource-card:hover {
+  .bureau-scroll-fx-active .download-resource-card.is-scroll-revealed:hover {
     transform: translate3d(0, -5px, 0) scale(1.01) !important;
   }
 
-  .bureau-scroll-fx-active .quarters-stat-card.is-scroll-revealed:hover,
-  .bureau-section.revealed .quarters-stat-card:hover {
+  .bureau-scroll-fx-active .quarters-stat-card.is-scroll-revealed:hover {
     transform: translate3d(0, -5px, 0) scale(1.01) !important;
   }
 
-  .bureau-scroll-fx-active .pillar-card.is-scroll-revealed:hover,
-  .bureau-section.revealed .pillar-card:hover {
+  .bureau-scroll-fx-active .pillar-card.is-scroll-revealed:hover {
+    transform: translate3d(0, -5px, 0) scale(1.01) !important;
+  }
+
+  .bureau-scroll-fx-active .developer-card.is-scroll-revealed:hover {
     transform: translate3d(0, -5px, 0) scale(1.01) !important;
   }
 }
@@ -7450,10 +7518,8 @@ body {
   .bureau-scroll-fx-active .pillar-card:nth-child(odd),
   .bureau-scroll-fx-active .auth-clearance-card:nth-child(odd),
   .bureau-scroll-fx-active .case-folder-unit:nth-child(odd),
-  .bureau-scroll-fx-active .bureau-scroll-card:nth-child(odd) {
-    transform: translate3d(-22px, 14px, 0) rotateY(-5deg) rotateZ(-0.8deg);
-  }
-
+  .bureau-scroll-fx-active .developer-card:nth-child(odd),
+  .bureau-scroll-fx-active .bureau-scroll-card:nth-child(odd),
   .bureau-scroll-fx-active .case-note-card:nth-child(even),
   .bureau-scroll-fx-active .domain-slot-card:nth-child(even),
   .bureau-scroll-fx-active .timeline-milestone-item:nth-child(even) .milestone-card-box,
@@ -7462,8 +7528,9 @@ body {
   .bureau-scroll-fx-active .pillar-card:nth-child(even),
   .bureau-scroll-fx-active .auth-clearance-card:nth-child(even),
   .bureau-scroll-fx-active .case-folder-unit:nth-child(even),
+  .bureau-scroll-fx-active .developer-card:nth-child(even),
   .bureau-scroll-fx-active .bureau-scroll-card:nth-child(even) {
-    transform: translate3d(22px, 14px, 0) rotateY(5deg) rotateZ(0.8deg);
+    transform: translate3d(0, 24px, 0) scale(0.985);
   }
 }
 
@@ -7471,12 +7538,33 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .bureau-scroll-fx-active .case-note-card,
   .bureau-scroll-fx-active .domain-slot-card,
+  .bureau-scroll-fx-active .domain-closing-cta-card,
+  .bureau-scroll-fx-active .highlight-card,
+  .bureau-scroll-fx-active .winner-intel-card,
+  .bureau-scroll-fx-active .results-dossier-chamber,
   .bureau-scroll-fx-active .timeline-milestone-item .milestone-card-box,
   .bureau-scroll-fx-active .download-resource-card,
+  .bureau-scroll-fx-active .registration-terminal-card,
+  .bureau-scroll-fx-active .rules-dossier-card,
+  .bureau-scroll-fx-active .round-1-subcard,
+  .bureau-scroll-fx-active .round-2-subcard,
+  .bureau-scroll-fx-active .rules-round-subcard,
+  .bureau-scroll-fx-active .round-one-notice-panel,
+  .bureau-scroll-fx-active .ppt-free-notice-panel,
+  .bureau-scroll-fx-active .reg-milestone-panel,
   .bureau-scroll-fx-active .quarters-stat-card,
+  .bureau-scroll-fx-active .accommodation-details-panel,
   .bureau-scroll-fx-active .pillar-card,
+  .bureau-scroll-fx-active .recognition-standby-panel,
   .bureau-scroll-fx-active .auth-clearance-card,
+  .bureau-scroll-fx-active .partnership-requisition-panel,
   .bureau-scroll-fx-active .case-folder-unit,
+  .bureau-scroll-fx-active .developer-card,
+  .bureau-scroll-fx-active .contact-dossier-card,
+  .bureau-scroll-fx-active .footer-contact-card,
+  .bureau-scroll-fx-active .footer-map-card,
+  .bureau-scroll-fx-active .venue-info-box,
+  .bureau-scroll-fx-active .footer-venue-panel,
   .bureau-scroll-fx-active .bureau-scroll-card {
     opacity: 1 !important;
     transform: none !important;
@@ -7645,12 +7733,15 @@ body {
 /* ----------------------------------------------------------
    8. FAQ SECTION — CASE FILE ACCORDIONS
 ---------------------------------------------------------- */
-.folder-tab-bar span:last-child {
+.folder-action-toggle {
   transition: transform 0.25s ease, color 0.25s ease;
   display: inline-block;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 14px;
 }
 
-.case-folder-unit.open .folder-tab-bar span:last-child {
+.case-folder-unit.open .folder-action-toggle {
   transform: scale(1.05);
   color: var(--amber-bright);
 }
@@ -8232,6 +8323,18 @@ body {
   color: var(--paper-muted);
   line-height: 1.4;
   margin: 0;
+}
+
+.tva-back-headline {
+  font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  color: var(--amber-warm, #E5A96A);
+  text-transform: uppercase;
+  margin: 4px 0 0;
+  text-align: center;
 }
 
 .tva-back-footer {

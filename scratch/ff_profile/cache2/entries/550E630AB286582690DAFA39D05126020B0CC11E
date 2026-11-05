@@ -604,12 +604,12 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     window.bureauEngine = new BureauScrollSequenceEngine('circuit-canvas');
   }
 }
-Q7ä?™           jÁ)„JxËjÁ@    M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/bureau-engine.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
-Server: SimpleHTTP/0.6 Python/3.14.4
-Date: Sun, 01 Nov 2026 12:00:35 GMT
+ãi™      jÏ|ŒjÏ|ŒJ=çjÌ6   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/bureau-engine.js strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
 Content-type: text/javascript
 Content-Length: 18383
 Last-Modified: Sat, 31 Oct 2026 20:17:02 GMT
+Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Thu, 05 Nov 2026 12:55:42 GMT
  original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
 Date: Sun, 01 Nov 2026 12:00:35 GMT
 Content-type: text/javascript

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>FAQ Live Interaction Test</title>
+  <style>
+    body { background: #14100C; color: #EFE6D2; font-family: monospace; padding: 20px; }
+    #log { white-space: pre-wrap; font-size: 14px; line-height: 1.5; background: #1c150f; padding: 16px; border: 1px solid #D9A93A; }
+    iframe { width: 100%; height: 600px; border: 1px solid #333; margin-top: 20px; }
+    .pass { color: #7CFF9B; }
+    .fail { color: #FF4D4D; }
+  </style>
+</head>
+<body>
+  <h2>OVERCLOCK 2027 — FAQ LIVE INTERACTION TEST</h2>
+  <div id="log">Running tests...</div>
+  <iframe id="app-frame" src="http://localhost:3000/?nointro=1"></iframe>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const logs = [];
+    function log(msg, status = '') {
+      const cls = status === 'PASS' ? 'pass' : (status === 'FAIL' ? 'fail' : '');
+      logs.push(`<span class="${cls}">[${status || 'INFO'}] ${msg}</span>`);
+      logEl.innerHTML = logs.join('\n');
+    }
+
+    const iframe = document.getElementById('app-frame');
+    function runTests() {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        const folders = doc.querySelectorAll('.case-folder-unit');
+        log(`Found ${folders.length} case folders in FAQ section.`, folders.length === 6 ? 'PASS' : 'FAIL');
+
+        // Check 1: All folders closed by default
+        let allClosed = true;
+        folders.forEach((f, idx) => {
+          if (f.classList.contains('open')) allClosed = false;
+        });
+        log(`All 6 case folders closed by default: ${allClosed}`, allClosed ? 'PASS' : 'FAIL');
+
+        // Check 2: Initial toggle labels and no OPEN CASE on left side
+        let allTogglesCorrect = true;
+        let leftSideClean = true;
+        folders.forEach((f, idx) => {
+          const toggle = f.querySelector('.folder-action-toggle');
+          const toggleText = toggle ? toggle.textContent.trim() : 'NONE';
+          if (toggleText !== '[OPEN CASE]') allTogglesCorrect = false;
+
+          const leftDiv = f.querySelector('.folder-tab-bar > div:first-child');
+          const leftText = leftDiv ? leftDiv.textContent : '';
+          if (leftText.includes('OPEN CASE') || leftText.includes('CLOSE CASE')) {
+            leftSideClean = false;
+          }
+        });
+        log(`Initial action toggles all say '[OPEN CASE]': ${allTogglesCorrect}`, allTogglesCorrect ? 'PASS' : 'FAIL');
+        log(`Left side of all cases contains NO 'OPEN CASE': ${leftSideClean}`, leftSideClean ? 'PASS' : 'FAIL');
+
+        // Check 3: Click Case 001 to open it
+        const bar1 = folders[0].querySelector('.folder-tab-bar');
+        bar1.click();
+        const case1Open = folders[0].classList.contains('open');
+        const toggle1OpenText = folders[0].querySelector('.folder-action-toggle').textContent.trim();
+        log(`Click Case 001 opens folder: ${case1Open}`, case1Open ? 'PASS' : 'FAIL');
+        log(`Click Case 001 updates toggle to '[CLOSE CASE]': ${toggle1OpenText === '[CLOSE CASE]'} (got '${toggle1OpenText}')`, toggle1OpenText === '[CLOSE CASE]' ? 'PASS' : 'FAIL');
+
+        // Check 4: Click Case 002 - should open Case 002, close Case 001
+        const bar2 = folders[1].querySelector('.folder-tab-bar');
+        bar2.click();
+        const case2Open = folders[1].classList.contains('open');
+        const case1NowClosed = !folders[0].classList.contains('open');
+        const toggle2Text = folders[1].querySelector('.folder-action-toggle').textContent.trim();
+        const toggle1Text = folders[0].querySelector('.folder-action-toggle').textContent.trim();
+        log(`Click Case 002 opens Case 002: ${case2Open}`, case2Open ? 'PASS' : 'FAIL');
+        log(`Click Case 002 closes Case 001: ${case1NowClosed}`, case1NowClosed ? 'PASS' : 'FAIL');
+        log(`Case 002 toggle is '[CLOSE CASE]': ${toggle2Text === '[CLOSE CASE]'}`, toggle2Text === '[CLOSE CASE]' ? 'PASS' : 'FAIL');
+        log(`Case 001 toggle is reset to '[OPEN CASE]': ${toggle1Text === '[OPEN CASE]'}`, toggle1Text === '[OPEN CASE]' ? 'PASS' : 'FAIL');
+
+        // Check 5: Click Case 002 again to collapse it
+        bar2.click();
+        const case2NowClosed = !folders[1].classList.contains('open');
+        const toggle2ResetText = folders[1].querySelector('.folder-action-toggle').textContent.trim();
+        log(`Clicking open Case 002 collapses it: ${case2NowClosed}`, case2NowClosed ? 'PASS' : 'FAIL');
+        log(`Case 002 toggle is reset to '[OPEN CASE]': ${toggle2ResetText === '[OPEN CASE]'}`, toggle2ResetText === '[OPEN CASE]' ? 'PASS' : 'FAIL');
+
+        // Check 6: Verify left side is still completely clean after interactions
+        let leftSideStillClean = true;
+        folders.forEach(f => {
+          const leftDiv = f.querySelector('.folder-tab-bar > div:first-child');
+          if (leftDiv && (leftDiv.textContent.includes('OPEN CASE') || leftDiv.textContent.includes('CLOSE CASE'))) {
+            leftSideStillClean = false;
+          }
+        });
+        log(`Left side remains 100% free of action labels after clicks: ${leftSideStillClean}`, leftSideStillClean ? 'PASS' : 'FAIL');
+
+        log(`ALL FAQ INTERACTION CHECKS COMPLETE.`, 'PASS');
+        window.__test_done = true;
+      } catch(err) {
+        log(`Execution error: ${err.message}`, 'FAIL');
+        window.__test_done = true;
+      }
+    }
+    iframe.onload = runTests;
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ Visual Preview</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../mobile.css">
+  <style>
+    body {
+      background: #14100C;
+      padding: 24px;
+      color: #EFE6D2;
+    }
+    #faq {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <section id="faq" class="bureau-section" data-section-num="10">
+    <div class="section-rubber-stamp">PENDING</div>
+
+    <div class="section-header-wrap">
+      <div class="bureau-tag">INQUIRY ARCHIVE // LEVEL 10</div>
+      <h2 class="section-main-heading">Case Files (FAQ)</h2>
+      <p class="section-subtext">Classified inquiries and operational questions answered directly by the Bureau.</p>
+    </div>
+
+    <div class="case-files-accordion">
+      <!-- Case 001 -->
+      <div class="case-folder-unit">
+        <div class="folder-tab-bar">
+          <div>
+            <span class="folder-case-num">CASE #001</span>
+            <span class="folder-query-title">Who is organizing OVERCLOCK 2027?</span>
+          </div>
+          <span class="folder-action-toggle" style="font-family: var(--font-mono); color: var(--crt-teal);">[OPEN CASE]</span>
+        </div>
+        <div class="folder-content-drawer">
+          <div class="folder-drawer-inner">
+            <div class="answered-stamp-badge">ANSWERED</div>
+            OVERCLOCK 2027 is jointly organized by EESA, ISLE, and the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai.
+          </div>
+        </div>
+      </div>
+
+      <!-- Case 002 -->
+      <div class="case-folder-unit">
+        <div class="folder-tab-bar">
+          <div>
+            <span class="folder-case-num">CASE #002</span>
+            <span class="folder-query-title">When does registration open and what is the fee?</span>
+          </div>
+          <span class="folder-action-toggle" style="font-family: var(--font-mono); color: var(--crt-teal);">[OPEN CASE]</span>
+        </div>
+        <div class="folder-content-drawer">
+          <div class="folder-drawer-inner">
+            <div class="answered-stamp-badge">ANSWERED</div>
+            Registration opens on 06 November 2026. Round 1 PPT submission is free. Shortlisted teams advancing to the physical build pay a registration fee of ₹1,500 + 18% GST.
+          </div>
+        </div>
+      </div>
+
+      <!-- Case 003 -->
+      <div class="case-folder-unit">
+        <div class="folder-tab-bar">
+          <div>
+            <span class="folder-case-num">CASE #003</span>
+            <span class="folder-query-title">What is the problem statement and submission schedule?</span>
+          </div>
+          <span class="folder-action-toggle" style="font-family: var(--font-mono); color: var(--crt-teal);">[OPEN CASE]</span>
+        </div>
+        <div class="folder-content-drawer">
+          <div class="folder-drawer-inner">
+            <div class="answered-stamp-badge">ANSWERED</div>
+            Initial problem statements will be released on 01 December 2026. Teams submit their preliminary approach during the PPT submission window from 10–15 December 2026. Shortlisted teams are announced on 22 December 2026, and the final problem statement releases on 22 January 2027.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const folders = document.querySelectorAll('.case-folder-unit');
+    folders.forEach(folder => {
+      const bar = folder.querySelector('.folder-tab-bar');
+      if (!bar) return;
+
+      bar.addEventListener('click', () => {
+        const wasOpen = folder.classList.contains('open');
+        folders.forEach(f => {
+          f.classList.remove('open');
+          const indicator = f.querySelector('.folder-action-toggle');
+          if (indicator) indicator.textContent = '[OPEN CASE]';
+        });
+        if (!wasOpen) {
+          folder.classList.add('open');
+          const indicator = folder.querySelector('.folder-action-toggle');
+          if (indicator) indicator.textContent = '[CLOSE CASE]';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

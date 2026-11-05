@@ -64,7 +64,7 @@ user_pref("services.settings.main.nimbus-desktop-experiments.last_check", 179347
 user_pref("services.settings.main.nimbus-secure-experiments.last_check", 1793472762);
 user_pref("services.settings.main.tracking-protection-lists.last_check", 1793472762);
 user_pref("services.sync.engine.addresses.available", true);
-user_pref("toolkit.startup.last_success", 1793534559);
+user_pref("toolkit.startup.last_success", 1793883575);
 user_pref("toolkit.telemetry.cachedClientID", "8d1d76c2-8c2a-41e5-b9ca-afbbc989edd2");
 user_pref("toolkit.telemetry.cachedProfileGroupID", "b3db4b91-6f95-41fa-be3c-72b9c5fad671");
 user_pref("toolkit.telemetry.previousBuildID", "20261006030843");

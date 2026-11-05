@@ -1,0 +1,2247 @@
+/* ==========================================================================
+   OVERCLOCK 2027 â€” DEDICATED MOBILE & TABLET STYLESHEET (mobile.css)
+   
+   Architecture:
+   - Scoped strictly to viewports <= 1023px (tablets and phones).
+   - Desktop viewports (>= 1024px) remain 100% untouched and pristine.
+   - Reuses existing design tokens and CSS variables from styles.css.
+   - Eliminates oversized, zoomed-in mobile appearance with balanced hierarchy:
+       * Hero flap title: clamp(1.15rem, 5vw, 1.45rem)
+       * Section headings: clamp(1.35rem, 4.8vw, 1.75rem) (23â€“28px)
+       * Card headings: 1.05remâ€“1.20rem (17â€“20px)
+       * Body text: 0.88remâ€“0.92rem (14â€“15px)
+       * Technical labels: 0.68remâ€“0.75rem (11â€“12px)
+       * Card internal padding: 12pxâ€“16px
+       * Side gutters: 16pxâ€“20px (361â€“430px), 14px (320â€“360px)
+   - Fixes Temporal Clock Navigator quarter-circle instrument at top-right.
+   - Fixes floating Miss Minutes at bottom-right viewport anchor.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. TABLETS & COMPACT VIEWPORTS (<= 1023px)
+   ========================================================================== */
+@media screen and (max-width: 1023px) {
+
+  /* --- Base Container & Gutters --- */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  .bureau-section {
+    padding: 56px 20px 48px !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+  }
+
+  .bureau-section:first-of-type {
+    margin-top: 0 !important;
+  }
+
+  /* Spacious, clean whitespace separation between consecutive sections (no line/divider) */
+  .bureau-section + .bureau-section {
+    margin-top: 56px !important;
+    border: none !important;
+    border-top: none !important;
+  }
+
+  .bureau-section + .bureau-section::before,
+  .bureau-section + .bureau-section::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Compact Hero: starts cleanly below navbar with space so LOGGED #01 stamp is fully visible */
+  .hero-bureau-section,
+  #hero.bureau-section {
+    min-height: auto !important;
+    justify-content: flex-start !important;
+    padding-top: 32px !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* --- Global Vintage Stamp Sizing --- */
+  .section-rubber-stamp,
+  .bureau-section .section-rubber-stamp {
+    font-size: 0.74rem;
+    padding: 3px 8px;
+    letter-spacing: 0.08em;
+    top: 8px;
+    right: 14px;
+    opacity: 0.85;
+  }
+
+  /* --- Section Typography Hierarchy --- */
+  .section-header-wrap {
+    margin-bottom: 34px !important;
+    width: 100%;
+  }
+
+  .bureau-tag,
+  .section-header-wrap .bureau-tag {
+    font-size: 0.70rem;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    margin-bottom: 8px;
+    display: inline-block;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.35;
+    box-sizing: border-box;
+  }
+
+  .section-main-heading {
+    font-size: clamp(1.75rem, 5.8vw, 2.15rem);
+    letter-spacing: 0.03em;
+    line-height: 1.16;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    word-break: break-word;
+    hyphens: manual;
+  }
+
+  .subsection-main-heading {
+    font-size: clamp(1.45rem, 4.8vw, 1.75rem);
+    letter-spacing: 0.03em;
+    line-height: 1.18;
+    margin: 6px 0 10px;
+    text-transform: uppercase;
+    word-break: break-word;
+  }
+
+  .section-subtext {
+    font-size: 0.90rem;
+    line-height: 1.5;
+    color: var(--text-dim, #7C735F);
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+
+  /* --- Navigation Bar --- */
+  .bureau-navbar {
+    height: 60px;
+    background: rgba(20, 17, 13, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .nav-container {
+    padding: 0 84px 0 16px !important;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .nav-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    max-width: calc(100% - 110px);
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  /* Secondary organization labels removed from mobile header to give OVERCLOCK breathing room */
+  .brand-badge {
+    display: none !important;
+  }
+
+  .brand-wordmark-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .brand-wordmark {
+    font-size: clamp(1.28rem, 4.8vw, 1.55rem);
+    letter-spacing: 0.04em;
+    font-family: var(--font-display);
+    color: var(--tva-orange, #E8872B);
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(232, 137, 43, 0.4);
+  }
+
+  .brand-year-tag {
+    font-size: 0.88rem;
+    font-family: var(--font-mono);
+    color: var(--paper-cream, #EADFC4);
+  }
+
+  .nav-actions-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Remove crowded desktop-only actions, secondary tags, replay intro button & temporal-log readouts */
+  .nav-timeline-status,
+  .nav-desktop-cta,
+  .nav-actions,
+  .nav-replay-btn,
+  .nav-links-menu,
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+
+  /* Transparent Dark-Blue Unstop Wordmark in Mobile Header */
+  .header-unstop-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 2px 4px !important;
+    text-decoration: none !important;
+    flex-shrink: 0 !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  .header-unstop-wordmark {
+    height: 20px !important;
+    width: auto !important;
+    max-width: 75px !important;
+    display: block !important;
+  }
+
+  /* Compact Audio Toggle Icon Button in Mobile Header */
+  .nav-audio-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    border-radius: 4px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Expand touch target to 42px without enlarging visible container */
+  .nav-audio-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: -5px !important;
+    cursor: pointer !important;
+  }
+
+  .nav-audio-btn .audio-toggle-svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* --- Temporal Clock Navigator (Upper-Right Corner Precision Instrument) --- */
+  .corner-clock-navigator {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .corner-dial-trigger,
+  button.corner-dial-trigger,
+  #corner-dial-trigger {
+    position: fixed !important;
+    top: -46px !important;
+    right: -46px !important;
+    width: 104px !important;
+    height: 104px !important;
+    z-index: 1000 !important;
+    pointer-events: auto !important;
+    border: 1.5px solid rgba(184, 146, 58, 0.65) !important;
+    background: radial-gradient(circle at 100% 0%, #26201A 0%, #1C1813 70%, #14110D 100%) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85) !important;
+    cursor: pointer;
+    padding: 0 !important;
+    margin: 0 !important;
+    touch-action: manipulation !important;
+  }
+
+  .corner-dial-pointer {
+    height: 34px !important;
+  }
+
+  .corner-dial-pointer .pointer-needle {
+    height: 28px !important;
+    width: 1.5px !important;
+  }
+
+  .corner-rotor-marker {
+    transform: translate(-50%, -50%) rotate(var(--base-angle)) translateY(-34px) !important;
+  }
+
+  .corner-dial-ray {
+    height: 52px !important;
+  }
+
+  /* Expanded Temporal Directory */
+  .corner-temporal-menu,
+  nav.corner-temporal-menu,
+  #corner-temporal-menu {
+    position: fixed !important;
+    top: 58px !important;
+    right: 8px !important;
+    width: calc(100vw - 16px) !important;
+    max-width: 310px !important;
+    max-height: calc(100vh - 68px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    z-index: 1100 !important;
+    background: #1C1813 !important;
+    border: 1.5px solid var(--border-brass, #B8923A) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.95) !important;
+    padding: 10px 12px 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Mobile Navigation Dropdown: Remove TEMPORAL DIRECTORY header area */
+  .corner-temporal-menu .menu-header {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    margin-bottom: 4px !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
+    min-height: 28px !important;
+  }
+
+  .corner-temporal-menu .menu-header-badge,
+  .corner-temporal-menu .menu-header-title {
+    display: none !important;
+  }
+
+  .corner-temporal-menu .menu-close-btn {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 1.15rem !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: auto !important;
+  }
+
+  .corner-temporal-menu .temporal-directory-wrapper {
+    position: relative;
+    padding-left: 14px;
+  }
+
+  .corner-temporal-menu .temporal-directory-wrapper::before {
+    left: 4px;
+    width: 2px;
+  }
+
+  .corner-temporal-menu .sector-box {
+    min-height: 40px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    border: 1px solid rgba(184, 146, 58, 0.35);
+    border-radius: 4px;
+    background: rgba(28, 24, 19, 0.9);
+    font-size: 0.80rem;
+  }
+
+  /* --- Floating Miss Minutes Mascot --- */
+  .miss-minutes-overlay,
+  #miss-minutes-overlay {
+    position: fixed !important;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 48px !important;
+    height: 48px !important;
+    z-index: 950 !important;
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    background: transparent !important;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.75)) !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+  }
+
+  .miss-minutes-speech,
+  #miss-minutes-speech {
+    display: none !important; /* Conceal bubble to prevent obscuring content */
+  }
+
+  /* --- Hero Section Elements --- */
+  .hero-content-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-title-container {
+    width: 100%;
+    position: relative;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .hero-bureau-section .section-rubber-stamp {
+    top: 6px !important;
+    right: 14px !important;
+    z-index: 10 !important;
+    font-size: 0.74rem !important;
+    padding: 2px 8px !important;
+  }
+
+  .split-flap-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 12px 0 10px !important;
+    gap: clamp(2px, 1.2vw, 5px);
+    box-sizing: border-box;
+  }
+
+  .split-flap-title .flap-char-box,
+  .hero-subhead,
+  .hero-tagline,
+  .typed-form-strip,
+  .typed-form-strip .form-field-unit,
+  .hero-cta-group > *,
+  .hero-registration-pill {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .split-flap-title .flap-char-box {
+    flex: 1 1 0;
+    min-width: 0;
+    height: clamp(56px, 15vw, 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-family: var(--font-display, 'Bebas Neue', sans-serif);
+    font-size: clamp(2.15rem, 8.8vw, 3.2rem);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--amber-bright, #FFAE42);
+    text-shadow: 0 0 16px rgba(255, 174, 66, 0.55), 0 2px 6px rgba(0, 0, 0, 0.95);
+    border: 2px solid rgba(214, 150, 60, 0.85);
+    border-radius: 5px;
+    background: linear-gradient(180deg, #251c14 0%, #17120c 50%, #0e0b08 51%, #1b150f 100%);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 12px rgba(232, 135, 43, 0.3);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    box-sizing: border-box;
+  }
+
+  .split-flap-title .flap-char-box::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: rgba(0, 0, 0, 0.75);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+  }
+
+  .hero-subhead {
+    font-size: clamp(0.78rem, 2.5vw, 0.88rem);
+    letter-spacing: 0.14em;
+    color: var(--brass, #B8923A);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .hero-tagline {
+    font-size: clamp(0.82rem, 2.7vw, 0.90rem);
+    line-height: 1.45;
+    margin-bottom: 16px;
+    color: var(--text-body, #EADFC4);
+  }
+
+  .hero-clock-backdrop {
+    width: min(240px, 65vw);
+    height: min(240px, 65vw);
+    opacity: 0.35;
+  }
+
+  /* Hero Intake Manifest Card */
+  .typed-form-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.92) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    width: 100%;
+    max-width: 480px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .typed-form-strip::before {
+    font-size: 0.62rem;
+    top: -9px;
+    left: 12px;
+    padding: 0 6px;
+  }
+
+  .typed-form-strip .form-field-unit {
+    opacity: 1 !important;
+    transform: none !important;
+    gap: 1px;
+  }
+
+  .field-label {
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim, #7C735F);
+  }
+
+  .field-value {
+    font-size: 0.82rem;
+    color: var(--text-bright, #EADFC4);
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 10px;
+  }
+
+  .hero-cta-group .btn-bureau-brass {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.84rem;
+    padding: 11px 16px;
+    min-height: 44px;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-registration-pill {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    max-width: 360px !important;
+    padding: 8px 14px !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.06em !important;
+    box-sizing: border-box !important;
+    margin-top: 6px !important;
+  }
+
+  /* Organising Clubs Section & Cards */
+  .clubs-cards-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-evenly !important;
+    align-items: center !important;
+    gap: 24px !important;
+    max-width: 860px !important;
+    margin: 32px auto 0 !important;
+    padding: 14px 6px !important;
+  }
+
+  .tva-club-card {
+    --tva-w: 240px !important;
+    width: var(--tva-w) !important;
+  }
+
+  /* Downloads Resource Grid */
+  .downloads-resource-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Hero Prize Pill */
+  .hero-prize-pill {
+    padding: 8px 14px;
+    font-size: 0.74rem;
+  }
+}
+
+/* ==========================================================================
+   2. PHONES & SMALL VIEWPORTS (<= 768px)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+
+  /* Gutters & Margins for Standard Mobile */
+  .bureau-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-top: 56px !important;
+    padding-bottom: 48px !important;
+    border: none !important;
+  }
+
+  .hero-bureau-section,
+  #hero.bureau-section {
+    padding-top: 30px !important;
+    padding-bottom: 24px !important;
+    margin-top: 0 !important;
+  }
+
+  /* --- Section 02: About / Event Briefing --- */
+  .operational-status-panel {
+    padding: 14px 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border-brass, #B8923A);
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.9);
+    box-sizing: border-box;
+  }
+
+  .panel-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
+  }
+
+  .panel-header-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .panel-header-badge {
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+
+  .status-readout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .status-cell {
+    padding: 8px 10px;
+    border: 1px solid rgba(184, 146, 58, 0.2);
+    background: rgba(20, 17, 13, 0.7);
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .status-cell.span-full {
+    grid-column: 1 / -1;
+  }
+
+  .status-k {
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+    display: block;
+    color: var(--text-dim, #7C735F);
+  }
+
+  .status-v {
+    font-size: 0.80rem;
+    line-height: 1.3;
+    display: block;
+  }
+
+  .case-notes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .case-note-card {
+    padding: 12px 10px;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.85);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .note-header-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+    color: var(--amber-bright, #E8892B);
+  }
+
+  .note-stamp {
+    font-size: 0.60rem;
+    padding: 2px 5px;
+    margin-bottom: 6px;
+  }
+
+  .note-title {
+    font-size: 0.90rem;
+    margin-bottom: 4px;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+  }
+
+  .note-body {
+    font-size: 0.74rem;
+    line-height: 1.38;
+    color: var(--paper-muted, #B8B09F);
+  }
+
+  /* --- Section 03: Problem Statements (Single Column, 6 Slots) --- */
+  .domain-slots-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .domain-slot-card {
+    grid-column: auto !important;
+    padding: 0 !important;
+    border: 2px solid var(--border-dim);
+    border-radius: var(--radius-md);
+    background: #1C1813;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .domain-slot-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    height: 42px;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid rgba(184, 146, 58, 0.15);
+    background: #14110D;
+    box-sizing: border-box;
+  }
+
+  .slot-badge {
+    font-size: 0.70rem;
+    padding: 0;
+  }
+
+  .slot-freq {
+    font-size: 0.68rem;
+  }
+
+  .domain-screen-display {
+    padding: 12px 14px 8px;
+    height: 100px;
+    margin-bottom: 0 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid var(--border-dim);
+    box-sizing: border-box;
+  }
+
+  .screen-waveform-container {
+    height: 50px;
+    width: 100%;
+    position: relative;
+  }
+
+  .waveform-svg {
+    height: 34px;
+  }
+
+  .slot-channel-tag {
+    font-size: 0.62rem;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  .slot-content-chamber {
+    padding: 16px 14px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .slot-status-indicator {
+    display: none !important;
+  }
+
+  .slot-title {
+    font-size: clamp(1.26rem, 4.6vw, 1.42rem) !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.03em !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    word-break: break-word !important;
+    text-transform: uppercase !important;
+  }
+
+  .slot-desc {
+    font-size: 0.82rem !important;
+    line-height: 1.55 !important;
+    color: rgba(235, 222, 205, 0.92) !important;
+    letter-spacing: 0.01em !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    text-align: left !important;
+    word-break: normal !important;
+  }
+
+  .slot-subtopics-block {
+    min-height: auto !important;
+    gap: 6px !important;
+    margin-top: 2px !important;
+  }
+
+  .subtopics-label,
+  .audience-label {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.1em !important;
+    line-height: 1.3 !important;
+    margin: 0 0 2px 0 !important;
+  }
+
+  .slot-tags-container {
+    min-height: auto !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .slot-tag {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    padding: 4px 8px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .slot-audience-row {
+    min-height: auto !important;
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+    gap: 3px !important;
+  }
+
+  .audience-text {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+    color: rgba(225, 212, 195, 0.88) !important;
+  }
+
+  .slot-teaser-box {
+    min-height: auto !important;
+    font-size: 0.76rem !important;
+    line-height: 1.45 !important;
+    padding: 10px 12px !important;
+    margin-top: 2px !important;
+  }
+
+  .slot-action-area {
+    display: none !important;
+  }
+
+  .slot-pending-btn {
+    display: none !important;
+  }
+
+  /* Secondary Registration CTA Banner (Domain Closing Card) */
+  .domain-closing-cta-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    padding: 22px 18px !important;
+    gap: 14px !important;
+    margin-top: 28px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    border: 1.5px solid var(--border-brass, #B8923A) !important;
+    border-radius: 6px !important;
+    background: rgba(28, 24, 19, 0.95) !important;
+  }
+
+  .domain-cta-content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .domain-cta-content .bureau-tag {
+    display: inline-block !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+    font-size: 0.70rem !important;
+    padding: 4px 10px !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 0.06em !important;
+    box-sizing: border-box !important;
+  }
+
+  .domain-cta-title {
+    font-size: clamp(1.25rem, 4.8vw, 1.65rem) !important;
+    line-height: 1.25 !important;
+    margin: 0 0 10px 0 !important;
+    width: 100% !important;
+    color: var(--paper-cream, #EADFC4) !important;
+  }
+
+  .domain-cta-text {
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+    margin: 0 0 14px 0 !important;
+    width: 100% !important;
+    color: var(--text-dim, #7C735F) !important;
+  }
+
+  .domain-cta-action {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .domain-cta-action .btn-bureau-secondary {
+    width: 100% !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px 18px !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.06em !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  /* --- Section 04: The Shortlist --- */
+  .results-dossier-chamber {
+    padding: 14px 14px;
+    border: 1.5px solid var(--border-brass, #B8923A);
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.92);
+  }
+
+  .dossier-teletype-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
+  }
+
+  .teletype-title {
+    font-size: 0.68rem;
+  }
+
+  .teletype-code {
+    font-size: 0.62rem;
+  }
+
+  .results-status-banner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px 10px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+  }
+
+  .status-label {
+    font-size: 0.58rem;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  .status-date-val,
+  .status-state-val {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+
+  .results-notice-body {
+    padding: 12px 12px;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    margin-bottom: 12px;
+    border-radius: 4px;
+  }
+
+  .notice-stamp-graphic {
+    font-size: 0.70rem;
+    padding: 2px 7px;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  .roster-standby-message {
+    font-size: 0.74rem;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  /* --- Section 05: Event Timeline --- */
+  .tva-chronological-timeline {
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .timeline-spine-track {
+    left: 8px;
+    width: 3px;
+  }
+
+  .timeline-milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .timeline-milestone-item,
+  .timeline-milestone-item.milestone-left,
+  .timeline-milestone-item.milestone-right {
+    display: block !important;
+    width: 100% !important;
+    left: auto !important;
+    right: auto !important;
+    text-align: left !important;
+    padding-left: 18px !important;
+    margin-left: 0 !important;
+    margin-bottom: 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  .milestone-node-anchor {
+    left: -20px !important;
+    top: 14px !important;
+  }
+
+  .milestone-node-dot {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .milestone-node-stem {
+    width: 12px !important;
+    height: 2px !important;
+  }
+
+  .milestone-card-box {
+    padding: 12px 14px !important;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3)) !important;
+    border-radius: 6px !important;
+    background: rgba(28, 24, 19, 0.88) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .milestone-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .milestone-badge-num {
+    font-size: 0.64rem;
+  }
+
+  .milestone-status-stamp {
+    font-size: 0.60rem;
+    padding: 2px 6px;
+  }
+
+  .milestone-title {
+    font-size: 1.05rem;
+    margin: 4px 0 6px;
+  }
+
+  .milestone-date-display {
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+
+  .milestone-description {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 6px;
+  }
+
+  .milestone-track-code {
+    font-size: 0.62rem;
+  }
+
+  /* --- Section 06: Registration (Rs. 1,770 display) --- */
+  .registration-terminal-card {
+    padding: 14px 14px;
+    border: 1.5px solid var(--border-brass, #B8923A);
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.92);
+  }
+
+  .terminal-card-topbar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(184, 146, 58, 0.25);
+  }
+
+  .topbar-badge {
+    font-size: 0.66rem;
+  }
+
+  .topbar-status {
+    font-size: 0.68rem;
+  }
+
+  .registration-content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .reg-milestone-panel {
+    padding: 12px 14px;
+    border: 1px solid rgba(184, 146, 58, 0.2);
+    border-radius: 4px;
+    background: rgba(20, 17, 13, 0.6);
+  }
+
+  .reg-k-label {
+    font-size: 0.64rem;
+    margin-bottom: 2px;
+  }
+
+  .reg-date-headline {
+    font-size: 1.15rem;
+    margin: 4px 0;
+  }
+
+  .reg-helper-note {
+    font-size: 0.80rem;
+    line-height: 1.4;
+  }
+
+  .fee-calculation-box {
+    padding: 14px 14px;
+    text-align: center;
+    border: 1.5px solid var(--border-brass, #B8923A);
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.85);
+  }
+
+  .fee-box-title {
+    font-size: 0.70rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .fee-amount-val {
+    font-size: 1.55rem;
+  }
+
+  /* --- Section 07: Accommodation (2 Columns for Mobile) --- */
+  .accommodation-notes-grid,
+  .accommodation-two-cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100%;
+  }
+
+  .quarters-stat-card {
+    padding: 12px 10px;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.85);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .stat-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+  }
+
+  .stat-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .stat-heading {
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+
+  .stat-body {
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .accommodation-details-panel {
+    padding: 14px 12px;
+    margin-top: 14px;
+    border: 1.5px solid rgba(184, 146, 58, 0.25);
+    border-radius: 6px;
+  }
+
+  .panel-section-title {
+    font-size: 0.68rem;
+    margin-bottom: 10px;
+  }
+
+  .specs-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .spec-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .spec-unit.span-two {
+    grid-column: 1 / -1 !important;
+  }
+
+  .spec-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+  }
+
+  .spec-val-pending {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .spec-row {
+    font-size: 0.78rem;
+    padding: 6px 0;
+  }
+
+  /* --- Section 08: Judging & Recognition (2 Columns for Mobile) --- */
+  .evaluation-pillars-grid,
+  .judging-criteria-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .pillar-card,
+  .criterion-card {
+    padding: 12px 10px !important;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
+    border-radius: 6px;
+    background: rgba(28, 24, 19, 0.85);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100% !important;
+  }
+
+  .pillar-num {
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+    color: var(--amber-bright, #E8892B);
+  }
+
+  .pillar-title,
+  .criterion-title {
+    font-size: 0.88rem;
+    margin: 3px 0 5px;
+    line-height: 1.25;
+    color: var(--paper-cream, #EFECE6);
+  }
+
+  .pillar-desc,
+  .criterion-desc {
+    font-size: 0.72rem;
+    line-height: 1.38;
+    color: var(--paper-muted, #B8B09F);
+  }
+
+  .criterion-weight {
+    font-size: 1.15rem;
+  }
+
+  /* --- Section 09: Sponsors & Partners (2-Column Clearance Cards on Mobile) --- */
+  .sponsors-pinboard-deck {
+    padding: 24px 10px 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .sponsors-tier-wrapper {
+    gap: 20px !important;
+    margin-bottom: 24px !important;
+    width: 100% !important;
+  }
+
+  .tier-section-group {
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .tier-divider-label {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.1em !important;
+    padding: 3px 12px !important;
+  }
+
+  /* Title Partner: Compact Centered Card */
+  .tier-title-container {
+    width: 100% !important;
+    max-width: 210px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Gold & Silver Tiers: 2-Column Grid on Mobile */
+  .tier-gold-grid,
+  .tier-silver-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .auth-clearance-card,
+  .tier-title-card,
+  .tier-gold-card,
+  .tier-silver-card {
+    padding: 12px 8px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 5px !important;
+  }
+
+  /* Compact Pushpin */
+  .card-pushpin-head {
+    width: 10px !important;
+    height: 10px !important;
+    top: -6px !important;
+    border-width: 1.5px !important;
+  }
+
+  /* Compact Auth Number */
+  .card-auth-number {
+    font-size: 0.52rem !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 5px !important;
+  }
+
+  /* Compact Logo Box */
+  .card-logo-container,
+  .tier-title-card .card-logo-container,
+  .tier-gold-card .card-logo-container,
+  .tier-silver-card .card-logo-container {
+    height: 44px !important;
+    margin-bottom: 6px !important;
+    border-radius: 3px !important;
+  }
+
+  .card-logo-placeholder-text {
+    font-size: 0.70rem !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  /* Compact Sponsor Name */
+  .card-sponsor-name,
+  .tier-title-card .card-sponsor-name,
+  .tier-gold-card .card-sponsor-name,
+  .tier-silver-card .card-sponsor-name {
+    font-size: 0.95rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 5px !important;
+    white-space: normal !important;
+  }
+
+  /* Compact Footer Strip */
+  .card-clearance-footer {
+    padding-top: 5px !important;
+    gap: 4px !important;
+    justify-content: space-between !important;
+  }
+
+  .card-tier-stamp {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.03em !important;
+    padding: 2px 4px !important;
+  }
+
+  .card-approved-stamp {
+    font-size: 0.65rem !important;
+    padding: 1px 3px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .sponsors-intro-card {
+    padding: 14px 14px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+  }
+
+  .sponsor-tier-group {
+    margin-bottom: 14px;
+  }
+
+  .sponsor-tier-title {
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+  }
+
+  .sponsor-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .sponsor-card {
+    padding: 10px 8px;
+    min-height: 68px;
+    border-radius: 4px;
+  }
+
+  /* --- Section 10: FAQs --- */
+  .case-folder-unit {
+    margin-bottom: 10px !important;
+  }
+
+  .folder-tab-bar {
+    padding: 12px 14px !important;
+    gap: 8px !important;
+  }
+
+  .folder-query-title {
+    font-size: 0.90rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .folder-case-num {
+    font-size: 0.70rem !important;
+    margin-right: 8px !important;
+  }
+
+  .folder-action-toggle {
+    font-size: 0.72rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    letter-spacing: 0.04em !important;
+    margin-left: 8px !important;
+  }
+
+  .folder-drawer-inner {
+    padding: 14px 14px !important;
+    font-size: 0.84rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .faq-accordion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .faq-item {
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
+    border-radius: 6px;
+  }
+
+  .faq-trigger {
+    padding: 12px 14px;
+    font-size: 0.86rem;
+    min-height: 44px;
+  }
+
+  .faq-body {
+    padding: 8px 14px 12px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  /* --- Section 11: Contact & Venue --- */
+  .contact-venue-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .venue-card {
+    padding: 14px 14px;
+    border: 1.5px solid var(--border-brass, #B8923A);
+    border-radius: 6px;
+  }
+
+  .venue-title {
+    font-size: 1.15rem;
+    margin-bottom: 6px;
+  }
+
+  .venue-address {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+
+  .venue-map-link {
+    font-size: 0.78rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* --- Footer: Location Map & Crew --- */
+  .bureau-footer {
+    padding: 32px 18px 20px;
+  }
+
+  .footer-panels-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .footer-panel {
+    padding: 14px 14px;
+    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3));
+    border-radius: 6px;
+  }
+
+  .crew-intro-note {
+    font-size: 0.78rem;
+    margin-bottom: 10px;
+  }
+
+  .crew-roster-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .crew-roster-card {
+    padding: 8px 10px;
+    border: 1px solid rgba(184, 146, 58, 0.2);
+    border-radius: 4px;
+  }
+
+  .crew-role {
+    font-size: 0.62rem;
+  }
+
+  .crew-name {
+    font-size: 0.85rem;
+    margin: 2px 0;
+  }
+
+  .footer-action-bar-single {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0 14px;
+    text-align: center;
+  }
+
+  .btn-back-to-start,
+  .btn-footer-developers {
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 0.80rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* Footer Contact Card Mobile */
+  .footer-contact-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 11px 14px;
+  }
+
+  .footer-contact-phone {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  /* Developers Recognition Modal Mobile (Compact 2-Column Layout) */
+  .developers-modal-overlay {
+    padding: 10px 8px !important;
+  }
+
+  .dev-modal-container {
+    max-height: 94vh !important;
+    max-width: 480px !important;
+    width: 100% !important;
+  }
+
+  .dev-modal-surface {
+    padding: 14px 10px 12px !important;
+  }
+
+  .dev-modal-topbar {
+    margin-bottom: 8px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .dev-modal-file-tag {
+    font-size: 0.56rem !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  .dev-modal-close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    font-size: 1.05rem !important;
+  }
+
+  .dev-modal-header {
+    margin-bottom: 10px !important;
+  }
+
+  .dev-modal-title {
+    font-size: 1.15rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .dev-modal-intro {
+    font-size: 0.70rem !important;
+    line-height: 1.35 !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* 2-Column Developer Grid on Mobile */
+  .dev-modal-grid,
+  .developers-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+  }
+
+  .dev-modal-bottom-note {
+    font-size: 0.54rem !important;
+    gap: 4px !important;
+    padding-top: 8px !important;
+    margin-top: 4px !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+
+  .developer-card {
+    padding: 10px 8px 8px !important;
+    border-radius: 5px !important;
+    border-left: 2.5px solid var(--brass) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .developer-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 4px !important;
+    gap: 4px !important;
+  }
+
+  .developer-id-tag {
+    font-size: 0.50rem !important;
+    padding: 2px 4px !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .developer-sys-label {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .developer-name {
+    font-size: 1.05rem !important;
+    line-height: 1.15 !important;
+    margin: 0 0 2px !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .developer-role {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.06em !important;
+    margin: 0 0 4px !important;
+  }
+
+  .developer-card-divider {
+    margin: 2px 0 6px !important;
+  }
+
+  .developer-contact-block {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    margin-top: auto !important;
+  }
+
+  .developer-phone-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 2px !important;
+  }
+
+  .developer-phone-label {
+    font-size: 0.50rem !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  .developer-phone-link {
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 30px !important;
+    padding: 4px 4px !important;
+    font-size: 0.65rem !important;
+    gap: 4px !important;
+    border-radius: 3px !important;
+    box-sizing: border-box !important;
+  }
+
+  .developer-phone-link .dev-phone-icon svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .developer-phone-link .dev-phone-val {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .developer-action-row {
+    width: 100% !important;
+  }
+
+  .developer-github-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 30px !important;
+    padding: 4px 6px !important;
+    font-size: 0.62rem !important;
+    gap: 4px !important;
+    border-radius: 3px !important;
+    box-sizing: border-box !important;
+  }
+
+  .developer-github-btn .dev-gh-icon svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .developer-github-btn .dev-gh-text {
+    font-size: 0.60rem !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .developer-github-btn .dev-gh-arrow {
+    font-size: 0.68rem !important;
+  }
+
+  .developers-bottom-bar {
+    font-size: 0.66rem;
+    gap: 8px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-marquee-strip {
+    padding: 10px 0;
+  }
+
+  .f-m-item {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  .f-m-sep {
+    padding: 0 12px;
+  }
+
+  .f-m-unstop-badge {
+    padding: 3px 9px;
+    gap: 5px;
+  }
+
+  .f-m-unstop-img {
+    height: 12px;
+  }
+
+  .f-m-unstop-text {
+    font-size: 0.62rem;
+  }
+
+  .f-m-dev-trigger {
+    padding: 3px 8px;
+    font-size: 0.65rem;
+  }
+
+  /* Organiser Logos Strip */
+  .organiser-logos-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 18px;
+    padding: 8px 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: rgba(20, 17, 13, 0.72);
+    border: 1px solid rgba(184, 146, 58, 0.3);
+    border-radius: var(--radius-sm, 6px);
+  }
+
+  .organiser-logo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 6px;
+    flex: 1 1 auto;
+    min-width: 80px;
+  }
+
+  .organiser-logo-badge {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .organiser-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .organiser-logo-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--paper-cream, #EADFC4);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Hero Register Button */
+  .hero-register-cta-btn {
+    width: 100%;
+    max-width: 340px;
+    justify-content: center;
+    font-size: 0.88rem;
+    padding: 13px 18px;
+  }
+
+  /* Organising Clubs Section */
+  .clubs-cards-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 22px !important;
+    margin-top: 18px !important;
+    width: 100% !important;
+  }
+
+  .tva-club-card {
+    --tva-w: min(230px, 75vw) !important;
+    width: var(--tva-w) !important;
+  }
+
+  .tva-card__back-content {
+    inset: 10px 12px !important;
+  }
+
+  .tva-back-body {
+    padding: 7px 7px !important;
+  }
+
+  .tva-back-headline {
+    font-size: 0.70rem !important;
+    line-height: 1.3 !important;
+    letter-spacing: 0.02em !important;
+    margin: 3px 0 0 !important;
+    text-align: center !important;
+  }
+
+  .tva-back-footer {
+    flex-direction: column !important;
+    gap: 2px !important;
+    text-align: center !important;
+    padding-top: 5px !important;
+  }
+
+  .tva-flip-prompt {
+    margin-left: 0 !important;
+  }
+
+  /* Round 1 PPT Free Notice Panel */
+  .ppt-free-notice-panel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 14px;
+    margin: 18px 0 24px;
+  }
+
+  .ppt-free-badge-wrap {
+    align-self: flex-start;
+  }
+
+  .ppt-free-badge {
+    font-size: 0.74rem;
+    padding: 4px 10px;
+  }
+
+  /* Downloads Section */
+  .downloads-resource-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .download-resource-card {
+    padding: 18px 16px;
+  }
+
+  .download-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Accommodation 2-cards (2 Columns on Mobile) */
+  .accommodation-two-cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-top: 18px;
+  }
+
+  /* Travel & Transport */
+  .travel-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .shared-auto-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  .shared-auto-price-badge {
+    align-self: flex-start;
+  }
+
+  /* Hero Prize Pill & Contact Clubs Strip */
+  .hero-prize-pill {
+    width: 100%;
+    max-width: 340px;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .contact-card-clubs-strip {
+    gap: 6px;
+  }
+
+  .contact-club-badge {
+    padding: 2px 6px;
+    font-size: 0.64rem;
+  }
+
+  /* Miss Minutes Modal */
+  .mm-modal-card {
+    width: 92%;
+    max-width: 360px;
+    padding: 24px 18px 22px;
+    max-height: 88vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mm-character-card-wrap {
+    width: 150px;
+    height: 150px;
+    margin: 10px auto 14px;
+  }
+
+  .mm-register-cta-btn {
+    width: 100%;
+    font-size: 0.86rem;
+    padding: 12px 16px;
+  }
+
+  /* Footer Bottom Bar with Unstop */
+  .footer-bottom-unstop-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+}
+
+/* ==========================================================================
+   3. ULTRA-COMPACT PHONES (320px to 360px)
+   ========================================================================== */
+@media screen and (max-width: 360px) {
+
+  /* Minimum Side Margins */
+  .bureau-section {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    padding-top: 48px !important;
+    padding-bottom: 40px !important;
+    border: none !important;
+  }
+
+  .hero-bureau-section,
+  #hero.bureau-section {
+    padding-top: 26px !important;
+    padding-bottom: 20px !important;
+    margin-top: 0 !important;
+  }
+
+  .bureau-navbar {
+    height: 54px;
+  }
+
+  .nav-container {
+    padding: 0 76px 0 10px !important;
+  }
+
+  .nav-actions-group {
+    gap: 8px !important;
+    margin-right: 0 !important;
+  }
+
+  .brand-wordmark {
+    font-size: 1.18rem !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .brand-badge {
+    display: none !important;
+  }
+
+  .header-unstop-link {
+    padding: 2px 2px !important;
+  }
+
+  .header-unstop-wordmark {
+    height: 18px !important;
+    max-width: 65px !important;
+  }
+
+  /* Ultra-Compact Clock Dial */
+  .corner-dial-trigger,
+  button.corner-dial-trigger,
+  #corner-dial-trigger {
+    top: -42px !important;
+    right: -42px !important;
+    width: 94px !important;
+    height: 94px !important;
+  }
+
+  .corner-dial-pointer {
+    height: 30px !important;
+  }
+
+  .corner-dial-pointer .pointer-needle {
+    height: 24px !important;
+  }
+
+  .corner-rotor-marker {
+    transform: translate(-50%, -50%) rotate(var(--base-angle)) translateY(-30px) !important;
+  }
+
+  .corner-dial-ray {
+    height: 46px !important;
+  }
+
+  .corner-temporal-menu,
+  nav.corner-temporal-menu,
+  #corner-temporal-menu {
+    top: 54px !important;
+    right: 4px !important;
+    width: calc(100vw - 8px) !important;
+    max-width: 295px !important;
+  }
+
+  /* Ultra-Compact Mascot & CTA Clearance */
+  .miss-minutes-overlay,
+  #miss-minutes-overlay {
+    width: 40px !important;
+    height: 40px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(10px + env(safe-area-inset-right, 0px)) !important;
+  }
+
+  .hero-cta-group {
+    max-width: calc(100% - 48px);
+  }
+
+  .hero-registration-pill {
+    max-width: calc(100% - 48px) !important;
+  }
+
+  /* Ultra-Compact Hero Elements */
+  .split-flap-title .flap-char-box {
+    height: 48px;
+    font-size: 1.62rem;
+    padding: 0;
+  }
+
+  .typed-form-strip {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 10px 10px;
+  }
+
+  .sponsor-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .crew-roster-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-readout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fee-amount-val {
+    font-size: 1.4rem;
+  }
+
+  .domain-closing-cta-card {
+    padding: 16px 12px !important;
+  }
+
+  .domain-cta-content .bureau-tag {
+    font-size: 0.64rem !important;
+    padding: 3px 8px !important;
+  }
+
+  .domain-cta-title {
+    font-size: 1.15rem !important;
+  }
+
+  .domain-cta-text {
+    font-size: 0.82rem !important;
+  }
+
+  .domain-cta-action .btn-bureau-secondary {
+    font-size: 0.78rem !important;
+    padding: 10px 14px !important;
+  }
+
+
+  .organiser-logo-item {
+    flex: 1 1 100%;
+    padding: 4px 6px;
+  }
+
+  .mm-modal-card {
+    width: 95%;
+    padding: 20px 14px 18px;
+  }
+
+  .mm-character-card-wrap {
+    width: 125px;
+    height: 125px;
+  }
+
+  .mm-modal-title {
+    font-size: 1.15rem;
+  }
+
+  .shared-auto-price-badge .auto-fare-amt {
+    font-size: 1.35rem;
+  }
+}
+âÿó÷‚      jì}Šjì}ŠJý¾jì}¢   M    O^partitionKey=%28http%2Clocalhost%29,:http://localhost:3000/mobile.css?v=1.6 strongly-framed 1 request-method GET response-head HTTP/1.0 200 OK
+Content-type: text/css
+Content-Length: 49814
+Last-Modified: Thu, 05 Nov 2026 12:54:46 GMT
+Date: Thu, 05 Nov 2026 12:58:50 GMT
+Server: SimpleHTTP/0.6 Python/3.14.4
+ original-response-headers Server: SimpleHTTP/0.6 Python/3.14.4
+Date: Thu, 05 Nov 2026 12:55:42 GMT
+Content-type: text/css
+Content-Length: 49814
+Last-Modified: Thu, 05 Nov 2026 12:54:46 GMT
+ ctid 5 net-response-time-onstart 36 net-response-time-onstop 36      Â–
