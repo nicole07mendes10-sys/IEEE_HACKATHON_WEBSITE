@@ -82,7 +82,7 @@
 
   /* Dimensions & Spacing */
   --header-height: 72px;
-  --container-max: 1240px;
+  --container-max: 1380px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 14px;
@@ -881,7 +881,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-right: clamp(16px, 6vw, 110px);
+  margin-right: clamp(68px, 5.5vw, 84px);
 }
 
 .nav-actions-group .nav-timeline-status {
@@ -948,14 +948,15 @@ body {
 
 .nav-container {
   width: 100%;
-  max-width: var(--container-max);
+  max-width: 100%;
   height: 100%;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 3vw, 32px);
+  margin: 0;
+  padding: 0 clamp(16px, 1.8vw, 28px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
+  box-sizing: border-box;
 }
 
 .nav-brand-group {
@@ -1481,8 +1482,15 @@ body {
 .split-flap-title {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: clamp(14px, 2.2vw, 28px);
   margin: 14px 0;
+}
+
+.flap-word {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .flap-char-box {
@@ -1491,7 +1499,7 @@ body {
   border-radius: var(--radius-sm);
   padding: 8px 14px;
   font-family: var(--font-display);
-  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-size: clamp(3.2rem, 8.5vw, 6.2rem);
   line-height: 0.9;
   color: var(--amber-bright);
   text-shadow: 0 0 12px rgba(184, 146, 58, 0.3);
@@ -1509,6 +1517,32 @@ body {
   width: 100%;
   height: 2px;
   background: rgba(0, 0, 0, 0.4);
+}
+
+.hero-year-tag {
+  position: relative;
+  top: clamp(4px, 0.55vw, 6px);
+  font-family: var(--font-display, 'Bebas Neue', 'Barlow Condensed', sans-serif);
+  font-size: clamp(2.8rem, 7.5vw, 5.4rem);
+  font-weight: 800;
+  color: var(--paper-cream, #EADFC4);
+  line-height: 0.9;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85), 0 0 14px rgba(234, 223, 196, 0.22);
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  user-select: none;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.36s, opacity 0.38s ease 0.36s;
+  will-change: transform, opacity;
+}
+
+.hero-anim-active .hero-year-tag {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hero-subhead {
@@ -6309,21 +6343,48 @@ body {
   .split-flap-title {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
     width: 100%;
-    gap: clamp(2px, 0.8vw, 4px);
+    gap: clamp(4px, 1.2vw, 10px);
     margin: 12px 0;
+  }
+
+  .flap-word {
+    display: flex;
+    align-items: center;
+    gap: clamp(1px, 0.6vw, 3px);
+  }
+
+  .flap-word-main {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .flap-char-box {
     flex: 1 1 0;
     min-width: 0;
     padding: clamp(4px, 1.2vw, 8px) 0;
-    font-size: clamp(1.2rem, 5.2vw, 1.75rem);
+    font-size: clamp(1.4rem, 5.5vw, 2.2rem);
     text-align: center;
     border-width: 1.5px;
     border-radius: 3px;
     box-sizing: border-box;
+  }
+
+  .hero-year-tag {
+    position: relative;
+    top: clamp(2px, 0.4vw, 4px);
+    font-family: var(--font-display, 'Bebas Neue', 'Barlow Condensed', sans-serif);
+    font-size: clamp(1.4rem, 5.5vw, 2.3rem);
+    font-weight: 800;
+    color: var(--paper-cream, #EADFC4);
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 10px rgba(234, 223, 196, 0.2);
+    margin-left: clamp(4px, 1.2vw, 10px);
   }
 
   .hero-subhead {
@@ -6998,9 +7059,13 @@ body {
   }
 
   .flap-char-box {
-    font-size: 1.15rem;
+    font-size: 1.22rem;
     padding: 3px 0;
-    min-width: 20px;
+    min-width: 18px;
+  }
+
+  .hero-year-tag {
+    font-size: 1.22rem;
   }
 
   .hero-subhead {
@@ -7134,15 +7199,25 @@ body {
   transform: translateY(0) rotateX(0);
 }
 
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(1),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(1) { transition-delay: 0.04s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(2),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(2) { transition-delay: 0.08s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(3),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(3) { transition-delay: 0.12s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(4),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(4) { transition-delay: 0.16s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(5),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(5) { transition-delay: 0.20s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(6),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(6) { transition-delay: 0.24s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(7),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(7) { transition-delay: 0.28s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(8),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(8) { transition-delay: 0.32s; }
+.hero-anim-active .split-flap-title .flap-word-main .flap-char-box:nth-child(9),
 .hero-anim-active .split-flap-title .flap-char-box:nth-child(9) { transition-delay: 0.36s; }
+
 
 .hero-subhead,
 .hero-tagline {
@@ -7836,6 +7911,7 @@ body {
   }
 
   .split-flap-title .flap-char-box,
+  .hero-year-tag,
   .hero-subhead,
   .hero-tagline,
   .typed-form-strip,
@@ -8036,24 +8112,142 @@ body {
   white-space: nowrap;
 }
 
-/* Hero CTA Button */
-.hero-register-cta {
-  font-size: 0.92rem;
-  padding: 12px 28px;
-  letter-spacing: 0.08em;
-}
-
-.hero-register-cta.is-pending {
-  background: #26201A;
-  border-color: rgba(184, 146, 58, 0.4);
-  color: var(--amber-dim);
+/* Hero CTA Button — Vibrant Highlighted TVA Orange */
+.hero-register-cta,
+.hero-register-cta.is-pending,
+.mm-modal-register-btn,
+.mm-modal-register-btn.is-pending {
+  background: linear-gradient(180deg, #FFA544 0%, #E8872B 55%, #C76814 100%) !important;
+  color: #100C08 !important;
+  border: 1.5px solid #FFBE7A !important;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 13px 30px;
+  border-radius: var(--radius-sm, 4px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   cursor: pointer;
+  box-shadow: 0 4px 18px rgba(232, 135, 43, 0.45),
+              0 0 12px rgba(255, 159, 69, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s ease,
+              border-color 0.2s ease;
+  animation: orange-cta-beacon 3.2s ease-in-out infinite;
+  will-change: transform, box-shadow;
 }
 
-.hero-register-cta.is-pending:hover {
-  background: #26201A;
-  border-color: var(--amber-bright);
-  box-shadow: 0 0 12px rgba(232, 137, 43, 0.3);
+/* High-contrast crisp dark typography on bright orange */
+.hero-register-cta span,
+.hero-register-cta.is-pending span,
+.mm-modal-register-btn span,
+.mm-modal-register-btn.is-pending span {
+  color: #100C08 !important;
+  font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.09em;
+}
+
+.hero-register-cta .btn-cta-arrow,
+.hero-register-cta.is-pending .btn-cta-arrow,
+.mm-modal-register-btn .btn-cta-arrow,
+.mm-modal-register-btn.is-pending .btn-cta-arrow {
+  color: #100C08 !important;
+  font-size: 1.12rem;
+  font-weight: 900;
+  line-height: 1;
+  display: inline-block;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scanline light sweep across the orange button */
+.hero-register-cta::after,
+.mm-modal-register-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  transform: skewX(-24deg);
+  pointer-events: none;
+  transition: none;
+}
+
+/* Hover Animation — Luminous Glow & Arrow Flight */
+.hero-register-cta:hover,
+.hero-register-cta.is-pending:hover,
+.mm-modal-register-btn:hover,
+.mm-modal-register-btn.is-pending:hover {
+  background: linear-gradient(180deg, #FFB66D 0%, #FF9534 52%, #D87016 100%) !important;
+  border-color: #FFE0B2 !important;
+  color: #0A0704 !important;
+  transform: translateY(-3px) scale(1.025);
+  box-shadow: 0 8px 28px rgba(232, 135, 43, 0.72),
+              0 0 22px rgba(255, 174, 66, 0.6),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  animation: none;
+}
+
+.hero-register-cta:hover .btn-cta-arrow,
+.hero-register-cta.is-pending:hover .btn-cta-arrow,
+.mm-modal-register-btn:hover .btn-cta-arrow,
+.mm-modal-register-btn.is-pending:hover .btn-cta-arrow {
+  transform: translate(3px, -3px) scale(1.18);
+  color: #0A0704 !important;
+}
+
+.hero-register-cta:hover::after,
+.mm-modal-register-btn:hover::after {
+  left: 170%;
+  transition: left 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Click / Active Animation — Mechanical Press Feedback */
+.hero-register-cta:active,
+.hero-register-cta.is-pending:active,
+.mm-modal-register-btn:active,
+.mm-modal-register-btn.is-pending:active {
+  transform: translateY(1px) scale(0.975) !important;
+  background: linear-gradient(180deg, #E0781D 0%, #B8590D 100%) !important;
+  border-color: #FF9F45 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7),
+              0 0 12px rgba(232, 135, 43, 0.4),
+              inset 0 3px 6px rgba(0, 0, 0, 0.35) !important;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.hero-register-cta:active .btn-cta-arrow,
+.hero-register-cta.is-pending:active .btn-cta-arrow,
+.mm-modal-register-btn:active .btn-cta-arrow,
+.mm-modal-register-btn.is-pending:active .btn-cta-arrow {
+  transform: translate(1px, -1px) scale(0.95);
+}
+
+/* Ambient Beacon Pulse */
+@keyframes orange-cta-beacon {
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(232, 135, 43, 0.45),
+                0 0 10px rgba(255, 159, 69, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    border-color: #FFBE7A;
+  }
+  50% {
+    box-shadow: 0 6px 26px rgba(232, 135, 43, 0.65),
+                0 0 20px rgba(255, 159, 69, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    border-color: #FFDFBA;
+  }
 }
 
 /* 3. The Organising Clubs Section */
