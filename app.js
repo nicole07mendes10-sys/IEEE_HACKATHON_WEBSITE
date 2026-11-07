@@ -119,7 +119,11 @@ class BureauSpatialScrollController {
     this.registrationSec = document.getElementById('registration');
     this.regTerminal = this.registrationSec ? this.registrationSec.querySelector('.registration-terminal-card') : null;
 
-    // Section 07: Accommodation
+    // Section 07: Downloads Resource Grid
+    this.downloadsSec = document.getElementById('downloads');
+    this.downloadsGrid = this.downloadsSec ? this.downloadsSec.querySelector('.downloads-resource-grid') : null;
+
+    // Section 08: Accommodation
     this.accommodationSec = document.getElementById('accommodation');
     this.quartersCards = this.accommodationSec ? Array.from(this.accommodationSec.querySelectorAll('.quarters-stat-card')) : [];
 
@@ -688,6 +692,7 @@ class OverclockApp {
       'results': 'RESULTS',
       'timeline': 'TIMELINE',
       'registration': 'REGISTER',
+      'downloads': 'DOWNLOADS',
       'accommodation': 'STAY',
       'judging': 'JUDGING',
       'sponsors': 'SPONSORS',
@@ -1336,6 +1341,7 @@ class OverclockApp {
       'results',
       'timeline',
       'registration',
+      'downloads',
       'accommodation',
       'judging',
       'sponsors',
@@ -1358,8 +1364,8 @@ class OverclockApp {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const backToStartBtn = document.getElementById('footer-back-to-start');
 
-    // 11 section marker angles spanning the visible bottom-left quadrant (190deg to 260deg)
-    const markerAngles = [190, 197, 204, 211, 218, 225, 232, 239, 246, 253, 260];
+    // 12 section marker angles spanning the visible bottom-left quadrant (190deg to 260deg)
+    const markerAngles = [190, 196, 202, 208, 215, 221, 228, 234, 241, 247, 254, 260];
 
     const sectionLabelsMap = {
       'hero': 'HOME',
@@ -1368,6 +1374,7 @@ class OverclockApp {
       'results': 'RESULTS',
       'timeline': 'TIMELINE',
       'registration': 'REGISTER',
+      'downloads': 'DOWNLOADS',
       'accommodation': 'STAY',
       'judging': 'JUDGING',
       'sponsors': 'SPONSORS',
