@@ -1052,95 +1052,53 @@
     gap: 8px;
   }
 
-  /* --- Section 05: Event Timeline --- */
-  .tva-chronological-timeline {
-    padding-left: 20px;
-    position: relative;
+  /* --- Section 05: TVA Sacred Timeline (Mobile Adaptations) --- */
+  .tva-temporal-timeline {
+    padding: 0 4px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .timeline-spine-track {
-    left: 8px;
-    width: 3px;
+  .tva-serpentine-wrapper {
+    padding-left: 36px !important;
+    gap: 26px !important;
   }
 
-  .timeline-milestones-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+  .tva-serpentine-wrapper::before {
+    left: 14px !important;
+    width: 3px !important;
   }
 
-  .timeline-milestone-item,
-  .timeline-milestone-item.milestone-left,
-  .timeline-milestone-item.milestone-right {
-    display: block !important;
+  .tva-milestone-node .tva-temporal-portal {
+    left: -36px !important;
+    top: 10px !important;
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .milestone-primary-badge {
     width: 100% !important;
-    left: auto !important;
-    right: auto !important;
-    text-align: left !important;
-    padding-left: 18px !important;
-    margin-left: 0 !important;
-    margin-bottom: 4px !important;
-    box-sizing: border-box !important;
-  }
-
-  .milestone-node-anchor {
-    left: -20px !important;
-    top: 14px !important;
-  }
-
-  .milestone-node-dot {
-    width: 18px !important;
-    height: 18px !important;
-  }
-
-  .milestone-node-stem {
-    width: 12px !important;
-    height: 2px !important;
-  }
-
-  .milestone-card-box {
     padding: 12px 14px !important;
-    border: 1.5px solid var(--border-subtle, rgba(184, 146, 58, 0.3)) !important;
-    border-radius: 6px !important;
-    background: rgba(28, 24, 19, 0.88) !important;
-    width: 100% !important;
     box-sizing: border-box !important;
   }
 
-  .milestone-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
+  .badge-title {
+    font-size: 1.05rem !important;
+    line-height: 1.25 !important;
   }
 
-  .milestone-badge-num {
-    font-size: 0.64rem;
+  .tva-classified-dossier {
+    width: 100% !important;
+    margin-top: 10px !important;
   }
 
-  .milestone-status-stamp {
-    font-size: 0.60rem;
-    padding: 2px 6px;
+  .dossier-event-title {
+    font-size: 1.15rem !important;
   }
 
-  .milestone-title {
-    font-size: 1.05rem;
-    margin: 4px 0 6px;
-  }
-
-  .milestone-date-display {
-    font-size: 0.78rem;
-    margin-bottom: 6px;
-  }
-
-  .milestone-description {
-    font-size: 0.82rem;
-    line-height: 1.45;
-    margin-bottom: 6px;
-  }
-
-  .milestone-track-code {
-    font-size: 0.62rem;
+  .tva-telemetry-chamber {
+    margin-top: 20px !important;
+    padding: 14px !important;
   }
 
   /* --- Section 06: Registration (Rs. 1,770 display) --- */

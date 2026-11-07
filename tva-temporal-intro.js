@@ -74,24 +74,26 @@ class TVATemporalIntroController {
   }
 
   async init() {
+    // Clear session storage flags so every reload and refresh starts with the 3D animation
+    try {
+      sessionStorage.removeItem('oc2027_temporal_intro_played');
+      sessionStorage.removeItem('oc2027_booted');
+    } catch (e) {}
+
     // Check Reduced Motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const urlParams = new URLSearchParams(window.location.search);
-    const forceReplay = urlParams.get('intro') === 'replay' || urlParams.get('replay') === '1';
     const noIntro = urlParams.has('nointro') || urlParams.has('noboot') || urlParams.has('skipintro');
-    const alreadyPlayed = sessionStorage.getItem('oc2027_temporal_intro_played') === 'true';
 
     this.container = document.getElementById('tva-temporal-intro');
     if (!this.container) return;
 
-    if (noIntro || (alreadyPlayed && !forceReplay) || prefersReducedMotion) {
+    if (noIntro || prefersReducedMotion) {
       this.bypassIntroImmediate();
       return;
     }
 
-    if (!window.location.hash && !urlParams.has('goto')) {
-      this.resetScrollToTop();
-    }
+    this.resetScrollToTop();
 
     // Load Three.js dynamically
     const threeLoaded = await this.ensureThreeJS();
@@ -955,8 +957,10 @@ class TVATemporalIntroController {
       } catch (e) {}
     }
 
-    // Save session flag so it only auto-plays once per visit
-    sessionStorage.setItem('oc2027_temporal_intro_played', 'true');
+    // Do not persist played state to sessionStorage so every page refresh restarts the 3D animation
+    try {
+      sessionStorage.removeItem('oc2027_temporal_intro_played');
+    } catch (e) {}
 
     // Fade out 3D intro container
     if (this.container) {

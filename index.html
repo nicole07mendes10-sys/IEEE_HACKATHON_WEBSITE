@@ -14,6 +14,11 @@
   <link rel="preload" as="image" href="images/ezgif-frame-001.jpg" fetchpriority="high">
   <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
   <script>
+    try {
+      sessionStorage.removeItem('oc2027_temporal_intro_played');
+      sessionStorage.removeItem('oc2027_booted');
+    } catch (e) {}
+
     const urlParams = new URLSearchParams(window.location.search);
     const hasScrollTarget = window.location.hash || urlParams.has('goto');
 
@@ -1650,197 +1655,616 @@
     </section>
 
     <!-- ========================================================
-         05. TIMELINE — EVENT SCHEDULE
+         05. TIMELINE — TVA SACRED CHRONOLOGICAL PROGRESSION
     ======================================================== -->
     <section id="timeline" class="bureau-section" data-section-num="05">
-      <div class="section-rubber-stamp">PENDING</div>
+      <div class="section-rubber-stamp">CLASSIFIED</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag">EVENT SCHEDULE // LEVEL 05</div>
-        <h2 class="section-main-heading">The Timeline</h2>
-        <p class="section-subtext">Chronological progression of OVERCLOCK 2027. Milestones unrolled along the master temporal track.</p>
+        <div class="bureau-tag">TVA TEMPORAL SCHEDULE // LEVEL 05</div>
+        <h2 class="section-main-heading">The Sacred Timeline</h2>
+        <p class="section-subtext">Chronological progression of OVERCLOCK 2027. Six temporal checkpoints unrolled along the master golden energy trajectory.</p>
       </div>
 
-      <!-- TVA Chronological Event Timeline (Connected Progression Sequence) -->
-      <div class="tva-chronological-timeline" id="tva-chronological-timeline">
-        <!-- Continuous Golden Timeline Spine Track -->
-        <div class="timeline-spine-track" aria-hidden="true">
-          <div class="timeline-spine-base"></div>
-          <div class="timeline-spine-progress" id="timeline-spine-progress"></div>
+      <!-- TVA Chronological Event Timeline (Horizontal Serpentine Trajectory) -->
+      <div class="tva-temporal-timeline" id="tva-temporal-timeline" role="region" aria-label="TVA Sacred Timeline Progression">
+        
+        <!-- Timeline System Telemetry Header Bar -->
+        <div class="tva-timeline-telemetry-bar">
+          <div class="telemetry-item telemetry-status">
+            <span class="telemetry-dot"></span>
+            <span class="telemetry-label">SACRED TIMELINE STATUS:</span>
+            <span class="telemetry-value">NOMINAL TEMPORAL FLOW // ZERO VARIANCE</span>
+          </div>
+          <div class="telemetry-item telemetry-coords">
+            <span class="telemetry-label">CHRONO-COORDINATE:</span>
+            <span class="telemetry-value" id="tva-active-chrono-coord">TVA-01 // 10 NOV 2026</span>
+          </div>
+          <div class="telemetry-item telemetry-hint">
+            <span class="telemetry-key">[TVA DIRECTIVE]</span>
+            <span class="telemetry-text">Hover or tap any portal checkpoint to inspect classified event records</span>
+          </div>
         </div>
 
-        <!-- 5 Chronological Milestone Checkpoints -->
-        <div class="timeline-milestones-list">
-          <!-- Milestone 01 (Left on desktop) -->
-          <article class="timeline-milestone-item milestone-left" data-milestone="1">
-            <div class="milestone-node-anchor">
-              <div class="milestone-node-dot">
-                <span class="node-inner-core"></span>
-              </div>
-              <div class="milestone-node-stem"></div>
-            </div>
-            <div class="milestone-card-box">
-              <div class="milestone-card-header">
-                <span class="milestone-badge-num">MILESTONE 01</span>
-                <span class="milestone-status-stamp">CONFIRMED DATE</span>
-              </div>
-              <h3 class="milestone-title">Registration Opens</h3>
-              <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">
-                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </span>
-                <span class="date-text">06 November 2026</span>
-              </div>
-              <p class="milestone-description">The intake portal opens for participant registration and Round 1 idea submissions.</p>
+        <!-- Serpentine Desktop Visual Track (Horizontal S-Curve Path) -->
+        <div class="tva-serpentine-wrapper">
+          <!-- Continuous Golden Temporal Energy SVG Path -->
+          <svg class="tva-serpentine-svg" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <!-- Golden Glowing Gradient -->
+              <linearGradient id="tvaGoldEnergyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F2B64B" />
+                <stop offset="25%" stop-color="#E99527" />
+                <stop offset="50%" stop-color="#F2B64B" />
+                <stop offset="75%" stop-color="#E99527" />
+                <stop offset="100%" stop-color="#F2B64B" />
+              </linearGradient>
 
-              <!-- Registration Fee Section -->
-              <div class="milestone-fee-structure">
-                <div class="fee-divider" aria-hidden="true"></div>
-                <div class="fee-rows-group">
-                  <div class="fee-row-item">
-                    <div class="fee-row-header">
-                      <svg class="fee-icon fee-icon-free" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="m9 12 2 2 4-4"></path>
-                      </svg>
-                      <span class="fee-stage-title">ROUND 1</span>
-                      <span class="fee-sep">—</span>
-                      <span class="fee-pill fee-pill-free">FREE</span>
-                    </div>
-                    <p class="fee-detail-text">Submit your idea PPT with no registration fee.</p>
+              <!-- Subtle Ambient Track Gradient -->
+              <linearGradient id="tvaBaseTrackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(233, 149, 39, 0.2)" />
+                <stop offset="50%" stop-color="rgba(242, 182, 75, 0.35)" />
+                <stop offset="100%" stop-color="rgba(233, 149, 39, 0.2)" />
+              </linearGradient>
+
+              <!-- Temporal Bloom Glow Filter -->
+              <filter id="tvaTemporalBloom" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur2" />
+                <feMerge>
+                  <feMergeNode in="blur2" />
+                  <feMergeNode in="blur1" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Base Ambient Serpentine Guide Track (Continuous organic S-curve) -->
+            <path id="tvaGuideTrack"
+                  class="tva-serpentine-base-path"
+                  d="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+
+            <!-- Dynamic Animated Golden Temporal Energy Track (Scroll / Reveal) -->
+            <path id="tvaActiveEnergyTrack"
+                  class="tva-serpentine-active-path"
+                  d="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+
+            <!-- Directional Flow Indicators along trajectory -->
+            <!-- M1 -> M2 (Row 1: moving east) -->
+            <g class="tva-flow-arrow flow-arrow-1" transform="translate(360, 148)">
+              <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+
+            <!-- M2 -> M3 (Row 1: moving east) -->
+            <g class="tva-flow-arrow flow-arrow-2" transform="translate(840, 148)">
+              <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+
+            <!-- Natural Curve Turn Loop (East apex: downward transition) -->
+            <g class="tva-flow-arrow flow-arrow-loop" transform="translate(1160, 260) rotate(90)">
+              <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+
+            <!-- M4 -> M5 (Row 2: returning west) -->
+            <g class="tva-flow-arrow flow-arrow-4" transform="translate(840, 370) rotate(180)">
+              <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+
+            <!-- M5 -> M6 (Row 2: returning west to Final Convergence) -->
+            <g class="tva-flow-arrow flow-arrow-5" transform="translate(360, 370) rotate(180)">
+              <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+
+            <!-- Traveling Golden Temporal Sparks (continuous organic pulses along path) -->
+            <circle class="tva-particle-spark spark-primary" r="4.5" fill="#F2B64B" filter="url(#tvaTemporalBloom)">
+              <animateMotion dur="10s" repeatCount="indefinite" path="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+            </circle>
+            <circle class="tva-particle-spark spark-secondary" r="3.2" fill="#E99527" filter="url(#tvaTemporalBloom)">
+              <animateMotion dur="10s" begin="-5s" repeatCount="indefinite" path="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+            </circle>
+          </svg>
+
+          <!-- 6 TVA Milestone Checkpoint Nodes Placed Along The Serpentine Track -->
+
+          <!-- MILESTONE 01 (Row 1 - Left) -->
+          <div class="tva-milestone-node node-pos-1 label-pos-top"
+               data-milestone="1"
+               data-chrono="TVA-01"
+               tabindex="0"
+               role="button"
+               aria-expanded="false"
+               aria-label="Milestone 01: 10 November 2026, The Registration Window Opens">
+            
+            <!-- Persistent Primary Readable Information Label (Top of Portal) -->
+            <div class="milestone-primary-badge">
+              <div class="badge-chrono-tag">
+                <span class="chrono-code">TVA-01</span>
+                <span class="status-stamp">REGISTRATION OPENING</span>
+              </div>
+              <div class="badge-date-row">
+                <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="badge-date">10 November 2026</span>
+              </div>
+              <h3 class="badge-title">THE REGISTRATION WINDOW OPENS</h3>
+              <div class="badge-stem-connector" aria-hidden="true"></div>
+            </div>
+
+            <!-- TVA Circular Temporal Portal Checkpoint -->
+            <div class="tva-temporal-portal" aria-hidden="true">
+              <div class="portal-halo"></div>
+              <div class="portal-outer-ring">
+                <span class="portal-ring-notch notch-0"></span>
+                <span class="portal-ring-notch notch-90"></span>
+                <span class="portal-ring-notch notch-180"></span>
+                <span class="portal-ring-notch notch-270"></span>
+              </div>
+              <div class="portal-middle-ring"></div>
+              <div class="portal-inner-ring"></div>
+              <div class="portal-singularity"></div>
+              <div class="portal-milestone-num">01</div>
+            </div>
+
+            <!-- Floating TVA Classified Event Record Dossier (Hover / Active View) -->
+            <div class="tva-classified-dossier dossier-align-right" role="dialog" aria-label="Classified Event Record TVA-01">
+              <div class="dossier-scanner-bar" aria-hidden="true"></div>
+              <div class="dossier-header">
+                <div class="dossier-badge-wrap">
+                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-01</span>
+                  <span class="dossier-status-pill">REGISTRATION OPENING</span>
+                </div>
+                <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
+              </div>
+
+              <div class="dossier-body">
+                <div class="dossier-date-banner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>10 NOVEMBER 2026</span>
+                </div>
+                <h4 class="dossier-event-title">THE REGISTRATION WINDOW OPENS</h4>
+                <p class="dossier-description">The OVERCLOCK journey begins. Assemble your team, complete your registration and prepare to enter the innovation timeline.</p>
+
+                <div class="dossier-directives">
+                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <ul class="directives-list">
+                    <li><span class="directive-marker">▹</span>Registration officially opens.</li>
+                    <li><span class="directive-marker">▹</span>Teams can begin registering for OVERCLOCK.</li>
+                    <li><span class="directive-marker">▹</span>Participants can prepare for the upcoming problem statement release.</li>
+                  </ul>
+                </div>
+
+                <div class="dossier-fee-memo">
+                  <div class="fee-memo-item">
+                    <span class="fee-tier">ROUND 1:</span>
+                    <span class="fee-val fee-free">FREE</span>
+                    <span class="fee-note">— PPT Submission</span>
                   </div>
-                  <div class="fee-row-item">
-                    <div class="fee-row-header">
-                      <svg class="fee-icon fee-icon-paid" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
-                        <path d="M13 5v2"></path>
-                        <path d="M13 11v2"></path>
-                        <path d="M13 17v2"></path>
-                      </svg>
-                      <span class="fee-stage-title">ROUND 2</span>
-                      <span class="fee-sep">//</span>
-                      <span class="fee-pill fee-pill-paid">PAID — ₹1,500 + 18% GST</span>
-                    </div>
-                    <p class="fee-detail-text">Participation fees apply only to shortlisted teams advancing to Round 2.</p>
+                  <div class="fee-memo-item">
+                    <span class="fee-tier">ROUND 2:</span>
+                    <span class="fee-val">₹1,500 + 18% GST</span>
+                    <span class="fee-note">— Shortlisted only</span>
                   </div>
                 </div>
               </div>
 
-              <div class="milestone-card-footer">
-                <span class="milestone-track-code">CHRONO-REF // SEC-01</span>
+              <div class="dossier-footer">
+                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-01 // SACRED TIMELINE</span>
+                <span class="dossier-timestamp">ST-COORD: 2026.11.10</span>
               </div>
             </div>
-          </article>
+          </div>
 
-          <!-- Milestone 02 (Right on desktop) -->
-          <article class="timeline-milestone-item milestone-right" data-milestone="2">
-            <div class="milestone-node-anchor">
-              <div class="milestone-node-dot">
-                <span class="node-inner-core"></span>
+          <!-- MILESTONE 02 (Row 1 - Center) -->
+          <div class="tva-milestone-node node-pos-2 label-pos-bottom"
+               data-milestone="2"
+               data-chrono="TVA-02"
+               tabindex="0"
+               role="button"
+               aria-expanded="false"
+               aria-label="Milestone 02: 1 December 2026, The Problem Statements Are Unsealed">
+            
+            <!-- TVA Circular Temporal Portal Checkpoint -->
+            <div class="tva-temporal-portal" aria-hidden="true">
+              <div class="portal-halo"></div>
+              <div class="portal-outer-ring">
+                <span class="portal-ring-notch notch-0"></span>
+                <span class="portal-ring-notch notch-90"></span>
+                <span class="portal-ring-notch notch-180"></span>
+                <span class="portal-ring-notch notch-270"></span>
               </div>
-              <div class="milestone-node-stem"></div>
+              <div class="portal-middle-ring"></div>
+              <div class="portal-inner-ring"></div>
+              <div class="portal-singularity"></div>
+              <div class="portal-milestone-num">02</div>
             </div>
-            <div class="milestone-card-box">
-              <div class="milestone-card-header">
-                <span class="milestone-badge-num">MILESTONE 02</span>
-                <span class="milestone-status-stamp">CONFIRMED DATE</span>
-              </div>
-              <h3 class="milestone-title">Initial Problem Statements Released</h3>
-              <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">
-                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </span>
-                <span class="date-text">01 December 2026</span>
-              </div>
-              <p class="milestone-description">Domain challenges and initial problem statements published across the six sectors.</p>
-              <div class="milestone-card-footer">
-                <span class="milestone-track-code">CHRONO-REF // SEC-02</span>
-              </div>
-            </div>
-          </article>
 
-          <!-- Milestone 03 (Left on desktop) -->
-          <article class="timeline-milestone-item milestone-left" data-milestone="3">
-            <div class="milestone-node-anchor">
-              <div class="milestone-node-dot">
-                <span class="node-inner-core"></span>
+            <!-- Persistent Primary Readable Information Label (Bottom of Portal) -->
+            <div class="milestone-primary-badge">
+              <div class="badge-stem-connector" aria-hidden="true"></div>
+              <div class="badge-chrono-tag">
+                <span class="chrono-code">TVA-02</span>
+                <span class="status-stamp">CHALLENGES REVEALED</span>
               </div>
-              <div class="milestone-node-stem"></div>
+              <div class="badge-date-row">
+                <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="badge-date">1 December 2026</span>
+              </div>
+              <h3 class="badge-title">THE PROBLEM STATEMENTS ARE UNSEALED</h3>
             </div>
-            <div class="milestone-card-box">
-              <div class="milestone-card-header">
-                <span class="milestone-badge-num">MILESTONE 03</span>
-                <span class="milestone-status-stamp window-stamp">5-DAY WINDOW</span>
-              </div>
-              <h3 class="milestone-title">PPT Submission Window</h3>
-              <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">
-                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </span>
-                <span class="date-text">10–15 December 2026</span>
-              </div>
-              <p class="milestone-description">Five-day window for teams to submit conceptual hardware presentations.</p>
-              <div class="milestone-card-footer">
-                <span class="milestone-track-code">CHRONO-REF // SEC-03</span>
-              </div>
-            </div>
-          </article>
 
-          <!-- Milestone 04 (Right on desktop) -->
-          <article class="timeline-milestone-item milestone-right" data-milestone="4">
-            <div class="milestone-node-anchor">
-              <div class="milestone-node-dot">
-                <span class="node-inner-core"></span>
+            <!-- Floating TVA Classified Event Record Dossier -->
+            <div class="tva-classified-dossier dossier-align-center" role="dialog" aria-label="Classified Event Record TVA-02">
+              <div class="dossier-scanner-bar" aria-hidden="true"></div>
+              <div class="dossier-header">
+                <div class="dossier-badge-wrap">
+                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-02</span>
+                  <span class="dossier-status-pill">CHALLENGES REVEALED</span>
+                </div>
+                <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
               </div>
-              <div class="milestone-node-stem"></div>
-            </div>
-            <div class="milestone-card-box">
-              <div class="milestone-card-header">
-                <span class="milestone-badge-num">MILESTONE 04</span>
-                <span class="milestone-status-stamp">CONFIRMED DATE</span>
-              </div>
-              <h3 class="milestone-title">Shortlisted Teams Announced</h3>
-              <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">
-                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </span>
-                <span class="date-text">22 December 2026</span>
-              </div>
-              <p class="milestone-description">Official publication of teams selected for the on-campus build phase.</p>
-              <div class="milestone-card-footer">
-                <span class="milestone-track-code">CHRONO-REF // SEC-04</span>
-              </div>
-            </div>
-          </article>
 
-          <!-- Milestone 05 (Left on desktop, final build target) -->
-          <article class="timeline-milestone-item milestone-left final-phase" data-milestone="5">
-            <div class="milestone-node-anchor">
-              <div class="milestone-node-dot">
-                <span class="node-inner-core"></span>
+              <div class="dossier-body">
+                <div class="dossier-date-banner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>1 DECEMBER 2026</span>
+                </div>
+                <h4 class="dossier-event-title">THE PROBLEM STATEMENTS ARE UNSEALED</h4>
+                <p class="dossier-description">The TVA has identified six domains of innovation. The challenge statements are now revealed. Discover your mission and choose the problem your team is ready to solve.</p>
+
+                <div class="dossier-directives">
+                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <ul class="directives-list">
+                    <li><span class="directive-marker">▹</span>Problem statements are officially released.</li>
+                    <li><span class="directive-marker">▹</span>Participants can explore all six challenge domains.</li>
+                    <li><span class="directive-marker">▹</span>Teams can begin developing their proposed solutions.</li>
+                  </ul>
+                </div>
               </div>
-              <div class="milestone-node-stem"></div>
-            </div>
-            <div class="milestone-card-box">
-              <div class="milestone-card-header">
-                <span class="milestone-badge-num highlight">MILESTONE 05</span>
-                <span class="milestone-status-stamp final-stamp">FINAL STATEMENT</span>
-              </div>
-              <h3 class="milestone-title">Final Problem Statement Released</h3>
-              <div class="milestone-date-display">
-                <span class="date-icon" aria-hidden="true">
-                  <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </span>
-                <span class="date-text">22 January 2027</span>
-              </div>
-              <p class="milestone-description">Final problem statement released as scheduled for the physical engineering phase.</p>
-              <div class="milestone-card-footer">
-                <span class="milestone-track-code">CHRONO-REF // SEC-05 · TARGET BUILD</span>
+
+              <div class="dossier-footer">
+                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-02 // SACRED TIMELINE</span>
+                <span class="dossier-timestamp">ST-COORD: 2026.12.01</span>
               </div>
             </div>
-          </article>
+          </div>
+
+          <!-- MILESTONE 03 (Row 1 - Right) -->
+          <div class="tva-milestone-node node-pos-3 label-pos-top"
+               data-milestone="3"
+               data-chrono="TVA-03"
+               tabindex="0"
+               role="button"
+               aria-expanded="false"
+               aria-label="Milestone 03: 10–15 December 2026, The Proposal Submission Window">
+            
+            <!-- Persistent Primary Readable Information Label (Top of Portal) -->
+            <div class="milestone-primary-badge">
+              <div class="badge-chrono-tag">
+                <span class="chrono-code">TVA-03</span>
+                <span class="status-stamp">SUBMISSION PHASE</span>
+              </div>
+              <div class="badge-date-row">
+                <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="badge-date">10–15 December 2026</span>
+              </div>
+              <h3 class="badge-title">THE PROPOSAL SUBMISSION WINDOW</h3>
+              <div class="badge-stem-connector" aria-hidden="true"></div>
+            </div>
+
+            <!-- TVA Circular Temporal Portal Checkpoint -->
+            <div class="tva-temporal-portal" aria-hidden="true">
+              <div class="portal-halo"></div>
+              <div class="portal-outer-ring">
+                <span class="portal-ring-notch notch-0"></span>
+                <span class="portal-ring-notch notch-90"></span>
+                <span class="portal-ring-notch notch-180"></span>
+                <span class="portal-ring-notch notch-270"></span>
+              </div>
+              <div class="portal-middle-ring"></div>
+              <div class="portal-inner-ring"></div>
+              <div class="portal-singularity"></div>
+              <div class="portal-milestone-num">03</div>
+            </div>
+
+            <!-- Floating TVA Classified Event Record Dossier -->
+            <div class="tva-classified-dossier dossier-align-left" role="dialog" aria-label="Classified Event Record TVA-03">
+              <div class="dossier-scanner-bar" aria-hidden="true"></div>
+              <div class="dossier-header">
+                <div class="dossier-badge-wrap">
+                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-03</span>
+                  <span class="dossier-status-pill">SUBMISSION PHASE</span>
+                </div>
+                <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
+              </div>
+
+              <div class="dossier-body">
+                <div class="dossier-date-banner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>10–15 DECEMBER 2026</span>
+                </div>
+                <h4 class="dossier-event-title">THE PROPOSAL SUBMISSION WINDOW</h4>
+                <p class="dossier-description">Every mission begins with an idea. Submit your team's presentation and demonstrate how your solution can make an impact.</p>
+
+                <div class="dossier-directives">
+                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <ul class="directives-list">
+                    <li><span class="directive-marker">▹</span>PPT submission window opens on 10 December.</li>
+                    <li><span class="directive-marker">▹</span>Final submission deadline is 15 December.</li>
+                    <li><span class="directive-marker">▹</span>Teams must submit their idea presentation within the specified submission period.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="dossier-footer">
+                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-03 // SACRED TIMELINE</span>
+                <span class="dossier-timestamp">ST-COORD: 2026.12.10–15</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MILESTONE 04 (Row 2 - Right) -->
+          <div class="tva-milestone-node node-pos-4 label-pos-bottom"
+               data-milestone="4"
+               data-chrono="TVA-04"
+               tabindex="0"
+               role="button"
+               aria-expanded="false"
+               aria-label="Milestone 04: 22 December 2026, The 25 Teams Are Identified">
+            
+            <!-- TVA Circular Temporal Portal Checkpoint -->
+            <div class="tva-temporal-portal" aria-hidden="true">
+              <div class="portal-halo"></div>
+              <div class="portal-outer-ring">
+                <span class="portal-ring-notch notch-0"></span>
+                <span class="portal-ring-notch notch-90"></span>
+                <span class="portal-ring-notch notch-180"></span>
+                <span class="portal-ring-notch notch-270"></span>
+              </div>
+              <div class="portal-middle-ring"></div>
+              <div class="portal-inner-ring"></div>
+              <div class="portal-singularity"></div>
+              <div class="portal-milestone-num">04</div>
+            </div>
+
+            <!-- Persistent Primary Readable Information Label (Bottom of Portal) -->
+            <div class="milestone-primary-badge">
+              <div class="badge-stem-connector" aria-hidden="true"></div>
+              <div class="badge-chrono-tag">
+                <span class="chrono-code">TVA-04</span>
+                <span class="status-stamp">SHORTLISTING RESULTS</span>
+              </div>
+              <div class="badge-date-row">
+                <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="badge-date">22 December 2026</span>
+              </div>
+              <h3 class="badge-title">THE 25 TEAMS ARE IDENTIFIED</h3>
+            </div>
+
+            <!-- Floating TVA Classified Event Record Dossier -->
+            <div class="tva-classified-dossier dossier-align-left" role="dialog" aria-label="Classified Event Record TVA-04">
+              <div class="dossier-scanner-bar" aria-hidden="true"></div>
+              <div class="dossier-header">
+                <div class="dossier-badge-wrap">
+                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-04</span>
+                  <span class="dossier-status-pill">SHORTLISTING RESULTS</span>
+                </div>
+                <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
+              </div>
+
+              <div class="dossier-body">
+                <div class="dossier-date-banner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>22 DECEMBER 2026</span>
+                </div>
+                <h4 class="dossier-event-title">THE 25 TEAMS ARE IDENTIFIED</h4>
+                <p class="dossier-description">Following the evaluation of submitted proposals, 25 teams will be selected to advance to the next stage of the OVERCLOCK timeline.</p>
+
+                <div class="dossier-directives">
+                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <ul class="directives-list">
+                    <li><span class="directive-marker">▹</span>Shortlisting results are announced.</li>
+                    <li><span class="directive-marker">▹</span>A total of 25 teams qualify for the next stage.</li>
+                    <li><span class="directive-marker">▹</span>Selected teams receive further instructions regarding the upcoming final round.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="dossier-footer">
+                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-04 // SACRED TIMELINE</span>
+                <span class="dossier-timestamp">ST-COORD: 2026.12.22</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MILESTONE 05 (Row 2 - Center) -->
+          <div class="tva-milestone-node node-pos-5 label-pos-top"
+               data-milestone="5"
+               data-chrono="TVA-05"
+               tabindex="0"
+               role="button"
+               aria-expanded="false"
+               aria-label="Milestone 05: 22 January 2027, The Final Challenges Are Revealed">
+            
+            <!-- Persistent Primary Readable Information Label (Top of Portal) -->
+            <div class="milestone-primary-badge">
+              <div class="badge-chrono-tag">
+                <span class="chrono-code">TVA-05</span>
+                <span class="status-stamp">FINAL MISSION RELEASED</span>
+              </div>
+              <div class="badge-date-row">
+                <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="badge-date">22 January 2027</span>
+              </div>
+              <h3 class="badge-title">THE FINAL CHALLENGES ARE REVEALED</h3>
+              <div class="badge-stem-connector" aria-hidden="true"></div>
+            </div>
+
+            <!-- TVA Circular Temporal Portal Checkpoint -->
+            <div class="tva-temporal-portal" aria-hidden="true">
+              <div class="portal-halo"></div>
+              <div class="portal-outer-ring">
+                <span class="portal-ring-notch notch-0"></span>
+                <span class="portal-ring-notch notch-90"></span>
+                <span class="portal-ring-notch notch-180"></span>
+                <span class="portal-ring-notch notch-270"></span>
+              </div>
+              <div class="portal-middle-ring"></div>
+              <div class="portal-inner-ring"></div>
+              <div class="portal-singularity"></div>
+              <div class="portal-milestone-num">05</div>
+            </div>
+
+            <!-- Floating TVA Classified Event Record Dossier -->
+            <div class="tva-classified-dossier dossier-align-center" role="dialog" aria-label="Classified Event Record TVA-05">
+              <div class="dossier-scanner-bar" aria-hidden="true"></div>
+              <div class="dossier-header">
+                <div class="dossier-badge-wrap">
+                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-05</span>
+                  <span class="dossier-status-pill">FINAL MISSION RELEASED</span>
+                </div>
+                <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
+              </div>
+
+              <div class="dossier-body">
+                <div class="dossier-date-banner">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>22 JANUARY 2027</span>
+                </div>
+                <h4 class="dossier-event-title">THE FINAL CHALLENGES ARE REVEALED</h4>
+                <p class="dossier-description">For the selected teams, the final mission begins. The final problem statements are released, setting the stage for the ultimate innovation challenge.</p>
+
+                <div class="dossier-directives">
+                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <ul class="directives-list">
+                    <li><span class="directive-marker">▹</span>Final problem statements are released.</li>
+                    <li><span class="directive-marker">▹</span>This milestone applies only to the 25 shortlisted teams.</li>
+                    <li><span class="directive-marker">▹</span>Selected teams can prepare for the final round.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="dossier-footer">
+                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-05 // SACRED TIMELINE</span>
+                <span class="dossier-timestamp">ST-COORD: 2027.01.22</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MILESTONE 06 (Row 2 - Left: The Culmination Point) -->
+          <div class="tva-milestone-node node-pos-6 label-pos-bottom milestone-convergence-target"
+               data-milestone="6"
+               data-chrono="TVA-06"
+               tabindex="0"
+               role="button"
+               aria-expanded="false"
+               aria-label="Milestone 06: 29–30 January 2027, The Final Convergence – OVERCLOCK">
+            
+            <!-- TVA Circular Temporal Portal Checkpoint (Grand Golden Convergence Effect) -->
+            <div class="tva-temporal-portal portal-convergence" aria-hidden="true">
+              <div class="portal-halo halo-convergence"></div>
+              <div class="portal-radiance-ring"></div>
+              <div class="portal-outer-ring">
+                <span class="portal-ring-notch notch-0"></span>
+                <span class="portal-ring-notch notch-45"></span>
+                <span class="portal-ring-notch notch-90"></span>
+                <span class="portal-ring-notch notch-135"></span>
+                <span class="portal-ring-notch notch-180"></span>
+                <span class="portal-ring-notch notch-225"></span>
+                <span class="portal-ring-notch notch-270"></span>
+                <span class="portal-ring-notch notch-315"></span>
+              </div>
+              <div class="portal-middle-ring"></div>
+              <div class="portal-inner-ring"></div>
+              <div class="portal-singularity singularity-convergence"></div>
+              <div class="portal-milestone-num highlight-num">06</div>
+            </div>
+
+            <!-- Persistent Primary Readable Information Label (Bottom of Portal) -->
+            <div class="milestone-primary-badge badge-convergence">
+              <div class="badge-stem-connector" aria-hidden="true"></div>
+              <div class="badge-chrono-tag">
+                <span class="chrono-code highlight">TVA-06 · TARGET</span>
+                <span class="status-stamp stamp-gold">FINAL ROUND</span>
+              </div>
+              <div class="badge-date-row">
+                <svg class="date-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="badge-date">29–30 January 2027</span>
+              </div>
+              <h3 class="badge-title">THE FINAL CONVERGENCE – OVERCLOCK</h3>
+            </div>
+
+            <!-- Floating TVA Classified Event Record Dossier -->
+            <div class="tva-classified-dossier dossier-align-right dossier-convergence" role="dialog" aria-label="Classified Event Record TVA-06">
+              <div class="dossier-scanner-bar scanner-gold" aria-hidden="true"></div>
+              <div class="dossier-header">
+                <div class="dossier-badge-wrap">
+                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-06</span>
+                  <span class="dossier-status-pill pill-gold">FINAL CONVERGENCE</span>
+                </div>
+                <div class="dossier-clearance">CLEARANCE: CITADEL ACCESS</div>
+              </div>
+
+              <div class="dossier-body">
+                <div class="dossier-date-banner banner-gold">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>29–30 JANUARY 2027</span>
+                </div>
+                <h4 class="dossier-event-title">THE FINAL CONVERGENCE – OVERCLOCK</h4>
+                <p class="dossier-description">The timelines converge. The selected teams come together at OVERCLOCK for the ultimate two-day final round. Ideas turn into action, innovation meets execution, and the final mission unfolds.</p>
+
+                <div class="dossier-directives">
+                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <ul class="directives-list">
+                    <li><span class="directive-marker">▹</span>Final round takes place over two days.</li>
+                    <li><span class="directive-marker">▹</span>Dates: 29 and 30 January 2027.</li>
+                    <li><span class="directive-marker">▹</span>Only the shortlisted teams participate in this stage.</li>
+                    <li><span class="directive-marker">▹</span>The final stage concludes the OVERCLOCK competition journey.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="dossier-footer">
+                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-06 // FINAL STAGE CONVERGENCE</span>
+                <span class="dossier-timestamp">ST-COORD: 2027.01.29–30</span>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- /.tva-serpentine-wrapper -->
+
+        <!-- TVA Telemetry Chamber (Docked Detail Drawer / Mobile Quick View) -->
+        <div class="tva-telemetry-chamber" id="tva-telemetry-chamber" aria-live="polite">
+          <div class="chamber-terminal-header">
+            <span class="chamber-led"></span>
+            <span class="chamber-title">TVA CLASSIFIED DOSSIER ARCHIVE // SELECTED CHECKPOINT BRIEFING</span>
+            <span class="chamber-coords" id="chamber-coord-readout">TVA-01 // ACTIVE</span>
+          </div>
+          <div class="chamber-terminal-content" id="chamber-dynamic-content">
+            <!-- Dynamically populated or mirrored from active checkpoint -->
+            <div class="chamber-grid">
+              <div class="chamber-col-main">
+                <div class="chamber-status-tag" id="chamber-status-tag">REGISTRATION OPENING</div>
+                <h4 class="chamber-heading" id="chamber-heading">THE REGISTRATION WINDOW OPENS</h4>
+                <div class="chamber-date" id="chamber-date">10 November 2026</div>
+                <p class="chamber-desc" id="chamber-desc">The OVERCLOCK journey begins. Assemble your team, complete your registration and prepare to enter the innovation timeline.</p>
+              </div>
+              <div class="chamber-col-details">
+                <div class="chamber-protocols-title">MISSION PROTOCOLS:</div>
+                <ul class="chamber-protocols-list" id="chamber-protocols-list">
+                  <li>Registration officially opens.</li>
+                  <li>Teams can begin registering for OVERCLOCK.</li>
+                  <li>Participants can prepare for the upcoming problem statement release.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+
+      </div> <!-- /.tva-temporal-timeline -->
     </section>
 
     <!-- ========================================================

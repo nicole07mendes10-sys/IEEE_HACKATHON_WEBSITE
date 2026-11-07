@@ -2734,498 +2734,1090 @@ body {
 }
 
 /* ==========================================================
-   05. TVA CHRONOLOGICAL EVENT TIMELINE (CONNECTED PROGRESSION)
+   05. TVA SACRED CHRONOLOGICAL SERPENTINE TIMELINE
+   Loki / TVA / Sacred Timeline Theme:
+   - Horizontal serpentine winding path (Row 1: M1->M2->M3, Row 2: M4<-M5<-M6)
+   - Glowing temporal circular portals with rotating concentric rings
+   - Continuous golden temporal energy path with animated pulses & sparks
+   - Classified TVA event dossiers with interactive hover & tap expansion
 ========================================================== */
-.tva-chronological-timeline {
+
+:root {
+  --tva-charcoal: #101612;
+  --tva-olive: #28372B;
+  --tva-amber: #E99527;
+  --tva-gold: #F2B64B;
+  --tva-cream: #F2E9D8;
+  --tva-muted-grey: #A6A090;
+  --tva-teal: #35B8A6;
+  --tva-glow-amber: rgba(233, 149, 39, 0.45);
+  --tva-glow-gold: rgba(242, 182, 75, 0.4);
+}
+
+/* Master Timeline Section & Container */
+#timeline.bureau-section {
   position: relative;
-  max-width: 1040px;
-  margin: 36px auto 0;
-  padding: 24px 0 48px;
+  overflow: visible;
+  padding-bottom: 80px;
 }
 
-/* Continuous Golden Timeline Spine Track (Desktop: Centered) */
-.timeline-spine-track {
-  position: absolute;
-  top: 10px;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  z-index: 1;
-  pointer-events: none;
+.tva-temporal-timeline {
+  position: relative;
+  width: 100%;
+  max-width: 1320px;
+  margin: 32px auto 0;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
-.timeline-spine-base {
-  position: absolute;
-  inset: 0;
-  background: rgba(184, 146, 58, 0.22);
+/* --- TVA Telemetry Status Header Bar --- */
+.tva-timeline-telemetry-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(16, 22, 18, 0.88);
+  border: 1px solid rgba(233, 149, 39, 0.35);
+  border-radius: 6px;
+  padding: 10px 18px;
+  margin-bottom: 30px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(233, 149, 39, 0.08);
 }
 
-.timeline-spine-progress {
+.telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+}
+
+.telemetry-status .telemetry-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tva-teal);
+  box-shadow: 0 0 8px var(--tva-teal);
+  animation: telemetryPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes telemetryPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.telemetry-label {
+  color: var(--tva-muted-grey);
+}
+
+.telemetry-value {
+  color: var(--tva-gold);
+  font-weight: 600;
+}
+
+.telemetry-hint {
+  color: var(--tva-cream);
+  font-size: 0.72rem;
+}
+
+.telemetry-hint .telemetry-key {
+  color: var(--tva-teal);
+  font-weight: 600;
+}
+
+/* --- Serpentine Timeline Desktop Wrapper --- */
+.tva-serpentine-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  height: 520px;
+  margin: 0 auto;
+}
+
+/* Continuous SVG Golden Energy Path Canvas */
+.tva-serpentine-svg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 0%;
-  background: linear-gradient(to bottom, var(--brass) 0%, var(--tva-orange) 100%);
-  box-shadow: 0 0 8px rgba(184, 146, 58, 0.4);
-  transition: height 0.2s ease-out;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
 }
 
-/* Milestones Sequence Container */
-.timeline-milestones-list {
+/* Faint Base Guide Track */
+.tva-serpentine-base-path {
+  stroke: rgba(233, 149, 39, 0.22);
+  stroke-width: 2.4;
+  stroke-dasharray: 6 5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px rgba(233, 149, 39, 0.2));
+}
+
+/* Active Golden Energy Path */
+.tva-serpentine-active-path {
+  stroke: url(#tvaGoldEnergyGradient);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(242, 182, 75, 0.65)) drop-shadow(0 0 14px rgba(233, 149, 39, 0.45));
+  stroke-dasharray: 3200;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.35s ease-out;
+}
+
+/* Flow Direction Chevrons along Path */
+.tva-flow-arrow {
+  opacity: 0.75;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tva-temporal-timeline:hover .tva-flow-arrow {
+  opacity: 1;
+}
+
+/* Traveling Golden Energy Sparks */
+.tva-particle-spark {
+  transform-origin: center;
+  opacity: 0.95;
+}
+
+.tva-particle-spark.spark-primary {
+  fill: var(--tva-gold);
+}
+
+.tva-particle-spark.spark-secondary {
+  fill: var(--tva-amber);
+}
+
+/* --- TVA Milestone Checkpoint Nodes --- */
+.tva-milestone-node {
+  position: absolute;
+  z-index: 10;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  gap: 36px;
-  position: relative;
-  z-index: 2;
-}
-
-/* Milestone Item Base & One-Time Progressive Scroll Reveal State */
-.timeline-milestone-item {
-  position: relative;
-  width: calc(50% - 36px);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
   opacity: 0;
-  transform: translateY(28px);
+  transform: translate(-50%, -50%) scale(0.9);
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
 }
 
-/* Once revealed, permanently remains fully visible; never reverts or re-animates */
-.timeline-milestone-item.is-revealed {
+/* Revealed entrance animation triggered on entering section */
+.tva-milestone-node.is-revealed,
+.tva-temporal-timeline.timeline-active .tva-milestone-node {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, -50%) scale(1);
 }
 
-/* Desktop Alternating Rhythm: Left vs Right of Central Spine */
-.timeline-milestone-item.milestone-left {
-  margin-right: auto;
-  margin-left: 0;
+/* Staggered entrance */
+.node-pos-1 { left: 10%; top: 28.8%; transition-delay: 0.1s; }
+.node-pos-2 { left: 50%; top: 28.8%; transition-delay: 0.25s; }
+.node-pos-3 { left: 90%; top: 28.8%; transition-delay: 0.4s; }
+.node-pos-4 { left: 90%; top: 71.2%; transition-delay: 0.55s; }
+.node-pos-5 { left: 50%; top: 71.2%; transition-delay: 0.7s; }
+.node-pos-6 { left: 10%; top: 71.2%; transition-delay: 0.85s; }
+
+/* Focus outline for accessibility */
+.tva-milestone-node:focus-visible .tva-temporal-portal {
+  box-shadow: 0 0 0 3px var(--tva-teal), 0 0 20px var(--tva-amber);
 }
 
-.timeline-milestone-item.milestone-right {
-  margin-left: auto;
-  margin-right: 0;
-}
-
-/* Milestone Node Anchor (Positioned on the Central Golden Spine) */
-.milestone-node-anchor {
-  position: absolute;
-  top: 36px;
-  display: flex;
-  align-items: center;
-  z-index: 4;
-}
-
-.milestone-left .milestone-node-anchor {
-  right: -36px;
-  transform: translate(50%, -50%);
-  flex-direction: row-reverse;
-}
-
-.milestone-right .milestone-node-anchor {
-  left: -36px;
-  transform: translate(-50%, -50%);
-  flex-direction: row;
-}
-
-/* Circular Node Directly on the Spine */
-.milestone-node-dot {
-  width: 16px;
-  height: 16px;
+/* --- Circular TVA Temporal Portal Checkpoint --- */
+.tva-temporal-portal {
+  position: relative;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
-  background: #1C1813;
-  border: 2px solid rgba(184, 146, 58, 0.45);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+              box-shadow 0.4s ease;
+  user-select: none;
 }
 
-.node-inner-core {
-  width: 5px;
-  height: 5px;
+/* Portal Halo */
+.portal-halo {
+  position: absolute;
+  inset: -14px;
   border-radius: 50%;
-  background: #B8923A;
-  transition: all 0.4s ease;
+  background: radial-gradient(circle, rgba(242, 182, 75, 0.28) 0%, rgba(233, 149, 39, 0.1) 45%, transparent 70%);
+  opacity: 0.7;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
 }
 
-.milestone-node-stem {
-  width: 28px;
-  height: 1.5px;
-  background: rgba(184, 146, 58, 0.35);
-  transition: all 0.4s ease;
+/* Concentric Outer Ring with Tick Marks */
+.portal-outer-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.8px dashed rgba(242, 182, 75, 0.65);
+  animation: portalSpinClockwise 24s linear infinite;
+  box-shadow: 0 0 10px rgba(233, 149, 39, 0.25);
+  transition: border-color 0.3s ease;
 }
 
-/* Node Illumination on Reveal */
-.timeline-milestone-item.is-revealed .milestone-node-dot {
-  border-color: var(--paper);
-  background: #2b1d12;
-  box-shadow: 0 0 10px rgba(184, 146, 58, 0.35);
+/* Tick notches at 0, 90, 180, 270 degrees */
+.portal-ring-notch {
+  position: absolute;
+  width: 5px;
+  height: 2px;
+  background: var(--tva-gold);
+  border-radius: 1px;
+}
+.notch-0   { top: -2px; left: calc(50% - 2.5px); width: 5px; height: 3px; }
+.notch-45  { top: 7px; right: 7px; transform: rotate(45deg); }
+.notch-90  { top: calc(50% - 1.5px); right: -2px; width: 3px; height: 5px; }
+.notch-135 { bottom: 7px; right: 7px; transform: rotate(-45deg); }
+.notch-180 { bottom: -2px; left: calc(50% - 2.5px); width: 5px; height: 3px; }
+.notch-225 { bottom: 7px; left: 7px; transform: rotate(45deg); }
+.notch-270 { top: calc(50% - 1.5px); left: -2px; width: 3px; height: 5px; }
+.notch-315 { top: 7px; left: 7px; transform: rotate(-45deg); }
+
+/* Concentric Middle Ring (Counter-rotating) */
+.portal-middle-ring {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(233, 149, 39, 0.55);
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: portalSpinCounter 14s linear infinite;
 }
 
-.timeline-milestone-item.is-revealed .node-inner-core {
-  background: var(--paper);
-  box-shadow: 0 0 6px #E8872B;
+/* Concentric Inner Ring */
+.portal-inner-ring {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  border: 1.2px solid rgba(242, 182, 75, 0.85);
+  background: rgba(16, 22, 18, 0.85);
 }
 
-.timeline-milestone-item.is-revealed .milestone-node-stem {
-  background: rgba(184, 146, 58, 0.85);
-  box-shadow: 0 0 6px rgba(184, 146, 58, 0.35);
+/* Bright Central Energy Singularity Core */
+.portal-singularity {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFFFFF 0%, var(--tva-gold) 45%, var(--tva-amber) 100%);
+  box-shadow: 0 0 12px #FFFFFF, 0 0 20px var(--tva-gold);
+  animation: singularityPulse 3.5s ease-in-out infinite alternate;
+  z-index: 2;
 }
 
-/* Final Milestone Highlighted Node */
-.timeline-milestone-item.final-phase.is-revealed .milestone-node-dot {
-  border-color: var(--paper);
-  background: #E8872B;
-  box-shadow: 0 0 16px rgba(255, 210, 125, 0.9);
-}
-
-.timeline-milestone-item.final-phase.is-revealed .node-inner-core {
-  background: #FFFFFF;
-  box-shadow: 0 0 8px #FFFFFF;
-}
-
-/* Milestone Information Box */
-.milestone-card-box {
-  background: #1C1813;
-  border: 1px solid rgba(184, 146, 58, 0.35);
-  border-radius: var(--radius-sm);
-  padding: 22px 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75),
-              inset 0 0 14px rgba(184, 146, 58, 0.04);
-  position: relative;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.milestone-card-box:hover {
-  border-color: rgba(232, 137, 43, 0.65);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85),
-              0 0 14px rgba(184, 146, 58, 0.15);
-}
-
-.milestone-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.milestone-badge-num {
+/* Checkpoint Number Label inside/overlay */
+.portal-milestone-num {
+  position: absolute;
+  bottom: -18px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--crt-teal);
+  color: var(--tva-gold);
   letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+
+/* --- Portal Hover & Active States --- */
+.tva-milestone-node:hover .tva-temporal-portal,
+.tva-milestone-node.is-active .tva-temporal-portal {
+  transform: scale(1.15);
+}
+
+.tva-milestone-node:hover .portal-halo,
+.tva-milestone-node.is-active .portal-halo {
+  opacity: 1;
+  transform: scale(1.3);
+  background: radial-gradient(circle, rgba(242, 182, 75, 0.45) 0%, rgba(233, 149, 39, 0.25) 50%, transparent 75%);
+}
+
+.tva-milestone-node:hover .portal-outer-ring,
+.tva-milestone-node.is-active .portal-outer-ring {
+  border-color: var(--tva-gold);
+  animation-duration: 8s;
+  box-shadow: 0 0 16px rgba(242, 182, 75, 0.6);
+}
+
+.tva-milestone-node:hover .portal-middle-ring,
+.tva-milestone-node.is-active .portal-middle-ring {
+  border-color: var(--tva-gold);
+  animation-duration: 5s;
+}
+
+.tva-milestone-node:hover .portal-singularity,
+.tva-milestone-node.is-active .portal-singularity {
+  transform: scale(1.25);
+  box-shadow: 0 0 16px #FFFFFF, 0 0 30px var(--tva-gold);
+}
+
+/* Milestone 06 (Grand Final Convergence Special Styling) */
+.portal-convergence {
+  width: 66px;
+  height: 66px;
+}
+
+.halo-convergence {
+  inset: -22px;
+  background: radial-gradient(circle, rgba(242, 182, 75, 0.5) 0%, rgba(233, 149, 39, 0.25) 50%, transparent 75%);
+}
+
+.portal-radiance-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px dotted rgba(242, 182, 75, 0.5);
+  animation: portalSpinClockwise 30s linear infinite;
+}
+
+.singularity-convergence {
+  width: 15px;
+  height: 15px;
+  box-shadow: 0 0 16px #FFFFFF, 0 0 28px var(--tva-gold), 0 0 45px var(--tva-amber);
+}
+
+.highlight-num {
+  color: var(--tva-gold);
+  font-weight: 800;
+  text-shadow: 0 0 8px var(--tva-gold);
+}
+
+/* Ring Animations */
+@keyframes portalSpinClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes portalSpinCounter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes singularityPulse {
+  0% { transform: scale(0.9); opacity: 0.85; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+/* --- Persistent Primary Readable Information Label --- */
+.milestone-primary-badge {
+  position: absolute;
+  width: 260px;
+  max-width: 280px;
+  background: rgba(16, 22, 18, 0.92);
+  border: 1px solid rgba(233, 149, 39, 0.4);
+  border-radius: 6px;
+  padding: 12px 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 10px rgba(233, 149, 39, 0.12);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+/* Placement Alternating: Above vs Below Portal Node */
+.label-pos-top .milestone-primary-badge {
+  bottom: calc(100% + 22px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.label-pos-bottom .milestone-primary-badge {
+  top: calc(100% + 22px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Connecting Stem Line between Portal and Primary Badge */
+.badge-stem-connector {
+  position: absolute;
+  left: 50%;
+  width: 1.5px;
+  background: linear-gradient(to bottom, var(--tva-gold), rgba(233, 149, 39, 0.3));
+  pointer-events: none;
+}
+
+.label-pos-top .badge-stem-connector {
+  top: 100%;
+  height: 22px;
+  transform: translateX(-50%);
+}
+
+.label-pos-bottom .badge-stem-connector {
+  bottom: 100%;
+  height: 22px;
+  transform: translateX(-50%);
+}
+
+/* Label Internal Typography */
+.badge-chrono-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.chrono-code {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--tva-teal);
+  letter-spacing: 0.1em;
+}
+
+.chrono-code.highlight {
+  color: var(--tva-gold);
+  text-shadow: 0 0 6px rgba(242, 182, 75, 0.5);
+}
+
+.status-stamp {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(233, 149, 39, 0.15);
+  border: 1px solid rgba(233, 149, 39, 0.4);
+  color: var(--tva-amber);
   text-transform: uppercase;
 }
 
-.milestone-badge-num.highlight {
-  color: var(--crt-teal);
-  text-shadow: 0 0 6px rgba(63, 181, 160, 0.4);
+.status-stamp.stamp-gold {
+  background: rgba(242, 182, 75, 0.2);
+  border-color: var(--tva-gold);
+  color: var(--tva-gold);
 }
 
-.milestone-status-stamp {
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 3px 8px;
-  border-radius: 2px;
-  border: 1px solid rgba(184, 146, 58, 0.4);
-  color: var(--paper-cream);
-  background: rgba(28, 24, 19, 0.7);
-}
-
-.milestone-status-stamp.window-stamp {
-  border-color: var(--sage);
-  color: #FFAE42;
-}
-
-.milestone-status-stamp.final-stamp {
-  border-color: var(--brick);
-  color: var(--amber-bright);
-  background: rgba(196, 69, 45, 0.12);
-  box-shadow: 0 0 8px rgba(196, 69, 45, 0.25);
-}
-
-.milestone-title {
-  font-family: var(--font-serif);
-  font-size: 1.22rem;
-  font-weight: 700;
-  color: var(--paper-cream);
-  margin: 0 0 8px;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-}
-
-.milestone-date-display {
+.badge-date-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--tva-amber);
+}
+
+.badge-date-row .date-svg {
+  flex-shrink: 0;
+  stroke: var(--tva-amber);
+}
+
+.badge-date {
   font-family: var(--font-mono);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--tva-orange);
-  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+  color: var(--tva-amber);
+}
+
+.badge-title {
+  font-family: 'Barlow Condensed', 'Bebas Neue', var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
   letter-spacing: 0.04em;
+  line-height: 1.25;
+  color: var(--tva-cream);
+  margin: 0;
+  text-transform: uppercase;
 }
 
-.milestone-date-display .date-icon {
-  font-size: 0.85rem;
+.badge-convergence .badge-title {
+  color: #FFF;
+  text-shadow: 0 0 10px rgba(242, 182, 75, 0.5);
 }
 
-.milestone-description {
-  font-family: var(--font-typewriter);
-  font-size: 0.84rem;
-  line-height: 1.5;
-  color: var(--text-muted);
-  margin: 0 0 12px;
+/* Hover highlights on primary badge */
+.tva-milestone-node:hover .milestone-primary-badge,
+.tva-milestone-node.is-active .milestone-primary-badge {
+  border-color: var(--tva-gold);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 18px rgba(242, 182, 75, 0.28);
 }
 
-/* Registration Fee Structure Breakdown in Milestone 01 */
-.milestone-fee-structure {
-  margin: 12px 0 10px;
+/* --- Floating TVA Classified Dossier Panel (Hover / Active Expansion) --- */
+.tva-classified-dossier {
+  position: absolute;
+  width: 340px;
+  max-width: 90vw;
+  background: #101612;
+  border: 1px solid var(--tva-amber);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.92), 0 0 24px rgba(233, 149, 39, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px) scale(0.96);
+  transition: opacity 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              visibility 0.28s ease;
+  overflow: hidden;
 }
 
-.fee-divider {
-  border-top: 1px dashed rgba(184, 146, 58, 0.35);
-  margin: 0 0 10px;
+/* Reveal Dossier when Node is Hovered, Focused, Active, or Mouse is inside Dossier */
+.tva-milestone-node:hover .tva-classified-dossier,
+.tva-milestone-node:focus-within .tva-classified-dossier,
+.tva-milestone-node.is-active .tva-classified-dossier,
+.tva-classified-dossier:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
-.fee-rows-group {
+/* Intelligent Horizontal Alignments to prevent viewport clipping */
+.label-pos-top .tva-classified-dossier {
+  top: calc(100% + 28px);
+}
+
+.label-pos-bottom .tva-classified-dossier {
+  bottom: calc(100% + 28px);
+}
+
+.dossier-align-right {
+  left: 0;
+  transform-origin: top left;
+}
+
+.dossier-align-center {
+  left: 50%;
+  transform: translateX(-50%) translateY(12px) scale(0.96);
+  transform-origin: center;
+}
+.tva-milestone-node:hover .dossier-align-center,
+.tva-milestone-node.is-active .dossier-align-center {
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.dossier-align-left {
+  right: 0;
+  left: auto;
+  transform-origin: top right;
+}
+
+/* Scanner Laser Line at Top of Dossier */
+.dossier-scanner-bar {
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent 0%, var(--tva-teal) 50%, transparent 100%);
+  animation: dossierScanner 3s ease-in-out infinite alternate;
+}
+
+.scanner-gold {
+  background: linear-gradient(90deg, transparent 0%, var(--tva-gold) 50%, transparent 100%);
+}
+
+@keyframes dossierScanner {
+  0% { transform: translateX(-30%); opacity: 0.6; }
+  100% { transform: translateX(30%); opacity: 1; }
+}
+
+/* Dossier Header */
+.dossier-header {
+  padding: 12px 16px 10px;
+  background: rgba(40, 55, 43, 0.45);
+  border-bottom: 1px solid rgba(233, 149, 39, 0.25);
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
 }
 
-.fee-row-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  background: rgba(28, 24, 19, 0.65);
-  border: 1px solid rgba(184, 146, 58, 0.22);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+.dossier-id-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--tva-teal);
+  letter-spacing: 0.08em;
+  display: block;
 }
 
-.fee-row-item:hover {
-  border-color: rgba(232, 137, 43, 0.45);
-  background: rgba(28, 24, 19, 0.85);
+.dossier-status-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  padding: 2px 6px;
+  background: rgba(233, 149, 39, 0.2);
+  color: var(--tva-amber);
+  border: 1px solid rgba(233, 149, 39, 0.45);
+  border-radius: 3px;
+  font-weight: 600;
+  margin-top: 4px;
 }
 
-.fee-row-header {
+.pill-gold {
+  background: rgba(242, 182, 75, 0.25);
+  color: var(--tva-gold);
+  border-color: var(--tva-gold);
+}
+
+.dossier-clearance {
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  color: var(--tva-muted-grey);
+  letter-spacing: 0.08em;
+  border: 1px dashed rgba(166, 160, 144, 0.4);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Dossier Body Content */
+.dossier-body {
+  padding: 16px;
+}
+
+.dossier-date-banner {
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--tva-amber);
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.banner-gold {
+  color: var(--tva-gold);
+}
+
+.dossier-event-title {
+  font-family: 'Barlow Condensed', 'Bebas Neue', var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--tva-cream);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.dossier-description {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #D6D0C2;
+  margin: 0 0 14px;
+}
+
+/* Bulleted Hover Directives / Protocols */
+.dossier-directives {
+  background: rgba(40, 55, 43, 0.35);
+  border: 1px solid rgba(233, 149, 39, 0.2);
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.directives-label {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--tva-teal);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.directives-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.directives-list li {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--tva-cream);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.directive-marker {
+  color: var(--tva-gold);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* Fee Structure Memo inside Milestone 01 Dossier */
+.dossier-fee-memo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: rgba(233, 149, 39, 0.08);
+  border-left: 2px solid var(--tva-amber);
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 10px;
+}
+
+.fee-memo-item {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  color: var(--tva-cream);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fee-tier {
+  font-weight: 700;
+  color: var(--tva-gold);
+}
+
+.fee-val {
+  color: var(--tva-amber);
+  font-weight: 600;
+}
+
+.fee-val.fee-free {
+  color: #3BD8A8;
+}
+
+.fee-note {
+  color: var(--tva-muted-grey);
+  font-size: 0.65rem;
+}
+
+/* Dossier Footer */
+.dossier-footer {
+  padding: 8px 16px;
+  background: rgba(16, 22, 18, 0.8);
+  border-top: 1px dashed rgba(233, 149, 39, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  color: var(--tva-muted-grey);
+  letter-spacing: 0.06em;
+}
+
+.dossier-chrono-ref {
+  color: var(--tva-teal);
+}
+
+/* --- TVA Telemetry Chamber (Docked Briefing / Mobile Display) --- */
+.tva-telemetry-chamber {
+  margin-top: 40px;
+  background: #101612;
+  border: 1px solid var(--tva-amber);
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75), inset 0 0 20px rgba(233, 149, 39, 0.08);
+  position: relative;
+}
+
+.chamber-terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(233, 149, 39, 0.25);
+  margin-bottom: 16px;
+}
+
+.chamber-led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tva-amber);
+  box-shadow: 0 0 10px var(--tva-amber);
+}
+
+.chamber-title {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--tva-cream);
+  flex-grow: 1;
+}
+
+.chamber-coords {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--tva-teal);
+  letter-spacing: 0.08em;
+}
+
+.chamber-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.chamber-status-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  background: rgba(233, 149, 39, 0.15);
+  border: 1px solid var(--tva-amber);
+  color: var(--tva-amber);
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+.chamber-heading {
+  font-family: 'Barlow Condensed', 'Bebas Neue', var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--tva-cream);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.chamber-date {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--tva-amber);
+  margin-bottom: 10px;
+}
+
+.chamber-desc {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #D6D0C2;
+  margin: 0;
+}
+
+.chamber-protocols-title {
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--paper-cream);
-  letter-spacing: 0.05em;
-}
-
-.fee-icon {
-  flex-shrink: 0;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.fee-icon-free {
-  color: var(--sage);
-  filter: drop-shadow(0 0 3px rgba(126, 154, 91, 0.35));
-}
-
-.fee-icon-paid {
-  color: var(--brass);
-  filter: drop-shadow(0 0 3px rgba(184, 146, 58, 0.35));
-}
-
-.fee-stage-title {
-  color: var(--paper-cream);
-}
-
-.fee-sep {
-  color: var(--text-dim);
-  font-weight: 400;
-}
-
-.fee-pill {
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  font-weight: 800;
+  color: var(--tva-teal);
   letter-spacing: 0.08em;
-  padding: 1px 6px;
-  border-radius: 2px;
-  line-height: 1.2;
+  margin-bottom: 8px;
 }
 
-.fee-pill-free {
-  color: var(--sage);
-  background: rgba(126, 154, 91, 0.12);
-  border: 1px solid rgba(126, 154, 91, 0.35);
-  text-shadow: 0 0 6px rgba(126, 154, 91, 0.25);
-}
-
-.fee-pill-paid {
-  color: var(--brass);
-  background: rgba(184, 146, 58, 0.14);
-  border: 1px solid rgba(184, 146, 58, 0.4);
-  text-shadow: 0 0 6px rgba(184, 146, 58, 0.25);
-}
-
-.fee-detail-text {
-  font-family: var(--font-typewriter);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--text-muted);
+.chamber-protocols-list {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  padding-left: 19px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.milestone-card-footer {
-  padding-top: 8px;
-  border-top: 1px dashed rgba(184, 146, 58, 0.18);
+.chamber-protocols-list li {
   font-family: var(--font-mono);
-  font-size: 0.64rem;
-  color: var(--text-dim);
-  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--tva-cream);
+  padding-left: 16px;
+  position: relative;
 }
 
-/* Final Phase Milestone Distinctive Framing */
-.timeline-milestone-item.final-phase .milestone-card-box {
-  border-color: rgba(184, 146, 58, 0.5);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.85),
-              0 0 16px rgba(184, 146, 58, 0.12);
+.chamber-protocols-list li::before {
+  content: '▹';
+  position: absolute;
+  left: 0;
+  color: var(--tva-gold);
 }
 
-/* Responsive Mobile Layout (Single Column along Left Golden Spine) */
+/* --- Tablet Adaptations (992px to 769px) --- */
+@media (max-width: 992px) {
+  .tva-serpentine-wrapper {
+    height: 480px;
+  }
+  
+  .milestone-primary-badge {
+    width: 220px;
+    padding: 10px 12px;
+  }
+
+  .badge-title {
+    font-size: 1.02rem;
+  }
+
+  .badge-date {
+    font-size: 0.76rem;
+  }
+
+  .tva-classified-dossier {
+    width: 300px;
+  }
+
+  .chamber-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* --- Responsive Mobile Layout (<= 768px) --- */
 @media (max-width: 768px) {
-  .tva-chronological-timeline {
-    margin-top: 24px;
-    padding: 12px 0 32px;
+  .tva-temporal-timeline {
+    padding: 0 6px;
   }
 
-  .timeline-spine-track {
-    left: 16px;
-    transform: none;
-  }
-
-  .timeline-milestones-list {
-    gap: 22px;
-  }
-
-  .timeline-milestone-item.milestone-left,
-  .timeline-milestone-item.milestone-right {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 38px;
-    box-sizing: border-box;
-  }
-
-  .milestone-left .milestone-node-anchor,
-  .milestone-right .milestone-node-anchor {
-    left: 16px;
-    right: auto;
-    top: 28px;
-    transform: translate(-50%, -50%);
-    flex-direction: row;
-  }
-
-  .milestone-node-stem {
-    width: 16px;
-  }
-
-  .milestone-card-box {
-    padding: 16px 14px;
-  }
-
-  .milestone-card-header {
-    flex-wrap: wrap;
+  .tva-timeline-telemetry-bar {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 6px;
-    margin-bottom: 8px;
+    padding: 10px 12px;
   }
 
-  .milestone-badge-num {
-    font-size: 0.68rem;
+  /* Switch serpentine track into vertical temporal flow */
+  .tva-serpentine-wrapper {
+    height: auto;
+    min-height: unset;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 24px 0 24px 34px;
+    position: relative;
   }
 
-  .milestone-status-stamp {
-    font-size: 0.62rem;
-    padding: 2px 6px;
+  /* Hide horizontal desktop SVG; show vertical golden line on left */
+  .tva-serpentine-svg {
+    display: none;
   }
 
-  .milestone-title {
-    font-size: 1.05rem;
-    line-height: 1.25;
-    margin-bottom: 6px;
+  .tva-serpentine-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 14px;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--tva-gold) 0%, var(--tva-amber) 50%, var(--tva-gold) 100%);
+    box-shadow: 0 0 10px rgba(242, 182, 75, 0.5);
+    border-radius: 2px;
   }
 
-  .milestone-date-display {
-    font-size: 0.82rem;
-    margin-bottom: 6px;
-  }
-
-  .milestone-description {
-    font-size: 0.84rem;
-    line-height: 1.5;
-  }
-}
-
-@media (max-width: 360px) {
-  .timeline-spine-track {
-    left: 12px;
-  }
-
-  .timeline-milestones-list {
-    gap: 18px;
-  }
-
-  .timeline-milestone-item.milestone-left,
-  .timeline-milestone-item.milestone-right {
-    padding-left: 30px;
-  }
-
-  .milestone-left .milestone-node-anchor,
-  .milestone-right .milestone-node-anchor {
-    left: 12px;
-    top: 24px;
-  }
-
-  .milestone-node-stem {
-    width: 12px;
-  }
-
-  .milestone-card-box {
-    padding: 12px 10px;
-  }
-
-  .milestone-title {
-    font-size: 0.98rem;
-  }
-
-  .milestone-date-display {
-    font-size: 0.78rem;
-  }
-
-  .milestone-description {
-    font-size: 0.80rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .timeline-milestone-item {
-    opacity: 1 !important;
+  /* Stack nodes vertically */
+  .tva-milestone-node {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
     transform: none !important;
+    width: 100%;
+    align-items: flex-start;
+    opacity: 1 !important;
+  }
+
+  /* Position circular portal at the left on the vertical spine */
+  .tva-milestone-node .tva-temporal-portal {
+    position: absolute;
+    left: -34px;
+    top: 6px;
+    width: 38px;
+    height: 38px;
+    z-index: 5;
+  }
+
+  .portal-halo {
+    inset: -6px;
+  }
+
+  .portal-milestone-num {
+    display: none;
+  }
+
+  .portal-singularity {
+    width: 8px;
+    height: 8px;
+  }
+
+  .badge-stem-connector {
+    display: none !important;
+  }
+
+  /* Primary badge sits as a readable card to the right of the portal */
+  .milestone-primary-badge {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    padding: 14px 16px;
+  }
+
+  .badge-title {
+    font-size: 1.15rem;
+  }
+
+  /* Floating Dossier on Mobile becomes inline expandable or opens on tap */
+  .tva-classified-dossier {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: none !important;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .tva-milestone-node.is-active .tva-classified-dossier,
+  .tva-milestone-node:hover .tva-classified-dossier {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .tva-telemetry-chamber {
+    margin-top: 24px;
+    padding: 16px;
+  }
+
+  .chamber-heading {
+    font-size: 1.3rem;
+  }
+}
+
+/* Reduced Motion Preference Support */
+@media (prefers-reduced-motion: reduce) {
+  .portal-outer-ring,
+  .portal-middle-ring,
+  .portal-radiance-ring,
+  .dossier-scanner-bar,
+  .telemetry-status .telemetry-dot,
+  .portal-singularity {
+    animation: none !important;
+  }
+
+  .tva-milestone-node {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) !important;
     transition: none !important;
   }
+
+  .tva-particle-spark {
+    display: none !important;
+  }
 }
+
 
 /* ==========================================================
    06. REGISTRATION TERMINAL CARD

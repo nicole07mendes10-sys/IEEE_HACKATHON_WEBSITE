@@ -375,55 +375,33 @@ class BureauSpatialScrollController {
   }
 
   /* --------------------------------------------------------
-     4. TIMELINE SECTION (REEL DECK & 5 MILESTONES)
+     4. TIMELINE SECTION (TVA SACRED SERPENTINE ENERGY TRACK)
   -------------------------------------------------------- */
   updateTimelineSection() {
     if (!this.timelineSec) return;
     const p = this.getSectionProgress(this.timelineSec);
-    if (p < -0.1 || p > 1.1) return;
+    if (p < -0.15 || p > 1.15) return;
 
-    // Rotate magnetic spools proportional to scroll progress
-    const spoolRot = (p * 720).toFixed(1);
-    this.spoolGraphics.forEach(spool => {
-      spool.style.transform = `rotate(${spoolRot}deg)`;
-    });
+    const timelineContainer = document.getElementById('tva-temporal-timeline');
+    if (timelineContainer && p > 0.05) {
+      timelineContainer.classList.add('timeline-active');
+    }
 
-    // Milestone film frames (5 milestones)
-    this.filmFrames.forEach((frame, i) => {
-      const c_i = 0.28 + i * 0.08;
-      const d = p - c_i;
-      const f = Math.max(0, 1 - Math.abs(d) / 0.12);
-      const f_smooth = f * f * (3 - 2 * f);
-
-      const enterT = Math.min(1, Math.max(0, (p - (c_i - 0.20)) / 0.20));
-      const exitT = Math.min(1, Math.max(0, (p - c_i) / 0.25));
-
-      const isFinal = i === 4; // Milestone 05: Final Problem Statement
-      const targetZ = isFinal ? 32 : 22;
-      const baseZ = -40 * (1 - enterT) - 20 * exitT;
-      let tz = baseZ + (targetZ - baseZ) * f_smooth;
-
-      let rx = (3.5 * (1 - enterT) - 2.0 * exitT) * (1 - f_smooth);
-      let ry = ((i - 2.0) * 2.5 * (1 - enterT)) * (1 - f_smooth);
-      let scale = 0.98 + 0.04 * f_smooth;
-
-      if (this.isMobile) {
-        rx *= 0.35;
-        ry *= 0.35;
-        tz = Math.max(-15, Math.min(12, tz));
-        scale = Math.min(scale, 1.018);
+    const activeEnergyTrack = document.getElementById('tvaActiveEnergyTrack');
+    if (activeEnergyTrack) {
+      if (!this.totalEnergyPathLength) {
+        try {
+          this.totalEnergyPathLength = activeEnergyTrack.getTotalLength();
+          activeEnergyTrack.style.strokeDasharray = `${this.totalEnergyPathLength}`;
+        } catch (e) {
+          this.totalEnergyPathLength = 2600;
+        }
       }
-
-      frame.style.transform = `perspective(1000px) translate3d(0px, 0px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-
-      if (isFinal && f_smooth > 0.05) {
-        frame.style.boxShadow = `0 0 ${(16 + f_smooth * 20).toFixed(1)}px rgba(184, 146, 58, 0.35)`;
-      } else if (f_smooth > 0.08) {
-        frame.style.boxShadow = `0 8px 20px rgba(0, 0, 0, 0.5), 0 0 ${(f_smooth * 14).toFixed(1)}px rgba(184, 146, 58, 0.25)`;
-      } else {
-        frame.style.boxShadow = '';
-      }
-    });
+      // Progressive golden energy path drawing from M1 to M6 as user scrolls through
+      const drawProgress = Math.min(1, Math.max(0, (p - 0.08) / 0.62));
+      const offset = this.totalEnergyPathLength * (1 - drawProgress);
+      activeEnergyTrack.style.strokeDashoffset = `${offset.toFixed(1)}`;
+    }
   }
 
   /* --------------------------------------------------------
@@ -689,7 +667,11 @@ class OverclockApp {
     this.audioCtx = null;
     this.noiseBuffer = null;
     this.lastClickSoundTime = 0;
-    this.hasBooted = sessionStorage.getItem('oc2027_booted') === 'true' || new URLSearchParams(window.location.search).has('skipboot');
+    try {
+      sessionStorage.removeItem('oc2027_booted');
+      sessionStorage.removeItem('oc2027_temporal_intro_played');
+    } catch (e) {}
+    this.hasBooted = new URLSearchParams(window.location.search).has('skipboot');
     this.isHomepageActive = false;
     this.clockInterval = null;
     
@@ -1187,7 +1169,6 @@ class OverclockApp {
 
     const finishBoot = () => {
       overlay.classList.add('hidden');
-      sessionStorage.setItem('oc2027_booted', 'true');
       this.playRelayClick(880);
       setTimeout(() => this.triggerHeroAnimations(), 100);
     };
@@ -1793,18 +1774,255 @@ class OverclockApp {
   }
 
   /* ==========================================================
-     4B. TVA EVENT TIMELINE BIDIRECTIONAL PROGRESSIVE SCROLL REVEAL
-     IntersectionObserver animates milestones into view on scroll down,
-     and smoothly reverses the animation when scrolling back up.
+     4B. TVA SACRED SERPENTINE TIMELINE INTERACTIVE SYSTEM
+     - Horizontal serpentine winding progression (Row 1 -> Row 2)
+     - Interactive temporal portal checkpoints with concentric rotating rings
+     - Classified event dossiers with automatic viewport collision repositioning
+     - Dynamic telemetry chamber synchronization & touch/keyboard support
   ========================================================== */
   setupTimelineReveals() {
-    const milestoneItems = document.querySelectorAll('.timeline-milestone-item');
-    if (!milestoneItems.length) return;
+    const timelineSec = document.getElementById('timeline');
+    const milestoneNodes = document.querySelectorAll('.tva-milestone-node');
+    const telemetryChamber = document.getElementById('tva-telemetry-chamber');
+    const chronoCoordReadout = document.getElementById('tva-active-chrono-coord');
+    const chamberCoordReadout = document.getElementById('chamber-coord-readout');
+    const chamberStatusTag = document.getElementById('chamber-status-tag');
+    const chamberHeading = document.getElementById('chamber-heading');
+    const chamberDate = document.getElementById('chamber-date');
+    const chamberDesc = document.getElementById('chamber-desc');
+    const chamberProtocolsList = document.getElementById('chamber-protocols-list');
 
+    if (!milestoneNodes.length) return;
+
+    // Milestone Data Registry (Exact dates, titles, descriptions & directives)
+    const milestoneData = {
+      1: {
+        chrono: 'TVA-01',
+        coordDate: '10 NOV 2026',
+        date: '10 November 2026',
+        title: 'THE REGISTRATION WINDOW OPENS',
+        status: 'REGISTRATION OPENING',
+        desc: 'The OVERCLOCK journey begins. Assemble your team, complete your registration and prepare to enter the innovation timeline.',
+        protocols: [
+          'Registration officially opens.',
+          'Teams can begin registering for OVERCLOCK.',
+          'Participants can prepare for the upcoming problem statement release.'
+        ]
+      },
+      2: {
+        chrono: 'TVA-02',
+        coordDate: '01 DEC 2026',
+        date: '1 December 2026',
+        title: 'THE PROBLEM STATEMENTS ARE UNSEALED',
+        status: 'CHALLENGES REVEALED',
+        desc: 'The TVA has identified six domains of innovation. The challenge statements are now revealed. Discover your mission and choose the problem your team is ready to solve.',
+        protocols: [
+          'Problem statements are officially released.',
+          'Participants can explore all six challenge domains.',
+          'Teams can begin developing their proposed solutions.'
+        ]
+      },
+      3: {
+        chrono: 'TVA-03',
+        coordDate: '10–15 DEC 2026',
+        date: '10–15 December 2026',
+        title: 'THE PROPOSAL SUBMISSION WINDOW',
+        status: 'SUBMISSION PHASE',
+        desc: 'Every mission begins with an idea. Submit your team\'s presentation and demonstrate how your solution can make an impact.',
+        protocols: [
+          'PPT submission window opens on 10 December.',
+          'Final submission deadline is 15 December.',
+          'Teams must submit their idea presentation within the specified submission period.'
+        ]
+      },
+      4: {
+        chrono: 'TVA-04',
+        coordDate: '22 DEC 2026',
+        date: '22 December 2026',
+        title: 'THE 25 TEAMS ARE IDENTIFIED',
+        status: 'SHORTLISTING RESULTS',
+        desc: 'Following the evaluation of submitted proposals, 25 teams will be selected to advance to the next stage of the OVERCLOCK timeline.',
+        protocols: [
+          'Shortlisting results are announced.',
+          'A total of 25 teams qualify for the next stage.',
+          'Selected teams receive further instructions regarding the upcoming final round.'
+        ]
+      },
+      5: {
+        chrono: 'TVA-05',
+        coordDate: '22 JAN 2027',
+        date: '22 January 2027',
+        title: 'THE FINAL CHALLENGES ARE REVEALED',
+        status: 'FINAL MISSION RELEASED',
+        desc: 'For the selected teams, the final mission begins. The final problem statements are released, setting the stage for the ultimate innovation challenge.',
+        protocols: [
+          'Final problem statements are released.',
+          'This milestone applies only to the 25 shortlisted teams.',
+          'Selected teams can prepare for the final round.'
+        ]
+      },
+      6: {
+        chrono: 'TVA-06',
+        coordDate: '29–30 JAN 2027',
+        date: '29–30 January 2027',
+        title: 'THE FINAL CONVERGENCE – OVERCLOCK',
+        status: 'FINAL ROUND',
+        desc: 'The timelines converge. The selected teams come together at OVERCLOCK for the ultimate two-day final round. Ideas turn into action, innovation meets execution, and the final mission unfolds.',
+        protocols: [
+          'Final round takes place over two days.',
+          'Dates: 29 and 30 January 2027.',
+          'Only the shortlisted teams participate in this stage.',
+          'The final stage concludes the OVERCLOCK competition journey.'
+        ]
+      }
+    };
+
+    // Update Telemetry Chamber Display
+    const updateTelemetryChamber = (mNum) => {
+      const data = milestoneData[mNum];
+      if (!data) return;
+
+      if (chronoCoordReadout) chronoCoordReadout.textContent = `${data.chrono} // ${data.coordDate}`;
+      if (chamberCoordReadout) chamberCoordReadout.textContent = `${data.chrono} // ACTIVE CHECKPOINT`;
+      if (chamberStatusTag) chamberStatusTag.textContent = data.status;
+      if (chamberHeading) chamberHeading.textContent = data.title;
+      if (chamberDate) chamberDate.textContent = data.date;
+      if (chamberDesc) chamberDesc.textContent = data.desc;
+      if (chamberProtocolsList) {
+        chamberProtocolsList.innerHTML = data.protocols
+          .map(p => `<li>${p}</li>`)
+          .join('');
+      }
+    };
+
+    // Viewport Boundary Protection for Floating Dossier Panels
+    const repositionDossier = (dossierEl) => {
+      if (!dossierEl) return;
+      // Reset inline adjustments first
+      dossierEl.style.marginLeft = '';
+      dossierEl.style.marginTop = '';
+
+      const rect = dossierEl.getBoundingClientRect();
+      const pad = 16;
+      const winW = window.innerWidth;
+      const winH = window.innerHeight;
+
+      // Check left / right bounds
+      if (rect.left < pad) {
+        const shiftX = pad - rect.left;
+        dossierEl.style.marginLeft = `${shiftX}px`;
+      } else if (rect.right > winW - pad) {
+        const shiftX = (winW - pad) - rect.right;
+        dossierEl.style.marginLeft = `${shiftX}px`;
+      }
+
+      // Check top / bottom bounds
+      if (rect.top < pad) {
+        const shiftY = pad - rect.top;
+        dossierEl.style.marginTop = `${shiftY}px`;
+      } else if (rect.bottom > winH - pad) {
+        const shiftY = (winH - pad) - rect.bottom;
+        dossierEl.style.marginTop = `${shiftY}px`;
+      }
+    };
+
+    let activePinnedNode = null;
+    let hoverTimeout = null;
+
+    milestoneNodes.forEach((node) => {
+      const mNum = parseInt(node.getAttribute('data-milestone'), 10);
+      const dossier = node.querySelector('.tva-classified-dossier');
+
+      // Hover / Focus handler
+      const onEnter = () => {
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        updateTelemetryChamber(mNum);
+        if (dossier) {
+          requestAnimationFrame(() => repositionDossier(dossier));
+        }
+      };
+
+      // Leave handler
+      const onLeave = () => {
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        hoverTimeout = setTimeout(() => {
+          if (activePinnedNode) {
+            const pinnedNum = parseInt(activePinnedNode.getAttribute('data-milestone'), 10);
+            updateTelemetryChamber(pinnedNum);
+          }
+        }, 180);
+      };
+
+      node.addEventListener('mouseenter', onEnter);
+      node.addEventListener('focus', onEnter);
+      node.addEventListener('mouseleave', onLeave);
+      node.addEventListener('blur', onLeave);
+
+      // Keep dossier open if user hovers into the dossier panel directly
+      if (dossier) {
+        dossier.addEventListener('mouseenter', () => {
+          if (hoverTimeout) clearTimeout(hoverTimeout);
+        });
+        dossier.addEventListener('mouseleave', onLeave);
+      }
+
+      // Click / Tap handler (Toggle Active / Pinned State)
+      node.addEventListener('click', (e) => {
+        // Prevent accidental bubble if clicking inside dossier links/buttons
+        if (e.target.closest('a, button')) return;
+
+        const isCurrentlyActive = node.classList.contains('is-active');
+
+        // Unpin all other nodes
+        milestoneNodes.forEach(n => {
+          n.classList.remove('is-active');
+          n.setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isCurrentlyActive) {
+          node.classList.add('is-active');
+          node.setAttribute('aria-expanded', 'true');
+          activePinnedNode = node;
+          updateTelemetryChamber(mNum);
+          if (dossier) {
+            requestAnimationFrame(() => repositionDossier(dossier));
+          }
+        } else {
+          activePinnedNode = null;
+        }
+      });
+
+      // Keyboard accessibility (Enter / Space)
+      node.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          node.click();
+        } else if (e.key === 'Escape') {
+          milestoneNodes.forEach(n => {
+            n.classList.remove('is-active');
+            n.setAttribute('aria-expanded', 'false');
+          });
+          activePinnedNode = null;
+        }
+      });
+    });
+
+    // Close pinned dossiers if user clicks anywhere outside timeline
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#timeline')) {
+        milestoneNodes.forEach(n => {
+          n.classList.remove('is-active');
+          n.setAttribute('aria-expanded', 'false');
+        });
+        activePinnedNode = null;
+      }
+    });
+
+    // Progressive Scroll Entrance Observer
     const observerOptions = {
       root: null,
       rootMargin: '120px 0px -8% 0px',
-      threshold: 0.08
+      threshold: 0.1
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -1819,7 +2037,10 @@ class OverclockApp {
       });
     }, observerOptions);
 
-    milestoneItems.forEach(item => observer.observe(item));
+    milestoneNodes.forEach(item => observer.observe(item));
+
+    // Initialize telemetry chamber with Milestone 01 by default
+    updateTelemetryChamber(1);
   }
 
   /* ==========================================================
@@ -1859,7 +2080,8 @@ class OverclockApp {
         .results-dossier-chamber,
         .highlight-card,
         .winner-intel-card,
-        .timeline-milestone-item .milestone-card-box,
+        .tva-milestone-node,
+        .tva-telemetry-chamber,
         .download-resource-card,
         .registration-terminal-card,
         .rules-dossier-card,
