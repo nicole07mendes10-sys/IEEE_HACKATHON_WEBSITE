@@ -12,7 +12,10 @@
   <link rel="stylesheet" href="mobile.css?v=2.1">
   <link rel="stylesheet" href="tva-temporal-intro.css?v=1.0">
   <link rel="preload" as="image" href="images/ezgif-frame-001.jpg" fetchpriority="high">
-  <link rel="preload" as="video" href="videos/miss_minutes.webm" type="video/webm">
+  <!-- Bundled Three.js for instant zero-lag 3D intro initialization across all PCs -->
+  <link rel="preload" as="script" href="vendor/three.min.js">
+  <script src="vendor/three.min.js"></script>
+  <script type="module" src="tva-temporal-intro.js"></script>
   <script>
     try {
       sessionStorage.removeItem('oc2027_temporal_intro_played');
@@ -3889,6 +3892,5 @@
   <script src="app.js"></script>
   <script src="tva-inspection-game.js"></script>
   <script src="domain-oscilloscope.js"></script>
-  <script type="module" src="tva-temporal-intro.js"></script>
 </body>
 </html>

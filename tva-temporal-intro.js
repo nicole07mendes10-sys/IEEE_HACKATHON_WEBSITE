@@ -111,20 +111,22 @@ class TVATemporalIntroController {
 
   async ensureThreeJS() {
     if (window.THREE) return true;
-    try {
-      const module = await import('./node_modules/three/build/three.module.js');
-      window.THREE = module;
-      return true;
-    } catch (err) {
-      // CDN Fallback
-      return new Promise((resolve) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-        script.onload = () => resolve(!!window.THREE);
-        script.onerror = () => resolve(false);
-        document.head.appendChild(script);
-      });
-    }
+
+    const loadScript = (src) => new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.onload = () => resolve(!!window.THREE);
+      script.onerror = () => resolve(false);
+      document.head.appendChild(script);
+    });
+
+    // 1. Check local bundled vendor script (tracked in repo, zero network delay)
+    if (await loadScript('vendor/three.min.js')) return true;
+
+    // 2. Fallback to CDN if opened from an atypical sub-directory
+    if (await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js')) return true;
+
+    return false;
   }
 
   /* ----------------------------------------------------------
@@ -187,7 +189,7 @@ class TVATemporalIntroController {
       powerPreference: 'high-performance'
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.25;
 
