@@ -1069,6 +1069,7 @@
     width: 3px !important;
   }
 
+  .tva-milestone-node .tva-tempad-device,
   .tva-milestone-node .tva-temporal-portal {
     left: -36px !important;
     top: 10px !important;

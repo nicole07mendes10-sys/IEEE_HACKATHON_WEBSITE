@@ -1689,7 +1689,7 @@
         <!-- Serpentine Desktop Visual Track (Horizontal Winding S-Curve Route) -->
         <div class="tva-serpentine-wrapper">
           <!-- Continuous Golden Temporal Energy SVG Path -->
-          <svg class="tva-serpentine-svg" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <svg class="tva-serpentine-svg" viewBox="0 0 1200 660" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <!-- Golden Glowing Gradient -->
               <linearGradient id="tvaGoldEnergyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1727,60 +1727,60 @@
               </filter>
             </defs>
 
-            <!-- Base Ambient Serpentine Guide Track (Continuous organic S-curve) -->
+            <!-- Base Ambient Serpentine Guide Track (Continuous organic S-curve with generous central void) -->
             <path id="tvaGuideTrack"
                   class="tva-serpentine-base-path"
-                  d="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+                  d="M 140 185 C 280 175, 460 195, 600 185 C 740 175, 920 195, 1060 185 C 1175 180, 1175 490, 1060 485 C 920 475, 740 495, 600 485 C 460 475, 280 495, 140 485" />
 
             <!-- Dynamic Animated Golden Temporal Energy Track (Scroll / Reveal) -->
             <path id="tvaActiveEnergyTrack"
                   class="tva-serpentine-active-path"
-                  d="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+                  d="M 140 185 C 280 175, 460 195, 600 185 C 740 175, 920 195, 1060 185 C 1175 180, 1175 490, 1060 485 C 920 475, 740 495, 600 485 C 460 475, 280 495, 140 485" />
 
             <!-- Individual Interactive Surge Segments between TemPads (illuminate more brightly on selection) -->
-            <path id="tempadSeg1" class="tva-tempad-segment" d="M 120 150 C 260 140, 460 160, 600 150" />
-            <path id="tempadSeg2" class="tva-tempad-segment" d="M 600 150 C 740 140, 940 160, 1080 150" />
-            <path id="tempadSeg3" class="tva-tempad-segment" d="M 1080 150 C 1175 145, 1175 375, 1080 370" />
-            <path id="tempadSeg4" class="tva-tempad-segment" d="M 1080 370 C 940 360, 740 380, 600 370" />
-            <path id="tempadSeg5" class="tva-tempad-segment" d="M 600 370 C 460 360, 260 380, 120 370" />
+            <path id="tempadSeg1" class="tva-tempad-segment" d="M 140 185 C 280 175, 460 195, 600 185" />
+            <path id="tempadSeg2" class="tva-tempad-segment" d="M 600 185 C 740 175, 920 195, 1060 185" />
+            <path id="tempadSeg3" class="tva-tempad-segment" d="M 1060 185 C 1175 180, 1175 490, 1060 485" />
+            <path id="tempadSeg4" class="tva-tempad-segment" d="M 1060 485 C 920 475, 740 495, 600 485" />
+            <path id="tempadSeg5" class="tva-tempad-segment" d="M 600 485 C 460 475, 280 495, 140 485" />
 
             <!-- Directional Flow Indicators along trajectory -->
             <!-- Checkpoint 1 -> 2 (Row 1: moving east) -->
-            <g class="tva-flow-arrow flow-arrow-1" transform="translate(360, 148)">
+            <g class="tva-flow-arrow flow-arrow-1" transform="translate(370, 183)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
             <!-- Checkpoint 2 -> 3 (Row 1: moving east) -->
-            <g class="tva-flow-arrow flow-arrow-2" transform="translate(840, 148)">
+            <g class="tva-flow-arrow flow-arrow-2" transform="translate(830, 183)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
             <!-- Natural Curve Turn Loop (East apex: downward transition) -->
-            <g class="tva-flow-arrow flow-arrow-loop" transform="translate(1160, 260) rotate(90)">
+            <g class="tva-flow-arrow flow-arrow-loop" transform="translate(1165, 335) rotate(90)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
             <!-- Checkpoint 4 -> 5 (Row 2: returning west) -->
-            <g class="tva-flow-arrow flow-arrow-4" transform="translate(840, 370) rotate(180)">
+            <g class="tva-flow-arrow flow-arrow-4" transform="translate(830, 485) rotate(180)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
             <!-- Checkpoint 5 -> 6 (Row 2: returning west to Final Convergence) -->
-            <g class="tva-flow-arrow flow-arrow-5" transform="translate(360, 370) rotate(180)">
+            <g class="tva-flow-arrow flow-arrow-5" transform="translate(370, 485) rotate(180)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
             <!-- Traveling Golden Temporal Sparks (continuous pulses along path) -->
             <circle class="tva-particle-spark spark-primary" r="4.5" fill="#F2B64B" filter="url(#tvaTemporalBloom)">
-              <animateMotion dur="10s" repeatCount="indefinite" path="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+              <animateMotion dur="10s" repeatCount="indefinite" path="M 140 185 C 280 175, 460 195, 600 185 C 740 175, 920 195, 1060 185 C 1175 180, 1175 490, 1060 485 C 920 475, 740 495, 600 485 C 460 475, 280 495, 140 485" />
             </circle>
             <circle class="tva-particle-spark spark-secondary" r="3.2" fill="#E99527" filter="url(#tvaTemporalBloom)">
-              <animateMotion dur="10s" begin="-5s" repeatCount="indefinite" path="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
+              <animateMotion dur="10s" begin="-5s" repeatCount="indefinite" path="M 140 185 C 280 175, 460 195, 600 185 C 740 175, 920 195, 1060 185 C 1175 180, 1175 490, 1060 485 C 920 475, 740 495, 600 485 C 460 475, 280 495, 140 485" />
             </circle>
           </svg>
 
