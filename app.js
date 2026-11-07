@@ -15,9 +15,16 @@ window.OVERCLOCK_CONFIG = {
   downloads: {
     participantGuide: {
       id: "participant-guide",
-      title: "PARTICIPANT RULES & GUIDE — PDF",
-      description: "Official TVA Participant Field Manual (Form OC-27/PG) covering required equipment, campus lab facilities, component rules, toolkit allowances, and event preparation.",
+      title: "PARTICIPANT GUIDE — PDF",
+      description: "Official OVERCLOCK 2027 Participant Guide and Field Manual (Form OC-27/PG) covering event architecture, required hardware equipment, campus facilities, lab toolkits, and preparation directives.",
       filePath: "docs/OVERCLOCK_2027_Participant_Guide.pdf",
+      status: "DOWNLOAD PDF"
+    },
+    brochureGuide: {
+      id: "brochure-guide",
+      title: "BROCHURE GUIDE — PDF",
+      description: "Official OVERCLOCK 2027 Brochure Guide outlining hackathon highlights, timeline milestones, problem statement domains, and overall event briefing.",
+      filePath: "docs/OVERCLOCK_2027_Brochure_Guide.pdf",
       status: "DOWNLOAD PDF"
     },
     rules: {
@@ -1806,13 +1813,13 @@ class OverclockApp {
       1: {
         chrono: 'TVA-01',
         device: 'TEMPAD-001',
-        coordDate: '10 NOV 2026',
-        date: '10 November 2026',
+        coordDate: '06 NOV 2026',
+        date: '6 November 2026',
         title: 'THE REGISTRATION WINDOW OPENS',
         status: 'REGISTRATION OPENING',
         desc: 'The OVERCLOCK journey begins. Assemble your team, complete your registration and prepare to enter the innovation timeline.',
         protocols: [
-          'Registration officially opens.',
+          'Registration officially opens on 6 November 2026.',
           'Teams can begin registering for OVERCLOCK.',
           'Participants can prepare for the upcoming problem statement release.'
         ]
@@ -2405,6 +2412,7 @@ class OverclockApp {
 
     const items = [
       { key: 'participant-guide', data: downloads.participantGuide },
+      { key: 'brochure-guide', data: downloads.brochureGuide },
       { key: 'rules', data: downloads.rules },
       { key: 'ppt', data: downloads.pptTemplate }
     ];
