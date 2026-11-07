@@ -1655,38 +1655,38 @@
     </section>
 
     <!-- ========================================================
-         05. TIMELINE — TVA SACRED CHRONOLOGICAL PROGRESSION
+         05. TIMELINE — TVA TEMPAD TEMPORAL NAVIGATION SYSTEM
     ======================================================== -->
     <section id="timeline" class="bureau-section" data-section-num="05">
       <div class="section-rubber-stamp">CLASSIFIED</div>
 
       <div class="section-header-wrap">
-        <div class="bureau-tag">TVA TEMPORAL SCHEDULE // LEVEL 05</div>
-        <h2 class="section-main-heading">The Sacred Timeline</h2>
-        <p class="section-subtext">Chronological progression of OVERCLOCK 2027. Six temporal checkpoints unrolled along the master golden energy trajectory.</p>
+        <div class="bureau-tag">TVA TEMPAD INTERFACE // LEVEL 05</div>
+        <h2 class="section-main-heading">TemPad Temporal Navigation</h2>
+        <p class="section-subtext">Access the TemPad. Navigate the timeline. Discover your mission. Experience OVERCLOCK.</p>
       </div>
 
-      <!-- TVA Chronological Event Timeline (Horizontal Serpentine Trajectory) -->
-      <div class="tva-temporal-timeline" id="tva-temporal-timeline" role="region" aria-label="TVA Sacred Timeline Progression">
+      <!-- TVA TemPad Temporal Navigation System -->
+      <div class="tva-temporal-timeline" id="tva-temporal-timeline" role="region" aria-label="TVA TemPad Temporal Navigation System">
         
-        <!-- Timeline System Telemetry Header Bar -->
+        <!-- TemPad System Telemetry Header Bar -->
         <div class="tva-timeline-telemetry-bar">
           <div class="telemetry-item telemetry-status">
             <span class="telemetry-dot"></span>
-            <span class="telemetry-label">SACRED TIMELINE STATUS:</span>
-            <span class="telemetry-value">NOMINAL TEMPORAL FLOW // ZERO VARIANCE</span>
+            <span class="telemetry-label">TEMPAD SYSTEM:</span>
+            <span class="telemetry-value">ONLINE // NOMINAL TEMPORAL SYNC</span>
           </div>
           <div class="telemetry-item telemetry-coords">
-            <span class="telemetry-label">CHRONO-COORDINATE:</span>
-            <span class="telemetry-value" id="tva-active-chrono-coord">TVA-01 // 10 NOV 2026</span>
+            <span class="telemetry-label">DEVICE COORDINATE:</span>
+            <span class="telemetry-value" id="tva-active-chrono-coord">TEMPAD-001 // 10 NOV 2026</span>
           </div>
           <div class="telemetry-item telemetry-hint">
-            <span class="telemetry-key">[TVA DIRECTIVE]</span>
-            <span class="telemetry-text">Hover or tap any portal checkpoint to inspect classified event records</span>
+            <span class="telemetry-key">[TEMPAD DIRECTIVE]</span>
+            <span class="telemetry-text">Select or hover TemPad checkpoints to unseal holographic dossiers</span>
           </div>
         </div>
 
-        <!-- Serpentine Desktop Visual Track (Horizontal S-Curve Path) -->
+        <!-- Serpentine Desktop Visual Track (Horizontal Winding S-Curve Route) -->
         <div class="tva-serpentine-wrapper">
           <!-- Continuous Golden Temporal Energy SVG Path -->
           <svg class="tva-serpentine-svg" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1700,11 +1700,19 @@
                 <stop offset="100%" stop-color="#F2B64B" />
               </linearGradient>
 
+              <!-- Surge Illuminated Segment Gradient -->
+              <linearGradient id="tvaSurgeEnergyGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FFF5D6" />
+                <stop offset="40%" stop-color="#F2B64B" />
+                <stop offset="80%" stop-color="#E99527" />
+                <stop offset="100%" stop-color="#F2B64B" />
+              </linearGradient>
+
               <!-- Subtle Ambient Track Gradient -->
               <linearGradient id="tvaBaseTrackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="rgba(233, 149, 39, 0.2)" />
-                <stop offset="50%" stop-color="rgba(242, 182, 75, 0.35)" />
-                <stop offset="100%" stop-color="rgba(233, 149, 39, 0.2)" />
+                <stop offset="0%" stop-color="rgba(233, 149, 39, 0.22)" />
+                <stop offset="50%" stop-color="rgba(242, 182, 75, 0.38)" />
+                <stop offset="100%" stop-color="rgba(233, 149, 39, 0.22)" />
               </linearGradient>
 
               <!-- Temporal Bloom Glow Filter -->
@@ -1729,14 +1737,21 @@
                   class="tva-serpentine-active-path"
                   d="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
 
+            <!-- Individual Interactive Surge Segments between TemPads (illuminate more brightly on selection) -->
+            <path id="tempadSeg1" class="tva-tempad-segment" d="M 120 150 C 260 140, 460 160, 600 150" />
+            <path id="tempadSeg2" class="tva-tempad-segment" d="M 600 150 C 740 140, 940 160, 1080 150" />
+            <path id="tempadSeg3" class="tva-tempad-segment" d="M 1080 150 C 1175 145, 1175 375, 1080 370" />
+            <path id="tempadSeg4" class="tva-tempad-segment" d="M 1080 370 C 940 360, 740 380, 600 370" />
+            <path id="tempadSeg5" class="tva-tempad-segment" d="M 600 370 C 460 360, 260 380, 120 370" />
+
             <!-- Directional Flow Indicators along trajectory -->
-            <!-- M1 -> M2 (Row 1: moving east) -->
+            <!-- Checkpoint 1 -> 2 (Row 1: moving east) -->
             <g class="tva-flow-arrow flow-arrow-1" transform="translate(360, 148)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
-            <!-- M2 -> M3 (Row 1: moving east) -->
+            <!-- Checkpoint 2 -> 3 (Row 1: moving east) -->
             <g class="tva-flow-arrow flow-arrow-2" transform="translate(840, 148)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -1748,19 +1763,19 @@
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
-            <!-- M4 -> M5 (Row 2: returning west) -->
+            <!-- Checkpoint 4 -> 5 (Row 2: returning west) -->
             <g class="tva-flow-arrow flow-arrow-4" transform="translate(840, 370) rotate(180)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
-            <!-- M5 -> M6 (Row 2: returning west to Final Convergence) -->
+            <!-- Checkpoint 5 -> 6 (Row 2: returning west to Final Convergence) -->
             <g class="tva-flow-arrow flow-arrow-5" transform="translate(360, 370) rotate(180)">
               <path d="M -8 -5 L 0 0 L -8 5" fill="none" stroke="#E99527" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M -16 -5 L -8 0 L -16 5" fill="none" stroke="rgba(242, 182, 75, 0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </g>
 
-            <!-- Traveling Golden Temporal Sparks (continuous organic pulses along path) -->
+            <!-- Traveling Golden Temporal Sparks (continuous pulses along path) -->
             <circle class="tva-particle-spark spark-primary" r="4.5" fill="#F2B64B" filter="url(#tvaTemporalBloom)">
               <animateMotion dur="10s" repeatCount="indefinite" path="M 120 150 C 260 140, 460 160, 600 150 C 740 140, 940 160, 1080 150 C 1175 145, 1175 375, 1080 370 C 940 360, 740 380, 600 370 C 460 360, 260 380, 120 370" />
             </circle>
@@ -1769,21 +1784,21 @@
             </circle>
           </svg>
 
-          <!-- 6 TVA Milestone Checkpoint Nodes Placed Along The Serpentine Track -->
+          <!-- 6 Miniature Holographic TemPad Checkpoints Along The Serpentine Track -->
 
-          <!-- MILESTONE 01 (Row 1 - Left) -->
+          <!-- CHECKPOINT 01 (Row 1 - Left) -->
           <div class="tva-milestone-node node-pos-1 label-pos-top"
                data-milestone="1"
-               data-chrono="TVA-01"
+               data-device="TEMPAD-001"
                tabindex="0"
                role="button"
                aria-expanded="false"
-               aria-label="Milestone 01: 10 November 2026, The Registration Window Opens">
+               aria-label="Checkpoint 01: 10 November 2026, The Registration Window Opens">
             
-            <!-- Persistent Primary Readable Information Label (Top of Portal) -->
+            <!-- Persistent Primary Readable Information Label (Top of TemPad) -->
             <div class="milestone-primary-badge">
               <div class="badge-chrono-tag">
-                <span class="chrono-code">TVA-01</span>
+                <span class="chrono-code">TEMPAD-001</span>
                 <span class="status-stamp">REGISTRATION OPENING</span>
               </div>
               <div class="badge-date-row">
@@ -1794,27 +1809,58 @@
               <div class="badge-stem-connector" aria-hidden="true"></div>
             </div>
 
-            <!-- TVA Circular Temporal Portal Checkpoint -->
-            <div class="tva-temporal-portal" aria-hidden="true">
-              <div class="portal-halo"></div>
-              <div class="portal-outer-ring">
-                <span class="portal-ring-notch notch-0"></span>
-                <span class="portal-ring-notch notch-90"></span>
-                <span class="portal-ring-notch notch-180"></span>
-                <span class="portal-ring-notch notch-270"></span>
+            <!-- Miniature Futuristic Holographic TemPad Interface -->
+            <div class="tva-tempad-device" aria-hidden="true">
+              <div class="tempad-chassis-bezel">
+                <span class="tempad-screw screw-tl"></span>
+                <span class="tempad-screw screw-tr"></span>
+                <span class="tempad-screw screw-bl"></span>
+                <span class="tempad-screw screw-br"></span>
+                <span class="tempad-label-brand">TEMPAD</span>
+                <span class="tempad-status-dot"></span>
               </div>
-              <div class="portal-middle-ring"></div>
-              <div class="portal-inner-ring"></div>
-              <div class="portal-singularity"></div>
-              <div class="portal-milestone-num">01</div>
+              <div class="tempad-holo-field"></div>
+              
+              <!-- 12 Fine Radial Indicators around Circumference -->
+              <div class="tempad-radial-ticks">
+                <span class="radial-tick tick-1"></span>
+                <span class="radial-tick tick-2"></span>
+                <span class="radial-tick tick-3"></span>
+                <span class="radial-tick tick-4"></span>
+                <span class="radial-tick tick-5"></span>
+                <span class="radial-tick tick-6"></span>
+                <span class="radial-tick tick-7"></span>
+                <span class="radial-tick tick-8"></span>
+                <span class="radial-tick tick-9"></span>
+                <span class="radial-tick tick-10"></span>
+                <span class="radial-tick tick-11"></span>
+                <span class="radial-tick tick-12"></span>
+              </div>
+
+              <!-- Rotating Outer Concentric Ring -->
+              <div class="tempad-ring-outer"></div>
+              <!-- Counter-Rotating Middle Concentric Reticle Ring -->
+              <div class="tempad-ring-middle"></div>
+              
+              <!-- Inner Holographic Dial Screen with Scanlines & Central Milestone Identifier -->
+              <div class="tempad-dial-inner">
+                <div class="tempad-scanlines"></div>
+                <span class="tempad-milestone-digit">01</span>
+              </div>
+
+              <!-- Small Central Glowing Orange Core -->
+              <div class="tempad-energy-core"></div>
+              
+              <!-- Device Reference Tag -->
+              <div class="tempad-id-stamp">TEMPAD-001</div>
             </div>
 
-            <!-- Floating TVA Classified Event Record Dossier (Hover / Active View) -->
-            <div class="tva-classified-dossier dossier-align-right" role="dialog" aria-label="Classified Event Record TVA-01">
+            <!-- Floating Holographic TVA TemPad Event Dossier -->
+            <div class="tva-classified-dossier dossier-align-right" role="dialog" aria-label="TemPad Dossier 001">
               <div class="dossier-scanner-bar" aria-hidden="true"></div>
               <div class="dossier-header">
                 <div class="dossier-badge-wrap">
-                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-01</span>
+                  <span class="dossier-id-tag">TVA TEMPAD TRANSMISSION // TEMPAD-001</span>
                   <span class="dossier-status-pill">REGISTRATION OPENING</span>
                 </div>
                 <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
@@ -1829,7 +1875,7 @@
                 <p class="dossier-description">The OVERCLOCK journey begins. Assemble your team, complete your registration and prepare to enter the innovation timeline.</p>
 
                 <div class="dossier-directives">
-                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <div class="directives-label">ADDITIONAL DETAILS & DIRECTIVES:</div>
                   <ul class="directives-list">
                     <li><span class="directive-marker">▹</span>Registration officially opens.</li>
                     <li><span class="directive-marker">▹</span>Teams can begin registering for OVERCLOCK.</li>
@@ -1852,41 +1898,65 @@
               </div>
 
               <div class="dossier-footer">
-                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-01 // SACRED TIMELINE</span>
-                <span class="dossier-timestamp">ST-COORD: 2026.11.10</span>
+                <span class="dossier-chrono-ref">DEVICE REFERENCE: TEMPAD-001</span>
+                <span class="dossier-timestamp">STATUS: CONFIRMED</span>
               </div>
             </div>
           </div>
 
-          <!-- MILESTONE 02 (Row 1 - Center) -->
-          <div class="tva-milestone-node node-pos-2 label-pos-bottom"
+          <!-- CHECKPOINT 02 (Row 1 - Center) -->
+          <div class="tva-milestone-node node-pos-2 label-pos-top"
                data-milestone="2"
-               data-chrono="TVA-02"
+               data-device="TEMPAD-002"
                tabindex="0"
                role="button"
                aria-expanded="false"
-               aria-label="Milestone 02: 1 December 2026, The Problem Statements Are Unsealed">
+               aria-label="Checkpoint 02: 1 December 2026, The Problem Statements Are Unsealed">
             
-            <!-- TVA Circular Temporal Portal Checkpoint -->
-            <div class="tva-temporal-portal" aria-hidden="true">
-              <div class="portal-halo"></div>
-              <div class="portal-outer-ring">
-                <span class="portal-ring-notch notch-0"></span>
-                <span class="portal-ring-notch notch-90"></span>
-                <span class="portal-ring-notch notch-180"></span>
-                <span class="portal-ring-notch notch-270"></span>
+            <!-- Miniature Futuristic Holographic TemPad Interface -->
+            <div class="tva-tempad-device" aria-hidden="true">
+              <div class="tempad-chassis-bezel">
+                <span class="tempad-screw screw-tl"></span>
+                <span class="tempad-screw screw-tr"></span>
+                <span class="tempad-screw screw-bl"></span>
+                <span class="tempad-screw screw-br"></span>
+                <span class="tempad-label-brand">TEMPAD</span>
+                <span class="tempad-status-dot"></span>
               </div>
-              <div class="portal-middle-ring"></div>
-              <div class="portal-inner-ring"></div>
-              <div class="portal-singularity"></div>
-              <div class="portal-milestone-num">02</div>
+              <div class="tempad-holo-field"></div>
+              
+              <div class="tempad-radial-ticks">
+                <span class="radial-tick tick-1"></span>
+                <span class="radial-tick tick-2"></span>
+                <span class="radial-tick tick-3"></span>
+                <span class="radial-tick tick-4"></span>
+                <span class="radial-tick tick-5"></span>
+                <span class="radial-tick tick-6"></span>
+                <span class="radial-tick tick-7"></span>
+                <span class="radial-tick tick-8"></span>
+                <span class="radial-tick tick-9"></span>
+                <span class="radial-tick tick-10"></span>
+                <span class="radial-tick tick-11"></span>
+                <span class="radial-tick tick-12"></span>
+              </div>
+
+              <div class="tempad-ring-outer"></div>
+              <div class="tempad-ring-middle"></div>
+              
+              <div class="tempad-dial-inner">
+                <div class="tempad-scanlines"></div>
+                <span class="tempad-milestone-digit">02</span>
+              </div>
+
+              <div class="tempad-energy-core"></div>
+              <div class="tempad-id-stamp">TEMPAD-002</div>
             </div>
 
-            <!-- Persistent Primary Readable Information Label (Bottom of Portal) -->
+            <!-- Persistent Primary Readable Information Label (Bottom of TemPad) -->
             <div class="milestone-primary-badge">
               <div class="badge-stem-connector" aria-hidden="true"></div>
               <div class="badge-chrono-tag">
-                <span class="chrono-code">TVA-02</span>
+                <span class="chrono-code">TEMPAD-002</span>
                 <span class="status-stamp">CHALLENGES REVEALED</span>
               </div>
               <div class="badge-date-row">
@@ -1896,12 +1966,12 @@
               <h3 class="badge-title">THE PROBLEM STATEMENTS ARE UNSEALED</h3>
             </div>
 
-            <!-- Floating TVA Classified Event Record Dossier -->
-            <div class="tva-classified-dossier dossier-align-center" role="dialog" aria-label="Classified Event Record TVA-02">
+            <!-- Floating Holographic TVA TemPad Event Dossier -->
+            <div class="tva-classified-dossier dossier-align-center" role="dialog" aria-label="TemPad Dossier 002">
               <div class="dossier-scanner-bar" aria-hidden="true"></div>
               <div class="dossier-header">
                 <div class="dossier-badge-wrap">
-                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-02</span>
+                  <span class="dossier-id-tag">TVA TEMPAD TRANSMISSION // TEMPAD-002</span>
                   <span class="dossier-status-pill">CHALLENGES REVEALED</span>
                 </div>
                 <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
@@ -1916,7 +1986,7 @@
                 <p class="dossier-description">The TVA has identified six domains of innovation. The challenge statements are now revealed. Discover your mission and choose the problem your team is ready to solve.</p>
 
                 <div class="dossier-directives">
-                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <div class="directives-label">ADDITIONAL DETAILS & DIRECTIVES:</div>
                   <ul class="directives-list">
                     <li><span class="directive-marker">▹</span>Problem statements are officially released.</li>
                     <li><span class="directive-marker">▹</span>Participants can explore all six challenge domains.</li>
@@ -1926,25 +1996,25 @@
               </div>
 
               <div class="dossier-footer">
-                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-02 // SACRED TIMELINE</span>
-                <span class="dossier-timestamp">ST-COORD: 2026.12.01</span>
+                <span class="dossier-chrono-ref">DEVICE REFERENCE: TEMPAD-002</span>
+                <span class="dossier-timestamp">STATUS: CONFIRMED</span>
               </div>
             </div>
           </div>
 
-          <!-- MILESTONE 03 (Row 1 - Right) -->
+          <!-- CHECKPOINT 03 (Row 1 - Right) -->
           <div class="tva-milestone-node node-pos-3 label-pos-top"
                data-milestone="3"
-               data-chrono="TVA-03"
+               data-device="TEMPAD-003"
                tabindex="0"
                role="button"
                aria-expanded="false"
-               aria-label="Milestone 03: 10–15 December 2026, The Proposal Submission Window">
+               aria-label="Checkpoint 03: 10–15 December 2026, The Proposal Submission Window">
             
-            <!-- Persistent Primary Readable Information Label (Top of Portal) -->
+            <!-- Persistent Primary Readable Information Label (Top of TemPad) -->
             <div class="milestone-primary-badge">
               <div class="badge-chrono-tag">
-                <span class="chrono-code">TVA-03</span>
+                <span class="chrono-code">TEMPAD-003</span>
                 <span class="status-stamp">SUBMISSION PHASE</span>
               </div>
               <div class="badge-date-row">
@@ -1955,27 +2025,51 @@
               <div class="badge-stem-connector" aria-hidden="true"></div>
             </div>
 
-            <!-- TVA Circular Temporal Portal Checkpoint -->
-            <div class="tva-temporal-portal" aria-hidden="true">
-              <div class="portal-halo"></div>
-              <div class="portal-outer-ring">
-                <span class="portal-ring-notch notch-0"></span>
-                <span class="portal-ring-notch notch-90"></span>
-                <span class="portal-ring-notch notch-180"></span>
-                <span class="portal-ring-notch notch-270"></span>
+            <!-- Miniature Futuristic Holographic TemPad Interface -->
+            <div class="tva-tempad-device" aria-hidden="true">
+              <div class="tempad-chassis-bezel">
+                <span class="tempad-screw screw-tl"></span>
+                <span class="tempad-screw screw-tr"></span>
+                <span class="tempad-screw screw-bl"></span>
+                <span class="tempad-screw screw-br"></span>
+                <span class="tempad-label-brand">TEMPAD</span>
+                <span class="tempad-status-dot"></span>
               </div>
-              <div class="portal-middle-ring"></div>
-              <div class="portal-inner-ring"></div>
-              <div class="portal-singularity"></div>
-              <div class="portal-milestone-num">03</div>
+              <div class="tempad-holo-field"></div>
+              
+              <div class="tempad-radial-ticks">
+                <span class="radial-tick tick-1"></span>
+                <span class="radial-tick tick-2"></span>
+                <span class="radial-tick tick-3"></span>
+                <span class="radial-tick tick-4"></span>
+                <span class="radial-tick tick-5"></span>
+                <span class="radial-tick tick-6"></span>
+                <span class="radial-tick tick-7"></span>
+                <span class="radial-tick tick-8"></span>
+                <span class="radial-tick tick-9"></span>
+                <span class="radial-tick tick-10"></span>
+                <span class="radial-tick tick-11"></span>
+                <span class="radial-tick tick-12"></span>
+              </div>
+
+              <div class="tempad-ring-outer"></div>
+              <div class="tempad-ring-middle"></div>
+              
+              <div class="tempad-dial-inner">
+                <div class="tempad-scanlines"></div>
+                <span class="tempad-milestone-digit">03</span>
+              </div>
+
+              <div class="tempad-energy-core"></div>
+              <div class="tempad-id-stamp">TEMPAD-003</div>
             </div>
 
-            <!-- Floating TVA Classified Event Record Dossier -->
-            <div class="tva-classified-dossier dossier-align-left" role="dialog" aria-label="Classified Event Record TVA-03">
+            <!-- Floating Holographic TVA TemPad Event Dossier -->
+            <div class="tva-classified-dossier dossier-align-left" role="dialog" aria-label="TemPad Dossier 003">
               <div class="dossier-scanner-bar" aria-hidden="true"></div>
               <div class="dossier-header">
                 <div class="dossier-badge-wrap">
-                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-03</span>
+                  <span class="dossier-id-tag">TVA TEMPAD TRANSMISSION // TEMPAD-003</span>
                   <span class="dossier-status-pill">SUBMISSION PHASE</span>
                 </div>
                 <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
@@ -1990,51 +2084,75 @@
                 <p class="dossier-description">Every mission begins with an idea. Submit your team's presentation and demonstrate how your solution can make an impact.</p>
 
                 <div class="dossier-directives">
-                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <div class="directives-label">ADDITIONAL DETAILS & DIRECTIVES:</div>
                   <ul class="directives-list">
-                    <li><span class="directive-marker">▹</span>PPT submission window opens on 10 December.</li>
+                    <li><span class="directive-marker">▹</span>PPT submission begins on 10 December.</li>
                     <li><span class="directive-marker">▹</span>Final submission deadline is 15 December.</li>
-                    <li><span class="directive-marker">▹</span>Teams must submit their idea presentation within the specified submission period.</li>
+                    <li><span class="directive-marker">▹</span>Teams must submit their idea presentations within the specified submission period.</li>
                   </ul>
                 </div>
               </div>
 
               <div class="dossier-footer">
-                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-03 // SACRED TIMELINE</span>
-                <span class="dossier-timestamp">ST-COORD: 2026.12.10–15</span>
+                <span class="dossier-chrono-ref">DEVICE REFERENCE: TEMPAD-003</span>
+                <span class="dossier-timestamp">STATUS: 5-DAY WINDOW</span>
               </div>
             </div>
           </div>
 
-          <!-- MILESTONE 04 (Row 2 - Right) -->
+          <!-- CHECKPOINT 04 (Row 2 - Right) -->
           <div class="tva-milestone-node node-pos-4 label-pos-bottom"
                data-milestone="4"
-               data-chrono="TVA-04"
+               data-device="TEMPAD-004"
                tabindex="0"
                role="button"
                aria-expanded="false"
-               aria-label="Milestone 04: 22 December 2026, The 25 Teams Are Identified">
+               aria-label="Checkpoint 04: 22 December 2026, The 25 Teams Are Identified">
             
-            <!-- TVA Circular Temporal Portal Checkpoint -->
-            <div class="tva-temporal-portal" aria-hidden="true">
-              <div class="portal-halo"></div>
-              <div class="portal-outer-ring">
-                <span class="portal-ring-notch notch-0"></span>
-                <span class="portal-ring-notch notch-90"></span>
-                <span class="portal-ring-notch notch-180"></span>
-                <span class="portal-ring-notch notch-270"></span>
+            <!-- Miniature Futuristic Holographic TemPad Interface -->
+            <div class="tva-tempad-device" aria-hidden="true">
+              <div class="tempad-chassis-bezel">
+                <span class="tempad-screw screw-tl"></span>
+                <span class="tempad-screw screw-tr"></span>
+                <span class="tempad-screw screw-bl"></span>
+                <span class="tempad-screw screw-br"></span>
+                <span class="tempad-label-brand">TEMPAD</span>
+                <span class="tempad-status-dot"></span>
               </div>
-              <div class="portal-middle-ring"></div>
-              <div class="portal-inner-ring"></div>
-              <div class="portal-singularity"></div>
-              <div class="portal-milestone-num">04</div>
+              <div class="tempad-holo-field"></div>
+              
+              <div class="tempad-radial-ticks">
+                <span class="radial-tick tick-1"></span>
+                <span class="radial-tick tick-2"></span>
+                <span class="radial-tick tick-3"></span>
+                <span class="radial-tick tick-4"></span>
+                <span class="radial-tick tick-5"></span>
+                <span class="radial-tick tick-6"></span>
+                <span class="radial-tick tick-7"></span>
+                <span class="radial-tick tick-8"></span>
+                <span class="radial-tick tick-9"></span>
+                <span class="radial-tick tick-10"></span>
+                <span class="radial-tick tick-11"></span>
+                <span class="radial-tick tick-12"></span>
+              </div>
+
+              <div class="tempad-ring-outer"></div>
+              <div class="tempad-ring-middle"></div>
+              
+              <div class="tempad-dial-inner">
+                <div class="tempad-scanlines"></div>
+                <span class="tempad-milestone-digit">04</span>
+              </div>
+
+              <div class="tempad-energy-core"></div>
+              <div class="tempad-id-stamp">TEMPAD-004</div>
             </div>
 
-            <!-- Persistent Primary Readable Information Label (Bottom of Portal) -->
+            <!-- Persistent Primary Readable Information Label (Bottom of TemPad) -->
             <div class="milestone-primary-badge">
               <div class="badge-stem-connector" aria-hidden="true"></div>
               <div class="badge-chrono-tag">
-                <span class="chrono-code">TVA-04</span>
+                <span class="chrono-code">TEMPAD-004</span>
                 <span class="status-stamp">SHORTLISTING RESULTS</span>
               </div>
               <div class="badge-date-row">
@@ -2044,12 +2162,12 @@
               <h3 class="badge-title">THE 25 TEAMS ARE IDENTIFIED</h3>
             </div>
 
-            <!-- Floating TVA Classified Event Record Dossier -->
-            <div class="tva-classified-dossier dossier-align-left" role="dialog" aria-label="Classified Event Record TVA-04">
+            <!-- Floating Holographic TVA TemPad Event Dossier -->
+            <div class="tva-classified-dossier dossier-align-left" role="dialog" aria-label="TemPad Dossier 004">
               <div class="dossier-scanner-bar" aria-hidden="true"></div>
               <div class="dossier-header">
                 <div class="dossier-badge-wrap">
-                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-04</span>
+                  <span class="dossier-id-tag">TVA TEMPAD TRANSMISSION // TEMPAD-004</span>
                   <span class="dossier-status-pill">SHORTLISTING RESULTS</span>
                 </div>
                 <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
@@ -2064,7 +2182,7 @@
                 <p class="dossier-description">Following the evaluation of submitted proposals, 25 teams will be selected to advance to the next stage of the OVERCLOCK timeline.</p>
 
                 <div class="dossier-directives">
-                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <div class="directives-label">ADDITIONAL DETAILS & DIRECTIVES:</div>
                   <ul class="directives-list">
                     <li><span class="directive-marker">▹</span>Shortlisting results are announced.</li>
                     <li><span class="directive-marker">▹</span>A total of 25 teams qualify for the next stage.</li>
@@ -2074,25 +2192,25 @@
               </div>
 
               <div class="dossier-footer">
-                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-04 // SACRED TIMELINE</span>
-                <span class="dossier-timestamp">ST-COORD: 2026.12.22</span>
+                <span class="dossier-chrono-ref">DEVICE REFERENCE: TEMPAD-004</span>
+                <span class="dossier-timestamp">STATUS: CONFIRMED</span>
               </div>
             </div>
           </div>
 
-          <!-- MILESTONE 05 (Row 2 - Center) -->
-          <div class="tva-milestone-node node-pos-5 label-pos-top"
+          <!-- CHECKPOINT 05 (Row 2 - Center) -->
+          <div class="tva-milestone-node node-pos-5 label-pos-bottom"
                data-milestone="5"
-               data-chrono="TVA-05"
+               data-device="TEMPAD-005"
                tabindex="0"
                role="button"
                aria-expanded="false"
-               aria-label="Milestone 05: 22 January 2027, The Final Challenges Are Revealed">
+               aria-label="Checkpoint 05: 22 January 2027, The Final Challenges Are Revealed">
             
-            <!-- Persistent Primary Readable Information Label (Top of Portal) -->
+            <!-- Persistent Primary Readable Information Label (Top of TemPad) -->
             <div class="milestone-primary-badge">
               <div class="badge-chrono-tag">
-                <span class="chrono-code">TVA-05</span>
+                <span class="chrono-code">TEMPAD-005</span>
                 <span class="status-stamp">FINAL MISSION RELEASED</span>
               </div>
               <div class="badge-date-row">
@@ -2103,27 +2221,51 @@
               <div class="badge-stem-connector" aria-hidden="true"></div>
             </div>
 
-            <!-- TVA Circular Temporal Portal Checkpoint -->
-            <div class="tva-temporal-portal" aria-hidden="true">
-              <div class="portal-halo"></div>
-              <div class="portal-outer-ring">
-                <span class="portal-ring-notch notch-0"></span>
-                <span class="portal-ring-notch notch-90"></span>
-                <span class="portal-ring-notch notch-180"></span>
-                <span class="portal-ring-notch notch-270"></span>
+            <!-- Miniature Futuristic Holographic TemPad Interface -->
+            <div class="tva-tempad-device" aria-hidden="true">
+              <div class="tempad-chassis-bezel">
+                <span class="tempad-screw screw-tl"></span>
+                <span class="tempad-screw screw-tr"></span>
+                <span class="tempad-screw screw-bl"></span>
+                <span class="tempad-screw screw-br"></span>
+                <span class="tempad-label-brand">TEMPAD</span>
+                <span class="tempad-status-dot"></span>
               </div>
-              <div class="portal-middle-ring"></div>
-              <div class="portal-inner-ring"></div>
-              <div class="portal-singularity"></div>
-              <div class="portal-milestone-num">05</div>
+              <div class="tempad-holo-field"></div>
+              
+              <div class="tempad-radial-ticks">
+                <span class="radial-tick tick-1"></span>
+                <span class="radial-tick tick-2"></span>
+                <span class="radial-tick tick-3"></span>
+                <span class="radial-tick tick-4"></span>
+                <span class="radial-tick tick-5"></span>
+                <span class="radial-tick tick-6"></span>
+                <span class="radial-tick tick-7"></span>
+                <span class="radial-tick tick-8"></span>
+                <span class="radial-tick tick-9"></span>
+                <span class="radial-tick tick-10"></span>
+                <span class="radial-tick tick-11"></span>
+                <span class="radial-tick tick-12"></span>
+              </div>
+
+              <div class="tempad-ring-outer"></div>
+              <div class="tempad-ring-middle"></div>
+              
+              <div class="tempad-dial-inner">
+                <div class="tempad-scanlines"></div>
+                <span class="tempad-milestone-digit">05</span>
+              </div>
+
+              <div class="tempad-energy-core"></div>
+              <div class="tempad-id-stamp">TEMPAD-005</div>
             </div>
 
-            <!-- Floating TVA Classified Event Record Dossier -->
-            <div class="tva-classified-dossier dossier-align-center" role="dialog" aria-label="Classified Event Record TVA-05">
+            <!-- Floating Holographic TVA TemPad Event Dossier -->
+            <div class="tva-classified-dossier dossier-align-center" role="dialog" aria-label="TemPad Dossier 005">
               <div class="dossier-scanner-bar" aria-hidden="true"></div>
               <div class="dossier-header">
                 <div class="dossier-badge-wrap">
-                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-05</span>
+                  <span class="dossier-id-tag">TVA TEMPAD TRANSMISSION // TEMPAD-005</span>
                   <span class="dossier-status-pill">FINAL MISSION RELEASED</span>
                 </div>
                 <div class="dossier-clearance">CLEARANCE: LEVEL-5</div>
@@ -2138,7 +2280,7 @@
                 <p class="dossier-description">For the selected teams, the final mission begins. The final problem statements are released, setting the stage for the ultimate innovation challenge.</p>
 
                 <div class="dossier-directives">
-                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <div class="directives-label">ADDITIONAL DETAILS & DIRECTIVES:</div>
                   <ul class="directives-list">
                     <li><span class="directive-marker">▹</span>Final problem statements are released.</li>
                     <li><span class="directive-marker">▹</span>This milestone applies only to the 25 shortlisted teams.</li>
@@ -2148,46 +2290,67 @@
               </div>
 
               <div class="dossier-footer">
-                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-05 // SACRED TIMELINE</span>
-                <span class="dossier-timestamp">ST-COORD: 2027.01.22</span>
+                <span class="dossier-chrono-ref">DEVICE REFERENCE: TEMPAD-005</span>
+                <span class="dossier-timestamp">STATUS: CONFIRMED</span>
               </div>
             </div>
           </div>
 
-          <!-- MILESTONE 06 (Row 2 - Left: The Culmination Point) -->
+          <!-- CHECKPOINT 06 (Row 2 - Left: The Culmination Point) -->
           <div class="tva-milestone-node node-pos-6 label-pos-bottom milestone-convergence-target"
                data-milestone="6"
-               data-chrono="TVA-06"
+               data-device="TEMPAD-006"
                tabindex="0"
                role="button"
                aria-expanded="false"
-               aria-label="Milestone 06: 29–30 January 2027, The Final Convergence – OVERCLOCK">
+               aria-label="Checkpoint 06: 29–30 January 2027, The Final Convergence – OVERCLOCK">
             
-            <!-- TVA Circular Temporal Portal Checkpoint (Grand Golden Convergence Effect) -->
-            <div class="tva-temporal-portal portal-convergence" aria-hidden="true">
-              <div class="portal-halo halo-convergence"></div>
-              <div class="portal-radiance-ring"></div>
-              <div class="portal-outer-ring">
-                <span class="portal-ring-notch notch-0"></span>
-                <span class="portal-ring-notch notch-45"></span>
-                <span class="portal-ring-notch notch-90"></span>
-                <span class="portal-ring-notch notch-135"></span>
-                <span class="portal-ring-notch notch-180"></span>
-                <span class="portal-ring-notch notch-225"></span>
-                <span class="portal-ring-notch notch-270"></span>
-                <span class="portal-ring-notch notch-315"></span>
+            <!-- Miniature Futuristic Holographic TemPad Interface (Culmination Grand Golden Aureole) -->
+            <div class="tva-tempad-device tempad-convergence" aria-hidden="true">
+              <div class="tempad-chassis-bezel chassis-convergence">
+                <span class="tempad-screw screw-tl"></span>
+                <span class="tempad-screw screw-tr"></span>
+                <span class="tempad-screw screw-bl"></span>
+                <span class="tempad-screw screw-br"></span>
+                <span class="tempad-label-brand">FINAL GATEWAY</span>
+                <span class="tempad-status-dot dot-convergence"></span>
               </div>
-              <div class="portal-middle-ring"></div>
-              <div class="portal-inner-ring"></div>
-              <div class="portal-singularity singularity-convergence"></div>
-              <div class="portal-milestone-num highlight-num">06</div>
+              <div class="tempad-holo-field halo-convergence"></div>
+              <div class="tempad-radiance-ring"></div>
+              
+              <!-- 24 High-Density Radial Indicators for Culmination -->
+              <div class="tempad-radial-ticks ticks-dense">
+                <span class="radial-tick tick-1"></span>
+                <span class="radial-tick tick-2"></span>
+                <span class="radial-tick tick-3"></span>
+                <span class="radial-tick tick-4"></span>
+                <span class="radial-tick tick-5"></span>
+                <span class="radial-tick tick-6"></span>
+                <span class="radial-tick tick-7"></span>
+                <span class="radial-tick tick-8"></span>
+                <span class="radial-tick tick-9"></span>
+                <span class="radial-tick tick-10"></span>
+                <span class="radial-tick tick-11"></span>
+                <span class="radial-tick tick-12"></span>
+              </div>
+
+              <div class="tempad-ring-outer ring-outer-convergence"></div>
+              <div class="tempad-ring-middle ring-middle-convergence"></div>
+              
+              <div class="tempad-dial-inner dial-convergence">
+                <div class="tempad-scanlines"></div>
+                <span class="tempad-milestone-digit highlight-num">06</span>
+              </div>
+
+              <div class="tempad-energy-core singularity-convergence"></div>
+              <div class="tempad-id-stamp stamp-gold">TEMPAD-006</div>
             </div>
 
-            <!-- Persistent Primary Readable Information Label (Bottom of Portal) -->
+            <!-- Persistent Primary Readable Information Label (Bottom of TemPad) -->
             <div class="milestone-primary-badge badge-convergence">
               <div class="badge-stem-connector" aria-hidden="true"></div>
               <div class="badge-chrono-tag">
-                <span class="chrono-code highlight">TVA-06 · TARGET</span>
+                <span class="chrono-code highlight">TEMPAD-006 · TARGET</span>
                 <span class="status-stamp stamp-gold">FINAL ROUND</span>
               </div>
               <div class="badge-date-row">
@@ -2197,12 +2360,12 @@
               <h3 class="badge-title">THE FINAL CONVERGENCE – OVERCLOCK</h3>
             </div>
 
-            <!-- Floating TVA Classified Event Record Dossier -->
-            <div class="tva-classified-dossier dossier-align-right dossier-convergence" role="dialog" aria-label="Classified Event Record TVA-06">
+            <!-- Floating Holographic TVA TemPad Event Dossier -->
+            <div class="tva-classified-dossier dossier-align-right dossier-convergence" role="dialog" aria-label="TemPad Dossier 006">
               <div class="dossier-scanner-bar scanner-gold" aria-hidden="true"></div>
               <div class="dossier-header">
                 <div class="dossier-badge-wrap">
-                  <span class="dossier-id-tag">TVA RECORD // CHRONO TVA-06</span>
+                  <span class="dossier-id-tag">TVA TEMPAD TRANSMISSION // TEMPAD-006</span>
                   <span class="dossier-status-pill pill-gold">FINAL CONVERGENCE</span>
                 </div>
                 <div class="dossier-clearance">CLEARANCE: CITADEL ACCESS</div>
@@ -2217,19 +2380,19 @@
                 <p class="dossier-description">The timelines converge. The selected teams come together at OVERCLOCK for the ultimate two-day final round. Ideas turn into action, innovation meets execution, and the final mission unfolds.</p>
 
                 <div class="dossier-directives">
-                  <div class="directives-label">DIRECTIVES & EVENT PROTOCOLS:</div>
+                  <div class="directives-label">ADDITIONAL DETAILS & DIRECTIVES:</div>
                   <ul class="directives-list">
-                    <li><span class="directive-marker">▹</span>Final round takes place over two days.</li>
+                    <li><span class="directive-marker">▹</span>The final round takes place over two days.</li>
                     <li><span class="directive-marker">▹</span>Dates: 29 and 30 January 2027.</li>
-                    <li><span class="directive-marker">▹</span>Only the shortlisted teams participate in this stage.</li>
+                    <li><span class="directive-marker">▹</span>Only shortlisted teams participate.</li>
                     <li><span class="directive-marker">▹</span>The final stage concludes the OVERCLOCK competition journey.</li>
                   </ul>
                 </div>
               </div>
 
               <div class="dossier-footer">
-                <span class="dossier-chrono-ref">CHRONO REFERENCE: TVA-06 // FINAL STAGE CONVERGENCE</span>
-                <span class="dossier-timestamp">ST-COORD: 2027.01.29–30</span>
+                <span class="dossier-chrono-ref">DEVICE REFERENCE: TEMPAD-006</span>
+                <span class="dossier-timestamp">STATUS: FINAL STAGE CONVERGENCE</span>
               </div>
             </div>
           </div>
@@ -2240,8 +2403,8 @@
         <div class="tva-telemetry-chamber" id="tva-telemetry-chamber" aria-live="polite">
           <div class="chamber-terminal-header">
             <span class="chamber-led"></span>
-            <span class="chamber-title">TVA CLASSIFIED DOSSIER ARCHIVE // SELECTED CHECKPOINT BRIEFING</span>
-            <span class="chamber-coords" id="chamber-coord-readout">TVA-01 // ACTIVE</span>
+            <span class="chamber-title">TVA TEMPAD HOLOGRAPHIC ARCHIVE // SELECTED CHECKPOINT DOSSIER</span>
+            <span class="chamber-coords" id="chamber-coord-readout">TEMPAD-001 // ACTIVE</span>
           </div>
           <div class="chamber-terminal-content" id="chamber-dynamic-content">
             <!-- Dynamically populated or mirrored from active checkpoint -->

@@ -2734,12 +2734,13 @@ body {
 }
 
 /* ==========================================================
-   05. TVA SACRED CHRONOLOGICAL SERPENTINE TIMELINE
-   Loki / TVA / Sacred Timeline Theme:
-   - Horizontal serpentine winding path (Row 1: M1->M2->M3, Row 2: M4<-M5<-M6)
-   - Glowing temporal circular portals with rotating concentric rings
-   - Continuous golden temporal energy path with animated pulses & sparks
-   - Classified TVA event dossiers with interactive hover & tap expansion
+   05. OVERCLOCK – TVA TEMPAD TEMPORAL NAVIGATION SYSTEM
+   Marvel Loki / TVA / TemPad-Inspired Aesthetic:
+   - Horizontal serpentine winding path (Row 1: 01->02->03, Row 2: 04<-05<-06)
+   - Miniature futuristic holographic TemPad checkpoints with concentric rings,
+     radial chronometric indicators, scanlines, and central glowing cores
+   - Dynamic path surge illumination connecting active checkpoints
+   - Transmitted holographic TemPad dossiers with viewport overflow protection
 ========================================================== */
 
 :root {
@@ -2770,21 +2771,21 @@ body {
   box-sizing: border-box;
 }
 
-/* --- TVA Telemetry Status Header Bar --- */
+/* --- TemPad Telemetry Status Header Bar --- */
 .tva-timeline-telemetry-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: rgba(16, 22, 18, 0.88);
-  border: 1px solid rgba(233, 149, 39, 0.35);
+  background: rgba(16, 22, 18, 0.90);
+  border: 1px solid rgba(233, 149, 39, 0.4);
   border-radius: 6px;
   padding: 10px 18px;
   margin-bottom: 30px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(233, 149, 39, 0.08);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6), inset 0 0 14px rgba(233, 149, 39, 0.1);
 }
 
 .telemetry-item {
@@ -2870,10 +2871,31 @@ body {
   transition: stroke-dashoffset 0.35s ease-out;
 }
 
+/* Individual Surge Segments Connecting Selected TemPads */
+.tva-tempad-segment {
+  fill: none;
+  stroke: url(#tvaSurgeEnergyGradient);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px #F2B64B) drop-shadow(0 0 16px rgba(233, 149, 39, 0.6));
+  opacity: 0;
+  transition: opacity 0.4s ease, stroke-width 0.4s ease;
+}
+
+.tva-tempad-segment.is-surge {
+  opacity: 1;
+  animation: segmentSurgeGlow 2s infinite ease-in-out alternate;
+}
+
+@keyframes segmentSurgeGlow {
+  0% { filter: drop-shadow(0 0 6px #F2B64B) drop-shadow(0 0 12px rgba(233, 149, 39, 0.5)); }
+  100% { filter: drop-shadow(0 0 12px #FFFFFF) drop-shadow(0 0 24px #E99527); }
+}
+
 /* Flow Direction Chevrons along Path */
 .tva-flow-arrow {
   opacity: 0.75;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .tva-temporal-timeline:hover .tva-flow-arrow {
@@ -2894,7 +2916,7 @@ body {
   fill: var(--tva-amber);
 }
 
-/* --- TVA Milestone Checkpoint Nodes --- */
+/* --- TVA TemPad Milestone Checkpoint Nodes --- */
 .tva-milestone-node {
   position: absolute;
   z-index: 10;
@@ -2911,14 +2933,20 @@ body {
               transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Revealed entrance animation triggered on entering section */
+.tva-milestone-node:hover,
+.tva-milestone-node:focus-within,
+.tva-milestone-node.is-active {
+  z-index: 120;
+}
+
+/* Revealed entrance state */
 .tva-milestone-node.is-revealed,
 .tva-temporal-timeline.timeline-active .tva-milestone-node {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Staggered entrance */
+/* Staggered node placements */
 .node-pos-1 { left: 10%; top: 28.8%; transition-delay: 0.1s; }
 .node-pos-2 { left: 50%; top: 28.8%; transition-delay: 0.25s; }
 .node-pos-3 { left: 90%; top: 28.8%; transition-delay: 0.4s; }
@@ -2927,15 +2955,17 @@ body {
 .node-pos-6 { left: 10%; top: 71.2%; transition-delay: 0.85s; }
 
 /* Focus outline for accessibility */
-.tva-milestone-node:focus-visible .tva-temporal-portal {
-  box-shadow: 0 0 0 3px var(--tva-teal), 0 0 20px var(--tva-amber);
+.tva-milestone-node:focus-visible .tva-tempad-device {
+  box-shadow: 0 0 0 3px var(--tva-teal), 0 0 24px var(--tva-amber);
 }
 
-/* --- Circular TVA Temporal Portal Checkpoint --- */
-.tva-temporal-portal {
+/* ==========================================================
+   MINIATURE FUTURISTIC HOLOGRAPHIC TEMPAD INTERFACE
+========================================================== */
+.tva-tempad-device {
   position: relative;
-  width: 58px;
-  height: 58px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2945,153 +2975,337 @@ body {
   user-select: none;
 }
 
-/* Portal Halo */
-.portal-halo {
+/* Metallic TemPad Chassis Outer Bezel */
+.tempad-chassis-bezel {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #251E17 60%, #15110D 100%);
+  border: 2px solid rgba(242, 182, 75, 0.65);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.9),
+              inset 0 0 8px rgba(0, 0, 0, 0.95),
+              0 0 12px rgba(233, 149, 39, 0.25);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Bezel Micro Screws */
+.tempad-screw {
+  position: absolute;
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: #B8923A;
+  box-shadow: inset 0.5px 0.5px 1px #000;
+}
+.screw-tl { top: 4px; left: 6px; }
+.screw-tr { top: 4px; right: 6px; }
+.screw-bl { bottom: 4px; left: 6px; }
+.screw-br { bottom: 4px; right: 6px; }
+
+/* Mini Technical Brand Label */
+.tempad-label-brand {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: var(--tva-teal);
+  letter-spacing: 0.08em;
+  background: rgba(16, 22, 18, 0.95);
+  padding: 1px 5px;
+  border: 1px solid rgba(53, 184, 166, 0.35);
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* Mini Status LED */
+.tempad-status-dot {
+  position: absolute;
+  bottom: -3px;
+  right: 12px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--tva-amber);
+  box-shadow: 0 0 6px var(--tva-amber);
+}
+
+/* Holographic Projection Ambient Field */
+.tempad-holo-field {
   position: absolute;
   inset: -14px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(242, 182, 75, 0.28) 0%, rgba(233, 149, 39, 0.1) 45%, transparent 70%);
-  opacity: 0.7;
+  background: radial-gradient(circle, rgba(242, 182, 75, 0.32) 0%, rgba(233, 149, 39, 0.12) 50%, transparent 72%);
+  opacity: 0.75;
   transition: opacity 0.4s ease, transform 0.4s ease;
   pointer-events: none;
 }
 
-/* Concentric Outer Ring with Tick Marks */
-.portal-outer-ring {
+/* 12 Fine Radial Indicators around Circumference */
+.tempad-radial-ticks {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1.8px dashed rgba(242, 182, 75, 0.65);
-  animation: portalSpinClockwise 24s linear infinite;
-  box-shadow: 0 0 10px rgba(233, 149, 39, 0.25);
-  transition: border-color 0.3s ease;
+  pointer-events: none;
+  z-index: 3;
 }
 
-/* Tick notches at 0, 90, 180, 270 degrees */
-.portal-ring-notch {
+.radial-tick {
   position: absolute;
-  width: 5px;
-  height: 2px;
-  background: var(--tva-gold);
+  top: 50%;
+  left: 50%;
+  width: 1.5px;
+  height: 4.5px;
+  background: rgba(242, 182, 75, 0.65);
   border-radius: 1px;
-}
-.notch-0   { top: -2px; left: calc(50% - 2.5px); width: 5px; height: 3px; }
-.notch-45  { top: 7px; right: 7px; transform: rotate(45deg); }
-.notch-90  { top: calc(50% - 1.5px); right: -2px; width: 3px; height: 5px; }
-.notch-135 { bottom: 7px; right: 7px; transform: rotate(-45deg); }
-.notch-180 { bottom: -2px; left: calc(50% - 2.5px); width: 5px; height: 3px; }
-.notch-225 { bottom: 7px; left: 7px; transform: rotate(45deg); }
-.notch-270 { top: calc(50% - 1.5px); left: -2px; width: 3px; height: 5px; }
-.notch-315 { top: 7px; left: 7px; transform: rotate(-45deg); }
-
-/* Concentric Middle Ring (Counter-rotating) */
-.portal-middle-ring {
-  position: absolute;
-  inset: 7px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(233, 149, 39, 0.55);
-  border-left-color: transparent;
-  border-right-color: transparent;
-  animation: portalSpinCounter 14s linear infinite;
+  transform-origin: center center;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, height 0.25s ease;
 }
 
-/* Concentric Inner Ring */
-.portal-inner-ring {
-  position: absolute;
-  inset: 14px;
-  border-radius: 50%;
-  border: 1.2px solid rgba(242, 182, 75, 0.85);
-  background: rgba(16, 22, 18, 0.85);
-}
+/* Position 12 Ticks at 30 degree increments */
+.tick-1  { transform: translate(-50%, -50%) rotate(0deg) translateY(-27px); }
+.tick-2  { transform: translate(-50%, -50%) rotate(30deg) translateY(-27px); }
+.tick-3  { transform: translate(-50%, -50%) rotate(60deg) translateY(-27px); }
+.tick-4  { transform: translate(-50%, -50%) rotate(90deg) translateY(-27px); }
+.tick-5  { transform: translate(-50%, -50%) rotate(120deg) translateY(-27px); }
+.tick-6  { transform: translate(-50%, -50%) rotate(150deg) translateY(-27px); }
+.tick-7  { transform: translate(-50%, -50%) rotate(180deg) translateY(-27px); }
+.tick-8  { transform: translate(-50%, -50%) rotate(210deg) translateY(-27px); }
+.tick-9  { transform: translate(-50%, -50%) rotate(240deg) translateY(-27px); }
+.tick-10 { transform: translate(-50%, -50%) rotate(270deg) translateY(-27px); }
+.tick-11 { transform: translate(-50%, -50%) rotate(300deg) translateY(-27px); }
+.tick-12 { transform: translate(-50%, -50%) rotate(330deg) translateY(-27px); }
 
-/* Bright Central Energy Singularity Core */
-.portal-singularity {
+/* Rotating Outer Concentric Ring */
+.tempad-ring-outer {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  inset: 5px;
   border-radius: 50%;
-  background: radial-gradient(circle, #FFFFFF 0%, var(--tva-gold) 45%, var(--tva-amber) 100%);
-  box-shadow: 0 0 12px #FFFFFF, 0 0 20px var(--tva-gold);
-  animation: singularityPulse 3.5s ease-in-out infinite alternate;
+  border: 1.4px dashed rgba(242, 182, 75, 0.75);
+  animation: portalSpinClockwise 28s linear infinite;
+  box-shadow: 0 0 8px rgba(233, 149, 39, 0.3);
   z-index: 2;
 }
 
-/* Checkpoint Number Label inside/overlay */
-.portal-milestone-num {
+/* Counter-Rotating Middle Concentric Reticle Ring */
+.tempad-ring-middle {
   position: absolute;
-  bottom: -18px;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--tva-gold);
-  letter-spacing: 0.1em;
+  inset: 11px;
+  border-radius: 50%;
+  border: 1.2px solid rgba(233, 149, 39, 0.65);
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  animation: portalSpinCounter 16s linear infinite;
+  z-index: 2;
+}
+
+/* Inner Holographic Display Dial with CRT Scanlines */
+.tempad-dial-inner {
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1A261E 0%, #101612 100%);
+  border: 1.2px solid rgba(242, 182, 75, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 3;
+}
+
+.tempad-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.45) 2px,
+    rgba(0, 0, 0, 0.45) 4px
+  );
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Prominent Central Milestone Number */
+.tempad-milestone-digit {
+  font-family: 'Barlow Condensed', 'Bebas Neue', var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--tva-cream);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 6px var(--tva-gold);
+  z-index: 4;
+  transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Small Central Glowing Orange Core (Singularity Pulse) */
+.tempad-energy-core {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFFFFF 0%, var(--tva-gold) 40%, var(--tva-amber) 100%);
+  box-shadow: 0 0 10px #FFFFFF, 0 0 18px var(--tva-amber);
+  animation: singularityPulse 3s ease-in-out infinite alternate;
+  z-index: 5;
+  pointer-events: none;
   opacity: 0.85;
 }
 
-/* --- Portal Hover & Active States --- */
-.tva-milestone-node:hover .tva-temporal-portal,
-.tva-milestone-node.is-active .tva-temporal-portal {
+/* Device Reference Tag Stamp */
+.tempad-id-stamp {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--tva-gold);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+/* ==========================================================
+   TEMPAD HOVER & ACTIVE INTERACTION STATES
+========================================================== */
+
+/* Hover State */
+.tva-milestone-node:hover .tva-tempad-device,
+.tva-milestone-node.is-active .tva-tempad-device {
   transform: scale(1.15);
 }
 
-.tva-milestone-node:hover .portal-halo,
-.tva-milestone-node.is-active .portal-halo {
+.tva-milestone-node:hover .tempad-holo-field,
+.tva-milestone-node.is-active .tempad-holo-field {
   opacity: 1;
-  transform: scale(1.3);
-  background: radial-gradient(circle, rgba(242, 182, 75, 0.45) 0%, rgba(233, 149, 39, 0.25) 50%, transparent 75%);
+  transform: scale(1.35);
+  background: radial-gradient(circle, rgba(242, 182, 75, 0.48) 0%, rgba(233, 149, 39, 0.28) 50%, transparent 75%);
 }
 
-.tva-milestone-node:hover .portal-outer-ring,
-.tva-milestone-node.is-active .portal-outer-ring {
+.tva-milestone-node:hover .tempad-chassis-bezel,
+.tva-milestone-node.is-active .tempad-chassis-bezel {
   border-color: var(--tva-gold);
-  animation-duration: 8s;
-  box-shadow: 0 0 16px rgba(242, 182, 75, 0.6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95),
+              0 0 20px rgba(242, 182, 75, 0.55),
+              inset 0 0 12px rgba(233, 149, 39, 0.35);
 }
 
-.tva-milestone-node:hover .portal-middle-ring,
-.tva-milestone-node.is-active .portal-middle-ring {
+/* Outer rings rotate faster on hover */
+.tva-milestone-node:hover .tempad-ring-outer,
+.tva-milestone-node.is-active .tempad-ring-outer {
+  border-color: var(--tva-gold);
+  animation-duration: 9s;
+  box-shadow: 0 0 14px rgba(242, 182, 75, 0.7);
+}
+
+.tva-milestone-node:hover .tempad-ring-middle,
+.tva-milestone-node.is-active .tempad-ring-middle {
   border-color: var(--tva-gold);
   animation-duration: 5s;
 }
 
-.tva-milestone-node:hover .portal-singularity,
-.tva-milestone-node.is-active .portal-singularity {
-  transform: scale(1.25);
-  box-shadow: 0 0 16px #FFFFFF, 0 0 30px var(--tva-gold);
+/* Sequential illumination of radial indicators on hover */
+.tva-milestone-node:hover .radial-tick,
+.tva-milestone-node.is-active .radial-tick {
+  background: #FFFFFF;
+  box-shadow: 0 0 8px var(--tva-gold), 0 0 14px var(--tva-amber);
+  height: 6px;
+}
+.tva-milestone-node:hover .tick-1  { transition-delay: 0.02s; }
+.tva-milestone-node:hover .tick-2  { transition-delay: 0.05s; }
+.tva-milestone-node:hover .tick-3  { transition-delay: 0.08s; }
+.tva-milestone-node:hover .tick-4  { transition-delay: 0.11s; }
+.tva-milestone-node:hover .tick-5  { transition-delay: 0.14s; }
+.tva-milestone-node:hover .tick-6  { transition-delay: 0.17s; }
+.tva-milestone-node:hover .tick-7  { transition-delay: 0.20s; }
+.tva-milestone-node:hover .tick-8  { transition-delay: 0.23s; }
+.tva-milestone-node:hover .tick-9  { transition-delay: 0.26s; }
+.tva-milestone-node:hover .tick-10 { transition-delay: 0.29s; }
+.tva-milestone-node:hover .tick-11 { transition-delay: 0.32s; }
+.tva-milestone-node:hover .tick-12 { transition-delay: 0.35s; }
+
+/* Brighter central core & prominent digit */
+.tva-milestone-node:hover .tempad-energy-core,
+.tva-milestone-node.is-active .tempad-energy-core {
+  transform: scale(1.35);
+  box-shadow: 0 0 16px #FFFFFF, 0 0 28px var(--tva-gold), 0 0 40px var(--tva-amber);
 }
 
-/* Milestone 06 (Grand Final Convergence Special Styling) */
-.portal-convergence {
-  width: 66px;
-  height: 66px;
+.tva-milestone-node:hover .tempad-milestone-digit,
+.tva-milestone-node.is-active .tempad-milestone-digit {
+  color: #FFFFFF;
+  transform: scale(1.15);
+  text-shadow: 0 0 10px #FFFFFF, 0 0 16px var(--tva-gold);
+}
+
+/* ==========================================================
+   CHECKPOINT 06: CULMINATION FINAL CONVERGENCE TEMPAD
+========================================================== */
+.tempad-convergence {
+  width: 76px;
+  height: 76px;
+}
+
+.chassis-convergence {
+  border-color: var(--tva-gold);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.95),
+              0 0 24px rgba(242, 182, 75, 0.6),
+              inset 0 0 14px rgba(233, 149, 39, 0.4);
 }
 
 .halo-convergence {
   inset: -22px;
-  background: radial-gradient(circle, rgba(242, 182, 75, 0.5) 0%, rgba(233, 149, 39, 0.25) 50%, transparent 75%);
+  background: radial-gradient(circle, rgba(242, 182, 75, 0.55) 0%, rgba(233, 149, 39, 0.3) 50%, transparent 75%);
 }
 
-.portal-radiance-ring {
+.tempad-radiance-ring {
   position: absolute;
-  inset: -6px;
+  inset: -8px;
   border-radius: 50%;
-  border: 1px dotted rgba(242, 182, 75, 0.5);
-  animation: portalSpinClockwise 30s linear infinite;
+  border: 1.2px dotted rgba(242, 182, 75, 0.65);
+  animation: portalSpinClockwise 32s linear infinite;
+  pointer-events: none;
+}
+
+.ring-outer-convergence {
+  inset: 6px;
+  border-color: var(--tva-gold);
+  border-width: 1.8px;
+}
+
+.ring-middle-convergence {
+  inset: 13px;
+  border-color: var(--tva-amber);
+}
+
+.dial-convergence {
+  inset: 19px;
+  background: radial-gradient(circle, #2E251A 0%, #101612 100%);
 }
 
 .singularity-convergence {
-  width: 15px;
-  height: 15px;
-  box-shadow: 0 0 16px #FFFFFF, 0 0 28px var(--tva-gold), 0 0 45px var(--tva-amber);
+  width: 12px;
+  height: 12px;
+  box-shadow: 0 0 18px #FFFFFF, 0 0 32px var(--tva-gold), 0 0 50px var(--tva-amber);
 }
 
-.highlight-num {
+.stamp-gold {
   color: var(--tva-gold);
   font-weight: 800;
   text-shadow: 0 0 8px var(--tva-gold);
 }
 
-/* Ring Animations */
+.dot-convergence {
+  background: var(--tva-gold);
+  box-shadow: 0 0 8px var(--tva-gold);
+}
+
+/* Animations */
 @keyframes portalSpinClockwise {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -3107,7 +3321,9 @@ body {
   100% { transform: scale(1.15); opacity: 1; }
 }
 
-/* --- Persistent Primary Readable Information Label --- */
+/* ==========================================================
+   PERSISTENT PRIMARY READABLE INFORMATION LABEL
+========================================================== */
 .milestone-primary-badge {
   position: absolute;
   width: 260px;
@@ -3124,20 +3340,20 @@ body {
   pointer-events: auto;
 }
 
-/* Placement Alternating: Above vs Below Portal Node */
+/* Placement Alternating: Above vs Below TemPad */
 .label-pos-top .milestone-primary-badge {
-  bottom: calc(100% + 22px);
+  bottom: calc(100% + 24px);
   left: 50%;
   transform: translateX(-50%);
 }
 
 .label-pos-bottom .milestone-primary-badge {
-  top: calc(100% + 22px);
+  top: calc(100% + 24px);
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* Connecting Stem Line between Portal and Primary Badge */
+/* Connecting Stem Line between TemPad and Primary Badge */
 .badge-stem-connector {
   position: absolute;
   left: 50%;
@@ -3148,13 +3364,13 @@ body {
 
 .label-pos-top .badge-stem-connector {
   top: 100%;
-  height: 22px;
+  height: 24px;
   transform: translateX(-50%);
 }
 
 .label-pos-bottom .badge-stem-connector {
   bottom: 100%;
-  height: 22px;
+  height: 24px;
   transform: translateX(-50%);
 }
 
@@ -3243,7 +3459,9 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 18px rgba(242, 182, 75, 0.28);
 }
 
-/* --- Floating TVA Classified Dossier Panel (Hover / Active Expansion) --- */
+/* ==========================================================
+   FLOATING HOLOGRAPHIC TVA TEMPAD DOSSIER
+========================================================== */
 .tva-classified-dossier {
   position: absolute;
   width: 340px;
@@ -3254,7 +3472,7 @@ body {
   box-shadow: 0 18px 45px rgba(0, 0, 0, 0.92), 0 0 24px rgba(233, 149, 39, 0.35);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  z-index: 100;
+  z-index: 120;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -3276,13 +3494,13 @@ body {
   transform: translateY(0) scale(1);
 }
 
-/* Intelligent Horizontal Alignments to prevent viewport clipping */
+/* Alignments */
 .label-pos-top .tva-classified-dossier {
-  top: calc(100% + 28px);
+  top: calc(100% + 30px);
 }
 
 .label-pos-bottom .tva-classified-dossier {
-  bottom: calc(100% + 28px);
+  bottom: calc(100% + 30px);
 }
 
 .dossier-align-right {
@@ -3306,7 +3524,7 @@ body {
   transform-origin: top right;
 }
 
-/* Scanner Laser Line at Top of Dossier */
+/* Scanner Laser Line */
 .dossier-scanner-bar {
   height: 3px;
   width: 100%;
@@ -3372,7 +3590,7 @@ body {
   border-radius: 2px;
 }
 
-/* Dossier Body Content */
+/* Dossier Body */
 .dossier-body {
   padding: 16px;
 }
@@ -3412,7 +3630,7 @@ body {
   margin: 0 0 14px;
 }
 
-/* Bulleted Hover Directives / Protocols */
+/* Additional Details Directives List */
 .dossier-directives {
   background: rgba(40, 55, 43, 0.35);
   border: 1px solid rgba(233, 149, 39, 0.2);
@@ -3455,7 +3673,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Fee Structure Memo inside Milestone 01 Dossier */
+/* Fee structure memo */
 .dossier-fee-memo {
   display: flex;
   flex-direction: column;
@@ -3511,9 +3729,12 @@ body {
 
 .dossier-chrono-ref {
   color: var(--tva-teal);
+  font-weight: 600;
 }
 
-/* --- TVA Telemetry Chamber (Docked Briefing / Mobile Display) --- */
+/* ==========================================================
+   TVA TELEMETRY CHAMBER (DOCKED DOSSIER ARCHIVE)
+========================================================== */
 .tva-telemetry-chamber {
   margin-top: 40px;
   background: #101612;
@@ -3720,34 +3941,43 @@ body {
     opacity: 1 !important;
   }
 
-  /* Position circular portal at the left on the vertical spine */
-  .tva-milestone-node .tva-temporal-portal {
+  /* Position circular TemPad at the left on the vertical spine */
+  .tva-milestone-node .tva-tempad-device {
     position: absolute;
-    left: -34px;
-    top: 6px;
-    width: 38px;
-    height: 38px;
+    left: -36px;
+    top: 8px;
+    width: 44px;
+    height: 44px;
     z-index: 5;
   }
 
-  .portal-halo {
+  .tempad-holo-field {
     inset: -6px;
   }
 
-  .portal-milestone-num {
+  .tempad-id-stamp,
+  .tempad-label-brand {
     display: none;
   }
 
-  .portal-singularity {
-    width: 8px;
-    height: 8px;
+  .tempad-dial-inner {
+    inset: 10px;
+  }
+
+  .tempad-milestone-digit {
+    font-size: 0.85rem;
+  }
+
+  .tempad-energy-core {
+    width: 6px;
+    height: 6px;
   }
 
   .badge-stem-connector {
     display: none !important;
   }
 
-  /* Primary badge sits as a readable card to the right of the portal */
+  /* Primary badge sits as a readable card to the right of the TemPad */
   .milestone-primary-badge {
     position: relative !important;
     top: auto !important;
@@ -3798,12 +4028,12 @@ body {
 
 /* Reduced Motion Preference Support */
 @media (prefers-reduced-motion: reduce) {
-  .portal-outer-ring,
-  .portal-middle-ring,
-  .portal-radiance-ring,
+  .tempad-ring-outer,
+  .tempad-ring-middle,
+  .tempad-radiance-ring,
   .dossier-scanner-bar,
   .telemetry-status .telemetry-dot,
-  .portal-singularity {
+  .tempad-energy-core {
     animation: none !important;
   }
 
@@ -3817,7 +4047,6 @@ body {
     display: none !important;
   }
 }
-
 
 /* ==========================================================
    06. REGISTRATION TERMINAL CARD

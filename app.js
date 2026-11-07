@@ -1794,10 +1794,11 @@ class OverclockApp {
 
     if (!milestoneNodes.length) return;
 
-    // Milestone Data Registry (Exact dates, titles, descriptions & directives)
+    // Milestone Data Registry (Exact dates, titles, descriptions, TVA status & TemPad device references)
     const milestoneData = {
       1: {
         chrono: 'TVA-01',
+        device: 'TEMPAD-001',
         coordDate: '10 NOV 2026',
         date: '10 November 2026',
         title: 'THE REGISTRATION WINDOW OPENS',
@@ -1811,6 +1812,7 @@ class OverclockApp {
       },
       2: {
         chrono: 'TVA-02',
+        device: 'TEMPAD-002',
         coordDate: '01 DEC 2026',
         date: '1 December 2026',
         title: 'THE PROBLEM STATEMENTS ARE UNSEALED',
@@ -1824,6 +1826,7 @@ class OverclockApp {
       },
       3: {
         chrono: 'TVA-03',
+        device: 'TEMPAD-003',
         coordDate: '10–15 DEC 2026',
         date: '10–15 December 2026',
         title: 'THE PROPOSAL SUBMISSION WINDOW',
@@ -1837,6 +1840,7 @@ class OverclockApp {
       },
       4: {
         chrono: 'TVA-04',
+        device: 'TEMPAD-004',
         coordDate: '22 DEC 2026',
         date: '22 December 2026',
         title: 'THE 25 TEAMS ARE IDENTIFIED',
@@ -1850,6 +1854,7 @@ class OverclockApp {
       },
       5: {
         chrono: 'TVA-05',
+        device: 'TEMPAD-005',
         coordDate: '22 JAN 2027',
         date: '22 January 2027',
         title: 'THE FINAL CHALLENGES ARE REVEALED',
@@ -1863,6 +1868,7 @@ class OverclockApp {
       },
       6: {
         chrono: 'TVA-06',
+        device: 'TEMPAD-006',
         coordDate: '29–30 JAN 2027',
         date: '29–30 January 2027',
         title: 'THE FINAL CONVERGENCE – OVERCLOCK',
@@ -1877,13 +1883,27 @@ class OverclockApp {
       }
     };
 
+    // TemPad Path Segment Surge Illumination Controller
+    const surgeSegments = document.querySelectorAll('.tva-tempad-segment');
+    const setSurgeSegment = (mNum) => {
+      surgeSegments.forEach(seg => seg.classList.remove('is-surge'));
+      if (!mNum) return;
+      if (mNum >= 1 && mNum <= 5) {
+        const seg = document.getElementById(`tempadSeg${mNum}`);
+        if (seg) seg.classList.add('is-surge');
+      } else if (mNum === 6) {
+        // At final convergence, all surge segments pulse in celebration
+        surgeSegments.forEach(seg => seg.classList.add('is-surge'));
+      }
+    };
+
     // Update Telemetry Chamber Display
     const updateTelemetryChamber = (mNum) => {
       const data = milestoneData[mNum];
       if (!data) return;
 
-      if (chronoCoordReadout) chronoCoordReadout.textContent = `${data.chrono} // ${data.coordDate}`;
-      if (chamberCoordReadout) chamberCoordReadout.textContent = `${data.chrono} // ACTIVE CHECKPOINT`;
+      if (chronoCoordReadout) chronoCoordReadout.textContent = `${data.device} // ${data.coordDate}`;
+      if (chamberCoordReadout) chamberCoordReadout.textContent = `${data.device} // ACTIVE CHECKPOINT`;
       if (chamberStatusTag) chamberStatusTag.textContent = data.status;
       if (chamberHeading) chamberHeading.textContent = data.title;
       if (chamberDate) chamberDate.textContent = data.date;
@@ -1937,6 +1957,7 @@ class OverclockApp {
       const onEnter = () => {
         if (hoverTimeout) clearTimeout(hoverTimeout);
         updateTelemetryChamber(mNum);
+        setSurgeSegment(mNum);
         if (dossier) {
           requestAnimationFrame(() => repositionDossier(dossier));
         }
@@ -1949,6 +1970,9 @@ class OverclockApp {
           if (activePinnedNode) {
             const pinnedNum = parseInt(activePinnedNode.getAttribute('data-milestone'), 10);
             updateTelemetryChamber(pinnedNum);
+            setSurgeSegment(pinnedNum);
+          } else {
+            setSurgeSegment(null);
           }
         }, 180);
       };
@@ -1962,6 +1986,7 @@ class OverclockApp {
       if (dossier) {
         dossier.addEventListener('mouseenter', () => {
           if (hoverTimeout) clearTimeout(hoverTimeout);
+          setSurgeSegment(mNum);
         });
         dossier.addEventListener('mouseleave', onLeave);
       }
@@ -1984,11 +2009,13 @@ class OverclockApp {
           node.setAttribute('aria-expanded', 'true');
           activePinnedNode = node;
           updateTelemetryChamber(mNum);
+          setSurgeSegment(mNum);
           if (dossier) {
             requestAnimationFrame(() => repositionDossier(dossier));
           }
         } else {
           activePinnedNode = null;
+          setSurgeSegment(null);
         }
       });
 
@@ -2003,6 +2030,7 @@ class OverclockApp {
             n.setAttribute('aria-expanded', 'false');
           });
           activePinnedNode = null;
+          setSurgeSegment(null);
         }
       });
     });
@@ -2015,6 +2043,7 @@ class OverclockApp {
           n.setAttribute('aria-expanded', 'false');
         });
         activePinnedNode = null;
+        setSurgeSegment(null);
       }
     });
 
