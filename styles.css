@@ -3312,22 +3312,57 @@ body {
 }
 
 /* ==========================================================
-   PERSISTENT PRIMARY READABLE INFORMATION LABEL
+   PERSISTENT PRIMARY READABLE INFORMATION LABEL (OPEN HOLOGRAPHIC HUD)
 ========================================================== */
 .milestone-primary-badge {
   position: absolute;
-  width: 240px;
-  max-width: 250px;
-  background: rgba(15, 20, 17, 0.88);
-  border: 1px solid rgba(242, 182, 75, 0.28);
-  border-radius: 8px;
-  padding: 10px 14px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 12px rgba(233, 149, 39, 0.12);
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 275px;
+  max-width: 295px;
+  background: radial-gradient(ellipse at center, rgba(16, 22, 18, 0.78) 0%, rgba(10, 14, 11, 0.52) 85%, rgba(6, 8, 7, 0.25) 100%);
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid rgba(242, 182, 75, 0.35);
+  border-bottom: 1px solid rgba(242, 182, 75, 0.35);
+  border-radius: 4px;
+  padding: 13px 18px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(233, 149, 39, 0.12);
+  transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+              border-color 0.28s ease,
+              box-shadow 0.28s ease,
+              background 0.28s ease;
   z-index: 5;
   pointer-events: auto;
+}
+
+/* Open Sci-Fi HUD Corner Brackets */
+.milestone-primary-badge::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 12px;
+  height: 8px;
+  border-top: 2px solid var(--tva-gold);
+  border-left: 2px solid var(--tva-gold);
+  pointer-events: none;
+  opacity: 0.9;
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+}
+
+.milestone-primary-badge::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 12px;
+  height: 8px;
+  border-bottom: 2px solid var(--tva-gold);
+  border-right: 2px solid var(--tva-gold);
+  pointer-events: none;
+  opacity: 0.9;
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
 }
 
 /* Placement Alternating: Above vs Below TemPad */
@@ -3335,20 +3370,23 @@ body {
   bottom: calc(100% + 24px);
   left: 50%;
   transform: translateX(-50%);
+  border-bottom: 2px solid var(--tva-gold);
 }
 
 .label-pos-bottom .milestone-primary-badge {
   top: calc(100% + 24px);
   left: 50%;
   transform: translateX(-50%);
+  border-top: 2px solid var(--tva-gold);
 }
 
 /* Connecting Stem Line between TemPad and Primary Badge */
 .badge-stem-connector {
   position: absolute;
   left: 50%;
-  width: 1.5px;
-  background: linear-gradient(to bottom, var(--tva-gold), rgba(233, 149, 39, 0.3));
+  width: 2px;
+  background: linear-gradient(to bottom, var(--tva-gold), rgba(233, 149, 39, 0.4));
+  box-shadow: 0 0 8px rgba(242, 182, 75, 0.5);
   pointer-events: none;
 }
 
@@ -3368,11 +3406,11 @@ body {
 .badge-stem-connector::after {
   content: '';
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--tva-gold);
-  box-shadow: 0 0 6px var(--tva-gold);
+  box-shadow: 0 0 8px var(--tva-gold);
   left: 50%;
   transform: translateX(-50%);
 }
@@ -3390,88 +3428,108 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 5px;
+  gap: 8px;
+  margin-bottom: 7px;
 }
 
 .chrono-code {
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.70rem;
   font-weight: 700;
   color: var(--tva-teal);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   white-space: nowrap;
   flex-shrink: 0;
+  text-shadow: 0 0 6px rgba(78, 205, 196, 0.4);
 }
 
 .chrono-code.highlight {
   color: var(--tva-gold);
-  text-shadow: 0 0 6px rgba(242, 182, 75, 0.5);
+  text-shadow: 0 0 8px rgba(242, 182, 75, 0.6);
 }
 
 .status-stamp {
   font-family: var(--font-mono);
-  font-size: 0.52rem;
+  font-size: 0.58rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 1px 5px;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
   border-radius: 3px;
-  background: rgba(233, 149, 39, 0.12);
-  border: 1px solid rgba(233, 149, 39, 0.35);
-  color: var(--tva-amber);
+  background: rgba(233, 149, 39, 0.15);
+  border: 1px solid rgba(242, 182, 75, 0.38);
+  color: var(--tva-gold);
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .status-stamp.stamp-gold {
-  background: rgba(242, 182, 75, 0.2);
+  background: rgba(242, 182, 75, 0.24);
   border-color: var(--tva-gold);
-  color: var(--tva-gold);
+  color: #FFF;
+  text-shadow: 0 0 6px var(--tva-gold);
 }
 
 .badge-date-row {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-bottom: 5px;
-  color: var(--tva-amber);
+  gap: 7px;
+  margin-bottom: 8px;
 }
 
 .badge-date-row .date-svg {
   flex-shrink: 0;
-  stroke: var(--tva-amber);
+  stroke: var(--tva-gold);
+  filter: drop-shadow(0 0 4px rgba(242, 182, 75, 0.5));
 }
 
 .badge-date {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--tva-amber);
+  letter-spacing: 0.06em;
+  color: var(--tva-gold);
+  text-shadow: 0 0 8px rgba(242, 182, 75, 0.4);
 }
 
-.badge-title {
+/* Milestone Event Title - Clean, bold, borderless */
+.milestone-primary-badge .badge-title {
   font-family: 'Barlow Condensed', 'Bebas Neue', var(--font-display);
-  font-size: 0.98rem;
+  font-size: 1.15rem !important;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.22;
-  color: var(--tva-cream);
-  margin: 0;
+  letter-spacing: 0.05em;
+  line-height: 1.25;
+  color: #FFF !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
   text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
 }
 
 .badge-convergence .badge-title {
-  color: #FFF;
-  text-shadow: 0 0 10px rgba(242, 182, 75, 0.5);
+  color: #FFF !important;
+  text-shadow: 0 0 12px rgba(242, 182, 75, 0.6), 0 2px 8px rgba(0, 0, 0, 0.95);
 }
 
 /* Hover highlights on primary badge */
 .tva-milestone-node:hover .milestone-primary-badge,
 .tva-milestone-node.is-active .milestone-primary-badge {
+  background: radial-gradient(ellipse at center, rgba(22, 28, 24, 0.88) 0%, rgba(14, 18, 14, 0.68) 85%, rgba(8, 10, 8, 0.35) 100%);
   border-color: var(--tva-gold);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 18px rgba(242, 182, 75, 0.28);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.9), 0 0 28px rgba(242, 182, 75, 0.35);
+  transform: translateX(-50%) scale(1.02);
+}
+
+.tva-milestone-node:hover .milestone-primary-badge::before,
+.tva-milestone-node:hover .milestone-primary-badge::after,
+.tva-milestone-node.is-active .milestone-primary-badge::before,
+.tva-milestone-node.is-active .milestone-primary-badge::after {
+  width: 18px;
+  height: 12px;
+  border-color: #FFF;
+  box-shadow: 0 0 10px var(--tva-gold);
 }
 
 /* ==========================================================
@@ -3884,16 +3942,16 @@ body {
   }
   
   .milestone-primary-badge {
-    width: 200px;
-    padding: 8px 10px;
+    width: 220px;
+    padding: 10px 12px;
   }
 
-  .badge-title {
-    font-size: 0.90rem;
+  .milestone-primary-badge .badge-title {
+    font-size: 0.98rem !important;
   }
 
   .badge-date {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
   }
 
   .tva-classified-dossier {
@@ -4005,10 +4063,14 @@ body {
     max-width: 100% !important;
     box-sizing: border-box;
     padding: 14px 16px;
+    border: 1px solid rgba(242, 182, 75, 0.28) !important;
+    border-left: 3px solid var(--tva-gold) !important;
+    border-radius: 6px !important;
+    background: rgba(16, 22, 18, 0.88) !important;
   }
 
-  .badge-title {
-    font-size: 1.15rem;
+  .milestone-primary-badge .badge-title {
+    font-size: 1.15rem !important;
   }
 
   /* Floating Dossier on Mobile becomes inline expandable or opens on tap */
@@ -4688,7 +4750,7 @@ body {
   white-space: nowrap;
 }
 
-.badge-title {
+.card-tier-stamp.badge-bronze {
   background: rgba(184, 146, 58, 0.12);
   border: 1.5px solid var(--stamp-amber);
   color: #9c4d08;
