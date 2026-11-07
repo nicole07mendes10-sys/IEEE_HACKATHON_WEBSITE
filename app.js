@@ -1820,13 +1820,13 @@ class OverclockApp {
       2: {
         chrono: 'TVA-02',
         device: 'TEMPAD-002',
-        coordDate: '01 DEC 2026',
-        date: '1 December 2026',
+        coordDate: '10 NOV 2026',
+        date: '10 November 2026',
         title: 'THE PROBLEM STATEMENTS ARE UNSEALED',
         status: 'CHALLENGES REVEALED',
         desc: 'The TVA has identified six domains of innovation. The challenge statements are now revealed. Discover your mission and choose the problem your team is ready to solve.',
         protocols: [
-          'Problem statements are officially released.',
+          'Problem statements are officially released on 10 November 2026.',
           'Participants can explore all six challenge domains.',
           'Teams can begin developing their proposed solutions.'
         ]
@@ -1834,13 +1834,13 @@ class OverclockApp {
       3: {
         chrono: 'TVA-03',
         device: 'TEMPAD-003',
-        coordDate: '10–15 DEC 2026',
-        date: '10–15 December 2026',
+        coordDate: '01–15 DEC 2026',
+        date: '1–15 December 2026',
         title: 'THE PROPOSAL SUBMISSION WINDOW',
         status: 'SUBMISSION PHASE',
         desc: 'Every mission begins with an idea. Submit your team\'s presentation and demonstrate how your solution can make an impact.',
         protocols: [
-          'PPT submission window opens on 10 December.',
+          'PPT submission window opens on 1 December.',
           'Final submission deadline is 15 December.',
           'Teams must submit their idea presentation within the specified submission period.'
         ]
