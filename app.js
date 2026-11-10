@@ -45,9 +45,9 @@ window.OVERCLOCK_CONFIG = {
 
   // Central Event Rewards Configuration
   prizes: {
-    totalCashPool: "₹50,000",
-    cashPrizeLabel: "₹50K CASH PRIZE",
-    description: "Compete for the ₹50,000 cash prize pool, institutional honours, and category awards sanctioned by EESA, ISLE, and IEEE Student Branch, FCRIT."
+    totalCashPool: "₹75,000",
+    cashPrizeLabel: "₹75K CASH PRIZE",
+    description: "Compete for the ₹75,000 cash prize pool, institutional honours, and category awards sanctioned by EESA, ISLE, and IEEE Student Branch, FCRIT."
   },
 
   // Central Travel Information Configuration
