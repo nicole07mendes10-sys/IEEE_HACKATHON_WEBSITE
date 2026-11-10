@@ -2783,9 +2783,11 @@ class OverclockApp {
 
       // Grid Container based on Tier
       const gridEl = document.createElement('div');
-      if (tierDef.id === 'TITLE') {
+      if (tierDef.gridClass) {
+        gridEl.className = tierDef.gridClass;
+      } else if (tierDef.id === 'TITLE') {
         gridEl.className = 'tier-title-container';
-      } else if (tierDef.id === 'GOLD') {
+      } else if (tierDef.id === 'GOLD' || tierDef.id === 'OFFICIAL') {
         gridEl.className = 'tier-gold-grid';
       } else {
         gridEl.className = 'tier-silver-grid';
@@ -2814,11 +2816,12 @@ class OverclockApp {
         const logoBox = document.createElement('div');
         logoBox.className = 'card-logo-container';
         if (sponsor.logo) {
+          logoBox.classList.add('has-logo');
           const img = document.createElement('img');
           img.src = sponsor.logo;
           img.alt = `${sponsor.name} Logo`;
-          img.style.maxHeight = '80%';
-          img.style.maxWidth = '80%';
+          img.style.maxHeight = '88%';
+          img.style.maxWidth = '88%';
           img.style.objectFit = 'contain';
           logoBox.appendChild(img);
         } else {
@@ -2834,6 +2837,14 @@ class OverclockApp {
         nameEl.className = 'card-sponsor-name';
         nameEl.textContent = sponsor.name;
         card.appendChild(nameEl);
+
+        // Optional Subtitle/Tagline
+        if (sponsor.subtitle) {
+          const subEl = document.createElement('div');
+          subEl.className = 'card-sponsor-subtitle';
+          subEl.textContent = sponsor.subtitle;
+          card.appendChild(subEl);
+        }
 
         // Card Clearance Footer Strip (Badge + Approved Stamp side-by-side)
         const footerStrip = document.createElement('div');

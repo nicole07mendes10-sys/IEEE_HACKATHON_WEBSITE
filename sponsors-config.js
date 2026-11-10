@@ -13,20 +13,46 @@ const SPONSORS_CONFIG = {
   sponsorContactEmail: "mailto:sponsorship.overclock@fcrit.ac.in",
   
   // URL for sponsorship brochure (set to null or empty string to hide the brochure button)
-  brochureUrl: null, // e.g. "assets/OVERCLOCK_2027_Sponsorship_Brochure.pdf"
+  brochureUrl: null, // e.g. "docs/OVERCLOCK_2027_Sponsorship_Brochure.pdf"
 
-  // Custom sponsors list (leave empty [] to auto-generate placeholder cards)
-  // Format: { name: "Company", tier: "TITLE", logo: "path/to/logo.png", url: "https://example.com" }
-  customSponsors: [],
+  // Custom sponsors list
+  customSponsors: [
+    {
+      id: "OC-27/SP-01",
+      name: "STAGE ARTS LIVE",
+      subtitle: "Customized Connect Experiences",
+      tier: "OFFICIAL",
+      logo: "images/sponsors/stage-arts-live.png",
+      url: "https://stageartslive.com"
+    },
+    {
+      id: "OC-27/SP-02",
+      name: "THE BRITISH INSTITUTES",
+      subtitle: "Education & Language Training Partner",
+      tier: "OFFICIAL",
+      logo: "images/sponsors/the-british-institutes.jpg",
+      url: "https://www.thebritishinstitutes.com"
+    }
+  ],
 
   // Tier configuration with slot allocations & styling
   tiers: [
+    {
+      id: "OFFICIAL",
+      title: "OFFICIAL EVENT PARTNERS",
+      stampText: "OFFICIAL PARTNER",
+      cardClass: "tier-gold-card",
+      badgeClass: "badge-gold",
+      gridClass: "tier-gold-grid",
+      slots: 2
+    },
     {
       id: "TITLE",
       title: "TITLE PARTNER",
       stampText: "TITLE PARTNER",
       cardClass: "tier-title-card",
       badgeClass: "badge-title",
+      gridClass: "tier-title-container",
       slots: 1
     },
     {
@@ -35,6 +61,7 @@ const SPONSORS_CONFIG = {
       stampText: "GOLD CLEARANCE",
       cardClass: "tier-gold-card",
       badgeClass: "badge-gold",
+      gridClass: "tier-gold-grid",
       slots: 2
     },
     {
@@ -43,7 +70,8 @@ const SPONSORS_CONFIG = {
       stampText: "SILVER CLEARANCE",
       cardClass: "tier-silver-card",
       badgeClass: "badge-silver",
-      slots: Infinity // Takes remaining
+      gridClass: "tier-silver-grid",
+      slots: Infinity
     }
   ]
 };
@@ -68,7 +96,7 @@ function getSponsorsData() {
       id: `OC-27-${numStr}`,
       name: `SPONSOR ${numStr}`,
       tier: tier,
-      logo: null, // Renders neutral SVG logo box
+      logo: null,
       url: "#"
     });
   }

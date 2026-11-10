@@ -5013,6 +5013,31 @@ body {
   border-color: var(--amber-primary);
 }
 
+.card-logo-container.has-logo {
+  background: #FFFFFF;
+  border: 1px solid rgba(185, 173, 146, 0.5);
+  filter: none !important;
+  opacity: 1 !important;
+  padding: 6px 12px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.auth-clearance-card:hover .card-logo-container.has-logo {
+  border-color: var(--amber-primary, #FFB020);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.card-sponsor-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #7C735F;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
 .card-logo-placeholder-text {
   font-family: var(--font-mono);
   font-size: 0.85rem;
