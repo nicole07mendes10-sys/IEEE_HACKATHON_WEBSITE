@@ -5,9 +5,9 @@
 window.OVERCLOCK_CONFIG = {
   // Official Unstop registration URL for OVERCLOCK 2027:
   // Connect directly to official Unstop registration page:
-  UNSTOP_EVENT_URL: "https://unstop.com",
-  UNSTOP_PLATFORM_URL: "https://unstop.com",
-  registrationUrl: "https://unstop.com", // Unified backward-compatible alias
+  UNSTOP_EVENT_URL: "https://unstop.com/hackathons/overclock-agnel-charities-fr-c-rodrigues-institute-of-technology-vashi-navi-mumbai-1798677",
+  UNSTOP_PLATFORM_URL: "https://unstop.com/hackathons/overclock-agnel-charities-fr-c-rodrigues-institute-of-technology-vashi-navi-mumbai-1798677",
+  registrationUrl: "https://unstop.com/hackathons/overclock-agnel-charities-fr-c-rodrigues-institute-of-technology-vashi-navi-mumbai-1798677", // Unified backward-compatible alias
   registrationPendingStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
   registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
 
