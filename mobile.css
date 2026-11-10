@@ -442,6 +442,7 @@
   .hero-year-tag,
   .hero-subhead,
   .hero-tagline,
+  .hero-prize-banner,
   .typed-form-strip,
   .typed-form-strip .form-field-unit,
   .hero-cta-group>*,
@@ -524,6 +525,23 @@
     width: min(240px, 65vw);
     height: min(240px, 65vw);
     opacity: 0.35;
+  }
+
+  /* Hero Grand Prize Pool Banner Mobile */
+  .hero-prize-banner {
+    width: 100%;
+    max-width: 480px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+  }
+
+  .hero-prize-banner::after {
+    display: none;
+  }
+
+  .hero-prize-amount-wrap {
+    gap: 4px 6px;
   }
 
   /* Hero Intake Manifest Card */

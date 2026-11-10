@@ -4,11 +4,11 @@
  */
 window.OVERCLOCK_CONFIG = {
   // Official Unstop registration URL for OVERCLOCK 2027:
-  // When official Unstop registration URL is announced, set it here (e.g. "https://unstop.com/o/overclock-2027"):
-  UNSTOP_EVENT_URL: null,
+  // Connect directly to official Unstop registration page:
+  UNSTOP_EVENT_URL: "https://unstop.com",
   UNSTOP_PLATFORM_URL: "https://unstop.com",
-  registrationUrl: null, // Unified backward-compatible alias
-  registrationPendingStatus: "REGISTRATION PORTAL // OPENS 06 NOV 2026",
+  registrationUrl: "https://unstop.com", // Unified backward-compatible alias
+  registrationPendingStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
   registrationLiveStatus: "REGISTRATION PORTAL // OFFICIAL UNSTOP LIVE",
 
   // Central Downloads Resources Configuration
