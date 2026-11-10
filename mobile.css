@@ -858,6 +858,35 @@
     display: none !important;
   }
 
+  /* Domain Release Announcement & Action Buttons Mobile */
+  .domain-release-kicker-banner {
+    width: 100%;
+    padding: 10px 12px;
+    gap: 6px 10px;
+    box-sizing: border-box;
+    margin-bottom: 14px;
+  }
+
+  .release-kicker-sub {
+    display: none;
+  }
+
+  .slot-dossier-actions {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(184, 146, 58, 0.28);
+  }
+
+  .dossier-button-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .btn-dossier-action {
+    padding: 8px 6px;
+    font-size: 0.68rem;
+  }
+
   .slot-title {
     font-size: clamp(1.26rem, 4.6vw, 1.42rem) !important;
     line-height: 1.2 !important;

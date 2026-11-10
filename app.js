@@ -40,6 +40,61 @@ window.OVERCLOCK_CONFIG = {
       description: "Official 9-slide presentation deck format for the free Round 1 problem-statement submission (Problem, Solution, Methodology, Technical Approach, Hardware Requirements, Feasibility, Impact).",
       filePath: "docs/OVERCLOCK_2027_Participant_Template.pptx",
       status: "DOWNLOAD PPTX"
+    },
+    // Official Round 1 Problem Statement Dossiers (6 Domains)
+    psCh01: {
+      id: "ps-ch01",
+      domainSlot: "01",
+      channel: "CH-01",
+      title: "GENERAL INNOVATION & OPEN INNOVATION — PS DOSSIER",
+      filePath: "docs/OVERCLOCK_2027_PS_CH01_General_Innovation.pdf",
+      docCode: "OC-27/CH-01",
+      pages: 6
+    },
+    psCh02: {
+      id: "ps-ch02",
+      domainSlot: "02",
+      channel: "CH-02",
+      title: "DEFENCE & NATIONAL SECURITY — PS DOSSIER",
+      filePath: "docs/OVERCLOCK_2027_PS_CH02_Defence_National_Security.pdf",
+      docCode: "OC-27/CH-02",
+      pages: 7
+    },
+    psCh03: {
+      id: "ps-ch03",
+      domainSlot: "03",
+      channel: "CH-03",
+      title: "HEALTHCARE & ASSISTIVE TECHNOLOGY — PS DOSSIER",
+      filePath: "docs/OVERCLOCK_2027_PS_CH03_Healthcare_Assistive_Tech.pdf",
+      docCode: "OC-27/CH-03",
+      pages: 7
+    },
+    psCh04: {
+      id: "ps-ch04",
+      domainSlot: "04",
+      channel: "CH-04",
+      title: "SMART HOME & CONSUMER ELECTRONICS — PS DOSSIER",
+      filePath: "docs/OVERCLOCK_2027_PS_CH04_Smart_Home_Consumer_Electronics.pdf",
+      docCode: "OC-27/CH-04",
+      pages: 7
+    },
+    psCh05: {
+      id: "ps-ch05",
+      domainSlot: "05",
+      channel: "CH-05",
+      title: "INDUSTRIAL AUTOMATION & MONITORING — PS DOSSIER",
+      filePath: "docs/OVERCLOCK_2027_PS_CH05_Industrial_Automation_Monitoring.pdf",
+      docCode: "OC-27/CH-05",
+      pages: 7
+    },
+    psCh06: {
+      id: "ps-ch06",
+      domainSlot: "06",
+      channel: "CH-06",
+      title: "ENERGY, POWER & SUSTAINABILITY — PS DOSSIER",
+      filePath: "docs/OVERCLOCK_2027_PS_CH06_Energy_Power_Sustainability.pdf",
+      docCode: "OC-27/CH-06",
+      pages: 7
     }
   },
 

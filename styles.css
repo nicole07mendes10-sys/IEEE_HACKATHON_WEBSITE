@@ -2615,6 +2615,192 @@ body {
   flex-grow: 1;
 }
 
+/* ==========================================================
+   PROBLEM STATEMENTS RELEASED ANNOUNCEMENT & DOSSIER ACTIONS
+========================================================== */
+.domain-release-kicker-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(38, 28, 18, 0.96) 0%, rgba(22, 16, 10, 0.98) 100%);
+  border: 1.5px solid rgba(232, 137, 43, 0.75);
+  border-left: 5px solid var(--tva-orange, #E8872B);
+  border-radius: var(--radius-sm, 6px);
+  padding: 10px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 16px rgba(232, 137, 43, 0.22);
+  flex-wrap: wrap;
+  max-width: 900px;
+}
+
+.release-spark-pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--tva-orange, #E8872B);
+  box-shadow: 0 0 12px rgba(232, 137, 43, 0.95);
+  animation: prizePipPulse 1.8s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+.release-kicker-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--mustard-secondary, #B8923A);
+  text-transform: uppercase;
+}
+
+.release-kicker-strong {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #FFF3D6;
+  text-shadow: 0 0 10px rgba(232, 137, 43, 0.6);
+  text-transform: uppercase;
+}
+
+.release-kicker-sub {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--paper-muted, #B0A28E);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Domain Card Dossier Action Box */
+.slot-dossier-actions {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(184, 146, 58, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.dossier-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dossier-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dossier-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: prizePipPulse 2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+.slot-amber .dossier-dot { background: #E8872B; box-shadow: 0 0 8px #E8872B; }
+.slot-amber .dossier-status-badge { color: #E8872B; }
+
+.slot-cyan .dossier-dot { background: #00F0FF; box-shadow: 0 0 8px #00F0FF; }
+.slot-cyan .dossier-status-badge { color: #00F0FF; }
+
+.slot-emerald .dossier-dot { background: #00FF85; box-shadow: 0 0 8px #00FF85; }
+.slot-emerald .dossier-status-badge { color: #00FF85; }
+
+.slot-violet .dossier-dot { background: #D4A5FF; box-shadow: 0 0 8px #D4A5FF; }
+.slot-violet .dossier-status-badge { color: #D4A5FF; }
+
+.slot-copper .dossier-dot { background: #FFA05C; box-shadow: 0 0 8px #FFA05C; }
+.slot-copper .dossier-status-badge { color: #FFA05C; }
+
+.slot-ruby .dossier-dot { background: #FF5E80; box-shadow: 0 0 8px #FF5E80; }
+.slot-ruby .dossier-status-badge { color: #FF5E80; }
+
+.dossier-code-tag {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  color: var(--mustard-secondary, #B8923A);
+}
+
+.dossier-button-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-dossier-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-sizing: border-box;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn-dossier-view {
+  background: rgba(184, 146, 58, 0.16);
+  border: 1.5px solid rgba(184, 146, 58, 0.6);
+  color: var(--paper-cream, #EADFC4);
+}
+
+.btn-dossier-view:hover {
+  background: rgba(184, 146, 58, 0.32);
+  border-color: var(--amber-bright, #F2A900);
+  color: #FFFFFF;
+  box-shadow: 0 0 12px rgba(242, 169, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-dossier-dl {
+  background: linear-gradient(135deg, rgba(232, 137, 43, 0.22) 0%, rgba(184, 146, 58, 0.28) 100%);
+  border: 1.5px solid rgba(232, 137, 43, 0.7);
+  color: #FFF3D6;
+}
+
+.btn-dossier-dl:hover {
+  background: linear-gradient(135deg, rgba(232, 137, 43, 0.45) 0%, rgba(184, 146, 58, 0.5) 100%);
+  border-color: #FFA500;
+  color: #FFFFFF;
+  box-shadow: 0 0 14px rgba(232, 137, 43, 0.45);
+  transform: translateY(-1px);
+}
+
+.action-icon {
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Accent-reactive hovers for domain cards */
+.slot-amber:hover .btn-dossier-dl { border-color: #FFA500; box-shadow: 0 0 14px rgba(232, 137, 43, 0.5); }
+.slot-cyan:hover .btn-dossier-dl { border-color: #00F0FF; box-shadow: 0 0 14px rgba(0, 229, 255, 0.5); }
+.slot-emerald:hover .btn-dossier-dl { border-color: #00FF85; box-shadow: 0 0 14px rgba(0, 230, 118, 0.5); }
+.slot-violet:hover .btn-dossier-dl { border-color: #D4A5FF; box-shadow: 0 0 14px rgba(187, 134, 252, 0.5); }
+.slot-copper:hover .btn-dossier-dl { border-color: #FFA05C; box-shadow: 0 0 14px rgba(255, 140, 66, 0.5); }
+.slot-ruby:hover .btn-dossier-dl { border-color: #FF5E80; box-shadow: 0 0 14px rgba(255, 75, 110, 0.5); }
+
 .slot-action-area {
   margin-top: auto;
   padding-top: 12px;
@@ -10544,6 +10730,64 @@ body.modal-blurred-open aside {
   border-color: var(--tva-orange, #E8872B);
   color: var(--paper-cream, #EADFC4);
   box-shadow: 0 0 10px rgba(232, 137, 43, 0.35);
+}
+
+/* 2B. Problem Statement Dossiers Sub-Grid in Downloads Section */
+.ps-dossiers-download-wrap {
+  margin-top: 52px;
+  padding-top: 36px;
+  border-top: 1px dashed rgba(184, 146, 58, 0.35);
+  width: 100%;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ps-downloads-header {
+  margin-bottom: 24px;
+}
+
+.ps-downloads-title {
+  font-family: var(--font-display, 'Bebas Neue', sans-serif);
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #FFF3D6;
+  text-shadow: 0 0 16px rgba(232, 137, 43, 0.4);
+  margin: 8px 0 6px;
+  text-transform: uppercase;
+}
+
+.ps-downloads-desc {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--paper-muted, #B0A28E);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ps-resource-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 20px;
+}
+
+@media (min-width: 1080px) {
+  .ps-resource-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+.btn-view-pdf {
+  background: rgba(36, 26, 18, 0.9) !important;
+  border: 1.5px solid rgba(184, 146, 58, 0.5) !important;
+  color: var(--paper-cream, #EADFC4) !important;
+}
+
+.btn-view-pdf:hover {
+  background: rgba(46, 32, 20, 1) !important;
+  border-color: var(--amber-bright, #F2A900) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 12px rgba(242, 169, 0, 0.35) !important;
 }
 
 /* 3. Rules Dossier Modal Container */
